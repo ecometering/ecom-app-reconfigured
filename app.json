@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "ecom-app",
-    "slug": "ecom-app",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "name": "ecomJobsApp",
+    "slug": "ecomjobsapp",
+    "version": "2.1.17",
+    "orientation": "default",
+    "icon": "./assets/icons/logo167.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -12,19 +12,74 @@
       "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": [
-      "**/*"
+      "assets/*"
     ],
     "ios": {
-      "supportsTablet": true
+      
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",
+        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
+      },
+      "bundleIdentifier": "com.ecomJobsApp"
     },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+    
+    "extra": {
+      "eas": {
+        "projectId": "ad335d98-531d-4bcc-8c63-8d07df138c91"
       }
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
     }
-  }
+  },
+  "android": {
+    "adaptiveIcon": {
+      "foregroundImage": "./assets/adaptive-icon.png",
+      "backgroundColor": "#ffffff"
+    },
+    "permissions": [
+      "android.permission.RECORD_AUDIO",
+      "android.permission.CAMERA"
+    ],
+    "package": "ECM.ecomJobsApp"
+  },
+  "web": {
+    "favicon": "./assets/favicon.png"
+  },
+  "plugins": [
+    [
+      "expo-secure-store"
+    ],
+    [
+      "expo-image-picker",
+      {
+        "photosPermission": "The app accesses your photos to let you share them with your friends."
+      }
+    ],
+    [
+      "expo-build-properties",
+      {
+        "ios": {
+          "deploymentTarget": "13.4"
+        }
+      }
+    ],
+    [
+      "expo-barcode-scanner",
+      {
+        "cameraPermission": "Allow $(PRODUCT_NAME) to access camera."
+      }
+    ],
+    [
+      "expo-camera",
+      {
+        "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera.",
+        "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos."
+      }
+    ]
+  ],
+  "extra": {
+    "eas": {
+      "projectId": "ad335d98-531d-4bcc-8c63-8d07df138c91"
+    }
+  },
+  "owner": "garanmayers"
 }
