@@ -11,7 +11,7 @@ import {
 import Text from "../../components/Text";
 import Header from "../../components/Header";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { height, unitH, width } from "../../utils/constant";
+import { useScreenDimensions } from "../../utils/constant";
 import { TextType } from "../../theme/typography";
 import { AppContext } from "../../context/AppContext";
 import EcomHelper from "../../utils/ecomHelper";
@@ -19,6 +19,7 @@ import * as ExpoImagePicker from "expo-image-picker";
 import * as MediaLibrary from 'expo-media-library';
 
 function GenericPhotoPage() {
+  const { width, height } = useScreenDimensions(); 
   const navigation = useNavigation();
   const route = useRoute();
   const appContext = useContext(AppContext);
@@ -77,24 +78,26 @@ function GenericPhotoPage() {
   };
 
   const takePhoto = async () => {
-    const hasPermission = await requestMediaLibraryPermission();
-    if (!hasPermission) {
-      EcomHelper.showInfoMessage("Permissions to access camera and media library are required!");
-      return;
+    // First, request camera permissions
+    const cameraPermission = await ExpoImagePicker.requestCameraPermissionsAsync();
+
+    if (cameraPermission.status !== 'granted') {
+        alert('Camera permission is required to take photos.');
+        return;
     }
-    let options = {
+
+    // Then, proceed with taking a photo if permission is granted
+    let result = await ExpoImagePicker.launchCameraAsync({
         mediaTypes: ExpoImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
         quality: 1,
-    };
+    });
 
-    let result = await ExpoImagePicker.launchCameraAsync(options);
-
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-      const asset = await MediaLibrary.createAssetAsync(result.assets[0].uri);
-      setSelectedImage(asset.uri);
+    if (!result.canceled) {
+        setSelectedImage(result.uri);
     }
-  };
-
+};
   const chooseFromGallery = async () => {
     const options = {
       mediaType: ExpoImagePicker.MediaTypeOptions.Images,
@@ -144,14 +147,14 @@ function GenericPhotoPage() {
 
 const styles = StyleSheet.create({
   scrollView: {
-    width: width,
-    height: height,
+    width: '100%',
+    height: '100%',
   },
   content: {
     flex: 1,
   },
   body: {
-    marginHorizontal: width * 0.1,
+    marginHorizontal: '10%',
   },
   text: {
     alignSelf: "flex-start",
@@ -166,8 +169,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   spacer: {
-    height: unitH * 50,
+    height: 50, // Adjust based on layout needs, possibly using useScreenDimensions
   },
 });
+
 
 export default GenericPhotoPage;

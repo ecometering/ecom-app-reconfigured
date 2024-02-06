@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal, StyleSheet, TouchableOpacity, View } from "react-native";
-import { width } from "../utils/constant";
+import { useScreenDimensions } from "../utils/constant";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Camera } from "expo-camera"
 import { BarCodeScanner as ExpoBarCodeScanner } from "expo-barcode-scanner";
@@ -10,11 +10,17 @@ const BarcodeScanner = ({
   cameraRef,
   barcodeRecognized,
 }) => {
+  const { width, height } = useScreenDimensions();
+
+ 
   return (
     <Modal transparent={true}>
       <View style={styles.container}>
-        <View style={styles.closeButtonContainer}>
-          <TouchableOpacity onPress={() => setIsModal(false)}>
+      <View style={[styles.closeButtonContainer, {
+          // Dynamically adjust the position based on screen size
+          top: height * 0.1, // Example: Adjust top margin
+          right: width * 0.1, // Example: Adjust right margin
+        }]}>          <TouchableOpacity onPress={() => setIsModal(false)}>
             <MaterialCommunityIcons
               name="close-thick"
               size={30}
@@ -25,8 +31,11 @@ const BarcodeScanner = ({
         <Camera
           ref={cameraRef}
           onBarCodeScanned={barcodeRecognized}
-          style={{ width: "80%", height: "50%" }}
-          barCodeScannerSettings={{
+          style={[styles.camera, {
+            // Dynamically adjust the camera size
+            width: width * 0.8, // Example: 80% of screen width
+            height: height * 0.5, // Example: 50% of screen height
+          }]}          barCodeScannerSettings={{
             barCodeTypes: [
               ExpoBarCodeScanner.Constants.BarCodeType.code93,
               ExpoBarCodeScanner.Constants.BarCodeType.code39,
@@ -54,8 +63,6 @@ const styles = StyleSheet.create({
   },
   closeButtonContainer: {
     position: "absolute",
-    top: 65,
-    right: 35,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -65,8 +72,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   camera: {
-    width: width * 0.8,
-    height: 200,
     alignSelf: "center",
   },
 });

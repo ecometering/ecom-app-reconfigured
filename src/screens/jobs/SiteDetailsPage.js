@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState,useRef } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -12,7 +12,8 @@ import { unitH, useScreenDimensions } from "../../utils/constant";
 import Header from "../../components/Header";
 import { useNavigation } from "@react-navigation/native";
 import TextInput, { TextInputWithTitle,InputRowWithTitle } from "../../components/TextInput";
-import { TextType } from "../../theme/typography";
+import {TextType } from "../../theme/typography";
+import { PrimaryColors } from "../../theme/colors";
 import OptionalButton from "../../components/OptionButton";
 import { AppContext } from "../../context/AppContext";
 import EcomHelper from "../../utils/ecomHelper";
@@ -25,13 +26,15 @@ const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 function SiteDetailsPage() {
   const { width, height } = useScreenDimensions(); // Use the custom hook for responsive dimensions
-  const unitH = height / 1024;
   const navigation = useNavigation();
   const appContext = useContext(AppContext);
 
   const jobType = appContext.jobType;
   const SiteDetails = appContext.SiteDetails;
-
+  const email1Ref = useRef(null);
+  const email2Ref = useRef(null);
+  const number1Ref = useRef(null);
+  const number2Ref = useRef(null);
   console.log("SiteDetailsPage");
   const [companyName, setCompanyName] = useState(
     SiteDetails?.companyName ?? ""
@@ -323,40 +326,39 @@ function SiteDetailsPage() {
 
           <View style={styles.spacer} />
           <View style={styles.contactContainer}>
-            <Text type={TextType.CAPTION_2}>{"Contact Numbers"}</Text>
-            <View style={styles.spacer2} />
-            <View style={styles.contactContent}>
-            <InputRowWithTitle
-        title1={"Phone Number 1"}
-        value1={number1}
-        onChangeText1={(txt) => {
-          const filteredText = txt.replace(/[^0-9]/g, "");
-          setNumber1(filteredText);
-        }}
-        title2={"Phone Number 2"}
-        value2={number2}
-        onChangeText2={(txt) => {
-          const filteredText = txt.replace(/[^0-9]/g, "");
-          setNumber2(filteredText);
-        }}
-        style={styles.inputFullWidth}
-        containerStyle={{ width: width * 0.8, alignSelf: "center" }}
-      />
+  <Text type={TextType.CAPTION_2}>{"Contact Numbers"}</Text>
+  <View style={styles.spacer2} />
+  <View style={styles.contactContent}>
+    <InputRowWithTitle
+      title1="Phone Number 1"
+      placeholder1="Enter phone number"
+      value1={number1}
+      onChangeText1={(text) => setNumber1(text)}
+      ref1={number1Ref}
+      title2="Phone Number 2"
+      placeholder2="Enter phone number"
+      value2={number2}
+      onChangeText2={(text) => setNumber2(text)}
+      ref2={number2Ref}
+    />
+  </View>
+  <View style={styles.contactContent}>
+    <InputRowWithTitle
+      title1="Email Address 1"
+      placeholder1="Enter email address"
+      value1={email1}
+      onChangeText1={(text) => setEmail1(text)}
+      ref1={email1Ref}
+      title2="Email Address 2"
+      placeholder2="Enter email address"
+      value2={email2}
+      onChangeText2={(text) => setEmail2(text)}
+      ref2={email2Ref}
+    />
+  </View>
+</View>
 
-</View>
-<View style={styles.contactContent}>
-<InputRowWithTitle
-        title1={"Email Address 1"}
-        value1={email1}
-        onChangeText1={(txt) => setEmail1(txt.toLowerCase())}
-        title2={"Email Address 2"}
-        value2={email2}
-        onChangeText2={(txt) => setEmail2(txt.toLowerCase())}
-        style={styles.inputFullWidth}
-        containerStyle={{ width: width * 0.8, alignSelf: "center" }}
-      />
-</View>
-          </View>
+  
 
           <View style={styles.spacer} />
           <TextInputWithTitle
@@ -398,8 +400,15 @@ function SiteDetailsPage() {
 }
 
 const styles = StyleSheet.create({
-  flex: {
+  container: {
     flex: 1,
+    backgroundColor: PrimaryColors.White,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingVertical: 20,
   },
   inputContainer: {
     alignSelf: "center",
@@ -413,28 +422,39 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     alignItems: "flex-start",
   },
-  contactContent: {
-    width: "100%",
-    justifyContent: "space-between",
-    flexDirection: "row",
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+    width: '100%', // Full width for button container
+    paddingHorizontal: 20, // Horizontal padding for screen edge spacing
   },
-  optionContainer: {
-    width: "80%",
-    alignSelf: "center",
-    justifyContent: "space-between",
-    flexDirection: "row",
+  actionButton: {
+    backgroundColor: PrimaryColors.Blue,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 100, // Minimum width for action buttons
   },
-  spacer: {
-    height: unitH * 20,
+  buttonText: {
+    color: PrimaryColors.White,
+    fontSize: 18,
+    fontWeight: 'bold',
   },
-  spacer2: {
-    height: unitH * 10,
+  optionalButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
   },
-  inputFullWidth: {
-    width: "100%",
-    alignSelf: "center",
-    // Add other styling as needed
+  confirmText: {
+    fontSize: 14,
+    color: PrimaryColors.Black,
+    paddingHorizontal: 10, // Padding around confirmation text
   },
-});
+  // Define additional styles as needed
+})
 
 export default SiteDetailsPage;

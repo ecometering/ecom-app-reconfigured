@@ -4,13 +4,34 @@ import {PrimaryColors} from '../theme/colors';
 import {unitH, useScreenDimensions } from '../utils/constant';
 import {TextStyles, TextType} from '../theme/typography';
 import Text from './Text';
+// Import useState and useEffect for managing state and side effects
+import { useState, useEffect } from 'react';
+
+// Custom hook for dynamic screen dimensions
+export const useScreenDimensions = () => {
+  const [screenData, setScreenData] = useState(Dimensions.get('window'));
+
+  useEffect(() => {
+    const onChange = (result) => {
+      setScreenData(result.window);
+    };
+
+    Dimensions.addEventListener('change', onChange);
+    return () => Dimensions.removeEventListener('change', onChange);
+  }, []);
+
+  return {
+    width: screenData.width,
+    height: screenData.height,
+  };
+};
 
 const TextInput = forwardRef(
-  ({placeholderTextColor, style, onChangeText, ...otherProps}, ref) => {
+  ({ placeholderTextColor, style, onChangeText, ...otherProps }, ref) => {
     return (
       <RNTextInput
         ref={ref}
-        placeholderTextColor={PrimaryColors.Gray}
+        placeholderTextColor={placeholderTextColor || PrimaryColors.Gray}
         onChangeText={text => {
           if (onChangeText) {
             onChangeText(text);
@@ -24,37 +45,30 @@ const TextInput = forwardRef(
 );
 
 export const TextInputWithTitle = forwardRef(
-  (
-    {
-      title,
-      placeholderTextColor,
-      style,
-      containerStyle,
-      onChangeText,
-      ...otherProps
-    },
-    ref,
-  ) => {
+  ({ title, placeholderTextColor, style, containerStyle, onChangeText, ...otherProps }, ref) => {
+    const { width } = useScreenDimensions(); // Dynamic screen dimensions
+    const dynamicStyle = { width: width * 0.9 }; // Example of dynamic width based on screen size
+
     return (
-      <View style={{...styles.container, ...containerStyle}}>
+      <View style={[styles.container, containerStyle]}>
         <Text style={{ fontSize: 10 }}>{title}</Text>
-        <View style={{height: 5}} />
+        <View style={{ height: 5 }} />
         <TextInput
           ref={ref}
           placeholderTextColor={placeholderTextColor}
           onChangeText={onChangeText}
-          style={style}
+          style={[dynamicStyle, style]} // Apply dynamic style here
           {...otherProps}
-          
         />
       </View>
     );
   },
 );
 
+// Adjusted InputRowWithTitle to accept refs for each input
 export const InputRowWithTitle = forwardRef(
-  ({ title1, title2, placeholderTextColor, style, onChangeText, ...otherProps }, ref) => {
-    const { width } = useScreenDimensions(); // Use the custom hook
+  ({ title1, title2, placeholderTextColor, style, onChangeText1, onChangeText2, ref1, ref2, ...otherProps }, ref) => {
+    const { width } = useScreenDimensions(); // Use the custom hook for dynamic dimensions
     const dynamicGap = width * 0.02;
 
     return (
@@ -63,8 +77,9 @@ export const InputRowWithTitle = forwardRef(
           <TextInputWithTitle
             title={title1}
             placeholderTextColor={placeholderTextColor}
-            onChangeText={onChangeText}
+            onChangeText={onChangeText1}
             style={style}
+            ref={ref1} // Pass ref to the first TextInputWithTitle
             {...otherProps}
           />
         </View>
@@ -72,8 +87,9 @@ export const InputRowWithTitle = forwardRef(
           <TextInputWithTitle
             title={title2}
             placeholderTextColor={placeholderTextColor}
-            onChangeText={onChangeText}
+            onChangeText={onChangeText2}
             style={style}
+            ref={ref2} // Pass ref to the second TextInputWithTitle
             {...otherProps}
           />
         </View>
@@ -82,18 +98,17 @@ export const InputRowWithTitle = forwardRef(
   },
 );
 
-
 const styles = StyleSheet.create({
   container: {
     alignItems: 'flex-start',
   },
   textInput: {
-    width: '100%',
     backgroundColor: PrimaryColors.White,
     borderRadius: 5,
-    height: unitH * 40,
     ...TextStyles[TextType.TEXTINPUT],
     borderColor: PrimaryColors.Black,
+    padding: 10, // Added padding for better text input visibility
+    // Height and width removed to allow dynamic styling
   },
 });
 

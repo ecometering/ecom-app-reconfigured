@@ -341,19 +341,7 @@ const DataLoggerProcess = () => {
       console.log("jobType is not available in the context");
       return null;
     }
-    switch (appContext.jobType) {
-      case 'Install':
-        return [
-      
-          ...MeterProcess(appContext.jobType),
-          ...CorrectorProcess(),
-          ...DataLoggerProcess(),
-          // ... Add other process functions as needed
-        ];
-      // Add cases for other job types...
-      default:
-        return null;
-    }
+  
   };
   
   console.log("Main Navigator rendered")
@@ -377,6 +365,7 @@ const DataLoggerProcess = () => {
         initialParams={{ title: 'Site Photo', photoKey: 'sitePhoto',nextScreen:'SiteQuestionsPage', }} 
       />
       <Stack.Screen name = 'SiteQuestionsPage' component={SiteQuestionsPage}/>
+      
       <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} />
       <Stack.Screen key="GenericPhotoPageEcvToMovPhoto"
         name="EcvToMovExisting" 
@@ -464,7 +453,7 @@ const DataLoggerProcess = () => {
             initialParams={{ title: 'Settings label', photoKey: 'settingsLabel',nextScreen: 'SubmitSuccessPage'}}
         />
           <Stack.Screen name='SubmitSuccessPage' component={SubmitSuccessPage}/>  
-{renderJobTypeScreens()}
+
           </Stack.Group>
         
       </Stack.Navigator>

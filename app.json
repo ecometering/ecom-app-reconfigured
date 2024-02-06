@@ -2,7 +2,7 @@
   "expo": {
     "name": "ecomJobsApp",
     "slug": "ecomjobsapp",
-    "version": "2.1.17",
+    "version": "2.1.19",
     "orientation": "default",
     "icon": "./assets/icons/logo167.png",
     "userInterfaceStyle": "light",
@@ -18,15 +18,22 @@
       "supportsTablet": true,
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",
-        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
+        "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos."
       },
-      "bundleIdentifier": "com.ecomJobsApp"
+      "bundleIdentifier": "ECM.ecomJobsApp"
     },
     "extra": {
       "eas": {
         "projectId": "ad335d98-531d-4bcc-8c63-8d07df138c91"
       }
-    }
+    },
+    "android": {
+      "package": "ECM.ecomJobsApp"
+    },
+    "plugins": [
+      "expo-build-properties"
+      
+    ]
   },
   "android": {
     "adaptiveIcon": {
@@ -56,7 +63,8 @@
       "expo-build-properties",
       {
         "ios": {
-          "deploymentTarget": "13.4"
+          "deploymentTarget": "13.4",
+          "flipper":true
         }
       }
     ],

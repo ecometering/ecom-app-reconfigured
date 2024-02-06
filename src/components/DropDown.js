@@ -1,113 +1,106 @@
-import React, {useState} from 'react';
-import {Image, Modal, View, StyleSheet, ScrollView, Text} from 'react-native';
-import {EcomPressable} from './ImageButton';
-import {unitH, unitW} from '../utils/constant';
-import {TextType, TextStyles} from '../theme/typography';
-import {leftGreyArrowIcon} from '../utils/assets';
-import {Dropdown} from 'react-native-element-dropdown';
-import {PrimaryColors} from '../theme/colors';
+import React, { useState } from 'react';
+import { Image, Modal, View, StyleSheet, ScrollView, Text, TouchableOpacity } from 'react-native';
+import { useScreenDimensions } from '../utils/constant';
+import { TextType, TextStyles } from '../theme/typography';
+import { leftGreyArrowIcon } from '../utils/assets';
+import Dropdown from 'react-native-element-dropdown';
+import { PrimaryColors } from '../theme/colors';
 
-const EcomDropDown = ({width, value, valueList, placeholder, onChange}) => {
-  const containerStyle = {
-    width: width,
+const dynamicDropdownStyles = (width, height) => StyleSheet.create({
+  container: {
     borderColor: PrimaryColors.Black,
     borderWidth: 1,
-    paddingLeft: unitW * 20,
-  };
+    paddingLeft: width * 0.05,
+    width: width * 0.8, // 80% of screen width
+  },
+  text: {
+    fontSize: height * 0.02, // Adjust font size dynamically based on screen height
+  },
+  dropdown: {
+    fontSize: width * 0.04, // Adjust dropdown font size dynamically
+  },
+  modalContent: {
+    backgroundColor: PrimaryColors.White,
+    borderRadius: 10,
+    maxHeight: height * 0.5, // Half of screen height
+    width: width * 0.8, // 80% of screen width
+  },
+  item: {
+    padding: 10,
+    fontSize: width * 0.04, // Dynamic font size for items
+  },
+  icon: {
+    width: width * 0.06, // Dynamic width
+    height: height * 0.03, // Dynamic height
+    transform: [{ rotate: '-90deg' }],
+  },
+});
+
+const EcomDropDown = ({ value, valueList, placeholder, onChange }) => {
+  const { width, height } = useScreenDimensions();
+  const styles = dynamicDropdownStyles(width, height);
+
   return (
     <View>
-      <Text style={{ fontSize: 10 }}>{placeholder ? placeholder : ' '}</Text>
-      <View style={{height: 5}} />
-      <View style={containerStyle}>
+      <Text style={styles.text}>{placeholder || ' '}</Text>
+      <View style={{ height: 5 }} />
+      <View style={styles.container}>
         <Dropdown
           data={valueList}
           search
           maxHeight={300}
           labelField="label"
           valueField="value"
-          placeholder={''}
+          placeholder=''
           value={value}
           onChange={onChange}
-          style={{fontSize: 15}}
+          style={styles.dropdown}
         />
       </View>
     </View>
   );
 };
 
-export function DropDownItem({item, onPress}) {
+const DropDownItem = ({ item, onPress, width, height }) => {
+  const styles = dynamicDropdownStyles(width, height);
   return (
-    <EcomPressable onPress={onPress}>
-      <Text style={styles.text}>{item.title}</Text>
-    </EcomPressable>
+    <TouchableOpacity onPress={onPress}>
+      <Text style={styles.item}>{item.title}</Text>
+    </TouchableOpacity>
   );
-}
+};
 
-const DropDown = ({
-  activeTint = PrimaryColors.Red,
-  placeholderTint = PrimaryColors.Gray,
-  dropdownTitle = '',
-  dropdownTitleStyle,
-  dropdownStyle,
-  items,
-  onSelectedItem,
-  selectedItem,
-  placeholder,
-  containerStyle,
-  disabled = false,
-}) => {
+const DropDown = ({ items, onSelectedItem, selectedItem, placeholder }) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const { width, height } = useScreenDimensions();
+  const styles = dynamicDropdownStyles(width, height);
 
   return (
-    <View style={{...styles.container, ...containerStyle}}>
-      {dropdownTitle != '' && (
-        <Text style={{...dropdownTitleStyle}}>{dropdownTitle}</Text>
-      )}
-      <EcomPressable
-        disabled={disabled}
-        style={{...styles.pressable, ...dropdownStyle}}
-        onPress={() => setModalVisible(true)}>
-        {selectedItem ? (
-          <Text style={[styles.text, {color: activeTint}]}>
-            {selectedItem.title}
-          </Text>
-        ) : (
-          <Text style={[styles.text, {color: placeholderTint}]}>
-            {placeholder}
-          </Text>
-        )}
-        <Image
-          source={leftGreyArrowIcon}
-          resizeMode="contain"
-          style={{
-            ...styles.rightIcon,
-            tintColor: selectedItem ? activeTint : placeholderTint,
-          }}
-        />
-      </EcomPressable>
+    <View style={styles.container}>
+      <TouchableOpacity onPress={() => setModalVisible(true)}>
+        <Text style={styles.text}>
+          {selectedItem ? selectedItem.title : placeholder}
+        </Text>
+        <Image source={leftGreyArrowIcon} resizeMode="contain" style={styles.icon} />
+      </TouchableOpacity>
       <Modal
-        style={styles.flyout}
-        isOpen={modalVisible}
-        isLightDismissEnabled={false}
-        isOverlayEnabled
-        placement="full"
-        onDismiss={() => setModalVisible(false)}>
-        <View style={styles.flyoutInnerView}>
-          <ScrollView
-            style={styles.flyoutScrollView}
-            contentContainerStyle={styles.flyoutContentStyle}>
-            {items.map((item, index) => {
-              return (
-                <DropDownItem
-                  key={index}
-                  item={item}
-                  onPress={() => {
-                    setModalVisible(false);
-                    onSelectedItem(item);
-                  }}
-                />
-              );
-            })}
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}>
+        <View style={styles.modalContent}>
+          <ScrollView>
+            {items.map((item, index) => (
+              <DropDownItem
+                key={index}
+                item={item}
+                onPress={() => {
+                  setModalVisible(false);
+                  onSelectedItem(item);
+                }}
+                width={width}
+                height={height}
+              />
+            ))}
           </ScrollView>
         </View>
       </Modal>
@@ -115,52 +108,6 @@ const DropDown = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'column',
-    width: '100%',
-  },
-  pressable: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    alignSelf: 'center',
-    width: '100%',
-    paddingHorizontal: unitW * 40,
-    borderRadius: unitH * 5,
-    height: unitH * 158,
-    backgroundColor: PrimaryColors.White,
-  },
-  icon: {},
-  flyout: {
-    width: '100%',
-    height: unitH * 1500,
-  },
-  flyoutInnerView: {
-    height: unitH * 1500,
-    justifyContent: 'center',
-  },
-  flyoutScrollView: {
-    flexGrow: 0,
-  },
-  flyoutContentStyle: {
-    backgroundColor: PrimaryColors.White,
-    borderRadius: unitH * 5,
-  },
-  rightIcon: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: unitW * 41,
-    height: unitH * 45,
-    transform: [{rotate: '-90deg'}],
-  },
-  text: {
-    ...TextStyles[TextType.TEXTINPUT],
-  },
-  spacing: {
-    backgroundColor: '#666',
-    height: unitH * 3,
-  },
-});
+// Note: You might need to adjust the styles more finely tuned to your app's design requirements.
 
 export default EcomDropDown;
