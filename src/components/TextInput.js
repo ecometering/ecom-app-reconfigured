@@ -1,7 +1,7 @@
 import React, {forwardRef} from 'react';
 import {StyleSheet, TextInput as RNTextInput, View} from 'react-native';
 import {PrimaryColors} from '../theme/colors';
-import {useScreenDimensions } from '../utils/constant';
+import {unitH, useScreenDimensions } from '../utils/constant';
 import {TextStyles, TextType} from '../theme/typography';
 import Text from './Text';
 

@@ -184,9 +184,9 @@ const MeterProcess = () => {
 
       //New ecv to mov
         <Stack.Screen key="GenericPhotoPageEcvToMovPhoto"
-        name={`GenericPhotoPageEcvToMov-${jobType}`} 
-        component={GenericPhotoPage} 
-        initialParams={getPhotoPageParams('ecvToMov',jobType)} 
+          name={`GenericPhotoPageEcvToMov-${jobType}`} 
+          component={GenericPhotoPage} 
+          initialParams={getPhotoPageParams('ecvToMov',jobType)} 
       />,
 
         
@@ -208,10 +208,10 @@ const MeterProcess = () => {
       />,
         //Meter photo
         <Stack.Screen 
-        key = "GenericPhotoPageMeterPhoto"
-            name={`GenericPhotoPageMeterPhoto-${jobType}`} 
-            component={GenericPhotoPage} 
-            initialParams={getPhotoPageParams('meterPhoto',jobType)} 
+          key = "GenericPhotoPageMeterPhoto"
+          name={`GenericPhotoPageMeterPhoto-${jobType}`} 
+          component={GenericPhotoPage} 
+          initialParams={getPhotoPageParams('meterPhoto',jobType)} 
         />      
         
     ];

@@ -15,10 +15,14 @@ export const useScreenDimensions = () => {
   }, []);
 
   return {
-    width: screenData.width,
-    height: screenData.height
+    width: screenData?.width || Dimensions.get('window').width,
+    height: screenData?.height || Dimensions.get('window').height
+    
   };
 };
+
+export const height = Dimensions.get('window').height;
+export const width = Dimensions.get('window').width;
 
 export const METER_MANUFACTURER_LIST = [
   {label: 'INS', value: 1},
@@ -1277,7 +1281,6 @@ export const ULTRASONIC_MODE_LIST = [
 ]
 
 
-
 export const METER_DETAILS_METER_MODEL_LIST = [
   { "label": "750", "value": 1 },
   { "label": "100T/C", "value": 2 },
@@ -1579,8 +1582,10 @@ export const MPRN_STATUS = [
 /**
  * This UI Design is based on 1366 x 1024 Screen(iPad Pro 12.9).
  */
-export const unitW = width / 1366;
-export const unitH = height / 1024;
+// export const unitW = Dimensions.get("window").width / 1366;
+// export const unitH = Dimensions.get("window").height / 1024;
+export const unitW = 1;
+export const unitH = 1;
 
 /**
  * IsAndroid

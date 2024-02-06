@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { useScreenDimensions } from "../../utils/constant";
+import { unitH, useScreenDimensions } from "../../utils/constant";
 import Header from "../../components/Header";
 import { useNavigation } from "@react-navigation/native";
 import TextInput, { TextInputWithTitle,InputRowWithTitle } from "../../components/TextInput";
@@ -195,7 +195,7 @@ function SiteDetailsPage() {
               const limitedText = filteredText.slice(0, 15);
               setMprn(limitedText);
             }}
-            containerStyle={styles.inputContainer}
+            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
             keyboardType="numeric"
           />
 
@@ -207,7 +207,7 @@ function SiteDetailsPage() {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
               setCompanyName(filteredText);
             }}
-            containerStyle={styles.inputContainer}
+            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
@@ -217,7 +217,7 @@ function SiteDetailsPage() {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
               setBuildingName(filteredText);
             }}
-            containerStyle={styles.inputContainer}
+            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
           />
 
           <View style={styles.spacer} />
@@ -228,7 +228,7 @@ function SiteDetailsPage() {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
               setAddress1(filteredText);
             }}
-            containerStyle={styles.inputContainer}
+            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
@@ -238,7 +238,7 @@ function SiteDetailsPage() {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
               setAddress2(filteredText);
             }}
-            containerStyle={styles.inputContainer}
+            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
@@ -248,7 +248,7 @@ function SiteDetailsPage() {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
               setAddress3(filteredText);
             }}
-            containerStyle={styles.inputContainer}
+            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
@@ -258,7 +258,7 @@ function SiteDetailsPage() {
               const filteredText = txt.replace(/[^a-zA-Z]/g, "");
               setTown(filteredText);
             }}
-            containerStyle={styles.inputContainer}
+            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
@@ -268,7 +268,7 @@ function SiteDetailsPage() {
               const filteredText = txt.replace(/[^a-zA-Z ]/g, "");
               setCounty(filteredText);
             }}
-            containerStyle={styles.inputContainer}
+            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
@@ -280,7 +280,7 @@ function SiteDetailsPage() {
                 setPostCode(filteredText.toUpperCase());
               }
             }}
-            containerStyle={styles.inputContainer}
+            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
           />
 
           <View
@@ -366,7 +366,7 @@ function SiteDetailsPage() {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s@.]/g, "");
               setInstructions(filteredText);
             }}
-            containerStyle={styles.inputContainer}
+            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
           />
           <View style={styles.spacer} />
           <View style={styles.spacer} />
@@ -402,7 +402,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   inputContainer: {
-    width: width * 0.8,
     alignSelf: "center",
   },
   input: {

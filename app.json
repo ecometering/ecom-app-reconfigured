@@ -15,7 +15,6 @@
       "assets/*"
     ],
     "ios": {
-      
       "supportsTablet": true,
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",
@@ -23,7 +22,6 @@
       },
       "bundleIdentifier": "com.ecomJobsApp"
     },
-    
     "extra": {
       "eas": {
         "projectId": "ad335d98-531d-4bcc-8c63-8d07df138c91"
@@ -77,9 +75,8 @@
     ]
   ],
   "extra": {
-    "eas": {
-      "projectId": "ad335d98-531d-4bcc-8c63-8d07df138c91"
-    }
+    "eas": {},
+    "projectId": "ad335d98-531d-4bcc-8c63-8d07df138c91"
   },
   "owner": "garanmayers"
 }

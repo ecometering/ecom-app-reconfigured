@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     height: height,
     alignItems: "center",
     justifyContent: "space-evenly",
-    paddingVertical: height * 0.2,
+    // paddingVertical: height * 0.2,
   },
   spacer: {
     height: unitH * 30,
