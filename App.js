@@ -6,6 +6,7 @@ import MainNavigator from './src/navigation/MainNavigator';
 import { AppContextProvider } from './src/context/AppContext';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AllNavigator from './src/navigation/AllNavigator';
 
 
 const App = () => {
@@ -13,7 +14,7 @@ const App = () => {
     
     <AppContextProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
-          <MainNavigator />
+          <AllNavigator />
       </GestureHandlerRootView>
     </AppContextProvider>
     

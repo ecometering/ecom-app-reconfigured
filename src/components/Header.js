@@ -1,6 +1,5 @@
 import React from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
-import {unitH, width} from '../utils/constant';
+import {Pressable, StyleSheet, View, useWindowDimensions} from 'react-native';
 import Text from './Text';
 import {TextType} from '../theme/typography';
 
@@ -15,30 +14,32 @@ export const Header = ({
   rightBtnPressed,
   containerStyle,
 }) => {
+  const { width } = useWindowDimensions(); // Dynamically adjust to screen width
+
   return (
-    <View style={{...styles.content, ...containerStyle}}>
+    <View style={[styles.content, { width }, containerStyle]}>
       {hasLeftBtn === true ? (
-        <Pressable onPress={leftBtnPressed} style={styles.leftBtn}>
+        <Pressable onPress={leftBtnPressed} style={styles.btn}>
           <Text type={TextType.BUTTON_1}>
             {leftBtnText ? leftBtnText : 'Back'}
           </Text>
         </Pressable>
       ) : (
-        <View />
+        <View style={styles.placeholder} />
       )}
       {hasCenterText === true ? (
-        <Text type={TextType.HEADER_1}>
+        <Text type={TextType.HEADER_1} style={styles.centerText}>
           {centerText ?? 'Job Number: ECOM00000'}
         </Text>
       ) : null}
       {hasRightBtn === true ? (
-        <Pressable onPress={rightBtnPressed} style={styles.rightBtn}>
+        <Pressable onPress={rightBtnPressed} style={styles.btn}>
           <Text type={TextType.BUTTON_1}>
             {rightBtnText ? rightBtnText : 'Next'}
           </Text>
         </Pressable>
       ) : (
-        <View />
+        <View style={styles.placeholder} />
       )}
     </View>
   );
@@ -47,16 +48,18 @@ export const Header = ({
 const styles = StyleSheet.create({
   content: {
     flexDirection: 'row',
-    width: width,
-    height: unitH * 80,
     justifyContent: 'space-between',
     alignItems: 'center',
+    height: '10%', // Adjust height based on design requirements
   },
-  leftBtn: {
-    left: 20,
+  btn: {
+    paddingHorizontal: 20, // Use padding for spacing inside buttons
   },
-  rightBtn: {
-    right: 20,
+  centerText: {
+    textAlign: 'center', // Ensure center text is actually centered
+  },
+  placeholder: {
+    width: 20, // Placeholder to maintain spacing if button is not present
   },
 });
 

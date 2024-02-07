@@ -37,12 +37,14 @@ const BarcodeScanner = ({
             height: height * 0.5, // Example: 50% of screen height
           }]}          barCodeScannerSettings={{
             barCodeTypes: [
+              ExpoBarCodeScanner.Constants.BarCodeType.codabar,
               ExpoBarCodeScanner.Constants.BarCodeType.code93,
+              ExpoBarCodeScanner.Constants.BarCodeType.
               ExpoBarCodeScanner.Constants.BarCodeType.code39,
               ExpoBarCodeScanner.Constants.BarCodeType.code128,
               ExpoBarCodeScanner.Constants.BarCodeType.ean_13,
               ExpoBarCodeScanner.Constants.BarCodeType.ean_8,
-              ExpoBarCodeScanner.Constants.BarCodeType.itf,
+              ExpoBarCodeScanner.Constants.BarCodeType.itf14,
               ExpoBarCodeScanner.Constants.BarCodeType.upc_e,
             ]
           }}

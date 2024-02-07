@@ -6,6 +6,11 @@ import StreamsSetSealDetailsPage from "../screens/jobs/StreamsSetSealDetailsPage
 import RegulatorPage from "../screens/jobs/RegulatorPage";
 import ChatterBoxPage from "../screens/jobs/ChatterBoxPage";
 import AdditionalMaterialPage from "../screens/jobs/AdditionalMaterialPage";
+import SlamshutPage from "../screens/jobs/SlamshutPage";
+import WaferCheckPage from "../screens/jobs/WaferCheckPage";
+import ReliefRegulatorPage from "../screens/jobs/ReliefRegulatorPage";
+import ActiveRegulatorPage from "../screens/jobs/ActiveRegulatorPage";
+import FilterPage from "../screens/jobs/FilterPage";
 import { AppContext } from "../context/AppContext";
 import React, { useState, useEffect } from "react";
 
@@ -109,10 +114,17 @@ const InstallFlowNavigator = () => {
     
     {/* set and seal process */}
     <Stack.Screen name="StreamsSetSealDetails" component={StreamsSetSealDetailsPage} />
+    
+    <Stack.Screen name = "FilterPage" component={FilterPage} />
+    <Stack.Screen name = "ActiveRegulatorPage" component={ActiveRegulatorPage} />
+    <Stack.Screen name = "ReliefRegulatorPage" component={ReliefRegulatorPage} />
+    <Stack.Screen name = "WaferCheckPage" component={WaferCheckPage} />
+    <Stack.Screen name = "SlamshutPage" component={SlamshutPage} />
+    
+    
     {/* regulator process */}
     <Stack.Screen name="Regulator" component={RegulatorPage} />
     <Stack.Screen name="ChatterBox" component={ChatterBoxPage} />
-    <Stack.Screen name="CorrectorDetails" component={CorrectorDetailsPage} />
     <Stack.Screen name="AdditionalMaterial" component={AdditionalMaterialPage} />
   </Stack.Navigator>
 

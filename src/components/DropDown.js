@@ -1,20 +1,21 @@
+// /path/to/EcomDropDown.js
+
 import React, { useState } from 'react';
-import { Image, Modal, View, StyleSheet, ScrollView, Text, TouchableOpacity } from 'react-native';
-import { useScreenDimensions } from '../utils/constant';
-import { TextType, TextStyles } from '../theme/typography';
-import { leftGreyArrowIcon } from '../utils/assets';
-import Dropdown from 'react-native-element-dropdown';
-import { PrimaryColors } from '../theme/colors';
+import { Image, Modal, View, StyleSheet, ScrollView, Text, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { TextType, TextStyles } from '../theme/typography'; // Assuming these are defined elsewhere
+import { leftGreyArrowIcon } from '../utils/assets'; // Assuming this is defined elsewhere
+import Dropdown from 'react-native-element-dropdown'; // Assuming package is installed
+import { PrimaryColors } from '../theme/colors'; // Assuming these are defined elsewhere
 
 const dynamicDropdownStyles = (width, height) => StyleSheet.create({
   container: {
     borderColor: PrimaryColors.Black,
     borderWidth: 1,
     paddingLeft: width * 0.05,
-    width: width * 0.8, // 80% of screen width
+    width: width * 0.8, // 80% of window width
   },
   text: {
-    fontSize: height * 0.02, // Adjust font size dynamically based on screen height
+    fontSize: height * 0.02, // Adjust font size dynamically based on window height
   },
   dropdown: {
     fontSize: width * 0.04, // Adjust dropdown font size dynamically
@@ -22,8 +23,8 @@ const dynamicDropdownStyles = (width, height) => StyleSheet.create({
   modalContent: {
     backgroundColor: PrimaryColors.White,
     borderRadius: 10,
-    maxHeight: height * 0.5, // Half of screen height
-    width: width * 0.8, // 80% of screen width
+    maxHeight: height * 0.5, // Half of window height
+    width: width * 0.8, // 80% of window width
   },
   item: {
     padding: 10,
@@ -37,7 +38,7 @@ const dynamicDropdownStyles = (width, height) => StyleSheet.create({
 });
 
 const EcomDropDown = ({ value, valueList, placeholder, onChange }) => {
-  const { width, height } = useScreenDimensions();
+  const { width, height } = useWindowDimensions();
   const styles = dynamicDropdownStyles(width, height);
 
   return (
@@ -61,7 +62,8 @@ const EcomDropDown = ({ value, valueList, placeholder, onChange }) => {
   );
 };
 
-const DropDownItem = ({ item, onPress, width, height }) => {
+const DropDownItem = ({ item, onPress }) => {
+  const { width, height } = useWindowDimensions();
   const styles = dynamicDropdownStyles(width, height);
   return (
     <TouchableOpacity onPress={onPress}>
@@ -72,7 +74,7 @@ const DropDownItem = ({ item, onPress, width, height }) => {
 
 const DropDown = ({ items, onSelectedItem, selectedItem, placeholder }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const { width, height } = useScreenDimensions();
+  const { width, height } = useWindowDimensions();
   const styles = dynamicDropdownStyles(width, height);
 
   return (
@@ -97,8 +99,6 @@ const DropDown = ({ items, onSelectedItem, selectedItem, placeholder }) => {
                   setModalVisible(false);
                   onSelectedItem(item);
                 }}
-                width={width}
-                height={height}
               />
             ))}
           </ScrollView>
@@ -108,6 +108,6 @@ const DropDown = ({ items, onSelectedItem, selectedItem, placeholder }) => {
   );
 };
 
-// Note: You might need to adjust the styles more finely tuned to your app's design requirements.
+// Note: Additional style adjustments may be required to fine-tune the design to your application's requirements.
 
 export default EcomDropDown;

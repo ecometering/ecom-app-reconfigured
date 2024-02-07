@@ -36,75 +36,21 @@ import RegulatorPage from "../screens/jobs/RegulatorPage";
 import SiteDetailsPage from "../screens/jobs/SiteDetailsPage";
 import SiteQuestionsPage from "../screens/jobs/SiteQuestionsPage";
 import StreamsSetSealDetailsPage from "../screens/jobs/StreamsSetSealDetailsPage";
+import ActiveRegulatorPage from "../screens/jobs/ActiveRegulatorPage";
+import FilterPage from "../screens/jobs/FilterPage";
+import ReliefRegulatorPage from "../screens/jobs/ReliefRegulatorPage";
+import SlamshutPage from "../screens/jobs/SlamshutPage";
+import WaferCheckPage from "../screens/jobs/WaferCheckPage";
+
 
 // generic photo page 
 import GenericPhotoPage from "../screens/jobs/GenericPhotoPage";
 
 const Stack = createStackNavigator();
 
-const MainNavigator = () => {
-  const [isToken, setIsToken] = useState(null);
-  const appContext = useContext(AppContext);
-  const { jobType } = useContext(AppContext);
-  console.log("appContext in MainNavigator:", appContext); // Check the entire context
-  console.log("jobType in MainNavigator:", appContext.jobType);
-  useEffect(() => {
-    getItemAsync("userToken")
-      .then((token) => {
-        console.log("Token retrieved:", token);
-        setIsToken(token ? true : false);
-        appContext.setUserLogged(!!token);
-      })
-      .catch((err) => {
-        console.error("Error retrieving token:", err);
-        setIsToken(false);
-      });
-  }, []);
-  console.log("isToken state:", isToken);
-  if (isToken === null) {
-    console.log("Loading spinner displayed");
-    return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
+const AllNavigator = () => {
 
- 
-
-
-
-  // Additional Photos Process
-  const AdditionalPhotosProcess = () => {
-    const { extraPhotoCount } = useContext(AppContext);
-    let additionalPhotoScreens = [];
-  
-    for (let i = 0; i < extraPhotoCount; i++) {
-      additionalPhotoScreens.push(
-        <Stack.Screen 
-          key={`ExtraPhotoPage_${i}`}
-          name={`ExtraPhotoPage_${i}`}
-          component={ExtraPhotoPage}
-          initialParams={{ photoNumber: i + 1 }}
-        />
-      );
-    }
-  
-    return additionalPhotoScreens;
-  };
-  // ...
-  const renderJobTypeScreens = () => {
-    console.log("renderJobTypeScreens called, appContext:", appContext);
-    if (!appContext || !appContext.jobType) {
-      // Handle the case where jobType is not yet available
-      console.log("jobType is not available in the context");
-      return null;
-    }
-  
-  };
-  
-  console.log("Main Navigator rendered")
-  return (
+return (
     
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -124,41 +70,34 @@ const MainNavigator = () => {
         initialParams={{ title: 'Site Photo', photoKey: 'sitePhoto',nextScreen:'SiteQuestionsPage', }} 
       />
       <Stack.Screen name = 'SiteQuestionsPage' component={SiteQuestionsPage}/>
-      
+      <Stack.Screen name = 'AssetTypeSelectionPage' component={AssetTypeSelectionPage}/>
+        <Stack.Screen name = 'MaintenancePage' component={MaintenancePage}/>
+        <Stack.Screen name = 'StreamsSetSealDetails' component={StreamsSetSealDetailsPage}/>
+        <Stack.Screen name = 'RegulatorPage' component={RegulatorPage}/>
+        <Stack.Screen name = 'ChatterBoxPage' component={ChatterBoxPage}/>
+        <Stack.Screen name = 'AdditionalMaterialPage' component={AdditionalMaterialPage}/>
+        <Stack.Screen name = 'CorrectorDetailsPage' component={CorrectorDetailsPage}/>
+        <Stack.Screen name = 'MeterDetailsPage' component={MeterDetailsPage}/>
+        <Stack.Screen name = 'DataLoggerDetailsPage' component={DataLoggerDetailsPage}/>
+        <Stack.Screen name = 'ActiveRegulatorPage' component={ActiveRegulatorPage}/>
+        <Stack.Screen name = 'FilterPage' component={FilterPage}/>
+        <Stack.Screen name = 'ReliefRegulatorPage' component={ReliefRegulatorPage}/>
+        <Stack.Screen name = 'WaferCheckPage' component={WaferCheckPage}/>
+        <Stack.Screen name = 'SlamshutPage' component={SlamshutPage}/>
+        <Stack.Screen name = 'ExtraPhotoPage' component={ExtraPhotoPage}/>
+        
 
 
             <Stack.Screen name="StandardPage" component={StandardPage} />
         <Stack.Screen name="RiddorReportPage" component={RiddorReportPage} />
         <Stack.Screen name="SnClientInfoPage" component={SnClientInfoPage} />
         <Stack.Screen name="GasSafeWarningPage" component={GasSafeWarningPage} />
-        
-        <Stack.Screen 
-        key="CompositeLabelPhoto"
-        name="CompositeLabelPhoto"  
-        component={GenericPhotoPage} 
-        initialParams={{ title: 'Composite label', photoKey: 'compositeLabel', nextScreen: 'DSEARLabelPhoto'}} 
-      />
-      
-        <Stack.Screen 
-        key = "DSEARLabelPhoto"
-            name="DSEARLabelPhoto"
-            component={GenericPhotoPage} 
-            initialParams={{ title: 'DSEAR label', photoKey: 'dsearLabel', nextScreen: 'SettingsLabelPhoto'}}
-        />
-    
-        <Stack.Screen 
-        key = "GenericPhotoPageSettingsLabelPhoto"
-            name="SettingsLabelPhoto" 
-            component={GenericPhotoPage} 
-            initialParams={{ title: 'Settings label', photoKey: 'settingsLabel',nextScreen: 'SubmitSuccessPage'}}
-        />
-          <Stack.Screen name='SubmitSuccessPage' component={SubmitSuccessPage}/>  
 
-          </Stack.Group>
-        
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
-};
-
-  export default MainNavigator;
+        <Stack.Screen name='SubmitSuccessPage' component={SubmitSuccessPage}/> 
+            
+             </Stack.Group>
+             </Stack.Navigator>
+             </NavigationContainer>
+             );
+   };
+export default AllNavigator;
