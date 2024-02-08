@@ -1,10 +1,10 @@
 
 import useState from 'react';
 import { View, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
-import TextInputWithTitle, { InputRowWithTitle } from './components/TextInput'; // Adjust path as needed
-import EcomDropDown from './components/DropDown'
-import ImagePickerButton from './components/ImagePickerButton';
-import { PrimaryColors } from './theme/colors'; // Adjust path as needed
+import TextInputWithTitle, { InputRowWithTitle } from '../../components/TextInput'; // Adjust path as needed
+import EcomDropDown from '../../components/DropDown'
+import ImagePickerButton from '../../components/ImagePickerButton';
+import { PrimaryColors } from '../../theme/colors'; // Adjust path as needed
 import Header from "../../components/Header";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
