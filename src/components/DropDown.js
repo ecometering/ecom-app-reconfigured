@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Image, Modal, View, StyleSheet, ScrollView, Text, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { TextType, TextStyles } from '../theme/typography'; // Assuming these are defined elsewhere
 import { leftGreyArrowIcon } from '../utils/assets'; // Assuming this is defined elsewhere
-import Dropdown from 'react-native-element-dropdown'; // Assuming package is installed
+import {Dropdown} from 'react-native-element-dropdown'; // Assuming package is installed
 import { PrimaryColors } from '../theme/colors'; // Assuming these are defined elsewhere
 
 const dynamicDropdownStyles = (width, height) => StyleSheet.create({
@@ -12,7 +12,7 @@ const dynamicDropdownStyles = (width, height) => StyleSheet.create({
     borderColor: PrimaryColors.Black,
     borderWidth: 1,
     paddingLeft: width * 0.05,
-    width: width * 0.8, // 80% of window width
+    // 80% of window width
   },
   text: {
     fontSize: height * 0.02, // Adjust font size dynamically based on window height
@@ -49,7 +49,7 @@ const EcomDropDown = ({ value, valueList, placeholder, onChange }) => {
         <Dropdown
           data={valueList}
           search
-          maxHeight={300}
+         
           labelField="label"
           valueField="value"
           placeholder=''

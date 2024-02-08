@@ -8,23 +8,7 @@ import Text from './Text';
 import { useState, useEffect } from 'react';
 
 // Custom hook for dynamic screen dimensions
-export const useScreenDimensions = () => {
-  const [screenData, setScreenData] = useState(Dimensions.get('window'));
 
-  useEffect(() => {
-    const onChange = (result) => {
-      setScreenData(result.window);
-    };
-
-    Dimensions.addEventListener('change', onChange);
-    return () => Dimensions.removeEventListener('change', onChange);
-  }, []);
-
-  return {
-    width: screenData.width,
-    height: screenData.height,
-  };
-};
 
 const TextInput = forwardRef(
   ({ placeholderTextColor, style, onChangeText, ...otherProps }, ref) => {

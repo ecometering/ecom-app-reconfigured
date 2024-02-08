@@ -4,6 +4,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
+  ScrollView
 } from "react-native";
 import { width, height, unitH } from "../../utils/constant";
 import { PrimaryColors } from "../../theme/colors";
@@ -125,11 +126,13 @@ function CalendarPage() {
         leftBtnPressed={backPressed}
         rightBtnPressed={null}
       />
+       <ScrollView style={{ flex: 1,
+          width: "100%",
+        }}>
       <View
         style={{
           flex: 1,
           width: "100%",
-          paddingTop: 50
           // alignItems: "center",
           // justifyContent: "center",
           // borderWidth: StyleSheet.hairlineWidth
@@ -222,6 +225,7 @@ function CalendarPage() {
           />
         )}
       </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

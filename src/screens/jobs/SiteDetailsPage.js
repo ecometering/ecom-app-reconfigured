@@ -175,7 +175,7 @@ function SiteDetailsPage() {
   };
 
   return (
-    <SafeAreaView style={styles.flex}>
+    <SafeAreaView style={{flex:1}}>
       <Header
         hasLeftBtn={true}
         hasCenterText={true}
@@ -185,11 +185,10 @@ function SiteDetailsPage() {
         rightBtnPressed={nextPressed}
       />
       <KeyboardAvoidingView
-        style={styles.flex}
+        style={{flex:1}}
         behavior={Platform.OS === "ios" ? "padding" : null}
       >
-        <ScrollView style={styles.flex}>
-          <View style={styles.spacer} />
+        <ScrollView style={{flex:1}} >
           <TextInputWithTitle
             title={"MPRN *"}
             value={mprn}
@@ -198,7 +197,7 @@ function SiteDetailsPage() {
               const limitedText = filteredText.slice(0, 15);
               setMprn(limitedText);
             }}
-            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
+            containerStyle={[styles.inputContainer,{width: "90%" }]}
             keyboardType="numeric"
           />
 
@@ -210,7 +209,7 @@ function SiteDetailsPage() {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
               setCompanyName(filteredText);
             }}
-            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
+            containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
@@ -220,7 +219,7 @@ function SiteDetailsPage() {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
               setBuildingName(filteredText);
             }}
-            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
+            containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
 
           <View style={styles.spacer} />
@@ -231,7 +230,7 @@ function SiteDetailsPage() {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
               setAddress1(filteredText);
             }}
-            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
+            containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
@@ -241,7 +240,7 @@ function SiteDetailsPage() {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
               setAddress2(filteredText);
             }}
-            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
+            containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
@@ -251,7 +250,7 @@ function SiteDetailsPage() {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
               setAddress3(filteredText);
             }}
-            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
+            containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
@@ -261,7 +260,7 @@ function SiteDetailsPage() {
               const filteredText = txt.replace(/[^a-zA-Z]/g, "");
               setTown(filteredText);
             }}
-            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
+            containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
@@ -271,7 +270,7 @@ function SiteDetailsPage() {
               const filteredText = txt.replace(/[^a-zA-Z ]/g, "");
               setCounty(filteredText);
             }}
-            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
+            containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
@@ -283,22 +282,22 @@ function SiteDetailsPage() {
                 setPostCode(filteredText.toUpperCase());
               }
             }}
-            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
+            containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
 
           <View
             style={{
-              alignItems: "flex-end",
+             
               flexDirection: "row",
-              justifyContent: "space-between",
-              marginHorizontal: 40,
+           alignItems:'center',
+            marginHorizontal:"5%"
+             
             }}
           >
-            <View style={{ width: "45%" }}>
-              <View style={styles.spacer2} />
-              <EcomDropDown
+            <View style={{flex:0.5}}>
+            <EcomDropDown
                 value={title}
-                valueList={[
+                 valueList={[
                   { _index: 1, label: "Mr", value: "Mr" },
                   { _index: 2, label: "Mrs", value: "Mrs" },
                   { _index: 3, label: "Ms", value: "Ms" },
@@ -311,56 +310,87 @@ function SiteDetailsPage() {
                 }}
               />
             </View>
-
-            <View style={styles.spacer} />
+          
+            
+            <View style={{flex:0.5}}>
             <TextInputWithTitle
+            style={{width:"100%"}}
               title={"Site Contact"}
-              value={contact}
+            />
+            </View>
+              
+             </View>
+
+  <View style={{marginHorizontal:'5%'}}>
+  <Text type={TextType.CAPTION_2}>{"Contact Numbers"}</Text>
+  <View
+            style={{
+             
+              flexDirection: "row",
+             
+            }}
+          >
+            <View style={{flex:0.5}}>
+            <TextInputWithTitle
+            style={{width:"100%"}}
+              title={"Phone Number 1"}
+              value={number1}
               onChangeText={(txt) => {
                 const filteredText = txt.replace(/[^a-zA-Z]/g, "");
-                setContact(filteredText);
+                setNumber1(filteredText);
               }}
-              containerStyle={{ width: "45%" }}
             />
-          </View>
-
-          <View style={styles.spacer} />
-          <View style={styles.contactContainer}>
-  <Text type={TextType.CAPTION_2}>{"Contact Numbers"}</Text>
-  <View style={styles.spacer2} />
-  <View style={styles.contactContent}>
-    <InputRowWithTitle
-      title1="Phone Number 1"
-      placeholder1="Enter phone number"
-      value1={number1}
-      onChangeText1={(text) => setNumber1(text)}
-      ref1={number1Ref}
-      title2="Phone Number 2"
-      placeholder2="Enter phone number"
-      value2={number2}
-      onChangeText2={(text) => setNumber2(text)}
-      ref2={number2Ref}
-    />
+            </View>
+            <View style={{flex:0.5}}>
+            <TextInputWithTitle
+            style={{width:"100%"}}
+              title={"Phone Number 2"}
+              value={number2}
+              onChangeText={(txt) => {
+                const filteredText = txt.replace(/[^a-zA-Z]/g, "");
+                setNumber2(filteredText);
+              }}
+            />
+            </View>
+              
+             </View>
+             <View
+            style={{
+             
+              flexDirection: "row",
+             
+            }}
+          >
+            <View style={{flex:0.5}}>
+            <TextInputWithTitle
+            style={{width:"100%"}}
+              title={"Email Number 1"}
+              value={email1}
+              onChangeText={(txt) => {
+                const filteredText = txt.replace(/[^a-zA-Z]/g, "");
+                setEmail1(txt);
+              }}
+            />
+            </View>
+            <View style={{flex:0.5}}>
+            <TextInputWithTitle
+            style={{width:"100%"}}
+            title={"Email Number 2"}
+              value={email2}
+              onChangeText={(txt) => {
+                const filteredText = txt.replace(/[^a-zA-Z]/g, "");
+                setEmail2(txt);
+              }}
+            />
+            </View>
+              
+             </View>
+ 
   </View>
-  <View style={styles.contactContent}>
-    <InputRowWithTitle
-      title1="Email Address 1"
-      placeholder1="Enter email address"
-      value1={email1}
-      onChangeText1={(text) => setEmail1(text)}
-      ref1={email1Ref}
-      title2="Email Address 2"
-      placeholder2="Enter email address"
-      value2={email2}
-      onChangeText2={(text) => setEmail2(text)}
-      ref2={email2Ref}
-    />
-  </View>
-</View>
 
   
 
-          <View style={styles.spacer} />
+          <View style={{marginHorizontal:'5%'}} />
           <TextInputWithTitle
             title={"Contact Instructions"}
             value={instructions}
@@ -368,11 +398,10 @@ function SiteDetailsPage() {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s@.]/g, "");
               setInstructions(filteredText);
             }}
-            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
+            containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
-          <View style={styles.spacer} />
-          <View style={styles.spacer} />
-          <View style={styles.optionContainer}>
+     
+          <View style={{marginHorizontal:'5%', marginBottom:'10%'}}>
             <Text type={TextType.CAPTION_2}>
               {"Is all contact details correct? *"}
             </Text>
@@ -391,8 +420,7 @@ function SiteDetailsPage() {
               }
             />
           </View>
-          <View style={styles.spacer} />
-          <View style={styles.spacer} />
+         
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
