@@ -96,7 +96,7 @@ export default function ExtraPhotoPage() {
         ...standardDetails,
         extras: result,
       });
-      navigation.navigate("SettingsLabelPage");
+      navigation.navigate("SubmitSuccessPage");
     }
   };
 
@@ -151,7 +151,7 @@ export default function ExtraPhotoPage() {
 
   return (
     <ScrollView style={styles.scrollView}>
-      <SafeAreaView style={styles.content}>
+      <SafeAreaView style={{flex:1}}>
         <Header
           hasLeftBtn={true}
           hasCenterText={true}
@@ -182,7 +182,7 @@ export default function ExtraPhotoPage() {
           <TextInput
             value={extraComment}
             multiline={true}
-            style={{ marginTop: 10, width: width * 0.8, height: 150 }}
+            style={{ marginTop: 10, width: "100%", height: 150 }}
             onChangeText={(txt) => {
               setExtraComment(txt);
             }}
@@ -214,8 +214,7 @@ export default function ExtraPhotoPage() {
 
 const styles = StyleSheet.create({
   scrollView: {
-    width: width,
-    height: height,
+    flex:1
   },
   body: {
     marginHorizontal: width * 0.1,
@@ -227,7 +226,6 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: "row",
-    justifyContent: "space-between",
   },
   optionContainer: {
     width: 100,
