@@ -154,7 +154,7 @@ function GasSafeWarningPage() {
         rightBtnPressed={nextPressed}
       />
       <KeyboardAvoidingView
-        style={styles.content}
+        style={[styles.content,{marginHorizontal:'5%'}]}
         behavior={Platform.OS === "ios" ? "padding" : null}
       >
         <ScrollView style={styles.content}>
@@ -322,16 +322,13 @@ function GasSafeWarningPage() {
             />
             <View
               style={{
-                height: unitH * 250,
-                alignItems: "center",
-                justifyContent: "center",
-                marginTop: "50%",
+               flex:1
               }}
             >
               <SignatureScreen
                 onOK={handleOK}
                 webStyle={`
-                  .m-signature-pad--body {height: 150px;}
+                  .m-signature-pad--body {height: 250px;}
                 `}
                 backgroundColor={PrimaryColors.Sand}
                 scrollable={true}
@@ -352,9 +349,10 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+   
   },
   inputContainer: {
-    width: width * 0.8,
+    width: '100%',
     alignSelf: "center",
   },
   input: {

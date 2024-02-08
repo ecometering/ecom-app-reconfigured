@@ -217,23 +217,23 @@ function StandardPage() {
               />
             </View>
             <View style={styles.spacer} />
-            <View style={styles.row}>
+           
               <TextInputWithTitle
                 title={"Inlet Pressure"}
-                width={width * 0.35}
+                width={'100%'}
                 value={pressure}
                 onChange={(item) => {
                   setPressure(item);
                 }}
                 keyboardType='numeric'
               />
-            </View>
+          
             <View style={styles.spacer} />
             <Text>{`I confirm that all works have been carried out in 
 accordance with current industry standards and 
 health safety policies`}</Text>
             <View style={styles.spacer} />
-            <View style={styles.row}>
+          
               <TextInputWithTitle
                 title={"Notes"}
                 value={confirmText}
@@ -242,12 +242,12 @@ health safety policies`}</Text>
                 }}
                 style={{
                   ...styles.input,
-                  width: width * 0.8,
+                  width:"100%",
                   height: unitH * 150,
                 }}
                 multiline={true}
               />
-            </View>
+          
 
             <View style={styles.spacer} />
             <View>
@@ -266,30 +266,28 @@ health safety policies`}</Text>
               )}
             </View>
 
-            <Modal visible={isModal}>
-              <Button
+            <Modal style={{flex:1}} visible={isModal}>
+            <Button
                 title="Close"
                 onPress={() => {
                   setIsModal(false);
                 }}
               />
-              <View
-                style={{
-                  height: unitH * 250,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginTop: "50%",
-                }}
-              >
+              <View style={{flex:1, backgroundColor:'red'}}>
+
                 <SignatureScreen
+                  
                   onOK={handleOK}
                   webStyle={`
-                  .m-signature-pad--body {height: 150px;}
+                  .m-signature-pad--body {height: 250px;}
+                  
                 `}
                   backgroundColor={PrimaryColors.Sand}
                   scrollable={true}
                 />
               </View>
+         
+             
             </Modal>
 
           </View>

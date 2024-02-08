@@ -1,5 +1,5 @@
 import React from 'react';
-import {Pressable, StyleSheet, View, useWindowDimensions} from 'react-native';
+import {Pressable, StyleSheet, View, useWindowDimensions, Platform, StatusBar} from 'react-native';
 import Text from './Text';
 import {TextType} from '../theme/typography';
 
@@ -17,7 +17,7 @@ export const Header = ({
   const { width } = useWindowDimensions(); // Dynamically adjust to screen width
 
   return (
-    <View style={[styles.content, { width }, containerStyle]}>
+    <View style={[styles.content, { width, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0  }, containerStyle]}>
       {hasLeftBtn === true ? (
         <Pressable onPress={leftBtnPressed} style={styles.btn}>
           <Text type={TextType.BUTTON_1}>
@@ -29,7 +29,7 @@ export const Header = ({
       )}
       {hasCenterText === true ? (
         <Text type={TextType.HEADER_1} style={styles.centerText}>
-          {centerText ?? 'Job Number: ECOM00000'}
+          {centerText ?? 'Jb No: ECOM00000'}
         </Text>
       ) : null}
       {hasRightBtn === true ? (
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    height: '10%', // Adjust height based on design requirements
+    // Adjust height based on design requirements
   },
   btn: {
     paddingHorizontal: 20, // Use padding for spacing inside buttons
