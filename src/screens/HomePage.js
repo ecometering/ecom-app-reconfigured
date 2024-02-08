@@ -57,12 +57,10 @@ function HomePage() {
 
 const styles = StyleSheet.create({
   scrollView: {
-    width: width,
-    height: height,
+    flex:1,
   },
   body: {
     flex: 1,
-    width: width,
     height: height,
     alignItems: "center",
     justifyContent: "space-evenly",

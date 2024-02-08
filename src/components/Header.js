@@ -47,10 +47,11 @@ export const Header = ({
 const styles = StyleSheet.create({
   content: {
     flexDirection: 'row',
-    width: width,
+    width: "100%",
     height: unitH * 80,
     justifyContent: 'space-between',
     alignItems: 'center',
+ 
   },
   leftBtn: {
     left: 20,

@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   body: {
     alignItems: "center",
     justifyContent: "center",
-    height: height * 0.85,
+    height: height * 0.70,
   },
   spacer: {
     height: unitH * 20,

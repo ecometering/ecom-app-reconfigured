@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -117,6 +118,8 @@ function CalendarPage() {
 
   return (
     <SafeAreaView style={styles.body}>
+     
+    
       <Header
         hasLeftBtn={true}
         hasCenterText={true}
@@ -125,11 +128,15 @@ function CalendarPage() {
         leftBtnPressed={backPressed}
         rightBtnPressed={null}
       />
+       <ScrollView style={{ flex: 1,
+          width: "100%",
+        }}>
+
       <View
         style={{
           flex: 1,
           width: "100%",
-          paddingTop: 50
+         
           // alignItems: "center",
           // justifyContent: "center",
           // borderWidth: StyleSheet.hairlineWidth
@@ -222,6 +229,7 @@ function CalendarPage() {
           />
         )}
       </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

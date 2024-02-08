@@ -198,7 +198,7 @@ function SiteDetailsPage() {
               const limitedText = filteredText.slice(0, 15);
               setMprn(limitedText);
             }}
-            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
+            containerStyle={[styles.inputContainer,{width: "90%" }]}
             keyboardType="numeric"
           />
 
@@ -210,7 +210,7 @@ function SiteDetailsPage() {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
               setCompanyName(filteredText);
             }}
-            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
+            containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
@@ -220,7 +220,7 @@ function SiteDetailsPage() {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
               setBuildingName(filteredText);
             }}
-            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
+            containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
 
           <View style={styles.spacer} />
@@ -231,7 +231,7 @@ function SiteDetailsPage() {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
               setAddress1(filteredText);
             }}
-            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
+            containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
@@ -241,7 +241,7 @@ function SiteDetailsPage() {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
               setAddress2(filteredText);
             }}
-            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
+            containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
@@ -251,7 +251,7 @@ function SiteDetailsPage() {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
               setAddress3(filteredText);
             }}
-            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
+            containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
@@ -261,7 +261,7 @@ function SiteDetailsPage() {
               const filteredText = txt.replace(/[^a-zA-Z]/g, "");
               setTown(filteredText);
             }}
-            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
+            containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
@@ -271,7 +271,7 @@ function SiteDetailsPage() {
               const filteredText = txt.replace(/[^a-zA-Z ]/g, "");
               setCounty(filteredText);
             }}
-            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
+            containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
@@ -283,7 +283,7 @@ function SiteDetailsPage() {
                 setPostCode(filteredText.toUpperCase());
               }
             }}
-            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
+            containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
 
           <View
@@ -291,7 +291,7 @@ function SiteDetailsPage() {
               alignItems: "flex-end",
               flexDirection: "row",
               justifyContent: "space-between",
-              marginHorizontal: 40,
+              marginHorizontal: 20,
             }}
           >
             <View style={{ width: "45%" }}>
@@ -368,7 +368,7 @@ function SiteDetailsPage() {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s@.]/g, "");
               setInstructions(filteredText);
             }}
-            containerStyle={[styles.inputContainer,{width: width * 0.8}]}
+            containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
           <View style={styles.spacer} />
           <View style={styles.spacer} />

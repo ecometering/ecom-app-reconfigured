@@ -3,7 +3,7 @@ import { Image, Modal, View, StyleSheet, ScrollView, Text, TouchableOpacity } fr
 import { useScreenDimensions } from '../utils/constant';
 import { TextType, TextStyles } from '../theme/typography';
 import { leftGreyArrowIcon } from '../utils/assets';
-import Dropdown from 'react-native-element-dropdown';
+import {Dropdown} from 'react-native-element-dropdown';
 import { PrimaryColors } from '../theme/colors';
 
 const dynamicDropdownStyles = (width, height) => StyleSheet.create({
