@@ -64,12 +64,7 @@ const nextAfterDataLogger = ({ meter, meterType, meterPressure }) => {
   }
 };
 
-
-const { numberOfStreams } = useContext(AppContext);
-
-
-
-const generateScreenInstancesForStreams = () => {
+const generateScreenInstancesForStreams = (numberOfStreams) => {
   let screens = [];
   for (let i = 0; i < numberOfStreams; i++) {
     // Dynamically generate screen names with stream index
@@ -85,7 +80,7 @@ const generateScreenInstancesForStreams = () => {
   return screens;
 };
 
-const getNextScreen = (currentScreenName) => {
+const getNextScreen = (currentScreenName, numberOfStreams) => {
   // Extract stream index and screen part from the current screen name
   const match = currentScreenName.match(/(\D+)-(\d+)/);
   if (!match) return 'RegulatorPage'; // Fallback to RegulatorPage
@@ -106,9 +101,10 @@ const getNextScreen = (currentScreenName) => {
 };
 
 const InstallFlowNavigator = () => {
-  const appContext = useContext(AppContext);
-  const meterType = appContext.meterDetails?.type;
-  const meterPressure = appContext.meterDetails?.pressure; 
+  const {numberOfStreams, meterDetails = {}} = useContext(AppContext);
+  // const {  } = useContext(AppContext);
+  const meterType = meterDetails?.type || "";
+  const meterPressure = meterDetails?.pressure || ""; 
   <Stack.Navigator > 
     <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being installed',nextScreen: ()=>assetSelection(meter,corrector,datalogger)}} />
     
@@ -155,13 +151,13 @@ const InstallFlowNavigator = () => {
     
     {/* set and seal details  */}
     <Stack.Screen name="StreamsSetSealDetails" component={StreamsSetSealDetailsPage} />
-      {generateScreenInstancesForStreams().map((screen, index) => (
+      {generateScreenInstancesForStreams(numberOfStreams).map((screen, index) => (
         <Stack.Screen
           key={screen.name}
           name={screen.name}
           component={screen.component}
           options={{ title: screen.title }}
-          initialParams={{ nextScreen: () => getNextScreen(screen.name) }}
+          initialParams={{ nextScreen: () => getNextScreen(screen.name, numberOfStreams) }}
         />
       ))}
     

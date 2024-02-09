@@ -66,32 +66,35 @@ const nextAfterDataLogger = ({ meter, meterType, meterPressure }) => {
 };
 
 
-const { numberOfStreams, currentStreamIndex, updateCurrentStreamIndex } = useContext(AppContext);
+// const { numberOfStreams, currentStreamIndex, updateCurrentStreamIndex } = useContext(AppContext);
 
-const getDynamicScreenTitle = (baseTitle, index) => `${baseTitle} ${index + 1}`;
 
-const getNextScreenName = (currentScreen) => {
-  const streamScreens = ['FilterPage', 'SlamshutPage', 'ActiveRegulatorPage', 'ReliefRegulatorPage', 'WaferCheckPage'];
-  const currentIndex = streamScreens.indexOf(currentScreen);
-  const nextIndex = (currentIndex + 1) % streamScreens.length;
-  const nextScreen = streamScreens[nextIndex];
+// const getDynamicScreenTitle = (baseTitle, index) => `${baseTitle} ${index + 1}`;
+
+// const getNextScreenName = (currentScreen) => {
+//   const streamScreens = ['FilterPage', 'SlamshutPage', 'ActiveRegulatorPage', 'ReliefRegulatorPage', 'WaferCheckPage'];
+//   const currentIndex = streamScreens.indexOf(currentScreen);
+//   const nextIndex = (currentIndex + 1) % streamScreens.length;
+//   const nextScreen = streamScreens[nextIndex];
   
-  // If we are at the last screen of a stream cycle and all streams have been processed
-  if (nextScreen === 'FilterPage' && currentStreamIndex + 1 >= numberOfStreams) {
-    return 'MaintenanceQuestions'; // Go to RegulatorPage after the last stream
-  }
+//   // If we are at the last screen of a stream cycle and all streams have been processed
+//   if (nextScreen === 'FilterPage' && currentStreamIndex + 1 >= numberOfStreams) {
+//     return 'MaintenanceQuestions'; // Go to RegulatorPage after the last stream
+//   }
   
-  // If looping back to FilterPage, increment the stream index
-  if (nextScreen === 'FilterPage') {
-    updateCurrentStreamIndex(currentStreamIndex + 1);
-  }
+//   // If looping back to FilterPage, increment the stream index
+//   if (nextScreen === 'FilterPage') {
+//     updateCurrentStreamIndex(currentStreamIndex + 1);
+//   }
 
-  return nextScreen;
-};
+//   return nextScreen;
+// };
+
 const MaintenanceFlowNavigator = () => {
-  const appContext = useContext(AppContext);
-  const meterType = appContext.meterDetails?.type;
-  const meterPressure = appContext.meterDetails?.pressure; 
+  const { numberOfStreams = 0, meterDetails, currentStreamIndex = 0, updateCurrentStreamIndex  = 0} = useContext(AppContext);
+  
+  const meterType = meterDetails?.type;
+  const meterPressure = meterDetails?.pressure; 
   <Stack.Navigator > 
     <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Existing Assets',nextScreen: ()=>assetSelection(meter,corrector,datalogger)}} />
     
