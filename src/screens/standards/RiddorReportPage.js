@@ -130,8 +130,8 @@ export default function RiddorReportPage() {
 
   return (
     <ScrollView style={styles.scrollView}>
-      <SafeAreaView style={styles.content}>
-        <Header
+      <SafeAreaView style={{flex:1, }}>
+      <Header
           hasLeftBtn={true}
           hasCenterText={true}
           hasRightBtn={true}
@@ -139,7 +139,7 @@ export default function RiddorReportPage() {
           leftBtnPressed={backPressed}
           rightBtnPressed={nextPressed}
         />
-        <View style={styles.spacer} />
+        <View style={{marginHorizontal:'5%', flex:1}}>
         <View style={styles.body}>
           <Text type={TextType.BODY_1}>RIDDOR Report</Text>
           {selectedImage && (
@@ -149,7 +149,7 @@ export default function RiddorReportPage() {
               resizeMode="contain"
             />
           )}
-          <View style={styles.row}>
+          <View style={[styles.row,{marginTop:'10%'}]}>
             <Button
               title={
                 selectedImage === undefined ? "Choose Image" : "Change Image"
@@ -159,10 +159,10 @@ export default function RiddorReportPage() {
           </View>
         </View>
 
-        <View style={{ alignItems: "center", justifyContent: "center" }}>
+        <View style={{ flex:1,  }}>
           <View style={styles.spacer} />
           <Text>Notes</Text>
-          <View style={styles.row}>
+       
             <TextInput
               value={notes}
               onChangeText={(text) => {
@@ -170,12 +170,12 @@ export default function RiddorReportPage() {
               }}
               style={{
                 ...styles.input,
-                width: width * 0.8,
+                width: "100%" ,
                 height: unitH * 150,
               }}
               multiline={true}
             />
-          </View>
+        
           <View style={styles.spacer} />
 
           <Text>RIDDOR reference</Text>
@@ -187,10 +187,12 @@ export default function RiddorReportPage() {
               }}
               style={{
                 ...styles.input,
-                width: width * 0.8,
+                width: "100%" ,
+               
               }}
             />
           </View>
+        </View>
         </View>
       </SafeAreaView>
     </ScrollView>
@@ -199,11 +201,10 @@ export default function RiddorReportPage() {
 
 const styles = StyleSheet.create({
   scrollView: {
-    width: width,
-    height: height,
+    flex:1
   },
   body: {
-    marginHorizontal: width * 0.1,
+  
   },
   image: {
     width: 200,

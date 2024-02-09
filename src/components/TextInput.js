@@ -31,7 +31,7 @@ const TextInput = forwardRef(
 export const TextInputWithTitle = forwardRef(
   ({ title, placeholderTextColor, style, containerStyle, onChangeText, ...otherProps }, ref) => {
     const { width } = useScreenDimensions(); // Dynamic screen dimensions
-    const dynamicStyle = { width: width * 0.9 }; // Example of dynamic width based on screen size
+    const dynamicStyle = { width: "100%"  }; // Example of dynamic width based on screen size
 
     return (
       <View style={[styles.container, containerStyle]}>

@@ -208,7 +208,7 @@ function SiteQuestionsPage() {
               onChangeText={(txt) => {
                 setGenericReason(txt);
               }}
-              containerStyle={styles.inputContainer}
+            
             />
           )}
           <View style={styles.spacer} />
