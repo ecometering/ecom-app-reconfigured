@@ -14,7 +14,7 @@ const App = () => {
     
     <AppContextProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
-          <AllNavigator />
+         <MainNavigator/>
       </GestureHandlerRootView>
     </AppContextProvider>
     

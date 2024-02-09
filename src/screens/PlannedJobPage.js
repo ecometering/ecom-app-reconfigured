@@ -1,12 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import {
-  FlatList,
-  SafeAreaView,
-  StyleSheet,
-  View,
-  Dimensions,
-  Platform,
-} from 'react-native';
+import { FlatList, SafeAreaView, StyleSheet, View, Text as RNText } from 'react-native';
 import { PrimaryColors, Transparents } from '../theme/colors';
 import { EcomPressable as Button } from '../components/ImageButton';
 import Header from '../components/Header';
@@ -14,24 +7,28 @@ import Text, { CenteredText } from '../components/Text';
 import { useNavigation } from '@react-navigation/native';
 import { TextType } from '../theme/typography';
 import { AppContext } from '../context/AppContext';
-import { useScreenDimensions } from '../utils/constant'; // Assume this is where useScreenDimensions is defined
+import { useScreenDimensions } from '../utils/constant';
 
 function PlannedJobPage() {
   const navigation = useNavigation();
   const [plannedJobs, setPlannedJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { width, height } = useScreenDimensions();
+  const { width } = useScreenDimensions();
 
   useEffect(() => {
     const fetchPlannedJobs = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('https://test.ecomdata.com/api/plannedJobs'); // Replace with your actual endpoint
+        const response = await fetch('https://test.ecomdata.com/api/plannedJobs'); // Replace with actual endpoint
         const data = await response.json();
-        setPlannedJobs(data);
+        if (data && data.length > 0) {
+          setPlannedJobs(data);
+        } else {
+          setError('No planned jobs');
+        }
       } catch (error) {
-        setError(error);
+        setError('Error loading data');
       } finally {
         setIsLoading(false);
       }
@@ -39,12 +36,6 @@ function PlannedJobPage() {
 
     fetchPlannedJobs();
   }, []);
-
-  const navigateToPage = ({ name, params }) => {
-    console.log(name);
-    console.log('params', params);
-    navigation.navigate(name, params);
-  };
 
   const appContext = useContext(AppContext);
 
@@ -58,7 +49,8 @@ function PlannedJobPage() {
         case 'Install':
           navigation.navigate('SiteDetailsPage');
           break;
-        case ('Removal', 'Exchange'):
+        case 'Removal':
+        case 'Exchange':
           navigation.navigate('RemovedSiteDetailsPage');
           break;
         case 'CallOut':
@@ -71,7 +63,7 @@ function PlannedJobPage() {
           navigation.navigate('MaintenanceSiteDetailsPage');
           break;
         default:
-          break;
+          console.log('Unknown Job Type:', jobType);
       }
     };
     const rowColor = index % 2 === 0 ? Transparents.SandColor2 : Transparents.Clear;
@@ -79,7 +71,6 @@ function PlannedJobPage() {
     return (
       <Button key={index.toString()} onPress={handleItemClick}>
         <View style={{ ...styles.row, backgroundColor: rowColor }}>
-          {/* Updated to use dynamic dimensions */}
           <CenteredText containerStyle={{ ...styles.headerCell, width: width * 0.2 }} type={TextType.BODY_TABLE} style={styles.blackTxt}>
             {item.MPRN}
           </CenteredText>
@@ -104,23 +95,29 @@ function PlannedJobPage() {
     );
   };
 
-  const backPressed = () => {
-    navigation.goBack();
+  const renderTableContent = () => {
+    if (isLoading) {
+      return <View style={styles.center}><RNText>Loading...</RNText></View>;
+    }
+    if (error) {
+      return <View style={styles.center}><RNText>{error}</RNText></View>;
+    }
+    return (
+      <FlatList
+        data={plannedJobs}
+        renderItem={renderItem}
+        keyExtractor={item => item.id.toString()}
+        ListEmptyComponent={<View style={styles.center}><RNText>No planned jobs</RNText></View>}
+      />
+    );
   };
-
-  if (isLoading) return <View style={styles.center}><Text>Loading...</Text></View>;
-  if (error) return <View style={styles.center}><Text>Error loading data</Text></View>;
 
   return (
     <SafeAreaView style={styles.body}>
-      <Header hasLeftBtn={true} hasCenterText={true} hasRightBtn={false} centerText={''} leftBtnPressed={backPressed} rightBtnPressed={null} />
+      <Header hasLeftBtn={true} hasCenterText={true} hasRightBtn={false} centerText={''} leftBtnPressed={() => navigation.goBack()} />
       <View style={styles.spacer} />
       <View style={styles.flex}>
-        <FlatList
-          data={plannedJobs}
-          renderItem={renderItem}
-          keyExtractor={item => item.id.toString()}
-        />
+        {renderTableContent()}
       </View>
       <View style={styles.spacer} />
     </SafeAreaView>
@@ -128,7 +125,6 @@ function PlannedJobPage() {
 }
 
 const styles = StyleSheet.create({
-  // Updated styles to remove explicit height/width definitions for dynamic resizing
   flex: { flex: 1 },
   body: {
     flex: 1,

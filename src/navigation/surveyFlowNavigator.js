@@ -8,7 +8,6 @@ import ChatterBoxPage from "../screens/jobs/ChatterBoxPage";
 import AdditionalMaterialPage from "../screens/jobs/AdditionalMaterialPage";
 import AssetTypeSelectionPage from "../screens/jobs/AssetTypeSelectionPage";
 
-import MaintenanceQuestionsPage from "../screens/maintenance/MaintenanceQuestionsPage";
 import SlamshutPage from "../screens/jobs/SlamshutPage";
 import WaferCheckPage from "../screens/jobs/WaferCheckPage";
 import ReliefRegulatorPage from "../screens/jobs/ReliefRegulatorPage";
@@ -35,7 +34,7 @@ const meterBadge = (meterType) => meterType === 'Diaphragm' ? 'ExistingMeterInde
 // Refactored Set and Seal logic based on meterType and meterPressure
 const setAndSeal = (meterType, meterPressure) => {
   if (meterType === 'Diaphragm' && meterPressure === 'Medium') return 'StreamsSetSealDetails';
-  return meterType === 'Diaphragm' ? 'MaintenanceQuestions' : 'StreamsSetSealDetails';
+  return meterType === 'Diaphragm' ? 'ExistingRegulator' : 'StreamsSetSealDetails';
 };
 
 const nextAfterMeterPhoto = ({ corrector, datalogger, meterType, meterPressure }) => {
@@ -52,7 +51,7 @@ const nextAfterCorrector = ({ datalogger, meter, meterType, meterPressure }) => 
   } else if (meter) {
     return setAndSeal(meterType, meterPressure); // Use setAndSeal logic if meter is present
   } else {
-    return 'MaintenanceQuestions'; // Fallback to maintenance questions 
+    return 'StandardPage'; // Fallback to StandardsNavigation
   }
 };
 
@@ -61,7 +60,7 @@ const nextAfterDataLogger = ({ meter, meterType, meterPressure }) => {
   if (meter) {
     return setAndSeal(meterType, meterPressure); // Use setAndSeal logic if meter is present
   } else {
-    return 'MaintenanceQuestions'; // Fallback to Maintenance questions
+    return 'StandardPage'; // Fallback to StandardsNavigation
   }
 };
 
@@ -78,7 +77,7 @@ const getNextScreenName = (currentScreen) => {
   
   // If we are at the last screen of a stream cycle and all streams have been processed
   if (nextScreen === 'FilterPage' && currentStreamIndex + 1 >= numberOfStreams) {
-    return 'MaintenanceQuestions'; // Go to RegulatorPage after the last stream
+    return 'ExistingRegulator'; // Go to RegulatorPage after the last stream
   }
   
   // If looping back to FilterPage, increment the stream index
@@ -88,7 +87,7 @@ const getNextScreenName = (currentScreen) => {
 
   return nextScreen;
 };
-const MaintenanceFlowNavigator = () => {
+const SurveyFlowNavigator = () => {
   const appContext = useContext(AppContext);
   const meterType = appContext.meterDetails?.type;
   const meterPressure = appContext.meterDetails?.pressure; 
@@ -150,11 +149,10 @@ const MaintenanceFlowNavigator = () => {
           component={screen.component}
           options={{ title: screen.title }}
           initialParams={{
-            nextScreen: index % 5 === 4 ? (index / 5 + 1 < numberOfStreams ? `FilterPage-${Math.floor(index / 5) + 1}` : 'MaintenanceQuestions') : undefined,
+            nextScreen: index % 5 === 4 ? (index / 5 + 1 < numberOfStreams ? `FilterPage-${Math.floor(index / 5) + 1}` : 'ExistingRegulator') : undefined,
           }}
         />
       ))}
-    <Stack.Screen name="MaintenanceQuestions" component={MaintenanceQuestionsPage} />
     {/* regulator process */}
     <Stack.Screen name="ExistingRegulator" component={RegulatorPage} />
     <Stack.Screen name="ExistingChatterBox" component={ChatterBoxPage} />
@@ -163,4 +161,4 @@ const MaintenanceFlowNavigator = () => {
 
 };
 
-export default MaintenanceFlowNavigator;
+export default SurveyFlowNavigator;

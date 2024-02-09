@@ -86,7 +86,7 @@ function MaintenanceQuestionsPage() {
       signature,
       isConfirm: isConfirm,
     });
-    navigation.navigate("RemovedSiteDetailsPage");
+    navigation.navigate("ExistingRegulator");
   };
   const backPressed = () => {
     appContext.setMaintenanceDetails({

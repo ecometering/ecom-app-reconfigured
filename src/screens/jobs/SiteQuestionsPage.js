@@ -146,7 +146,7 @@ function SiteQuestionsPage() {
     } else if (!isCarryOut) {
       navigation.navigate("SubmitSuccessPage");
     } else {
-      navigation.navigate("AssetTypeSelectionPage");
+      navigation.navigatenavigation.navigate(nextScreen);
     }
   };
 

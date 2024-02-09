@@ -216,7 +216,7 @@ function SiteDetailsPage() {
             title={"Building name/ number *"}
             value={buildingName}
             onChangeText={(txt) => {
-              const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
+              const filteredText = txt.replace(/[^a-zA-Z0-9\s-]/g, "");
               setBuildingName(filteredText);
             }}
             containerStyle={[styles.inputContainer,{width: "90%" }]}
@@ -331,27 +331,29 @@ function SiteDetailsPage() {
             }}
           >
             <View style={{flex:0.5}}>
-            <TextInputWithTitle
-            style={{width:"100%"}}
-              title={"Phone Number 1"}
-              value={number1}
-              onChangeText={(txt) => {
-                const filteredText = txt.replace(/[^a-zA-Z]/g, "");
-                setNumber1(filteredText);
-              }}
-            />
-            </View>
-            <View style={{flex:0.5}}>
-            <TextInputWithTitle
-            style={{width:"100%"}}
-              title={"Phone Number 2"}
-              value={number2}
-              onChangeText={(txt) => {
-                const filteredText = txt.replace(/[^a-zA-Z]/g, "");
-                setNumber2(filteredText);
-              }}
-            />
-            </View>
+  <TextInputWithTitle
+    style={{width:"100%"}}
+    title={"Phone Number 1"}
+    value={number1}
+    keyboardType="numeric" // Set keyboardType to numeric
+    onChangeText={(txt) => {
+      const filteredText = txt.replace(/[^0-9]/g, ""); // Allow only numbers
+      setNumber1(filteredText);
+    }}
+  />
+</View>
+<View style={{flex:0.5}}>
+  <TextInputWithTitle
+    style={{width:"100%"}}
+    title={"Phone Number 2"}
+    value={number2}
+    keyboardType="numeric" // Set keyboardType to numeric
+    onChangeText={(txt) => {
+      const filteredText = txt.replace(/[^0-9]/g, ""); // Allow only numbers
+      setNumber2(filteredText);
+    }}
+  />
+</View>
               
              </View>
              <View

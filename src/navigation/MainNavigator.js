@@ -40,6 +40,17 @@ import StreamsSetSealDetailsPage from "../screens/jobs/StreamsSetSealDetailsPage
 // generic photo page 
 import GenericPhotoPage from "../screens/jobs/GenericPhotoPage";
 
+
+// navigation stacks 
+import ExchangeFlowNavigator from "./exchangeFlowNavigator";
+import InstallFlowNavigator from "./installFlowNavigator";
+import MaintenanceFlowNavigator from "./maintenanceFlowNavigator";
+import SurveyFlowNavigator from "./surveyFlowNavigator";
+import RemovalFlowNavigator from "./removalFlowNavigator";
+
+
+
+
 const Stack = createStackNavigator();
 
 const MainNavigator = () => {
@@ -93,15 +104,26 @@ const MainNavigator = () => {
     return additionalPhotoScreens;
   };
   // ...
-  const renderJobTypeScreens = () => {
-    console.log("renderJobTypeScreens called, appContext:", appContext);
-    if (!appContext || !appContext.jobType) {
-      // Handle the case where jobType is not yet available
-      console.log("jobType is not available in the context");
-      return null;
-    }
-  
-  };
+
+  const RenderNavigator = () => {
+    switch (jobType) {
+      case "Exchange":
+        return <ExchangeFlowNavigator />;
+      case "Install":
+        return <InstallFlowNavigator />;
+      case "Maintenance":
+        return <MaintenanceFlowNavigator />;
+      case "Survey":
+        return <SurveyFlowNavigator />;
+      case "Removal":
+        return <RemovalFlowNavigator />;
+        case "Warrant":
+          return <RemovalFlowNavigator/>; 
+      default:
+        return null ; 
+
+    } }
+      
   
   console.log("Main Navigator rendered")
   return (
@@ -123,7 +145,7 @@ const MainNavigator = () => {
         component={GenericPhotoPage} 
         initialParams={{ title: 'Site Photo', photoKey: 'sitePhoto',nextScreen:'SiteQuestionsPage', }} 
       />
-      <Stack.Screen name = 'SiteQuestionsPage' component={SiteQuestionsPage}/>
+      <Stack.Screen name = 'SiteQuestionsPage' component={SiteQuestionsPage} initialParams={{nextScreen: RenderNavigator}}/>
       
 
 
@@ -146,12 +168,13 @@ const MainNavigator = () => {
             initialParams={{ title: 'DSEAR label', photoKey: 'dsearLabel', nextScreen: 'SettingsLabelPhoto'}}
         />
     
-        <Stack.Screen 
-        key = "GenericPhotoPageSettingsLabelPhoto"
-            name="SettingsLabelPhoto" 
-            component={GenericPhotoPage} 
-            initialParams={{ title: 'Settings label', photoKey: 'settingsLabel',nextScreen: 'SubmitSuccessPage'}}
-        />
+       
+      <Stack.Screen name="SettingsLabelPhoto" component={GenericPhotoPage} initialParams={{ title: 'Settings label', photoKey: 'settingsLabel',nextScreen: 'ExtraPhotoPage_0'}} />
+{/* Dynamically generated additional photo screens */}
+{AdditionalPhotosProcess().map(({ name, component, key, initialParams }) => (
+  <Stack.Screen key={key} name={name} component={component} initialParams={initialParams} />
+))}
+
           <Stack.Screen name='SubmitSuccessPage' component={SubmitSuccessPage}/>  
 
           </Stack.Group>

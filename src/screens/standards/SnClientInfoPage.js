@@ -164,7 +164,9 @@ function SnClientInfoPage() {
     });
     navigation.navigate("GasSafeWarningPage");
   };
-
+  const deleteEntry = (index) => {
+    setTableData((currentData) => currentData.filter((_, i) => i !== index));
+  };
   console.log("SnClientInfoPage");
 
   return (
@@ -458,7 +460,7 @@ does not remove the risk`}</Text>
                 setIsDisconnectDanger(false)
                 setIsTurnOffDanger(false)
                 setIsNotRemove(false)
-
+                setRemedial("");
                 setIsEscapeGas(false)
                 setIsMeterIssue(false)
                 setIsPipeworkIssue(false)
@@ -629,6 +631,12 @@ does not remove the risk`}</Text>
                   <Text>Other - </Text>
                   <Text>{item.isOther}</Text>
                 </View>
+                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                <RNButton
+      title="Delete"
+      onPress={() => deleteEntry(index)}
+    />
+              </View> 
               </View>
             );
           })}

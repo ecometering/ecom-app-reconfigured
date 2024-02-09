@@ -6,6 +6,8 @@ import StreamsSetSealDetailsPage from "../screens/jobs/StreamsSetSealDetailsPage
 import RegulatorPage from "../screens/jobs/RegulatorPage";
 import ChatterBoxPage from "../screens/jobs/ChatterBoxPage";
 import AdditionalMaterialPage from "../screens/jobs/AdditionalMaterialPage";
+import AssetTypeSelectionPage from "../screens/jobs/AssetTypeSelectionPage";
+
 import SlamshutPage from "../screens/jobs/SlamshutPage";
 import WaferCheckPage from "../screens/jobs/WaferCheckPage";
 import ReliefRegulatorPage from "../screens/jobs/ReliefRegulatorPage";
@@ -49,7 +51,7 @@ const nextAfterCorrector = ({ datalogger, meter, meterType, meterPressure }) => 
   } else if (meter) {
     return setAndSeal(meterType, meterPressure); // Use setAndSeal logic if meter is present
   } else {
-    return 'StandardsNavigation'; // Fallback to StandardsNavigation
+    return 'StandardPage'; // Fallback to StandardsNavigation
   }
 };
 
@@ -58,11 +60,50 @@ const nextAfterDataLogger = ({ meter, meterType, meterPressure }) => {
   if (meter) {
     return setAndSeal(meterType, meterPressure); // Use setAndSeal logic if meter is present
   } else {
-    return 'StandardsNavigation'; // Fallback to StandardsNavigation
+    return 'StandardPage'; // Fallback to StandardsNavigation
   }
 };
 
 
+const { numberOfStreams } = useContext(AppContext);
+
+
+
+const generateScreenInstancesForStreams = () => {
+  let screens = [];
+  for (let i = 0; i < numberOfStreams; i++) {
+    // Dynamically generate screen names with stream index
+    const streamScreens = [
+      { name: `FilterPage-${i}`, component: FilterPage, title: `Filter ${i + 1}` },
+      { name: `SlamshutPage-${i}`, component: SlamshutPage, title: `Slamshut ${i + 1}` },
+      { name: `ActiveRegulatorPage-${i}`, component: ActiveRegulatorPage, title: `Active Regulator ${i + 1}` },
+      { name: `ReliefRegulatorPage-${i}`, component: ReliefRegulatorPage, title: `Relief Regulator ${i + 1}` },
+      { name: `WaferCheckPage-${i}`, component: WaferCheckPage, title: `Wafer Check ${i + 1}` },
+    ];
+    screens = screens.concat(streamScreens);
+  }
+  return screens;
+};
+
+const getNextScreen = (currentScreenName) => {
+  // Extract stream index and screen part from the current screen name
+  const match = currentScreenName.match(/(\D+)-(\d+)/);
+  if (!match) return 'RegulatorPage'; // Fallback to RegulatorPage
+
+  const [, screenPart, index] = match;
+  const streamIndex = parseInt(index, 10);
+  const screenOrder = ['FilterPage', 'SlamshutPage', 'ActiveRegulatorPage', 'ReliefRegulatorPage', 'WaferCheckPage'];
+  const currentScreenIndex = screenOrder.indexOf(screenPart);
+  const nextScreenIndex = currentScreenIndex + 1;
+
+  // Check if it's the last screen of the current stream
+  if (nextScreenIndex >= screenOrder.length) {
+    // If it's the last stream, navigate to RegulatorPage; otherwise, start the next stream
+    return streamIndex + 1 < numberOfStreams ? `${screenOrder[0]}-${streamIndex + 1}` : 'RegulatorPage';
+  } else {
+    return `${screenOrder[nextScreenIndex]}-${streamIndex}`;
+  }
+};
 
 const InstallFlowNavigator = () => {
   const appContext = useContext(AppContext);
@@ -112,15 +153,17 @@ const InstallFlowNavigator = () => {
     {/*  Corrector Process */}
     <Stack.Screen name ="CorrectorDetails" component={CorrectorDetailsPage} initialParams={{title: 'New Corrector installed',nextScreen:()=>nextAfterCorrector}} />
     
-    {/* set and seal process */}
+    {/* set and seal details  */}
     <Stack.Screen name="StreamsSetSealDetails" component={StreamsSetSealDetailsPage} />
-    
-    <Stack.Screen name = "FilterPage" component={FilterPage} />
-    <Stack.Screen name = "ActiveRegulatorPage" component={ActiveRegulatorPage} />
-    <Stack.Screen name = "ReliefRegulatorPage" component={ReliefRegulatorPage} />
-    <Stack.Screen name = "WaferCheckPage" component={WaferCheckPage} />
-    <Stack.Screen name = "SlamshutPage" component={SlamshutPage} />
-    
+      {generateScreenInstancesForStreams().map((screen, index) => (
+        <Stack.Screen
+          key={screen.name}
+          name={screen.name}
+          component={screen.component}
+          options={{ title: screen.title }}
+          initialParams={{ nextScreen: () => getNextScreen(screen.name) }}
+        />
+      ))}
     
     {/* regulator process */}
     <Stack.Screen name="Regulator" component={RegulatorPage} />

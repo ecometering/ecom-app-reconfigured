@@ -141,7 +141,7 @@ function GasSafeWarningPage() {
       customerSign: customerSign,
     });
 
-    navigation.navigate("CompositeLabelPage");
+    navigation.navigate("CompositeLabelPhoto");
   };
   return (
     <SafeAreaView style={styles.content}>
