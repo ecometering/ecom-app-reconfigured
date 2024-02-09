@@ -289,9 +289,8 @@ function SiteDetailsPage() {
             style={{
              
               flexDirection: "row",
-           alignItems:'center',
-            marginHorizontal:"5%"
-             
+              justifyContent: "space-between",
+              marginHorizontal: 20,
             }}
           >
             <View style={{flex:0.5}}>

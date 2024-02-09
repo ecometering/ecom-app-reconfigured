@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import {
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
-  ScrollView
 } from "react-native";
 import { width, height, unitH } from "../../utils/constant";
 import { PrimaryColors } from "../../theme/colors";
@@ -118,6 +118,8 @@ function CalendarPage() {
 
   return (
     <SafeAreaView style={styles.body}>
+     
+    
       <Header
         hasLeftBtn={true}
         hasCenterText={true}
@@ -129,10 +131,12 @@ function CalendarPage() {
        <ScrollView style={{ flex: 1,
           width: "100%",
         }}>
+
       <View
         style={{
           flex: 1,
           width: "100%",
+         
           // alignItems: "center",
           // justifyContent: "center",
           // borderWidth: StyleSheet.hairlineWidth

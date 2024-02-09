@@ -57,7 +57,7 @@ function HomePage() {
 
 const styles = StyleSheet.create({
   scrollView: {
-    flex:1
+    flex:1,
   },
   body: {
     flex: 1,

@@ -1,11 +1,12 @@
 // /path/to/EcomDropDown.js
 
 import React, { useState } from 'react';
-import { Image, Modal, View, StyleSheet, ScrollView, Text, TouchableOpacity, useWindowDimensions } from 'react-native';
-import { TextType, TextStyles } from '../theme/typography'; // Assuming these are defined elsewhere
-import { leftGreyArrowIcon } from '../utils/assets'; // Assuming this is defined elsewhere
-import {Dropdown} from 'react-native-element-dropdown'; // Assuming package is installed
-import { PrimaryColors } from '../theme/colors'; // Assuming these are defined elsewhere
+import { Image, Modal, View, StyleSheet, ScrollView, Text, TouchableOpacity } from 'react-native';
+import { useScreenDimensions } from '../utils/constant';
+import { TextType, TextStyles } from '../theme/typography';
+import { leftGreyArrowIcon } from '../utils/assets';
+import {Dropdown} from 'react-native-element-dropdown';
+import { PrimaryColors } from '../theme/colors';
 
 const dynamicDropdownStyles = (width, height) => StyleSheet.create({
   container: {

@@ -48,12 +48,10 @@ export const Header = ({
 const styles = StyleSheet.create({
   content: {
     flexDirection: 'row',
+    width: "100%",
+    height: unitH * 80,
     justifyContent: 'space-between',
     alignItems: 'center',
-    // Adjust height based on design requirements
-  },
-  btn: {
-    paddingHorizontal: 20, // Use padding for spacing inside buttons
   },
   centerText: {
     textAlign: 'center', // Ensure center text is actually centered

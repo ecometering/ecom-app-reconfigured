@@ -9,7 +9,6 @@ import { useState, useEffect } from 'react';
 
 // Custom hook for dynamic screen dimensions
 
-
 const TextInput = forwardRef(
   ({ placeholderTextColor, style, onChangeText, ...otherProps }, ref) => {
     return (
