@@ -1,8 +1,14 @@
 import React, { createContext, useEffect, useState } from "react";
 
-const AppContext = createContext(null);
+const AppContext = createContext({
+  numberOfStreams: 0,
+  currentStreamIndex: 0, 
+  updateCurrentStreamIndex: 0,
+  extraPhotoCount: 0
+});
 
 const AppContextProvider = (props) => {
+
   const [jobType, setJobType] = useState(null);
   const [isWarrant, setIsWarrant] = useState(false);
 

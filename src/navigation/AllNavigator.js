@@ -1,9 +1,9 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { ActivityIndicator, View } from "react-native";
 import { getItemAsync } from "expo-secure-store";
-import { AppContext } from "../context/AppContext";
+// import { AppContext } from "../context/AppContext";
 
 // import screens from "..screens"    
 import LoginPage from "../screens/LoginPage";

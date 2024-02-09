@@ -55,22 +55,23 @@ const Stack = createStackNavigator();
 
 const MainNavigator = () => {
   const [isToken, setIsToken] = useState(null);
-  const appContext = useContext(AppContext);
+  const {extraPhotoCount, setUserLogged} = useContext(AppContext);  
   const { jobType } = useContext(AppContext);
-  console.log("appContext in MainNavigator:", appContext); // Check the entire context
-  console.log("jobType in MainNavigator:", appContext.jobType);
+
+
   useEffect(() => {
     getItemAsync("userToken")
       .then((token) => {
         console.log("Token retrieved:", token);
         setIsToken(token ? true : false);
-        appContext.setUserLogged(!!token);
+        setUserLogged(!!token);
       })
       .catch((err) => {
         console.error("Error retrieving token:", err);
         setIsToken(false);
       });
   }, []);
+  
   console.log("isToken state:", isToken);
   if (isToken === null) {
     console.log("Loading spinner displayed");
@@ -83,11 +84,8 @@ const MainNavigator = () => {
 
  
 
-
-
   // Additional Photos Process
   const AdditionalPhotosProcess = () => {
-    const { extraPhotoCount } = useContext(AppContext);
     let additionalPhotoScreens = [];
   
     for (let i = 0; i < extraPhotoCount; i++) {
@@ -121,8 +119,8 @@ const MainNavigator = () => {
           return <RemovalFlowNavigator/>; 
       default:
         return null ; 
-
-    } }
+   }
+  }
       
   
   console.log("Main Navigator rendered")

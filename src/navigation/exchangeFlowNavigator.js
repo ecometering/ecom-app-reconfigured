@@ -14,7 +14,7 @@ import ReliefRegulatorPage from "../screens/jobs/ReliefRegulatorPage";
 import ActiveRegulatorPage from "../screens/jobs/ActiveRegulatorPage";
 import FilterPage from "../screens/jobs/FilterPage";
 import { AppContext } from "../context/AppContext";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -76,11 +76,11 @@ const nextAfterDataLoggerInstallation = ({ meterType, meterPressure }) => {
     return 'StandardPage'; // Fallback to StandardsNavigation
   }
 };
-const { numberOfStreams } = useContext(AppContext);
 
 
 
-const generateScreenInstancesForStreams = () => {
+
+const generateScreenInstancesForStreams = (numberOfStreams) => {
   let screens = [];
   for (let i = 0; i < numberOfStreams; i++) {
     // Dynamically generate screen names with stream index
@@ -120,9 +120,13 @@ const RemovedmeterBadge = (meterType) => meterType === 'Diaphragm' ? 'RemovedMet
 const InstalledmeterBadge = (meterType) => meterType === 'Diaphragm' ? 'InstalledMeterIndex' : 'InstalledMeterDataBadge';
 
 const ExchangeFlowNavigator = () => {
-  const appContext = useContext(AppContext);
-  const meterType = appContext.meterDetails?.type;
-  const meterPressure = appContext.meterDetails?.pressure; 
+  
+  const {numberOfStreams, meterDetails = {}} = useContext(AppContext);
+  // const {type, pressure} = meterDetails
+  
+  const meterType = meterDetails?.type;
+  const meterPressure = meterDetails?.pressure; 
+
 
 
   <Stack.Navigator >
@@ -144,7 +148,7 @@ const ExchangeFlowNavigator = () => {
   <Stack.Screen name="InstalledCorrectorDetails" component={CorrectorDetailsPage} initialParams={{title: 'Installed Corrector Details',nextScreen:()=>nextAfterCorrectorInstallation({ meter, corrector, datalogger, meterType, meterPressure })}} />
   <Stack.Screen name="InstalledDataLoggerDetails" component={DataLoggerDetailsPage} initialParams={{title: 'Installed DataLogger Details',nextScreen:()=>nextAfterDataLoggerInstallation({ meter, corrector, datalogger, meterType, meterPressure })}} />
   <Stack.Screen name="StreamsSetSealDetails" component={StreamsSetSealDetailsPage} />
-      {generateScreenInstancesForStreams().map((screen, index) => (
+      {generateScreenInstancesForStreams(numberOfStreams).map((screen, index) => (
         <Stack.Screen
           key={screen.name}
           name={screen.name}

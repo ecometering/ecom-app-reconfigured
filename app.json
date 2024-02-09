@@ -22,18 +22,17 @@
       },
       "bundleIdentifier": "ECO.ecomJobsApp"
     },
-    "extra": {
-      "eas": {
-        "projectId": "ad335d98-531d-4bcc-8c63-8d07df138c91"
-      }
-    },
     "android": {
       "package": "ECM.ecomJobsApp"
     },
     "plugins": [
       "expo-build-properties"
-      
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "ad335d98-531d-4bcc-8c63-8d07df138c91"
+      }
+    }
   },
   "android": {
     "adaptiveIcon": {
@@ -64,7 +63,7 @@
       {
         "ios": {
           "deploymentTarget": "13.4",
-          "flipper":true
+          "flipper": true
         }
       }
     ],
@@ -82,9 +81,5 @@
       }
     ]
   ],
-  "extra": {
-    "eas": {},
-    "projectId": "ad335d98-531d-4bcc-8c63-8d07df138c91"
-  },
   "owner": "garanmayers"
 }
