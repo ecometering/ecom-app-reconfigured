@@ -58,6 +58,9 @@ const styles = StyleSheet.create({
   centerText: {
     textAlign: 'center', // Ensure center text is actually centered
   },
+  btn: {
+    paddingHorizontal: 20, // Use padding for spacing inside buttons
+  },
   placeholder: {
     width: 20, // Placeholder to maintain spacing if button is not present
   },
