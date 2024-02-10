@@ -15,6 +15,8 @@ import { AppContext } from "../../context/AppContext";
 import EcomHelper from "../../utils/ecomHelper";
 import * as ExpoImagePicker from "expo-image-picker";
 import * as MediaLibrary from 'expo-media-library';
+import { TextType, TextStyles } from '../../theme/typography';
+
 
 function GenericPhotoPage() {
   const navigation = useNavigation();
