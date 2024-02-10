@@ -2,6 +2,8 @@ import React from 'react';
 import {Pressable, StyleSheet, View, useWindowDimensions, Platform, StatusBar} from 'react-native';
 import Text from './Text';
 import {TextType} from '../theme/typography';
+import {unitH, unitW} from '../utils/constant';
+
 
 export const Header = ({
   hasLeftBtn,

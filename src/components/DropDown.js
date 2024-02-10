@@ -7,6 +7,7 @@ import { TextType, TextStyles } from '../theme/typography';
 import { leftGreyArrowIcon } from '../utils/assets';
 import {Dropdown} from 'react-native-element-dropdown';
 import { PrimaryColors } from '../theme/colors';
+import { useWindowDimensions } from 'react-native';
 
 const dynamicDropdownStyles = (width, height) => StyleSheet.create({
   container: {
