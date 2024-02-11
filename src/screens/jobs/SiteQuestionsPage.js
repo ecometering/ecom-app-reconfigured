@@ -25,8 +25,7 @@ function SiteQuestionsPage() {
   const jobType = appContext.jobType;
   console.log("Job Type:", jobType);
   const meterDetails = appContext.meterDetails;
-  const route = useRoute();
-  const {  nextScreen, } = route.params;
+  
   const [isSafe, setIsSafe] = useState(meterDetails?.isSafe);
   const [isGerneric, setIsGerneric] = useState(meterDetails?.isGerneric);
   const [genericReason, setGenericReason] = useState(
@@ -110,6 +109,7 @@ function SiteQuestionsPage() {
   const nextPressed = async () => {
     console.log("nextPressed invoked.");
   
+    // Validation checks
     if (
       isSafe === null ||
       isGerneric === null ||
@@ -122,6 +122,7 @@ function SiteQuestionsPage() {
       return;
     }
   
+    // Attempt to upload bypass image if present
     if (byPassImage) {
       console.log("Attempting to upload bypass image...");
       try {
@@ -134,6 +135,7 @@ function SiteQuestionsPage() {
       }
     }
   
+    // Update meter details in context
     const currentMeterDetails = {
       ...appContext.meterDetails,
       isSafe: isSafe,
@@ -148,22 +150,35 @@ function SiteQuestionsPage() {
     appContext.setMeterDetails(currentMeterDetails);
     console.log("Meter details updated in context:", currentMeterDetails);
   
-    if (!isSafe || !isStandard) {
-      console.log("Navigating to StandardPage due to safety or standard issues.");
-      navigation.navigate("StandardPage");
-    } else if (!isCarryOut) {
-      console.log("Navigating to SubmitSuccessPage as the job cannot be carried out.");
-      navigation.navigate("SubmitSuccessPage");
-    } else {
-      console.log(`Navigating to next screen: ${nextScreen}`, `Job Type: ${jobType}`);
-      try {
-        navigation.navigate(nextScreen, { jobType });
-      } catch (error) {
-        console.error("Navigation error:", error);
-      }
+    // Conditional navigation based on jobType
+    switch(jobType) {
+      case "Warrant":
+      case "Removal":
+        navigation.navigate("removal");
+        console.log("Navigating to RemovalFlowNavigator");
+        break;
+      case "Exchange":
+        navigation.navigate("exchange");
+        console.log("Navigating to ExchangeFlowNavigator");
+        break;
+      case "Install":
+        navigation.navigate("install");
+        console.log("Navigating to InstallFlowNavigator");
+        break;
+      case "Maintenance":
+        navigation.navigate("maintenance");
+        console.log("Navigating to MaintenanceFlowNavigator");
+        break;
+      case "Survey":
+        navigation.navigate("survey");
+        console.log("Navigating to SurveyFlowNavigator");
+        break;
+      default:
+        console.log(`Unknown job type: ${jobType}`);
+        // Fallback navigation or error handling
+        break;
     }
-  };
-  
+  };  
   return (
     <SafeAreaView style={styles.content}>
       <Header

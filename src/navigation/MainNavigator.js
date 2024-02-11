@@ -89,34 +89,36 @@ const MainNavigator = () => {
     let additionalPhotoScreens = [];
   
     for (let i = 0; i < extraPhotoCount; i++) {
-      additionalPhotoScreens.push(
-        <Stack.Screen 
-          key={`ExtraPhotoPage_${i}`}
-          name={`ExtraPhotoPage_${i}`}
-          component={ExtraPhotoPage}
-          initialParams={{ photoNumber: i + 1 }}
-        />
-      );
+      const name = i === 0 ? "ExtraPhotoPage" : `ExtraPhotoPage_${i}`;
+      const nextScreen = i + 1 < extraPhotoCount ? `ExtraPhotoPage_${i + 1}` : 'NextScreenAfterPhotos'; // Adjust 'NextScreenAfterPhotos' to your actual next screen
+  
+      additionalPhotoScreens.push({
+        key: name,
+        name: name,
+        component: ExtraPhotoPage,
+        initialParams: { photoNumber: i + 1, nextScreen: nextScreen }
+      });
     }
   
     return additionalPhotoScreens;
   };
+  
   // ...
 
   const RenderNavigator = () => {
     switch (jobType) {
       case "Exchange":
-        return <ExchangeFlowNavigator />;
+        return 'exchange';
       case "Install":
-        return <InstallFlowNavigator />;
+        return 'install';
       case "Maintenance":
-        return <MaintenanceFlowNavigator />;
+        return 'maintenance';
       case "Survey":
-        return <SurveyFlowNavigator />;
+        return 'survey';
       case "Removal":
-        return <RemovalFlowNavigator />;
+        return 'removal';
         case "Warrant":
-          return <RemovalFlowNavigator/>; 
+          return 'removal'; 
       default:
         return null ; 
    }
@@ -143,8 +145,13 @@ const MainNavigator = () => {
         component={GenericPhotoPage} 
         initialParams={{ title: 'Site Photo', photoKey: 'sitePhoto',nextScreen:'SiteQuestionsPage', }} 
       />
-      <Stack.Screen name = 'SiteQuestionsPage' component={SiteQuestionsPage} initialParams={{nextScreen: RenderNavigator()}}/>
-      
+      <Stack.Screen name = 'SiteQuestionsPage' component={SiteQuestionsPage} />
+      <Stack.Screen name ='install' component={InstallFlowNavigator}/>
+      <Stack.Screen name ='exchange' component={ExchangeFlowNavigator}/>
+      <Stack.Screen name ='maintenance' component={MaintenanceFlowNavigator}/>
+      <Stack.Screen name ='survey' component={SurveyFlowNavigator}/>
+      <Stack.Screen name ='removal' component={RemovalFlowNavigator}/>
+
 
 
             <Stack.Screen name="StandardPage" component={StandardPage} />
@@ -167,10 +174,14 @@ const MainNavigator = () => {
         />
     
        
-      <Stack.Screen name="SettingsLabelPhoto" component={GenericPhotoPage} initialParams={{ title: 'Settings label', photoKey: 'settingsLabel',nextScreen: 'ExtraPhotoPage_0'}} />
-{/* Dynamically generated additional photo screens */}
-{AdditionalPhotosProcess().map(({ name, component, key, initialParams }) => (
-  <Stack.Screen key={key} name={name} component={component} initialParams={initialParams} />
+    <Stack.Screen
+  name="SettingsLabelPhoto"
+  component={GenericPhotoPage}
+  initialParams={{ title: 'Settings label', photoKey: 'settingsLabel', nextScreen: 'ExtraPhotoPage' }} // Adjusted to navigate to the first extra photo page correctly
+/>
+<Stack.Screen name="ExtraPhotoPage" component={ExtraPhotoPage} initialParams={{ photoNumber: 0,photoKey: 'extraPhotos_0,',title:'Extra Photos ' }} />
+{AdditionalPhotosProcess().map((screen) => (
+  <Stack.Screen key={screen.key} name={screen.name} component={screen.component} initialParams={screen.initialParams} />
 ))}
 
           <Stack.Screen name='SubmitSuccessPage' component={SubmitSuccessPage}/>  

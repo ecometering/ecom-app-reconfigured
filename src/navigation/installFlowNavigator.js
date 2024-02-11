@@ -14,7 +14,7 @@ import ReliefRegulatorPage from "../screens/jobs/ReliefRegulatorPage";
 import ActiveRegulatorPage from "../screens/jobs/ActiveRegulatorPage";
 import FilterPage from "../screens/jobs/FilterPage";
 import { AppContext } from "../context/AppContext";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -110,7 +110,7 @@ const InstallFlowNavigator = () => {
     
     {/* meter process */}
     <Stack.Screen name="MeterDetails" component={MeterDetailsPage}
-    initialParams={{title: 'New Meter Details',nextScreen: NewEcvToMov
+    initialParams={{title: 'New Meter Details',nextScreen: 'NewEcvToMov'
     }}  />  
     <Stack.Screen 
         key = "NewEcvToMov"

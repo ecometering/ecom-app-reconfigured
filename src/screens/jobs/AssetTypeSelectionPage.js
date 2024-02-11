@@ -18,28 +18,38 @@ import { AppContext } from "../../context/AppContext";
 import EcomHelper from "../../utils/ecomHelper";
 
 function AssetTypeSelectionPage() {
+  console.log("AssetTypeSelectionPage Mounted"); // Initial render check
   const navigation = useNavigation();
   const appContext = useContext(AppContext);
+
+  console.log("AppContext Values", appContext); // Log context values
 
   const jobType = appContext.jobType;
   const meterDetails = appContext.meterDetails;
 
   const [isMeter, setIsMeter] = useState(meterDetails?.isMeter);
+  console.log("isMeter State:", isMeter); // State update check
+
   const [isAmr, setIsAmr] = useState(meterDetails?.isAmr);
+  console.log("isAmr State:", isAmr); // State update check
+
   const [isCorrector, setIsCorrector] = useState(meterDetails?.isCorrector);
-  // const [isDataLogger, setIsDataLogger] = useState(meterDetails?.isDataLogger);
+  console.log("isCorrector State:", isCorrector); // State update check
+
+  // Removed unused state for clarity
 
   const backPressed = () => {
+    console.log("Back Pressed"); // Event handler check
     appContext.setMeterDetails({
       isMeter: isMeter,
       isAmr: isAmr,
       isCorrector: isCorrector,
-      // isDataLogger: isDataLogger,
     });
     navigation.goBack();
   };
 
   const nextPressed = () => {
+    console.log("Next Pressed"); // Event handler check
     if (!isMeter && !isAmr && !isCorrector) {
       EcomHelper.showInfoMessage(
         "You can move next if at least 1 asset type is selected"
@@ -51,18 +61,18 @@ function AssetTypeSelectionPage() {
       isMeter: isMeter,
       isAmr: isAmr,
       isCorrector: isCorrector,
-      // isDataLogger: isDataLogger,
     });
 
-    if(isMeter)  {
+    if (isMeter) {
+      console.log("Navigating to EcvToMovExisting");
       navigation.navigate("EcvToMovExisting");
-    }
-
-    else if (isCorrector) {
+    } else if (isCorrector) {
+      console.log("Navigating to CorrectorDetailsPage");
       navigation.navigate("CorrectorDetailsPage");
     } else if (isAmr) {
+      console.log("Navigating to DataLoggerDetailsPage");
       navigation.navigate("DataLoggerDetailsPage");
-    } 
+    }
   };
 
   return (
@@ -87,6 +97,7 @@ function AssetTypeSelectionPage() {
               value={isMeter}
               onValueChange={(e) => {
                 setIsMeter(e);
+                console.log("Meter Switch Changed:", e); // State change check
               }}
             />
             <View style={styles.spacer} />
@@ -95,6 +106,7 @@ function AssetTypeSelectionPage() {
               value={isAmr}
               onValueChange={(e) => {
                 setIsAmr(e);
+                console.log("AMR Switch Changed:", e); // State change check
               }}
             />
             <View style={styles.spacer} />
@@ -103,6 +115,7 @@ function AssetTypeSelectionPage() {
               value={isCorrector}
               onValueChange={(e) => {
                 setIsCorrector(e);
+                console.log("Corrector Switch Changed:", e); // State change check
               }}
             />
             <View style={styles.spacer} />
@@ -121,17 +134,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: width * 0.1,
   },
-  mprn: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  input: {
-    width: "60%",
-    height: unitH * 40,
-    marginLeft: unitW * 30,
-    // alignSelf: 'center',
-  },
-
   spacer: {
     height: unitH * 20,
   },
