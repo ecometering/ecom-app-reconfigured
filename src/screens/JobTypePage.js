@@ -15,9 +15,11 @@ function JobTypePage() {
   const setJobTypeAndNavigate = (jobType) => {
     console.log(`Setting job type to: ${jobType}`);
     
-    // appContext.setJobTypes(jobType); // Set the job type in the context
+    appContext.setJobTypes(jobType); // Set the job type in the context
     
-    console.log(`${jobType} button was pressed`); // Log the message
+    console.log(`${jobType} button was pressed`);
+    console.log (appContext.jobType);
+    // Log the message
     // Assuming you have a specific screen to navigate to after setting the job type
     navigation.navigate("SiteDetailsPage"); // Replace "YourNextScreen" with your actual next screen
   };

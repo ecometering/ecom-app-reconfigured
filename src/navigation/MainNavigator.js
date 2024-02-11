@@ -143,7 +143,7 @@ const MainNavigator = () => {
         component={GenericPhotoPage} 
         initialParams={{ title: 'Site Photo', photoKey: 'sitePhoto',nextScreen:'SiteQuestionsPage', }} 
       />
-      <Stack.Screen name = 'SiteQuestionsPage' component={SiteQuestionsPage} initialParams={{nextScreen: RenderNavigator}}/>
+      <Stack.Screen name = 'SiteQuestionsPage' component={SiteQuestionsPage} initialParams={{nextScreen: RenderNavigator()}}/>
       
 
 

@@ -8,7 +8,6 @@ import {
   Text,
   View,
 } from "react-native";
-import { unitH, useScreenDimensions } from "../../utils/constant";
 import Header from "../../components/Header";
 import { useNavigation } from "@react-navigation/native";
 import TextInput, { TextInputWithTitle,InputRowWithTitle } from "../../components/TextInput";
@@ -25,17 +24,18 @@ const phoneNumberRegex =
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 function SiteDetailsPage() {
-  const { width, height } = useScreenDimensions(); // Use the custom hook for responsive dimensions
   const navigation = useNavigation();
   const appContext = useContext(AppContext);
 
   const jobType = appContext.jobType;
+  
   const SiteDetails = appContext.SiteDetails;
   const email1Ref = useRef(null);
   const email2Ref = useRef(null);
   const number1Ref = useRef(null);
   const number2Ref = useRef(null);
   console.log("SiteDetailsPage");
+  console.log("jobType", jobType);
   const [companyName, setCompanyName] = useState(
     SiteDetails?.companyName ?? ""
   );

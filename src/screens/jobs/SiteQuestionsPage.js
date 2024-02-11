@@ -11,7 +11,7 @@ import {
 import Text from "../../components/Text";
 import { TextInputWithTitle } from "../../components/TextInput";
 import Header from "../../components/Header";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation,useRoute } from "@react-navigation/native";
 import OptionalButton from "../../components/OptionButton";
 import { unitH, width } from "../../utils/constant";
 import { AppContext } from "../../context/AppContext";
@@ -23,8 +23,10 @@ function SiteQuestionsPage() {
 
   const appContext = useContext(AppContext);
   const jobType = appContext.jobType;
+  console.log("Job Type:", jobType);
   const meterDetails = appContext.meterDetails;
-
+  const route = useRoute();
+  const {  nextScreen, } = route.params;
   const [isSafe, setIsSafe] = useState(meterDetails?.isSafe);
   const [isGerneric, setIsGerneric] = useState(meterDetails?.isGerneric);
   const [genericReason, setGenericReason] = useState(
@@ -106,6 +108,8 @@ function SiteQuestionsPage() {
   };
 
   const nextPressed = async () => {
+    console.log("nextPressed invoked.");
+  
     if (
       isSafe === null ||
       isGerneric === null ||
@@ -114,20 +118,22 @@ function SiteQuestionsPage() {
       isStandard === null
     ) {
       EcomHelper.showInfoMessage("Please answer all questions");
+      console.log("Validation failed: Not all questions answered.");
       return;
     }
-
-    if ( byPassImage) {
+  
+    if (byPassImage) {
+      console.log("Attempting to upload bypass image...");
       try {
         const response = await fetch(byPassImage);
         const blob = await response.blob();
         appContext.setBlobs((prev) => [...prev, blob]);
+        console.log("Bypass image uploaded successfully.");
       } catch (err) {
-        console.log(err);
+        console.log("Error uploading bypass image:", err);
       }
     }
-
-
+  
     const currentMeterDetails = {
       ...appContext.meterDetails,
       isSafe: isSafe,
@@ -138,18 +144,26 @@ function SiteQuestionsPage() {
       isFitted: isFitted,
       isStandard: isStandard,
     };
-
+  
     appContext.setMeterDetails(currentMeterDetails);
-
+    console.log("Meter details updated in context:", currentMeterDetails);
+  
     if (!isSafe || !isStandard) {
+      console.log("Navigating to StandardPage due to safety or standard issues.");
       navigation.navigate("StandardPage");
     } else if (!isCarryOut) {
+      console.log("Navigating to SubmitSuccessPage as the job cannot be carried out.");
       navigation.navigate("SubmitSuccessPage");
     } else {
-      navigation.navigatenavigation.navigate(nextScreen);
+      console.log(`Navigating to next screen: ${nextScreen}`, `Job Type: ${jobType}`);
+      try {
+        navigation.navigate(nextScreen, { jobType });
+      } catch (error) {
+        console.error("Navigation error:", error);
+      }
     }
   };
-
+  
   return (
     <SafeAreaView style={styles.content}>
       <Header
