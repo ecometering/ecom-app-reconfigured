@@ -9,6 +9,9 @@ import { TextType } from '../theme/typography';
 import { AppContext } from '../context/AppContext';
 import { useScreenDimensions } from '../utils/constant';
 
+
+
+
 function PlannedJobPage() {
   const navigation = useNavigation();
   const [plannedJobs, setPlannedJobs] = useState([]);
@@ -19,16 +22,17 @@ function PlannedJobPage() {
   useEffect(() => {
     const fetchPlannedJobs = async () => {
       setIsLoading(true);
+      setError(null); // Reset error state on fetch start
       try {
         const response = await fetch('https://test.ecomdata.com/api/plannedJobs'); // Replace with actual endpoint
         const data = await response.json();
         if (data && data.length > 0) {
           setPlannedJobs(data);
         } else {
-          setError('No planned jobs');
+          setError('No planned jobs found');
         }
       } catch (error) {
-        setError('Error loading data');
+        setError('Error loading data: ' + error.message);
       } finally {
         setIsLoading(false);
       }
@@ -95,35 +99,32 @@ function PlannedJobPage() {
     );
   };
 
-  const renderTableContent = () => {
+  // Dynamic empty component to show loading, error, or no data message
+  const renderEmptyComponent = () => {
     if (isLoading) {
       return <View style={styles.center}><RNText>Loading...</RNText></View>;
     }
     if (error) {
       return <View style={styles.center}><RNText>{error}</RNText></View>;
     }
-    return (
-      <FlatList
-        data={plannedJobs}
-        renderItem={renderItem}
-        keyExtractor={item => item.id.toString()}
-        ListEmptyComponent={<View style={styles.center}><RNText>No planned jobs</RNText></View>}
-      />
-    );
+    return <View style={styles.center}><RNText>No planned jobs</RNText></View>;
   };
 
   return (
     <SafeAreaView style={styles.body}>
-      <Header hasLeftBtn={true} hasCenterText={true} hasRightBtn={false} centerText={''} leftBtnPressed={() => navigation.goBack()} />
-      <View style={styles.spacer} />
-      <View style={styles.flex}>
-        {renderTableContent()}
-      </View>
-      <View style={styles.spacer} />
+      <Header hasLeftBtn={true} hasCenterText={true} hasRightBtn={false} centerText={'Planned Jobs'} leftBtnPressed={() => navigation.goBack()} />
+      <FlatList
+        data={plannedJobs}
+        renderItem={renderItem}
+        keyExtractor={item => item.id.toString()}
+        ListEmptyComponent={renderEmptyComponent}
+        // Ensures the header is always displayed
+        ListHeaderComponent={<View style={styles.spacer} />}
+        ListFooterComponent={<View style={styles.spacer} />}
+      />
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   body: {

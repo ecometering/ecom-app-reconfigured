@@ -15,7 +15,8 @@ import { AppContext } from "../../context/AppContext";
 import EcomHelper from "../../utils/ecomHelper";
 import * as ExpoImagePicker from "expo-image-picker";
 import * as MediaLibrary from 'expo-media-library';
-import { TextType, TextStyles } from '../../theme/typography';
+import { TextType, TextStyles } from '../../theme/typography'; 
+
 
 
 function GenericPhotoPage() {
@@ -24,83 +25,88 @@ function GenericPhotoPage() {
   const appContext = useContext(AppContext);
 
   const { title, onPhotoSelected, photoKey, nextScreen } = route.params;
+const jobType = appContext.jobType; 
+console.log("jobType", jobType);
   const existingPhoto = appContext[photoKey];
   const [selectedImage, setSelectedImage] = useState(existingPhoto);
 
+  console.log("GenericPhotoPage rendered with params:", { title, photoKey, nextScreen });
+  console.log("Existing photo:", existingPhoto);
+
   const backPressed = () => {
+    console.log("Back button pressed");
     navigation.goBack();
   };
 
   const nextPressed = async () => {
+    console.log("Next button pressed");
+
     if (!selectedImage) {
+      console.log("No image selected");
       EcomHelper.showInfoMessage("Please choose an image");
       return;
     }
 
-    // Assuming onPhotoSelected updates the app context or performs necessary actions with the selected image
-    if (onPhotoSelected && typeof onPhotoSelected === 'function') {
-      onPhotoSelected(selectedImage, appContext);
-    }
+    console.log("Selected image:", selectedImage);
+    // onPhotoSelected(selectedImage, appContext);
+    console.log("Navigating to next screen:", nextScreen);
+    navigation.navigate(nextScreen);
+  };
 
-    // Optionally update the app context or navigate to the next screen with additional parameters as needed
-    navigation.navigate(nextScreen, { selectedImage });
+  const requestMediaLibraryPermission = async () => {
+    const { status } = await MediaLibrary.requestPermissionsAsync();
+    console.log("Media library permission status:", status);
+    return status === 'granted';
+  };
+
+  const handleImagePicker = () => {
+    console.log("Opening image picker alert");
+    Alert.alert("Choose Image", "How would you like to choose the image?", [
+      {
+        text: "Cancel",
+        onPress: () => {},
+        style: "cancel",
+      },
+      {
+        text: "Choose from Gallery",
+        onPress: chooseFromGallery,
+      },
+      {
+        text: "Take Photo",
+        onPress: takePhoto,
+      },
+    ]);
   };
 
   const takePhoto = async () => {
-    const cameraPermission = await ExpoImagePicker.requestCameraPermissionsAsync();
-    if (cameraPermission.status !== 'granted') {
-      alert('Camera permission is required to take photos.');
+    const hasPermission = await requestMediaLibraryPermission();
+    if (!hasPermission) {
+      EcomHelper.showInfoMessage("Permissions to access camera and media library are required!");
       return;
     }
+    let options = {
+        mediaTypes: ExpoImagePicker.MediaTypeOptions.Images,
+        quality: 1,
+    };
 
-    let result = await ExpoImagePicker.launchCameraAsync({
-      mediaTypes: ExpoImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+    let result = await ExpoImagePicker.launchCameraAsync(options);
 
-    if (!result.canceled) {
-      setSelectedImage(result.uri);
-
-      // Save the photo in the device's gallery
-      const asset = await MediaLibrary.createAssetAsync(result.uri);
-      const albumName = "Ecom Jobs";
-      await MediaLibrary.createAlbumAsync(albumName, asset, false)
-        .then(() => {
-          console.log('Photo saved to album');
-        })
-        .catch((error) => {
-          console.error('Error saving photo to album:', error);
-        });
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      const asset = await MediaLibrary.createAssetAsync(result.assets[0].uri);
+      setSelectedImage(asset.uri);
     }
   };
 
   const chooseFromGallery = async () => {
-    const mediaLibraryPermission = await MediaLibrary.requestPermissionsAsync();
-    if (mediaLibraryPermission.status !== 'granted') {
-      alert('Media library permission is required to choose photos.');
-      return;
-    }
-
-    const result = await ExpoImagePicker.launchImageLibraryAsync({
-      mediaTypes: ExpoImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
+    const options = {
+      mediaType: ExpoImagePicker.MediaTypeOptions.Images,
       quality: 1,
-    });
+    };
 
-    if (!result.canceled) {
-      setSelectedImage(result.uri);
+    const result = await ExpoImagePicker.launchImageLibraryAsync(options);
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      setSelectedImage(result.assets[0].uri);
     }
-  };
-
-  const handleImagePicker = () => {
-    Alert.alert("Choose Image", "How would you like to choose the image?", [
-      { text: "Cancel", style: "cancel" },
-      { text: "Choose from Gallery", onPress: chooseFromGallery },
-      { text: "Take Photo", onPress: takePhoto },
-    ]);
   };
 
   return (
@@ -114,7 +120,7 @@ function GenericPhotoPage() {
       />
       <ScrollView style={styles.scrollView}>
         <View style={styles.content}>
-          <Text type={TextType.CAPTION_2} style={styles.text}>{title}</Text>
+          <Text type="caption" style={styles.text}>{title}</Text>
           {selectedImage && (
             <Image source={{ uri: selectedImage }} style={styles.image} />
           )}
@@ -127,8 +133,6 @@ function GenericPhotoPage() {
     </SafeAreaView>
   );
 }
-
-
 const styles = StyleSheet.create({
   scrollView: {
     width: '100%',

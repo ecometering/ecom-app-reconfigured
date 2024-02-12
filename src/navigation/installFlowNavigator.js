@@ -14,7 +14,7 @@ import ReliefRegulatorPage from "../screens/jobs/ReliefRegulatorPage";
 import ActiveRegulatorPage from "../screens/jobs/ActiveRegulatorPage";
 import FilterPage from "../screens/jobs/FilterPage";
 import { AppContext } from "../context/AppContext";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -105,12 +105,13 @@ const InstallFlowNavigator = () => {
   // const {  } = useContext(AppContext);
   const meterType = meterDetails?.type || "";
   const meterPressure = meterDetails?.pressure || ""; 
-  <Stack.Navigator > 
+  console.log ("loading install flow navigator with ", numberOfStreams, " streams");
+  <Stack.Navigator> 
     <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being installed',nextScreen: ()=>assetSelection(meter,corrector,datalogger)}} />
     
     {/* meter process */}
     <Stack.Screen name="MeterDetails" component={MeterDetailsPage}
-    initialParams={{title: 'New Meter Details',nextScreen: NewEcvToMov
+    initialParams={{title: 'New Meter Details',nextScreen: 'NewEcvToMov'
     }}  />  
     <Stack.Screen 
         key = "NewEcvToMov"

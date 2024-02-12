@@ -11,7 +11,7 @@ import {
 import Text from "../../components/Text";
 import { TextInputWithTitle } from "../../components/TextInput";
 import Header from "../../components/Header";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation,useRoute } from "@react-navigation/native";
 import OptionalButton from "../../components/OptionButton";
 import { unitH, width } from "../../utils/constant";
 import { AppContext } from "../../context/AppContext";
@@ -23,8 +23,9 @@ function SiteQuestionsPage() {
 
   const appContext = useContext(AppContext);
   const jobType = appContext.jobType;
+  console.log("Job Type:", jobType);
   const meterDetails = appContext.meterDetails;
-
+  
   const [isSafe, setIsSafe] = useState(meterDetails?.isSafe);
   const [isGerneric, setIsGerneric] = useState(meterDetails?.isGerneric);
   const [genericReason, setGenericReason] = useState(
@@ -106,6 +107,9 @@ function SiteQuestionsPage() {
   };
 
   const nextPressed = async () => {
+    console.log("nextPressed invoked.");
+  
+    // Validation checks
     if (
       isSafe === null ||
       isGerneric === null ||
@@ -114,20 +118,24 @@ function SiteQuestionsPage() {
       isStandard === null
     ) {
       EcomHelper.showInfoMessage("Please answer all questions");
+      console.log("Validation failed: Not all questions answered.");
       return;
     }
-
-    if ( byPassImage) {
+  
+    // Attempt to upload bypass image if present
+    if (byPassImage) {
+      console.log("Attempting to upload bypass image...");
       try {
         const response = await fetch(byPassImage);
         const blob = await response.blob();
         appContext.setBlobs((prev) => [...prev, blob]);
+        console.log("Bypass image uploaded successfully.");
       } catch (err) {
-        console.log(err);
+        console.log("Error uploading bypass image:", err);
       }
     }
-
-
+  
+    // Update meter details in context
     const currentMeterDetails = {
       ...appContext.meterDetails,
       isSafe: isSafe,
@@ -138,18 +146,39 @@ function SiteQuestionsPage() {
       isFitted: isFitted,
       isStandard: isStandard,
     };
-
+  
     appContext.setMeterDetails(currentMeterDetails);
-
-    if (!isSafe || !isStandard) {
-      navigation.navigate("StandardPage");
-    } else if (!isCarryOut) {
-      navigation.navigate("SubmitSuccessPage");
-    } else {
-      navigation.navigatenavigation.navigate(nextScreen);
+    console.log("Meter details updated in context:", currentMeterDetails);
+  
+    // Conditional navigation based on jobType
+    switch(jobType) {
+      case "Warrant":
+      case "Removal":
+        navigation.navigate("removal");
+        console.log("Navigating to RemovalFlowNavigator");
+        break;
+      case "Exchange":
+        navigation.navigate("exchange");
+        console.log("Navigating to ExchangeFlowNavigator");
+        break;
+      case "Install":
+        navigation.navigate("install");
+        console.log("Navigating to InstallFlowNavigator");
+        break;
+      case "Maintenance":
+        navigation.navigate("maintenance");
+        console.log("Navigating to MaintenanceFlowNavigator");
+        break;
+      case "Survey":
+        navigation.navigate("survey");
+        console.log("Navigating to SurveyFlowNavigator");
+        break;
+      default:
+        console.log(`Unknown job type: ${jobType}`);
+        // Fallback navigation or error handling
+        break;
     }
-  };
-
+  };  
   return (
     <SafeAreaView style={styles.content}>
       <Header

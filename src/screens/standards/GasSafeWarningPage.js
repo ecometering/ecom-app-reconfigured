@@ -327,9 +327,21 @@ function GasSafeWarningPage() {
             >
               <SignatureScreen
                 onOK={handleOK}
-                webStyle={`
-                  .m-signature-pad--body {height: 250px;}
-                `}
+                webStyle={ `.m-signature-pad {
+                  box-shadow: none; border: none;
+                  margin-left: 0px;
+                  margin-top: 0px;
+                } 
+                 .m-signature-pad--body
+                  canvas {
+                    background-color: #E5E5F1;
+                  }
+                .m-signature-pad--body 
+                .m-signature-pad--footer {display: none; margin: 0px;}
+                body,html {
+                   width: 100%; 
+                   height: 68%;
+                }`}
                 backgroundColor={PrimaryColors.Sand}
                 scrollable={true}
               />

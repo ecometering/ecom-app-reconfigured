@@ -239,7 +239,7 @@ function SnClientInfoPage() {
                 title={"Serial Number"}
                 placeholder={""}
                 value={serialNumber}
-                keyboardType="numeric"
+               
                 onChangeText={(txt) => {
                   setSerialNumber(txt);
                 }}
@@ -448,8 +448,15 @@ does not remove the risk`}</Text>
               onPress={() => {
                 setTableData((prev) => [
                   ...prev,
-                  { type, location, model, make, serialNumber, descript, isDisconnectDanger, isTurnOffDanger, isNotRemove,
-                  isEscapeGas, isMeterIssue, isPipeworkIssue, isChimneyFlute, isVentilation, isOther },
+                  { type, location, model, make, serialNumber, descript,remedial,isEscapeGas: isEscapeGas ? "Yes" : "No", // Format boolean values for display
+                  isMeterIssue: isMeterIssue ? "Yes" : "No",
+                  isPipeworkIssue: isPipeworkIssue ? "Yes" : "No",
+                  isChimneyFlute: isChimneyFlute ? "Yes" : "No",
+                  isVentilation: isVentilation ? "Yes" : "No",
+                  isOther: isOther ? "Yes" : "No",
+                  isDisconnectDanger: isDisconnectDanger ? "Yes" : "No", // Adjust the text based on your application's context
+                  isTurnOffDanger: isTurnOffDanger ? "Yes" : "No",
+                  isNotRemove: isNotRemove ? "Yes" : "No", },
                 ]);
                 setType("");
                 setLocation("");
@@ -457,9 +464,6 @@ does not remove the risk`}</Text>
                 setModel("");
                 setSerialNumber("");
                 setDescript("");
-                setIsDisconnectDanger(false)
-                setIsTurnOffDanger(false)
-                setIsNotRemove(false)
                 setRemedial("");
                 setIsEscapeGas(false)
                 setIsMeterIssue(false)
@@ -467,113 +471,16 @@ does not remove the risk`}</Text>
                 setIsChimneyFlute(false)
                 setIsVentilation(false)
                 setIsOther(false)
+                setIsDisconnectDanger(false)
+                setIsTurnOffDanger(false)
+                setIsNotRemove(false)
+                
+                
               }}
             />
           </View>
 
-          {/* <View style={styles.spacer} />
-          <View
-            style={{ ...styles.row, backgroundColor: Transparents.BlueColor2 }}
-          >
-            <CenteredText
-              containerStyle={{ ...styles.headerCell, width: width * 0.15 }}
-              type={TextType.HEADER_TABLE}
-              style={styles.blackTxt}
-            >
-              {"Type"}
-            </CenteredText>
-            <CenteredText
-              containerStyle={{ ...styles.headerCell, width: width * 0.15 }}
-              type={TextType.HEADER_TABLE}
-              style={styles.blackTxt}
-            >
-              {"Make"}
-            </CenteredText>
-            <CenteredText
-              containerStyle={{ ...styles.headerCell, width: width * 0.15 }}
-              type={TextType.HEADER_TABLE}
-              style={styles.blackTxt}
-            >
-              {"Location"}
-            </CenteredText>
-            <CenteredText
-              containerStyle={{ ...styles.headerCell, width: width * 0.15 }}
-              type={TextType.HEADER_TABLE}
-              style={styles.blackTxt}
-            >
-              {"Model"}
-            </CenteredText>
-            <CenteredText
-              containerStyle={{ ...styles.headerCell, width: width * 0.15 }}
-              type={TextType.HEADER_TABLE}
-              style={styles.blackTxt}
-            >
-              {"serial no."}
-            </CenteredText>
-            <CenteredText
-              containerStyle={{ ...styles.headerCell, width: width * 0.15 }}
-              type={TextType.HEADER_TABLE}
-              style={styles.blackTxt}
-            >
-              {"Description"}
-            </CenteredText>
-          </View> */}
-
-          {/* {tableData.map((item, index) => {
-            return (
-              <View
-                key={index}
-                style={{
-                  ...styles.row,
-                  backgroundColor: Transparents.Clear,
-                  borderBottomWidth: 1,
-                }}
-              >
-                <CenteredText
-                  containerStyle={{ ...styles.headerCell, width: width * 0.15 }}
-                  type={TextType.HEADER_TABLE}
-                  style={styles.blackTxt}
-                >
-                  {item.type}
-                </CenteredText>
-                <CenteredText
-                  containerStyle={{ ...styles.headerCell, width: width * 0.15 }}
-                  type={TextType.HEADER_TABLE}
-                  style={styles.blackTxt}
-                >
-                  {item.make}
-                </CenteredText>
-                <CenteredText
-                  containerStyle={{ ...styles.headerCell, width: width * 0.15 }}
-                  type={TextType.HEADER_TABLE}
-                  style={styles.blackTxt}
-                >
-                  {item.location}
-                </CenteredText>
-                <CenteredText
-                  containerStyle={{ ...styles.headerCell, width: width * 0.15 }}
-                  type={TextType.HEADER_TABLE}
-                  style={styles.blackTxt}
-                >
-                  {item.model}
-                </CenteredText>
-                <CenteredText
-                  containerStyle={{ ...styles.headerCell, width: width * 0.15 }}
-                  type={TextType.HEADER_TABLE}
-                  style={styles.blackTxt}
-                >
-                  {item.serialNumber}
-                </CenteredText>
-                <CenteredText
-                  containerStyle={{ ...styles.headerCell, width: width * 0.15 }}
-                  type={TextType.HEADER_TABLE}
-                  style={styles.blackTxt}
-                >
-                  {item.descript}
-                </CenteredText>
-              </View>
-            );
-          })} */}
+         
 
           {tableData.map((item, index) => {
             return (
@@ -631,6 +538,31 @@ does not remove the risk`}</Text>
                   <Text>Other - </Text>
                   <Text>{item.isOther}</Text>
                 </View>
+                {
+                  item.isDisconnectDanger === "Yes" && (
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                      <Text>Disconnected & labelled Danger - </Text>
+                      <Text>{item.isDisconnectDanger}</Text>
+                    </View>
+                  )
+                }
+                {
+                  item.isTurnOffDanger === "Yes" && (
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                      <Text>Turn Off & labelled Danger - </Text>
+                      <Text>{item.isTurnOffDanger}</Text>
+                    </View>
+                  )
+                }
+                {
+                  item.isNotRemove === "Yes" && (
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                      <Text>At Risk - </Text>
+                      <Text>{item.isNotRemove}</Text>
+                    </View>
+                  )
+                }
+
                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
                 <RNButton
       title="Delete"

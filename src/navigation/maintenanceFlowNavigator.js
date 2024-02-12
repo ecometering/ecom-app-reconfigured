@@ -15,7 +15,7 @@ import ReliefRegulatorPage from "../screens/jobs/ReliefRegulatorPage";
 import ActiveRegulatorPage from "../screens/jobs/ActiveRegulatorPage";
 import FilterPage from "../screens/jobs/FilterPage";
 import { AppContext } from "../context/AppContext";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useContext } from "react";
 
 import { createStackNavigator } from "@react-navigation/stack";
 
