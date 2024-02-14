@@ -26,7 +26,8 @@ function AssetTypeSelectionPage() {
   console.log("AppContext Values", appContext); // Log context values
 
   const { title, nextScreen } = route.params;
-
+  console.log("Title:", title); // Log check
+  console.log("Next Screen:", nextScreen); // Log check
 
   const jobType = appContext.jobType;
   const meterDetails = appContext.meterDetails;
@@ -67,11 +68,9 @@ function AssetTypeSelectionPage() {
       isAmr: isAmr,
       isCorrector: isCorrector,
     });
-    const meter = isMeter;
-    const Corrector = isCorrector;
-    const DataLogger = isAmr;
 
-    navigation.navigate(nextScreen(meter, Corrector, DataLogger));
+
+    navigation.navigate(nextScreen);
     
 
   };

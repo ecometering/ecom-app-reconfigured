@@ -32,18 +32,18 @@ const setAndSeal = (meterType, meterPressure) => {
   return meterType === 'Diaphragm' ? 'Regulator' : 'StreamsSetSealDetails';
 };
 
-const nextAfterMeterPhoto = ({ corrector, datalogger, meterType, meterPressure }) => {
-  if (corrector && datalogger) return 'CorrectorDetails';
-  if (corrector) return 'CorrectorDetails';
-  if (datalogger) return 'DataLoggerDetails';
+const nextAfterMeterPhoto = ({ isCorrector, isAmr, meterType, meterPressure }) => {
+  if (isCorrector && isAmr) return 'CorrectorDetails';
+  if (isCorrector) return 'CorrectorDetails';
+  if (isAmr) return 'DataLoggerDetails';
   return setAndSeal(meterType, meterPressure);
 };
 
 // Determine next after CorrectorDetails
-const nextAfterCorrector = ({ datalogger, meter, meterType, meterPressure }) => {
-  if (datalogger) {
+const nextAfterCorrector = ({ isAmr, isMeter, meterType, meterPressure }) => {
+  if (isAmr) {
     return 'DataLoggerDetails'; // Navigate to DataLogger if true
-  } else if (meter) {
+  } else if (isMeter) {
     return setAndSeal(meterType, meterPressure); // Use setAndSeal logic if meter is present
   } else {
     return 'StandardPage'; // Fallback to StandardsNavigation
@@ -51,8 +51,8 @@ const nextAfterCorrector = ({ datalogger, meter, meterType, meterPressure }) => 
 };
 
 // Function to determine the next page from DataLoggerDetails
-const nextAfterDataLogger = ({ meter, meterType, meterPressure }) => {
-  if (meter) {
+const nextAfterDataLogger = ({ isMeter, meterType, meterPressure }) => {
+  if (isMeter) {
     return setAndSeal(meterType, meterPressure); // Use setAndSeal logic if meter is present
   } else {
     return 'StandardPage'; // Fallback to StandardsNavigation
@@ -95,27 +95,35 @@ const getNextScreen = (currentScreenName, numberOfStreams) => {
   }
 };
 
-
+  const assetSelection = ( isMeter, isCorrector, isAmr) => {
+    if (isMeter) return 'MeterDetails';
+    
+    if (isCorrector) return 'CorrectorDetails';
+    if (isAmr) return 'DataLoggerDetails';
+    else 'MeterDetails'
+  };
 const InstallFlowNavigator = () => {
   const {numberOfStreams, meterDetails = {}} = useContext(AppContext);
+  // const {isMeter, isCorrector, isAmr} = meterDetails;
   // const {  } = useContext(AppContext);
+
+  const nextScreen = assetSelection(isMeter,isCorrector,isAmr);
+   console.log ("Meter details in install flow navigator", meterDetails)
+  const isCorrector = meterDetails?.isCorrector || false;
+  const isAmr = meterDetails?.isAmr || false;
+  const isMeter = meterDetails?.isMeter || false;
   const meterType = meterDetails?.type || "";
   const meterPressure = meterDetails?.pressure || "";
   
   console.log ("loading install flow navigator with ", numberOfStreams, " streams");
-  const assetSelection = ({ meter, corrector, datalogger }) => {
-    if (meter) return 'MeterDetails';
-    if (corrector) return 'CorrectorDetails';
-    if (datalogger) return 'DataLoggerDetails';
-    throw new Error('At least one asset must be selected.');
-  };
- 
+
+ console.log (assetSelection(isMeter,isCorrector,isAmr))
  return(
  <Stack.Navigator> 
-    <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being installed',nextScreen: ()=>assetSelection(meter,corrector,datalogger)}} />
+    <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being installed',nextScreen: nextScreen}} />
     
     {/* meter process */}
-    <Stack.Screen name="MeterDetails" component={MeterDetailsPage}
+    <Stack.Screen  name="MeterDetails" component={MeterDetailsPage}
     initialParams={{title: 'New Meter Details',nextScreen: 'NewEcvToMov'
     }}  />  
     <Stack.Screen 
