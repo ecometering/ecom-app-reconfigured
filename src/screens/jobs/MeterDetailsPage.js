@@ -6,13 +6,12 @@ import {
   ScrollView,
   StyleSheet,
   View,
+  useWindowDimensions,
 } from "react-native";
 import {
   height,
   isIos,
-  unitH,
-  unitW,
-  width,
+
   NUMBER_OF_DEALS,
   PULSE_VALUE,
   METER_POINT_LOCATION_CHOICES,
@@ -21,8 +20,10 @@ import {
   UNIT_OF_MEASURE_CHOICES,
   METER_TYPE_CHOICES,
   MECHANISM_TYPE_CHOICES,
+  width,
   
 } from "../../utils/constant";
+import {getDatabaseTables}from "../../utils/database";
 import { useNavigation } from "@react-navigation/native";
 import Header from "../../components/Header";
 import Text from "../../components/Text";
@@ -37,6 +38,7 @@ import { fetchManufacturersForMeterType, fetchModelsForManufacturer } from '../.
 const alphanumericRegex = /^[a-zA-Z0-9]*$/;
 
 function MeterDetailsPage() {
+  const { width, height } = useWindowDimensions();
   const navigation = useNavigation();
   const appContext = useContext(AppContext);
   const camera = useRef(null);
@@ -94,7 +96,7 @@ function MeterDetailsPage() {
   useEffect(() => {
     if (type) {
       fetchManufacturersForMeterType(type.label)
-        .then(data => setManufacturers(data))
+        .then(data => setManufacturers(data.map(manufacturer => ({ label: manufacturer.manufacturer, value: manufacturer.manufacturer }))))
         .catch(error => console.error(error));
     }
   }, [type]);
@@ -102,10 +104,13 @@ function MeterDetailsPage() {
   useEffect(() => {
     if (manufacturer && type) {
       fetchModelsForManufacturer(type.label, manufacturer.label)
-        .then(data => setModels(data))
+        .then(data => setModels(data.map(model => ({ label: model.ModelDescription, value: model.ProductId }))))
         .catch(error => console.error(error));
     }
   }, [manufacturer, type]);
+
+
+
   const nextPressed = () => {
     if (location == null) {
       EcomHelper.showInfoMessage("Please Choose 'Meter Location'");
@@ -213,15 +218,7 @@ function MeterDetailsPage() {
 
   const pageTitle = jobType === "Install" ? "New Meter Details" : jobType;
 
-  const MeterTypeData = {
-    1: TIN_CASE_DIAPHGRAM_MODEL_CODE_LIST,
-    2: DIAPHRAGM_MODEL_CODE_LIST,
-    4: DIAPHRAGM_MODEL_CODE_LIST,
-    3: ROTARY_MODEL_CODE_LIST,
-    5: TURBINE_MODEL_LIST,
-    6: ULTRASONIC_MODE_LIST,
-    7: MATERIAL_MODEL_CODE_LIST
-  }
+ 
 
   return (
     <SafeAreaView style={styles.content}>
@@ -253,7 +250,7 @@ function MeterDetailsPage() {
             <View style={styles.spacer} />
             <View style={styles.row}>
               <EcomDropDown
-                width={width * 0.35}
+                width={width *0.5}
                 value={type}
                 valueList={[
                   {label: 'D-DIAPHRAGM OF UNKOWN MATERIAL', value: 1},
@@ -284,15 +281,17 @@ function MeterDetailsPage() {
                 }}
               />
               <EcomDropDown
-                width={width * 0.35}
-                value={manufacturer}
-                valueList={METER_DETAILS_METER_MANUFACTURER_LIST}
-                placeholder={"Meter Manufacturer"}
-                onChange={(item) => {
-                  console.log(item);
-                  setManufacturer(item);
-                }}
-              />
+    width={width}
+    value={manufacturer}
+    valueList={manufacturers} // Dynamically populated from SQLite database
+    placeholder={"Meter Manufacturer"}
+    onChange={(item) => {
+      console.log(item);
+      setManufacturer(item);
+      // Reset models when manufacturer changes
+      setModels([]);
+    }}
+  />
             </View>
             <View style={styles.spacer} />
             <View style={styles.row}>
@@ -307,15 +306,15 @@ function MeterDetailsPage() {
                 }}
               />
               <EcomDropDown
-                width={width * 0.35}
-                value={model}
-                valueList={MeterTypeData[type?.value??1]}
-                placeholder={"Meter model"}
-                onChange={(item) => {
-                  console.log(item);
-                  setModel(item);
-                }}
-              />
+    width={width * 0.5}
+    value={model}
+    valueList={models} // Dynamically populated based on the selected manufacturer
+    placeholder={"Meter Model"}
+    onChange={(item) => {
+      console.log(item);
+      setModel(item);
+    }}
+  />
             </View>
             <View style={styles.spacer} />
             <View style={styles.row}>
@@ -397,7 +396,7 @@ function MeterDetailsPage() {
                 style={styles.input}
               />
               <EcomDropDown
-                width={width * 0.35}
+                width={'35%'}
                 value={dialNumber}
                 valueList={NUMBER_OF_DEALS}
                 placeholder={"Number of dials"}
@@ -409,7 +408,7 @@ function MeterDetailsPage() {
             </View>
             <View style={styles.spacer} />
             <View style={styles.row}>
-              <View style={{ width: width * 0.35 }}>
+              <View style={{ width: '35%'}}>
                 <Text>{"Meter serial number"}</Text>
                 <View style={{ height: 5 }} />
                 <View style={styles.row}>
@@ -418,7 +417,7 @@ function MeterDetailsPage() {
                     onChangeText={(txt) => {
                       if (alphanumericRegex.test(txt)) setSerialNumber(txt);
                     }}
-                    style={{ ...styles.input, width: unitW * 300 }}
+                    style={{ ...styles.input, width: '45%' }}
                   />
                   <Button
                     title="📷"
@@ -429,7 +428,7 @@ function MeterDetailsPage() {
               </View>
 
               <EcomDropDown
-                width={width * 0.35}
+                width={'35%'}
                 value={status}
                 valueList={METER_POINT_STATUS_CHOICES}
                 placeholder={"Meter status"}
@@ -442,7 +441,7 @@ function MeterDetailsPage() {
             <View style={styles.spacer} />
             <View style={styles.row}>
               <EcomDropDown
-                width={width * 0.35}
+                width={'35%'}
                 value={mechanism}
                 valueList={MECHANISM_TYPE_CHOICES}
                 placeholder={"Meter Mechanism"}
@@ -452,7 +451,7 @@ function MeterDetailsPage() {
                 }}
               />
               <EcomDropDown
-                width={width * 0.35}
+                width={'35%'}
                 value={pressureTier}
                 valueList={pressureTierList} //METER_PRESSURE_TIER_CHOICES
                 placeholder={"Metering pressure tier"}
@@ -465,7 +464,7 @@ function MeterDetailsPage() {
             <View style={styles.spacer} />
             <View style={styles.spacer} />
             <View style={styles.row}>
-              <View style={{ width: width * 0.35 }}>
+              <View style={{ width: '35%' }}>
                 <Text>Meter Outlet Working Pressure</Text>
                 <View style={{ height: 5 }} />
                 <View
@@ -488,7 +487,7 @@ function MeterDetailsPage() {
                     keyboardType="numeric"
                     style={{
                       ...styles.input,
-                      width: unitW * 300,
+                      width: '45%',
                       alignSelf: "center",
                       marginRight: 8,
                     }}
@@ -518,33 +517,41 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   body: {
-    marginHorizontal: width * 0.1,
+    marginHorizontal: '8%',
   },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center", // Ensure vertical alignment is centered for row items
   },
   input: {
-    width: width * 0.35,
-    alignSelf: "center",
-    height: unitH * 40,
+    width: '100%', // Adjust to use full width of its container for better visibility
+    height: 40, // Ensure this is a number, not a string
+    padding: 10, // Add padding for text input
+    // Consider adding margin if needed
   },
+  scanBtn: {
+    // If you are using a custom button, ensure it is visible and accessible
+  },
+  spacer: {
+    height: 20, 
+    width :width*0.05,
+  },
+    // Adjust the dropdown and input container widths in the row
   scanBtn: {
     height: 20,
   },
   optionContainer: {
     justifyContent: "center",
     alignItems: "flex-end",
-    width: width * 0.35,
+    width: '35%',
   },
   questions: {
     alignItems: "center",
     justifyContent: "space-between",
     flexDirection: "row",
   },
-  spacer: {
-    height: unitH * 20,
-  },
+  
   closeButtonContainer: {
     position: "absolute",
     top: 50,

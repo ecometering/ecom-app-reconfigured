@@ -1,9 +1,9 @@
 // Learn more https://docs.expo.io/guides/customizing-metro
 const { getDefaultConfig } = require("expo/metro-config");
 
-const defaultConfig = getDefaultConfig(__dirname);
+const Config = getDefaultConfig(__dirname);
 
-defaultConfig.resolver.assetExts.push("sqlite");
+Config.resolver.assetExts.push("sqlite");
 
-module.exports = defaultConfig;
+module.exports = Config;
 

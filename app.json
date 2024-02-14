@@ -15,6 +15,7 @@
       "assets/*"
     ],
     "ios": {
+      "jsEngine": "hermes",
       "supportsTablet": true,
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",
@@ -23,6 +24,7 @@
       "bundleIdentifier": "ECO.ecomJobsApp"
     },
     "android": {
+      "jsEngine": "hermes",
       "package": "ECM.ecomJobsApp"
     },
     "plugins": [

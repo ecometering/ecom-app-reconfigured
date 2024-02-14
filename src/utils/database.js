@@ -1,47 +1,109 @@
+import * as SQLite from 'expo-sqlite';
 import * as FileSystem from 'expo-file-system';
 import { Asset } from 'expo-asset';
-import * as SQLite from 'expo-sqlite';
-
-const databaseName = 'options.sqlite';
 
 async function openDatabase() {
-  const databaseUri = FileSystem.documentDirectory + databaseName;
-  const asset = Asset.fromModule(require('../../assets/options.sqlite'));
+  console.log('Opening database...');
+  const dbFileName = 'options.sqlite';
+  const dbFileUri = Asset.fromModule(require('../../assets/options.sqlite')).uri;
+  const dbFileDirectory = `${FileSystem.documentDirectory}SQLite/`;
+  const dbFilePath = dbFileDirectory + dbFileName;
 
-  // Check if the database file exists and if not, download it to the correct location
-  if (!(await FileSystem.getInfoAsync(databaseUri)).exists) {
-    await FileSystem.downloadAsync(asset.uri, databaseUri);
+  console.log(`Database directory: ${dbFileDirectory}`);
+
+  // Ensure the SQLite directory exists
+  await FileSystem.makeDirectoryAsync(dbFileDirectory, { intermediates: true });
+
+  // Check if the database file already exists in the file system
+  const fileInfo = await FileSystem.getInfoAsync(dbFilePath);
+  if (!fileInfo.exists) {
+      // If the database file doesn't exist, copy it from the bundled assets
+      console.log('Database file not found, copying from assets...');
+      await FileSystem.downloadAsync(dbFileUri, dbFilePath);
+      console.log('Database file copied successfully.');
+  } else {
+      console.log('Database file already exists, no need to copy.');
   }
 
-  return SQLite.openDatabase(databaseName);
+  // Open the database
+  console.log('Actually opening the database with SQLite...');
+  const db = SQLite.openDatabase(dbFilePath);
+  console.log('Database opened successfully.');
+  return db;
 }
 
-const fetchManufacturersForMeterType = async (meterType) => {
-  const db = await openDatabase();
+
+async function fetchTableNames(db) {
+  console.log('Fetching table names...');
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
+      console.log('Executing SQL to fetch table names...');
       tx.executeSql(
-        `SELECT DISTINCT manufacturer FROM ${meterType};`,
+        `SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';`,
         [],
-        (_, { rows }) => resolve(rows._array),
-        (_, err) => reject(err)
+        (_, { rows }) => {
+          console.log(`Received ${rows.length} rows from sqlite_master.`);
+          let tables = {};
+          for (let i = 0; i < rows.length; i++) {
+            const tableName = rows.item(i).name;
+            console.log(`Found table: ${tableName}`);
+            tables[tableName] = [];
+          }
+          resolve(tables);
+        },
+        (_, error) => {
+          console.error('SQL execution error:', error);
+          reject(error);
+        }
       );
     });
   });
-};
+}
 
-const fetchModelsForManufacturer = async (meterType, manufacturer) => {
-  const db = await openDatabase();
-  return new Promise((resolve, reject) => {
-    db.transaction(tx => {
-      tx.executeSql(
-        `SELECT model_code FROM ${meterType} WHERE manufacturer = ?;`,
-        [manufacturer],
-        (_, { rows }) => resolve(rows._array),
-        (_, err) => reject(err)
-      );
-    });
+const createJobsInProgressTable = (db) => {
+  console.log('Creating JobsInProgress table...');
+  db.transaction(tx => {
+    tx.executeSql(
+      `CREATE TABLE IF NOT EXISTS jobsInProgress (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        jobTitle TEXT NOT NULL,
+        description TEXT,
+        startDate TEXT,
+        endDate TEXT,
+        status TEXT
+      );`,
+      [],
+      () => console.log('Table jobsInProgress created successfully.'),
+      (_, error) => console.error('Error creating jobsInProgress table:', error)
+    );
   });
 };
 
-export { fetchManufacturersForMeterType, fetchModelsForManufacturer };
+async function getDatabaseTables() {
+  try {
+    const db = await openDatabase(); // Open the database
+    const tables = await fetchTableNames(db); // Fetch the table names
+    console.log('Database tables:', tables);
+    return tables;
+  } catch (error) {
+    console.error('Error fetching table names:', error);
+  }
+}
+
+async function testDatabaseAndTables() {
+  console.log('Testing database and table setup...');
+  try {
+      const db = await openDatabase(); // Open the preloaded database
+      await createJobsInProgressTable(db); // Ensure the jobsInProgress table exists
+      const tables = await fetchTableNames(db); // Fetch and log table names
+
+      console.log('Database tables verified:', tables);
+  } catch (error) {
+      console.error('Error during database and table testing:', error);
+  }
+}
+
+
+
+export { getDatabaseTables, createJobsInProgressTable,openDatabase,testDatabaseAndTables };
+// Example usage
