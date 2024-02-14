@@ -89,6 +89,8 @@ const SurveyFlowNavigator = () => {
   const { numberOfStreams = 0, meterDetails = {}} = useContext(AppContext);
   const meterType = meterDetails?.type;
   const meterPressure = meterDetails?.pressure; 
+  
+  return (
   <Stack.Navigator > 
     <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Existing Assets',nextScreen: ()=>assetSelection(meter,corrector,datalogger)}} />
     
@@ -157,6 +159,6 @@ const SurveyFlowNavigator = () => {
     <Stack.Screen name="AdditionalMaterial" component={AdditionalMaterialPage} />
   </Stack.Navigator>
 
-};
+);};
 
 export default SurveyFlowNavigator;

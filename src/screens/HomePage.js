@@ -45,6 +45,23 @@ function HomePage() {
         >
           <Text style={styles.buttonTxt}>Planned Job</Text>
         </Button>
+
+        <Button
+          onPress={() => {
+            navigationToPage({ navigationName: "InProgressJobsPage" });
+          }}
+          style={styles.button}
+        >
+          <Text style={styles.buttonTxt}> jobs in progress</Text>
+        </Button>
+        <Button
+          onPress={() => {
+            navigationToPage({ navigationName: "CompletedJobsPage" });
+          }}
+          style={styles.button}
+        >
+          <Text style={styles.buttonTxt}>Completed Job</Text>
+        </Button>
       </View>
       <RnButton title="Logout" onPress={() => {
         deleteItemAsync("userToken").then(() => {

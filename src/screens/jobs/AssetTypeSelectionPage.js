@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { unitH, unitW, width } from "../../utils/constant";
 import Header from "../../components/Header";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation,useRoute } from "@react-navigation/native";
 import Text from "../../components/Text";
 import { TextType } from "../../theme/typography";
 import TextInput from "../../components/TextInput";
@@ -20,9 +20,13 @@ import EcomHelper from "../../utils/ecomHelper";
 function AssetTypeSelectionPage() {
   console.log("AssetTypeSelectionPage Mounted"); // Initial render check
   const navigation = useNavigation();
+  const route = useRoute();
   const appContext = useContext(AppContext);
 
   console.log("AppContext Values", appContext); // Log context values
+
+  const { title, nextScreen } = route.params;
+
 
   const jobType = appContext.jobType;
   const meterDetails = appContext.meterDetails;
@@ -54,6 +58,7 @@ function AssetTypeSelectionPage() {
       EcomHelper.showInfoMessage(
         "You can move next if at least 1 asset type is selected"
       );
+      console.log("No asset type selected"); // Error check
       return;
     }
 
@@ -62,17 +67,13 @@ function AssetTypeSelectionPage() {
       isAmr: isAmr,
       isCorrector: isCorrector,
     });
+    const meter = isMeter;
+    const Corrector = isCorrector;
+    const DataLogger = isAmr;
 
-    if (isMeter) {
-      console.log("Navigating to EcvToMovExisting");
-      navigation.navigate("EcvToMovExisting");
-    } else if (isCorrector) {
-      console.log("Navigating to CorrectorDetailsPage");
-      navigation.navigate("CorrectorDetailsPage");
-    } else if (isAmr) {
-      console.log("Navigating to DataLoggerDetailsPage");
-      navigation.navigate("DataLoggerDetailsPage");
-    }
+    navigation.navigate(nextScreen(meter, Corrector, DataLogger));
+    
+
   };
 
   return (
@@ -81,7 +82,7 @@ function AssetTypeSelectionPage() {
         hasLeftBtn={true}
         hasCenterText={true}
         hasRightBtn={true}
-        centerText={""}
+        centerText={title}
         leftBtnPressed={backPressed}
         rightBtnPressed={nextPressed}
       />

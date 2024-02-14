@@ -128,7 +128,7 @@ const ExchangeFlowNavigator = () => {
   const meterPressure = meterDetails?.pressure; 
 
 
-
+  return(
   <Stack.Navigator >
   <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being Exchanged',nextScreen: ()=>assetSelection({ meter, corrector, datalogger }, 'Removal')}} />
   <Stack.Screen name="RemovedMeterDetails" component={MeterDetailsPage} initialParams={{title:' Removed Meter Details',nextScreen: ()=>RemovedmeterBadge(meterType)}} />
@@ -165,7 +165,7 @@ const ExchangeFlowNavigator = () => {
 
 
 </Stack.Navigator>
-}
+);};
 
 export default ExchangeFlowNavigator;
 

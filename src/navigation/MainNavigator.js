@@ -11,6 +11,8 @@ import HomePage from "../screens/HomePage";
 import PlannedJobPage from "../screens/PlannedJobPage";
 import SubmitSuccessPage from "../screens/SubmitSuccessPage";
 import JobTypePage from "../screens/JobTypePage";
+import InProgressJobsPage from "../screens/InProgressJobsPage";
+import CompletedJobsPage from "../screens/CompletedJobsPage";
 // calendar imports
 import CalendarPage from "../screens/calendar/CalendarPage";
 
@@ -140,6 +142,8 @@ const MainNavigator = () => {
             <Stack.Screen name="CalendarPage" component={CalendarPage} />
             <Stack.Screen name="NewJobPage" component={JobTypePage} />
             <Stack.Screen name="PlannedJobPage" component={PlannedJobPage} />
+            <Stack.Screen name="InProgressJobsPage" component={InProgressJobsPage} />
+            <Stack.Screen name="CompletedJobsPage" component={CompletedJobsPage} />
             <Stack.Screen  name="SiteDetailsPage" component={SiteDetailsPage} />
             <Stack.Screen  name="SitePhotoPage" 
         component={GenericPhotoPage} 

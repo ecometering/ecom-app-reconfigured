@@ -40,7 +40,7 @@ const assetSelection = ({ meter, corrector, datalogger }) => {
   const RemovalFlowNavigator = () => {
     const appContext = useContext(AppContext);
     const meterType = appContext.meterDetails?.type;
-
+return(
     <Stack.Navigator > 
     <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being Removed',nextScreen: ()=>assetSelection(meter,corrector,datalogger)}} />
     <Stack.Screen name="RemovedMeterDetails" component={MeterDetailsPage} initialParams={{title:' Removed Meter Details',nextScreen: ()=>meterBadge(meterType)}} />
@@ -73,7 +73,7 @@ const assetSelection = ({ meter, corrector, datalogger }) => {
 </Stack.Navigator>
     
     
-  }
+  );};
 
   export default RemovalFlowNavigator;
   // Function to determine the next page from DataLoggerDetails

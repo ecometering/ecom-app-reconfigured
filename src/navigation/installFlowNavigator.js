@@ -21,12 +21,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 const Stack = createStackNavigator();
 
-const assetSelection = ({ meter, corrector, datalogger }) => {
-  if (meter) return 'MeterDetails';
-  if (corrector) return 'CorrectorDetails';
-  if (datalogger) return 'DataLoggerDetails';
-  throw new Error('At least one asset must be selected.');
-};
+
 
 // Simplified meter badge logic
 const meterBadge = (meterType) => meterType === 'Diaphragm' ? 'MeterIndex' : 'MeterDataBadge';
@@ -100,13 +95,23 @@ const getNextScreen = (currentScreenName, numberOfStreams) => {
   }
 };
 
+
 const InstallFlowNavigator = () => {
   const {numberOfStreams, meterDetails = {}} = useContext(AppContext);
   // const {  } = useContext(AppContext);
   const meterType = meterDetails?.type || "";
-  const meterPressure = meterDetails?.pressure || ""; 
+  const meterPressure = meterDetails?.pressure || "";
+  
   console.log ("loading install flow navigator with ", numberOfStreams, " streams");
-  <Stack.Navigator> 
+  const assetSelection = ({ meter, corrector, datalogger }) => {
+    if (meter) return 'MeterDetails';
+    if (corrector) return 'CorrectorDetails';
+    if (datalogger) return 'DataLoggerDetails';
+    throw new Error('At least one asset must be selected.');
+  };
+ 
+ return(
+ <Stack.Navigator> 
     <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being installed',nextScreen: ()=>assetSelection(meter,corrector,datalogger)}} />
     
     {/* meter process */}
@@ -168,6 +173,6 @@ const InstallFlowNavigator = () => {
     <Stack.Screen name="AdditionalMaterial" component={AdditionalMaterialPage} />
   </Stack.Navigator>
 
-};
+);};
 
 export default InstallFlowNavigator;

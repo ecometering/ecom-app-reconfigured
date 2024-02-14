@@ -2,35 +2,20 @@ import * as SQLite from 'expo-sqlite';
 import * as FileSystem from 'expo-file-system';
 import { Asset } from 'expo-asset';
 
+
+const databaseName = 'options.sqlite';
+
 async function openDatabase() {
-  console.log('Opening database...');
-  const dbFileName = 'options.sqlite';
-  const dbFileUri = Asset.fromModule(require('../../assets/options.sqlite')).uri;
-  const dbFileDirectory = `${FileSystem.documentDirectory}SQLite/`;
-  const dbFilePath = dbFileDirectory + dbFileName;
-
-  console.log(`Database directory: ${dbFileDirectory}`);
-
-  // Ensure the SQLite directory exists
-  await FileSystem.makeDirectoryAsync(dbFileDirectory, { intermediates: true });
-
-  // Check if the database file already exists in the file system
-  const fileInfo = await FileSystem.getInfoAsync(dbFilePath);
-  if (!fileInfo.exists) {
-      // If the database file doesn't exist, copy it from the bundled assets
-      console.log('Database file not found, copying from assets...');
-      await FileSystem.downloadAsync(dbFileUri, dbFilePath);
-      console.log('Database file copied successfully.');
-  } else {
-      console.log('Database file already exists, no need to copy.');
+  if (!(await FileSystem.getInfoAsync(FileSystem.documentDirectory + 'SQLite')).exists) {
+    await FileSystem.makeDirectoryAsync(FileSystem.documentDirectory + 'SQLite');
   }
-
-  // Open the database
-  console.log('Actually opening the database with SQLite...');
-  const db = SQLite.openDatabase(dbFilePath);
-  console.log('Database opened successfully.');
-  return db;
+  await FileSystem.downloadAsync(
+    Asset.fromModule(require('../../assets/options.sqlite')).uri,
+    FileSystem.documentDirectory + 'SQLite/options.sqlite'
+  );
+  return SQLite.openDatabase('options.sqlite');
 }
+
 
 
 async function fetchTableNames(db) {
@@ -104,6 +89,38 @@ async function testDatabaseAndTables() {
 }
 
 
+const fetchManufacturersForMeterType = async (meterType) => {
+  const db = await openDatabase();
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        `SELECT DISTINCT manufacturer FROM '${meterType}';`,
+        [],
+        (_, { rows }) => resolve(rows._array),
+        (_, err) => reject(err)
+      );
+    });
+  });
+};
 
-export { getDatabaseTables, createJobsInProgressTable,openDatabase,testDatabaseAndTables };
+const fetchModelsForManufacturer = async (meterType, manufacturer) => {
+  const db = await openDatabase();
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        `SELECT model_code FROM '${meterType}' WHERE manufacturer = ?;`,
+        [manufacturer],
+        (_, { rows }) => resolve(rows._array),
+        (_, err) => reject(err)
+      );
+    });
+  });
+};
+
+export {  };
+
+
+export { fetchManufacturersForMeterType, fetchModelsForManufacturer,getDatabaseTables, createJobsInProgressTable,openDatabase,testDatabaseAndTables };
 // Example usage
+
+
