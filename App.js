@@ -18,13 +18,26 @@ const Stack = createStackNavigator();
 
 
 const App = () => {
+  // async function testFetchManufacturersForMeterType(meterType) {
+  //   console.log(`Testing fetchManufacturersForMeterType for meter type: ${meterType}`);
+    
+  //   try {
+  //     // Assuming meterType is correctly mapped to one of the keys in tableNameMap
+  //     // For example, '5' for 'turbine' if using the adjusted mapping approach
+  //     const manufacturers = await fetchManufacturersForMeterType(meterType);
+  //     console.log('Fetched manufacturers:', manufacturers);
+  //   } catch (error) {
+  //     console.error('Error fetching manufacturers:', error);
+  //   }
+  // }
+  
+  // // Example usage of the test function
+  // testFetchManufacturersForMeterType('5');
   return (
     
     <AppContextProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <NavigationContainer>
-       <InstallFlowNavigator/>
-       </NavigationContainer>
+        <MainNavigator/>
       </GestureHandlerRootView>
     </AppContextProvider>
     

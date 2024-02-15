@@ -19,83 +19,41 @@ import EcomHelper from "../../utils/ecomHelper";
 
 
 function AssetTypeSelectionPage() {
-  console.log("AssetTypeSelectionPage Mounted"); // Initial render check
   const navigation = useNavigation();
-  const route = useRoute();
-  const appContext = useContext(AppContext);
+  const { params } = useRoute();
+  const { setMeterDetails, jobType, meterDetails } = useContext(AppContext);
 
-  console.log("AppContext Values", appContext); // Log context values
+  // Destructuring parameters directly to ensure they're accessed consistently
+  const { title, nextScreen } = params;
 
-  const { title} = route.params;
-  console.log("Title:", title); // Log check
-
-  const jobType = appContext.jobType;
-  const meterDetails = appContext.meterDetails;
- 
+  // State initialization
   const [isMeter, setIsMeter] = useState(meterDetails?.isMeter ?? false);
-  console.log("isMeter State:", isMeter); // State update check
-  const [nextScreen, setNextScreen] = useState(route.params.nextScreen);
   const [isAmr, setIsAmr] = useState(meterDetails?.isAmr ?? false);
-  console.log("isAmr State:", isAmr); // State update check
-  
   const [isCorrector, setIsCorrector] = useState(meterDetails?.isCorrector ?? false);
-  console.log("isCorrector State:", isCorrector); 
 
-  // Removed unused state for clarity
-
-  // const assetSelection = ( isMeter, isCorrector, isAmr,jobType) => {
-  //   if (jobType === 'Install') {
-  //     // For 'install' job type, determine which page to return based on asset selection
-  //     if (isMeter) return 'MeterDetails';
-  //     if (isCorrector) return 'CorrectorDetails';
-  //     if (isAmr) return 'DataLoggerDetails';
-  //     // Additional conditions can be added here if there are more assets
-  //   } else if (jobType === 'Maintenance' || jobType === 'Survey') {
-  //     if (meter) return 'ExistingMeterDetails';
-  // if (corrector) return 'ExistingCorrectorDetails';
-  // if (datalogger) return 'ExistingDataLoggerDetails';
-  //   }
-  //   else if (jobType === 'Removal'|| jobType === 'Warrant' || jobType === 'Exchange') {
-  //     if (meter) return 'RemovedMeterDetails';
-  //   if (corrector) return 'RemovedCorrectorDetails';
-  //   if (datalogger) return 'RemovedDataLoggerDetails';}
-  //   };
-// const nextScreen = assetSelection(meterDetails?.isMeter,meterDetails?.isCorrector,meterDetails?.isAmr,jobType);
+  
 console.log("Next Screen:", nextScreen); // Log check
 console.log("jobType:", jobType); // Log check
 
 const backPressed = () => {
     console.log("Back Pressed"); // Event handler check
-    appContext.setMeterDetails({
-      isMeter: isMeter,
-      isAmr: isAmr,
-      isCorrector: isCorrector,
-    });
+    setMeterDetails({ isMeter, isAmr, isCorrector });
     navigation.goBack();
   };
 
   const nextPressed = () => {
     console.log("Next Pressed"); // Event handler check
     if (!isMeter && !isAmr && !isCorrector) {
-      EcomHelper.showInfoMessage(
-        "You can move next if at least 1 asset type is selected"
-      );
-      console.log("No asset type selected"); // Error check
+      EcomHelper.showInfoMessage("You must select at least one asset type to proceed.");
       return;
-    }
+  }
 
-    appContext.setMeterDetails({
-      isMeter: isMeter,
-      isAmr: isAmr,
-      isCorrector: isCorrector,
-    });
+    setMeterDetails({ isMeter, isAmr, isCorrector });
+  navigation.navigate(nextScreen, { ...params, meterDetails });
 
-
-    const screenToNavigate = nextScreen(isAmr, isCorrector, isMeter);
 
     // Navigate to the determined screen
-    navigation.navigate(screenToNavigate);
-    
+
 
   };
 

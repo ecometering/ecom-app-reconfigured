@@ -27,7 +27,7 @@ export const width = Dimensions.get('window').width;
 
 
 
-export const NUMBER_OF_DEALS = [
+export const NUMBER_OF_DIALS = [
   {label: '4', value: 4},
   {label: '5', value: 5},
   {label: '6', value: 6},

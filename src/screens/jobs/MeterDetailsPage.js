@@ -12,7 +12,7 @@ import {
   height,
   isIos,
 
-  NUMBER_OF_DEALS,
+  NUMBER_OF_DIALS,
   PULSE_VALUE,
   METER_POINT_LOCATION_CHOICES,
   METER_PRESSURE_TIER_CHOICES,
@@ -261,7 +261,7 @@ function MeterDetailsPage() {
                   {label: 'U-ULTRASONIC', value: 6},
                   {label: 'Unknown', value: 7},
                 ]}
-                placeholder={"Meter type"}
+                placeholder={"Meter type                       "}
                 onChange={(item) => {
                   console.log(item);
                   setType(item);
@@ -284,7 +284,7 @@ function MeterDetailsPage() {
     width={width}
     value={manufacturer}
     valueList={manufacturers} // Dynamically populated from SQLite database
-    placeholder={"Meter Manufacturer"}
+    placeholder={"Meter Manufacturer   "}
     onChange={(item) => {
       console.log(item);
       setManufacturer(item);
@@ -299,7 +299,7 @@ function MeterDetailsPage() {
                 width={width * 0.35}
                 value={uom}
                 valueList={UNIT_OF_MEASURE_CHOICES}
-                placeholder={"UOM"}
+                placeholder={"UOM                   "}
                 onChange={(item) => {
                   console.log(item);
                   setUom(item);
@@ -309,7 +309,7 @@ function MeterDetailsPage() {
     width={width * 0.5}
     value={model}
     valueList={models} // Dynamically populated based on the selected manufacturer
-    placeholder={"Meter Model"}
+    placeholder={"Meter Model                            "}
     onChange={(item) => {
       console.log(item);
       setModel(item);
@@ -362,7 +362,7 @@ function MeterDetailsPage() {
             <View style={styles.spacer} />
             <View style={styles.row}>
               <TextInputWithTitle
-                title={"Measuring capacity"}
+                title={"Measuring capacity                 "}
                 value={measuringCapacity}
                 onChangeText={(txt) => {
                   const numericValue = txt.replace(/[^0-9]/g, "");
@@ -386,7 +386,7 @@ function MeterDetailsPage() {
             <View style={styles.row}>
               <TextInputWithTitle
                 value={reading}
-                title={"Meter Reading"}
+                title={"Meter Reading                                    "}
                 onChangeText={(txt) => {
                   //validation
                   const numericValue = txt.replace(/[^0-9]/g, "");
@@ -398,7 +398,7 @@ function MeterDetailsPage() {
               <EcomDropDown
                 width={'35%'}
                 value={dialNumber}
-                valueList={NUMBER_OF_DEALS}
+                valueList={NUMBER_OF_DIALS}
                 placeholder={"Number of dials"}
                 onChange={(item) => {
                   console.log(item);
@@ -408,7 +408,7 @@ function MeterDetailsPage() {
             </View>
             <View style={styles.spacer} />
             <View style={styles.row}>
-              <View style={{ width: '35%'}}>
+              <View style={{ width: '65%'}}>
                 <Text>{"Meter serial number"}</Text>
                 <View style={{ height: 5 }} />
                 <View style={styles.row}>
@@ -535,7 +535,7 @@ const styles = StyleSheet.create({
   },
   spacer: {
     height: 20, 
-    width :width*0.05,
+    width :width*0.0001,
   },
     // Adjust the dropdown and input container widths in the row
   scanBtn: {

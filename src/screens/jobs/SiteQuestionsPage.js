@@ -17,7 +17,7 @@ import { unitH, width } from "../../utils/constant";
 import { AppContext } from "../../context/AppContext";
 import EcomHelper from "../../utils/ecomHelper";
 import * as ExpoImagePicker from "expo-image-picker";
-
+import ImagePickerButton from "../../components/ImagePickerButton";
 function SiteQuestionsPage() {
   const navigation = useNavigation();
 
@@ -40,56 +40,6 @@ function SiteQuestionsPage() {
 
   const [byPassImage, setByPassImage] = useState(meterDetails?.byPassImage);
 
-  const handleImagePicker = () => {
-    Alert.alert("Choose Image", "how to choose image ?", [
-      {
-        text: "Cancel",
-        onPress: () => {},
-        style: "cancel",
-      },
-      {
-        text: "Choose from gallery",
-        onPress: chooseFromGallery,
-      },
-      {
-        text: "Take photo",
-        onPress: takePhoto,
-      },
-      {},
-    ]);
-  };
-
-  const takePhoto = () => {
-    const options = {
-      title: "Take Photo",
-      mediaType: "photo",
-      quality: 1,
-    };
-
-    ExpoImagePicker.launchCameraAsync(options)
-      .then((response) => {
-        setByPassImage(response.assets[0].uri);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const chooseFromGallery = () => {
-    const options = {
-      title: "Choose from Gallery",
-      mediaType: "photo",
-      quality: 1,
-    };
-
-    ExpoImagePicker.launchImageLibraryAsync(options)
-      .then((response) => {
-        setByPassImage(response.assets[0].uri);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
 
   const backPressed = () => {
     const currentMeterDetails = {
@@ -101,6 +51,7 @@ function SiteQuestionsPage() {
       carryOutReason: carryOutReason,
       isFitted: isFitted,
       isStandard: isStandard,
+      byPassImage: byPassImage,
     };
     appContext.setMeterDetails(currentMeterDetails);
     navigation.goBack();
@@ -123,17 +74,6 @@ function SiteQuestionsPage() {
     }
   
     // Attempt to upload bypass image if present
-    if (byPassImage) {
-      console.log("Attempting to upload bypass image...");
-      try {
-        const response = await fetch(byPassImage);
-        const blob = await response.blob();
-        appContext.setBlobs((prev) => [...prev, blob]);
-        console.log("Bypass image uploaded successfully.");
-      } catch (err) {
-        console.log("Error uploading bypass image:", err);
-      }
-    }
   
     // Update meter details in context
     const currentMeterDetails = {
@@ -145,6 +85,7 @@ function SiteQuestionsPage() {
       carryOutReason: carryOutReason,
       isFitted: isFitted,
       isStandard: isStandard,
+      byPassImage: byPassImage,
     };
   
     appContext.setMeterDetails(currentMeterDetails);
@@ -286,18 +227,21 @@ function SiteQuestionsPage() {
             />
           </View>
 
-          {byPassImage && (
-            <Image
-              source={{ uri: byPassImage }}
-              style={styles.image}
-              resizeMode="contain"
-            />
+          
+          
+          {isFitted && (
+            <View style={styles.imagePickerContainer}>
+              <ImagePickerButton
+                onImageSelected={(uri) => setByPassImage(uri)}
+              />
+              {byPassImage && (
+                <Image
+                  source={{ uri: byPassImage }}
+                  style={styles.image}
+                />
+              )}
+            </View>
           )}
-          {isFitted && <Button
-            title={byPassImage === undefined ? "Choose Image" : "Change Image"}
-            onPress={handleImagePicker}
-          />}
-
           <View style={styles.spacer} />
           <View style={styles.spacer} />
           <Text>

@@ -2,7 +2,7 @@
 import React from 'react';
 import { Alert, Button } from 'react-native';
 import * as ExpoImagePicker from 'expo-image-picker';
-
+import * as MediaLibrary from 'expo-media-library';
 // Reusable Image Picker Button Component
 const ImagePickerButton = ({ onImageSelected }) => {
   const requestPermissions = async () => {
@@ -35,10 +35,13 @@ const ImagePickerButton = ({ onImageSelected }) => {
       });
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
-        onImageSelected(result.assets[0].uri);
+        // Save the photo to the gallery before passing it to the callback
+        const asset = await MediaLibrary.createAssetAsync(result.assets[0].uri);
+        onImageSelected(asset.uri); // Pass the saved photo's URI
       }
     }
   };
+
 
   const chooseFromGallery = async () => {
     if (await requestPermissions()) {
@@ -52,7 +55,7 @@ const ImagePickerButton = ({ onImageSelected }) => {
     }
   };
 
-  return <Button title="Choose Image" onPress={handleImagePicker} />;
+  return <Button title="Choose Image" onPress={()=>handleImagePicker()} />;
 };
 
 export default ImagePickerButton;

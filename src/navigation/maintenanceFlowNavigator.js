@@ -7,7 +7,7 @@ import RegulatorPage from "../screens/jobs/RegulatorPage";
 import ChatterBoxPage from "../screens/jobs/ChatterBoxPage";
 import AdditionalMaterialPage from "../screens/jobs/AdditionalMaterialPage";
 import AssetTypeSelectionPage from "../screens/jobs/AssetTypeSelectionPage";
-
+import ExistingGatewayScreen from "../screens/gateways/exisitingGateWay";
 import MaintenanceQuestionsPage from "../screens/maintenance/MaintenanceQuestionsPage";
 import SlamshutPage from "../screens/jobs/SlamshutPage";
 import WaferCheckPage from "../screens/jobs/WaferCheckPage";
@@ -39,7 +39,7 @@ const setAndSeal = (meterType, meterPressure) => {
 };
 
 const nextAfterMeterPhoto = ({ corrector, datalogger, meterType, meterPressure }) => {
-  if (corrector && datalogger) return 'CorrectorDetails';
+  if (corrector && datalogger) return 'ExistingCorrectorDetails';
   if (corrector) return 'ExistingCorrectorDetails';
   if (datalogger) return 'ExistingDataLoggerDetails';
   return setAndSeal(meterType, meterPressure);
@@ -98,8 +98,8 @@ const MaintenanceFlowNavigator = () => {
   
   return(
   <Stack.Navigator > 
-    <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Existing Assets',nextScreen: ()=>assetSelection(meter,corrector,datalogger)}} />
-    
+    <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Existing Assets',nextScreen:'ExistingGateway'}} />
+    <Stack.Screen name="ExistingGateway" component={ExistingGatewayScreen} />
     {/* meter process */}
     <Stack.Screen name="MeterDetails" component={MeterDetailsPage}
     initialParams={{title: 'Existing Meter Details',nextScreen: ExistingEcvToMov

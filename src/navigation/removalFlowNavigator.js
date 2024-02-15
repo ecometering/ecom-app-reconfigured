@@ -6,6 +6,7 @@ import AssetTypeSelectionPage from "../screens/jobs/AssetTypeSelectionPage";
 import AdditionalMaterialPage from "../screens/jobs/AdditionalMaterialPage";
 import { AppContext } from "../context/AppContext";
 import React, { useState, useEffect,useContext } from "react";
+import RemovalGatewayScreen from "../screens/gateways/removalGateWay";
 
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -42,7 +43,8 @@ const assetSelection = ({ meter, corrector, datalogger }) => {
     const meterType = appContext.meterDetails?.type;
 return(
     <Stack.Navigator > 
-    <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being Removed',nextScreen: ()=>assetSelection(meter,corrector,datalogger)}} />
+    <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being Removed',nextScreen:'RemovedGateway'}} />
+    <stack.Screen name="RemovedGateway" component={RemovalGatewayScreen} />
     <Stack.Screen name="RemovedMeterDetails" component={MeterDetailsPage} initialParams={{title:' Removed Meter Details',nextScreen: ()=>meterBadge(meterType)}} />
     <Stack.Screen 
     key = "RemovedMeterDataBadge"

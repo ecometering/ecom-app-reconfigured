@@ -31,7 +31,7 @@ import { PrimaryColors } from "../../theme/colors";
 
 import * as ExpoImagePicker from "expo-image-picker";
 import EcomDropDown from "../../components/DropDown";
-
+import { fetchManufacturersForMeterType, fetchModelsForManufacturer } from "../../utils/database";
 const alphanumericRegex = /^[a-zA-Z0-9]+$/;
 
 export default function CorrectorDetailsPage() {
@@ -212,20 +212,20 @@ export default function CorrectorDetailsPage() {
   const [models, setModels] = useState([]);
 
   useEffect(() => {
-    fetchManufacturersForMeterType('your_meter_type').then(data => {
+    fetchManufacturersForMeterType('4').then(data => {
       setManufacturers(data); // Assuming data is in the correct format
     }).catch(error => console.error(error));
   }, []);
 
-  const onManufacturerChange = async (item) => {
-    setManufacturer(item);
-    try {
-      const modelsData = await fetchModelsForManufacturer('your_meter_type', item);
-      setModels(modelsData); // Update models based on the selected manufacturer
-    } catch (error) {
-      console.error(error);
-    }
-  };
+const onManufacturerChange = async (item) => {
+  setManufacturer(item);
+  try {
+    const modelsData = await fetchModelsForManufacturer('4', item.value); // Assuming item.value contains the manufacturer's identifier
+    setModels(modelsData); // Update models based on the selected manufacturer
+  } catch (error) {
+    console.error("Failed to fetch models for manufacturer:", error);
+  }
+};
   const scanBarcode = () => {
     setIsModal(true);
   };

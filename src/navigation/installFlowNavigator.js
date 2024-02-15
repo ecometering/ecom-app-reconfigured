@@ -126,7 +126,7 @@ const InstallFlowNavigator = () => {
 
  return(
  <Stack.Navigator> 
-    <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being installed',nextScreen: InstallGatewayScreen }} />
+    <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being installed',nextScreen: 'InstallGatewayScreen' }} />
     <Stack.Screen name="InstallGatewayScreen" component={InstallGatewayScreen} />
     {/* meter process */}
     <Stack.Screen  name="MeterDetails" component={MeterDetailsPage}

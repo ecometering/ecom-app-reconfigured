@@ -89,36 +89,78 @@ async function testDatabaseAndTables() {
 }
 
 
-const fetchManufacturersForMeterType = async (meterType) => {
-  const db = await openDatabase();
-  return new Promise((resolve, reject) => {
-    db.transaction(tx => {
-      tx.executeSql(
-        `SELECT DISTINCT manufacturer FROM '${meterType}';`,
-        [],
-        (_, { rows }) => resolve(rows._array),
-        (_, err) => reject(err)
-      );
+  const fetchManufacturersForMeterType = async (meterType) => {
+    const tableNameMap = {
+      1: 'diaphragm',
+      2: 'Tin_case_diaphragm',
+      3: 'rotary',
+      4: 'correctors',
+      5: 'turbine',
+      6: 'ultrasonic',
+    };
+  
+    const tableName = tableNameMap[meterType]; // Use meterType to get the correct table name
+    if (!tableName) {
+      throw new Error(`Invalid meter type: ${meterType}`);
+    }
+  
+    const db = await openDatabase();
+    return new Promise((resolve, reject) => {
+      db.transaction(tx => {
+        tx.executeSql(
+          `SELECT DISTINCT manufacturer FROM ${tableName};`,
+          [],
+          (_, { rows }) => resolve(rows._array),
+          (_, err) => reject(err)
+        );
+      });
     });
-  });
-};
-
-const fetchModelsForManufacturer = async (meterType, manufacturer) => {
-  const db = await openDatabase();
-  return new Promise((resolve, reject) => {
-    db.transaction(tx => {
-      tx.executeSql(
-        `SELECT model_code FROM '${meterType}' WHERE manufacturer = ?;`,
-        [manufacturer],
-        (_, { rows }) => resolve(rows._array),
-        (_, err) => reject(err)
-      );
+  }
+  const fetchModelsForManufacturer = async (meterType, manufacturer) => {
+    const tableNameMap = {
+      1: 'diaphragm', // Example mapping, adjust according to your actual data
+      2: 'Tin_case_diaphragm', // Use the actual numeric values as keys
+      3: 'rotary',
+      4: 'correctors', // Assuming there's a numeric value associated with 'corrector'
+      5: 'turbine',
+      6: 'ultrasonic',
+    };
+  
+    console.log(`Fetching models for meterType: ${meterType}, manufacturer: ${manufacturer}`);
+  
+    // Retrieve the table name based on the meter type
+    const tableName = tableNameMap[meterType];
+    if (!tableName) {
+      console.error("Invalid meter type provided:", meterType);
+      return Promise.reject(new Error("Invalid meter type"));
+    }
+  
+    console.log(`Using table: ${tableName} for meterType: ${meterType}`);
+  
+    const db = await openDatabase(); // Ensure openDatabase() is defined and returns a database connection
+  
+    return new Promise((resolve, reject) => {
+      db.transaction(tx => {
+        const query = `SELECT model_code FROM ${tableName} WHERE manufacturer = ?;`;
+        console.log(`Executing query: ${query} with manufacturer: ${manufacturer}`);
+        
+        tx.executeSql(
+          query,
+          [manufacturer],
+          (_, { rows }) => {
+            console.log(`Query successful, rows returned: ${rows.length}`);
+            resolve(rows._array);
+          },
+          (_, err) => {
+            console.error("Query error:", err);
+            reject(err);
+          }
+        );
+      });
     });
-  });
-};
-
-export {  };
-
+  };
+  
+  
 
 export { fetchManufacturersForMeterType, fetchModelsForManufacturer,getDatabaseTables, createJobsInProgressTable,openDatabase,testDatabaseAndTables };
 // Example usage

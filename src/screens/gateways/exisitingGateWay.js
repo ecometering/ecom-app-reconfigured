@@ -3,7 +3,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { AppContext } from '../../context/AppContext';
 
 
-const InstallGatewayScreen = () => {
+const ExistingGatewayScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const {  meterDetails } = useContext(AppContext);
@@ -17,11 +17,11 @@ console.log(" gateway screen",isMeter,isCorrector,isAmr);
         console.log('InstallGatewayScreen Mounted');
         // Enhanced conditional logic
         if (isMeter) {
-            navigation.replace('MeterDetails');
+            navigation.replace('ExistingMeterDetails');
         } else if (isCorrector) {
-            navigation.replace('CorrectorDetails');
+            navigation.replace('ExistingCorrectorDetails');
         } else if (isAmr) {
-            navigation.replace('DataLoggerDetails');
+            navigation.replace('ExistingDataLoggerDetails');
         } else {
             // Add a default navigation or error handling if needed
             console.log('No conditions met, staying on the current screen or navigating to a default screen.');
@@ -32,4 +32,4 @@ console.log(" gateway screen",isMeter,isCorrector,isAmr);
     return null; // This component does not render anything
 };
 
-export default InstallGatewayScreen;
+export default ExistingGatewayScreen;
