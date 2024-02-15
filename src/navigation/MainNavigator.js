@@ -132,7 +132,7 @@ const MainNavigator = () => {
     
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {/* {!appContext.userLogged ? (
+        {/* {!AppContext.userLogged ? (
           <Stack.Group>
             <Stack.Screen name="LogIn" component={LoginPage} />
           </Stack.Group>
@@ -191,8 +191,9 @@ const MainNavigator = () => {
           <Stack.Screen name='SubmitSuccessPage' component={SubmitSuccessPage}/>  
 
           </Stack.Group>
+        {/* )} */}
         
-      </Stack.Navigator>
+        </Stack.Navigator>
     </NavigationContainer>
   );
 };

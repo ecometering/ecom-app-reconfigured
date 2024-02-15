@@ -14,12 +14,18 @@ import ReliefRegulatorPage from "../screens/jobs/ReliefRegulatorPage";
 import ActiveRegulatorPage from "../screens/jobs/ActiveRegulatorPage";
 import FilterPage from "../screens/jobs/FilterPage";
 import { AppContext } from "../context/AppContext";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext,createContext } from "react";
+
+// import gateways 
+import InstallGatewayScreen from "../screens/gateways/installGateWay";
+
 
 import { createStackNavigator } from "@react-navigation/stack";
 
 
 const Stack = createStackNavigator();
+
+
 
 
 
@@ -95,33 +101,33 @@ const getNextScreen = (currentScreenName, numberOfStreams) => {
   }
 };
 
-  const assetSelection = ( isMeter, isCorrector, isAmr) => {
-    if (isMeter) return 'MeterDetails';
-    
-    if (isCorrector) return 'CorrectorDetails';
-    if (isAmr) return 'DataLoggerDetails';
-    else 'MeterDetails'
-  };
+ 
 const InstallFlowNavigator = () => {
+  
   const {numberOfStreams, meterDetails = {}} = useContext(AppContext);
   // const {isMeter, isCorrector, isAmr} = meterDetails;
-  // const {  } = useContext(AppContext);
+   
+  const { isAmr = false, isCorrector = false, isMeter = false } = meterDetails || {};
+ 
 
-  const nextScreen = assetSelection(isMeter,isCorrector,isAmr);
-   console.log ("Meter details in install flow navigator", meterDetails)
-  const isCorrector = meterDetails?.isCorrector || false;
-  const isAmr = meterDetails?.isAmr || false;
-  const isMeter = meterDetails?.isMeter || false;
+ const determineFirstScreen = () => {
+  if (isMeter) return 'MeterDetails';
+  if (isCorrector) return 'CorrectorDetails';
+  if (isAmr) return 'DataLoggerDetails';
+ 
+
+ };
   const meterType = meterDetails?.type || "";
   const meterPressure = meterDetails?.pressure || "";
+  console.log ("meterDetails", meterDetails)
+
   
   console.log ("loading install flow navigator with ", numberOfStreams, " streams");
 
- console.log (assetSelection(isMeter,isCorrector,isAmr))
  return(
  <Stack.Navigator> 
-    <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being installed',nextScreen: nextScreen}} />
-    
+    <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being installed',nextScreen: InstallGatewayScreen }} />
+    <Stack.Screen name="InstallGatewayScreen" component={InstallGatewayScreen} />
     {/* meter process */}
     <Stack.Screen  name="MeterDetails" component={MeterDetailsPage}
     initialParams={{title: 'New Meter Details',nextScreen: 'NewEcvToMov'

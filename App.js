@@ -7,6 +7,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MainNavigator from './src/navigation/MainNavigator';
 import MeterDetailsPage from "./src/screens/jobs/MeterDetailsPage";
+import InstallFlowNavigator from './src/navigation/installFlowNavigator';
 
 import { getDatabaseTables,createJobsInProgressTable,openDatabase,testDatabaseAndTables,fetchManufacturersForMeterType } from './src/utils/database';
 
@@ -21,7 +22,9 @@ const App = () => {
     
     <AppContextProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
-         <MainNavigator/>
+        <NavigationContainer>
+       <InstallFlowNavigator/>
+       </NavigationContainer>
       </GestureHandlerRootView>
     </AppContextProvider>
     

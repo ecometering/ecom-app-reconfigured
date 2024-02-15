@@ -70,6 +70,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontWeight: 'bold',
     marginRight: 10,
+    fontSize: 15,
   },
   row: {
     flexDirection: 'row',
@@ -80,6 +81,7 @@ const styles = StyleSheet.create({
   cell: {
     flex: 1,
     marginRight: 10,
+    fontSize:12 , 
   },
   noJobsText: {
     padding: 10,
