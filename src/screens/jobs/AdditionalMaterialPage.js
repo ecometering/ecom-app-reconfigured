@@ -170,12 +170,13 @@ function AdditionalMaterialPage() {
             <View style={styles.spacer} />
             <View style={styles.row}>
               <View style={{width: width * 0.3}}>
-                {/* <Text>Item Code</Text> */}
                 <View style={styles.spacer2} />
                 <EcomDropDown
                   width={width * 0.3}
                   value={item}
-                  valueList={ADDITIONAL_MATERIALS_ITEM_CODE_LIST}
+                  valueList={[
+                    { _index: 1, label: '1', value: '1' },
+                    { _index: 2, label: '2', value: '2' }]}
                   placeholder={'Item Code'}
                   onChange={e => {
                     console.log(e);
