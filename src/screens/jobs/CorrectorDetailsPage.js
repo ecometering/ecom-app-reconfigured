@@ -213,15 +213,18 @@ export default function CorrectorDetailsPage() {
 
   useEffect(() => {
     fetchManufacturersForMeterType('4').then(data => {
-      setManufacturers(data); // Assuming data is in the correct format
+      console.log("---------------1-----------------corrector details", data)
+      setManufacturers(data.map(manufacturer => ({ label: manufacturer.Manufacturer, value: manufacturer.Manufacturer }))); // Assuming data is in the correct format
     }).catch(error => console.error(error));
   }, []);
 
 const onManufacturerChange = async (item) => {
   setManufacturer(item);
+  console.log("---------item", item)
   try {
     const modelsData = await fetchModelsForManufacturer('4', item.value); // Assuming item.value contains the manufacturer's identifier
-    setModels(modelsData); // Update models based on the selected manufacturer
+    console.log("corrector-----------", modelsData)
+    setModels(modelsData.map((model, index) => ({ label: model["Model Code (A0083)"], value: index }))); // Update models based on the selected manufacturer
   } catch (error) {
     console.error("Failed to fetch models for manufacturer:", error);
   }
@@ -369,8 +372,8 @@ const onManufacturerChange = async (item) => {
                     valueList={manufacturers}
                     placeholder={"Corrector Manufacturer"}
                     onChange={(item) => {
-                      console.log(item);
-                      onManufacturerChange
+                      console.log("------",item);
+                      onManufacturerChange(item)
                     }}
                   />
                 </View>
