@@ -6,13 +6,15 @@ import { Asset } from 'expo-asset';
 const databaseName = 'options.sqlite';
 
 async function openDatabase() {
+  console.log("opendatabase")
   if (!(await FileSystem.getInfoAsync(FileSystem.documentDirectory + 'SQLite')).exists) {
     await FileSystem.makeDirectoryAsync(FileSystem.documentDirectory + 'SQLite');
   }
+  console.log("opendatabase_end")
   await FileSystem.downloadAsync(
     Asset.fromModule(require('../../assets/options.sqlite')).uri,
     FileSystem.documentDirectory + 'SQLite/options.sqlite'
-  );
+  ); 
   return SQLite.openDatabase('options.sqlite');
 }
 
@@ -90,9 +92,10 @@ async function testDatabaseAndTables() {
 
 
   const fetchManufacturersForMeterType = async (meterType) => {
+    console.log("--------------------------------------fetchManufacturersForMeterType--------------start")
     const tableNameMap = {
-      1: 'diaphragm',
-      2: 'Tin_case_diaphragm',
+      1: 'diaphrgam',
+      2: 'Tin Case Diaphrgam',
       3: 'rotary',
       4: 'correctors',
       5: 'turbine',
@@ -100,33 +103,36 @@ async function testDatabaseAndTables() {
     };
   
     const tableName = tableNameMap[meterType]; // Use meterType to get the correct table name
+    console.log(">>>  1  >>>meterType / tableName:", meterType, "/ ",tableName);
     if (!tableName) {
       throw new Error(`Invalid meter type: ${meterType}`);
     }
-  
     const db = await openDatabase();
+    console.log(">>>  2  >>>db status", db)
+    
     return new Promise((resolve, reject) => {
-      db.transaction(tx => {
-        tx.executeSql(
-          `SELECT DISTINCT manufacturer FROM ${tableName};`,
-          [],
-          (_, { rows }) => resolve(rows._array),
-          (_, err) => reject(err)
-        );
-      });
+        db.transaction(tx => {
+          tx.executeSql(
+            `SELECT DISTINCT Manufacturer FROM "${tableName}";`,
+            [],
+            (_, { rows }) => {console.log(">>>  3  >>>", rows); db.closeSync(); resolve(rows._array); },
+            (_, err) => reject(err)
+          );
+        }); 
     });
   }
   const fetchModelsForManufacturer = async (meterType, manufacturer) => {
+    console.log("-------------------second dropdown-------------")
     const tableNameMap = {
-      1: 'diaphragm', // Example mapping, adjust according to your actual data
-      2: 'Tin_case_diaphragm', // Use the actual numeric values as keys
+      1: 'diaphrgam', // Example mapping, adjust according to your actual data
+      2: 'Tin Case Diaphrgam', // Use the actual numeric values as keys
       3: 'rotary',
       4: 'correctors', // Assuming there's a numeric value associated with 'corrector'
       5: 'turbine',
       6: 'ultrasonic',
     };
   
-    console.log(`Fetching models for meterType: ${meterType}, manufacturer: ${manufacturer}`);
+    console.log(`>>>  5  >>>Fetching models for meterType: ${meterType}, manufacturer: ${manufacturer}`);
   
     // Retrieve the table name based on the meter type
     const tableName = tableNameMap[meterType];
@@ -138,11 +144,11 @@ async function testDatabaseAndTables() {
     console.log(`Using table: ${tableName} for meterType: ${meterType}`);
   
     const db = await openDatabase(); // Ensure openDatabase() is defined and returns a database connection
-  
+    //const db = SQLite.openDatabase('options.sqlite')
     return new Promise((resolve, reject) => {
       db.transaction(tx => {
-        const query = `SELECT model_code FROM ${tableName} WHERE manufacturer = ?;`;
-        console.log(`Executing query: ${query} with manufacturer: ${manufacturer}`);
+        const query = `SELECT "Model Code (A0083)" FROM "${tableName}" WHERE manufacturer = ?;`;
+        console.log(`Executing query: ${query} with manufacturer: ${manufacturer} and tableName ${tableName}`);
         
         tx.executeSql(
           query,
