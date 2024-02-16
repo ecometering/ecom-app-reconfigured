@@ -94,20 +94,21 @@ function MeterDetailsPage() {
   const [manufacturers, setManufacturers] = useState([]);
   const [models, setModels] = useState([]);
   useEffect(() => {
+    console.log("+++++++type changed", type)
     if (type) {
-      fetchManufacturersForMeterType(type.label)
-        .then(data => setManufacturers(data.map(manufacturer => ({ label: manufacturer.manufacturer, value: manufacturer.manufacturer }))))
-        .catch(error => console.error(error));
+      fetchManufacturersForMeterType(type.value)
+        .then(data => {console.log(">>>  4  >>>fetchManufacturersForMeterType>>>", data); setManufacturers(data.map(manufacturer => ({ label: manufacturer.Manufacturer, value: manufacturer.Manufacturer })))})
+        .catch(error => console.error("error", error));
     }
   }, [type]);
 
   useEffect(() => {
     if (manufacturer && type) {
-      fetchModelsForManufacturer(type.label, manufacturer.label)
-        .then(data => setModels(data.map(model => ({ label: model.ModelDescription, value: model.ProductId }))))
+      fetchModelsForManufacturer(type.value, manufacturer.label)
+        .then(data => {console.log(">>>  4  >>>fetchModelsForManufacturer", data); setModels(data.map((model, index) => ({ label: model["Model Code (A0083)"], value: index })))})
         .catch(error => console.error(error));
     }
-  }, [manufacturer, type]);
+  }, [manufacturer]);
 
 
 
@@ -253,17 +254,16 @@ function MeterDetailsPage() {
                 width={width *0.5}
                 value={type}
                 valueList={[
-                  {label: 'D-DIAPHRAGM OF UNKOWN MATERIAL', value: 1},
-                  {label: 'L-LEATHER DIAPHRAGM', value: 2},
-                  {label: 'R-ROTARY', value: 3},
-                  {label: 'S-SYNTHETIC DIAPHRAGM', value: 4},
-                  {label: 'T-TURBINE', value: 5},
-                  {label: 'U-ULTRASONIC', value: 6},
-                  {label: 'Unknown', value: 7},
+                  {label: 'D-DIAPHRAGM OF UNKOWN MATERIAL', value: "1"},
+                  {label: 'L-LEATHER DIAPHRAGM', value: "2"},
+                  {label: 'R-ROTARY', value: "3"},
+                  {label: 'S-SYNTHETIC DIAPHRAGM', value: "4"},
+                  {label: 'T-TURBINE', value: "5"},
+                  {label: 'U-ULTRASONIC', value: "6"}
                 ]}
                 placeholder={"Meter type                       "}
                 onChange={(item) => {
-                  console.log(item);
+                  console.log("==============item", item);
                   setType(item);
                   let isDiaphragm = [1, 2, 4].includes(item.value);
                   let isML = [3, 2].includes(pressureTier?.value);
