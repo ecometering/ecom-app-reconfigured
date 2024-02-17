@@ -3,7 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { ActivityIndicator, View } from "react-native";
 import { getItemAsync } from "expo-secure-store";
-import { AppContext } from "../context/AppContext";
+import { AppConsumer, AppContext } from "../context/AppContext";
 
 // import screens from "..screens"    
 import LoginPage from "../screens/LoginPage";
@@ -57,7 +57,7 @@ const Stack = createStackNavigator();
 
 const MainNavigator = () => {
   const [isToken, setIsToken] = useState(null);
-  const {extraPhotoCount, setUserLogged} = useContext(AppContext);  
+  const {extraPhotoCount, setUserLogged, userLogged} = useContext(AppContext);  
   const { jobType } = useContext(AppContext);
 
 
@@ -132,11 +132,11 @@ const MainNavigator = () => {
     
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {/* {!AppContext.userLogged ? (
+       {!userLogged ? (
           <Stack.Group>
             <Stack.Screen name="LogIn" component={LoginPage} />
           </Stack.Group>
-        ) : ( */}
+        ) : ( 
           <Stack.Group>
             <Stack.Screen name="Home" component={HomePage} />
             <Stack.Screen name="CalendarPage" component={CalendarPage} />
@@ -191,7 +191,7 @@ const MainNavigator = () => {
           <Stack.Screen name='SubmitSuccessPage' component={SubmitSuccessPage}/>  
 
           </Stack.Group>
-         {/* )} */}
+          )} 
         
         </Stack.Navigator>
     </NavigationContainer>
