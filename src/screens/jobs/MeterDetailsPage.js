@@ -261,7 +261,7 @@ function MeterDetailsPage() {
                   {label: 'T-TURBINE', value: "5"},
                   {label: 'U-ULTRASONIC', value: "6"}
                 ]}
-                placeholder={"Meter type                       "}
+                placeholder={"Meter type"}
                 onChange={(item) => {
                   console.log("==============item", item);
                   setType(item);
@@ -284,7 +284,7 @@ function MeterDetailsPage() {
     width={width}
     value={manufacturer}
     valueList={manufacturers} // Dynamically populated from SQLite database
-    placeholder={"Meter Manufacturer   "}
+    placeholder={"Meter Manufacturer"}
     onChange={(item) => {
       console.log(item);
       setManufacturer(item);
@@ -299,7 +299,7 @@ function MeterDetailsPage() {
                 width={width * 0.35}
                 value={uom}
                 valueList={UNIT_OF_MEASURE_CHOICES}
-                placeholder={"UOM                   "}
+                placeholder={"UOM"}
                 onChange={(item) => {
                   console.log(item);
                   setUom(item);
@@ -309,7 +309,7 @@ function MeterDetailsPage() {
     width={width * 0.5}
     value={model}
     valueList={models} // Dynamically populated based on the selected manufacturer
-    placeholder={"Meter Model                            "}
+    placeholder={"Meter Model"}
     onChange={(item) => {
       console.log(item);
       setModel(item);
@@ -362,7 +362,7 @@ function MeterDetailsPage() {
             <View style={styles.spacer} />
             <View style={styles.row}>
               <TextInputWithTitle
-                title={"Measuring capacity                 "}
+                title={"Measuring capacity"}
                 value={measuringCapacity}
                 onChangeText={(txt) => {
                   const numericValue = txt.replace(/[^0-9]/g, "");
@@ -386,7 +386,7 @@ function MeterDetailsPage() {
             <View style={styles.row}>
               <TextInputWithTitle
                 value={reading}
-                title={"Meter Reading                                    "}
+                title={"Meter Reading"}
                 onChangeText={(txt) => {
                   //validation
                   const numericValue = txt.replace(/[^0-9]/g, "");

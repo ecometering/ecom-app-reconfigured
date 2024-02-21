@@ -112,7 +112,7 @@ function PlannedJobPage() {
 
   return (
     <SafeAreaView style={styles.body}>
-      <Header hasLeftBtn={true} hasCenterText={true} hasRightBtn={false} centerText={'Planned Jobs'} leftBtnPressed={() => navigation.goBack()} />
+      <Header hasMenuButton={false} hasLeftBtn={true} hasCenterText={true} hasRightBtn={false} centerText={'Planned Jobs'} leftBtnPressed={() => navigation.goBack()} />
       <FlatList
         data={plannedJobs}
         renderItem={renderItem}

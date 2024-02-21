@@ -4,17 +4,29 @@
     "promptToConfigurePushNotifications": false
   },
   "build": {
-    "development": {
-      "developmentClient": true,
-      "distribution": "internal"
-    },
     "preview": {
-      "distribution": "internal",
       "android": {
         "buildType": "apk"
       }
     },
-    "production": {}
+    "preview2": {
+      "android": {
+        "gradleCommand": ":app:assembleRelease"
+      }
+    },
+    "preview3": {
+      "developmentClient": true
+    },
+    "preview4": {
+      "distribution": "internal"
+    },
+    "production": {},
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    }
+   
+    
   },
   "submit": {
     "production": {}

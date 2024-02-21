@@ -1,4 +1,4 @@
-import React, { useContext, useState,useRef } from "react";
+import React, { useContext, useState,useRef, useEffect } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -9,7 +9,7 @@ import {
   View,
 } from "react-native";
 import Header from "../../components/Header";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation,useRoute } from "@react-navigation/native";
 import TextInput, { TextInputWithTitle,InputRowWithTitle } from "../../components/TextInput";
 import {TextType } from "../../theme/typography";
 import { PrimaryColors } from "../../theme/colors";
@@ -17,6 +17,7 @@ import OptionalButton from "../../components/OptionButton";
 import { AppContext } from "../../context/AppContext";
 import EcomHelper from "../../utils/ecomHelper";
 import EcomDropDown from "../../components/DropDown";
+import { openDatabase } from "../../utils/database";
 
 const ukPostCodeRegex = /^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i;
 const phoneNumberRegex =
@@ -26,9 +27,11 @@ const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 function SiteDetailsPage() {
   const navigation = useNavigation();
   const appContext = useContext(AppContext);
-
+  const jobNumber = appContext.jobNumber;
   const jobType = appContext.jobType;
-  
+  const route = useRoute();
+ const params = route.params;
+ 
   const SiteDetails = appContext.SiteDetails;
   const email1Ref = useRef(null);
   const email2Ref = useRef(null);
@@ -42,6 +45,14 @@ function SiteDetailsPage() {
   const [buildingName, setBuildingName] = useState(
     SiteDetails?.buildingName ?? ""
   );
+
+  useEffect(() => {
+    // Assume route.params.jobType exists
+    const routeJobType = route.params.jobType;
+    if (routeJobType) {
+      appContext.setJobType(routeJobType);
+    }
+  }, []);
 
   const [mprn, setMprn] = useState(SiteDetails?.mprn ?? "");
   const [address1, setAddress1] = useState(SiteDetails?.address1 ?? "");
@@ -63,6 +74,41 @@ function SiteDetailsPage() {
     SiteDetails?.confirmContact
   );
 
+ const saveSiteDetailsToDatabase = async () => {
+  const db = await openDatabase();
+  const jsonString = JSON.stringify({
+    ...SiteDetails,
+    // Include all other details you're capturing from the form
+    companyName,
+    buildingName,
+    address1,
+    address2,
+    address3,
+    town,
+    county,
+    postCode,
+    title,
+    contact,
+    email1,
+    email2,
+    number1,
+    number2,
+    instructions,
+    confirmContact,
+  });
+
+  // Assuming SiteDetails.id is the correct identifier for your record
+  const jobId = SiteDetails.id; // Ensure this is the correct way to access the job's ID
+
+  db.transaction((tx) => {
+    tx.executeSql(
+      `UPDATE jobsInProgress SET siteDetails = ?, progress = 2 WHERE id = ?;`,
+      [jsonString, jobId],
+      (_, result) => console.log('Site details and progress updated in database', result),
+      (_, error) => console.log('Error updating site details in database', error)
+    );
+  });
+};
   const backPressed = () => {
     appContext.setSiteDetails({
       ...SiteDetails,
@@ -84,6 +130,7 @@ function SiteDetailsPage() {
       instructions: instructions,
       confirmContact: confirmContact,
     });
+    saveSiteDetailsToDatabase();
     // appContext.setStartRemoval(true);
     navigation.goBack();
   };
@@ -169,7 +216,7 @@ function SiteDetailsPage() {
       confirmContact: confirmContact,
     });
  
-    
+    saveSiteDetailsToDatabase();
       navigation.navigate("SitePhotoPage");
   
   };
@@ -183,6 +230,9 @@ function SiteDetailsPage() {
         centerText={""}
         leftBtnPressed={backPressed}
         rightBtnPressed={nextPressed}
+        totalPages={params.totalPages}
+        currentPage={params.currentPage}
+        onPageChange={(pageNum) => console.log("navigated to pageL:", pageNum)}
       />
       <KeyboardAvoidingView
         style={{flex:1}}
