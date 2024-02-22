@@ -29,7 +29,7 @@ function JobTypePage() {
 
       // Directly save job data to the Jobs table without checking for table existence
       // as we assume table creation is handled at app initialization level
-      await addOrUpdateJobData(jobData.jobNumber, jobData); // jobNumber is assumed to be unique identifier
+       addOrUpdateJobData(jobData.jobNumber, jobData); // jobNumber is assumed to be unique identifier
 
       console.log(`Job type ${jobType} saved successfully.`);
       navigation.navigate("SiteDetailsPage", { jobType: jobType, jobNumber: jobData.jobNumber });

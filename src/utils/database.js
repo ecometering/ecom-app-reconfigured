@@ -262,12 +262,12 @@ const loadDataAndSetContext = async (id) => {
 
 
 
-const addOrUpdateJobData = (jobId, jobData) => {
+const addOrUpdateJobData = async (jobId, jobData) => {
   console.log("[addOrUpdateJobData] Adding or updating job data", { jobId, jobData });
-  const db = openDatabase(); 
+  const db = await openDatabase(); 
 
   return new Promise((resolve, reject) => {
-    db.transaction(tx => {
+    db?.transaction(tx => {
       console.log("[addOrUpdateJobData] Transaction started");
       tx.executeSql(
         `SELECT * FROM Jobs WHERE id = ?;`,
@@ -277,7 +277,7 @@ const addOrUpdateJobData = (jobId, jobData) => {
           if (result.rows.length > 0) {
             console.log(`[addOrUpdateJobData] Job with id ${jobId} exists, updating...`);
             const updatedPhotos = JSON.stringify({ ...JSON.parse(result.rows._array[0].photos), ...jobData.photos });
-            tx.executeSql(
+            tx?.executeSql(
               `UPDATE Jobs SET photos = ? WHERE id = ?;`,
               [updatedPhotos, jobId],
               () => {
