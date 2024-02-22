@@ -21,14 +21,15 @@ import {
   CORRECTOR_METER_MODEL_LIST
 } from "../../utils/constant";
 import Text from "../../components/Text";
-import TextInput,{ TextInputWithTitle } from "../../components/TextInput";
+import TextInput,{ TextInputWithTitle, InputRowWithTitle } from "../../components/TextInput";
 import OptionalButton from "../../components/OptionButton";
 import { TextType } from "../../theme/typography";
 import { AppContext } from "../../context/AppContext";
 import EcomHelper from "../../utils/ecomHelper";
 import BarcodeScanner from "../../components/BarcodeScanner";
 import { PrimaryColors } from "../../theme/colors";
-
+import { openDatabase } from "../../utils/database";
+import ImagePickerButton from "../../components/ImagePickerButton";
 import * as ExpoImagePicker from "expo-image-picker";
 import EcomDropDown from "../../components/DropDown";
 import { fetchManufacturersForMeterType, fetchModelsForManufacturer } from "../../utils/database";
@@ -50,9 +51,7 @@ export default function CorrectorDetailsPage() {
   console.log("CorrectorDetailsPage");
 
   const regulatorDetails = appContext.regulatorDetails;
-  const [serialNumber, setSerialNumber] = useState(
-    regulatorDetails?.loggerSerialNumber
-  );
+  const [serialNumber, setSerialNumber] = useState('');
   const [isMountingBracket, setIsMountingBracket] = useState(
     regulatorDetails?.isMountingBracket
   );
@@ -66,50 +65,13 @@ export default function CorrectorDetailsPage() {
     regulatorDetails?.loggerImage
   );
   const [isModal, setIsModal] = useState(false);
+  const [uncorrectedReads, setUncorrectedReads] = useState('');
+  const [correctedReads, setCorrectedReads] = useState('');
 
   const backPressed = () => {
-    if (jobType === "Install") {
-      appContext.setMeterDetails({
-        ...meterDetails,
-        corrector_loggerSerialNumber: serialNumber,
-        corrector_isMountingBracket: isMountingBracket,
-        corrector_manufacturer: manufacturer,
-        corrector_model: model,
-        corrector_loggerImage: selectedImage,
-      });
+   
       navigation.goBack();
-    } else if (jobType === "Maintenance" && !isStartRemoval) {
-      navigation.goBack();
-    } else if (
-      jobType === "Removal" ||
-      jobType === "Exchange" ||
-      jobType === "Warrant" ||
-      jobType === "Maintenance"
-    ) {
-      if (isPassedRemoval) {
-        appContext.setMeterDetails({
-          ...meterDetails,
-          corrector_loggerSerialNumber: serialNumber,
-          corrector_isMountingBracket: isMountingBracket,
-          corrector_manufacturer: manufacturer,
-          corrector_model: model,
-          corrector_loggerImage: selectedImage,
-        });
-        navigation.goBack();
-        return;
-      }
-      appContext.setRemovedMeterDetails({
-        ...removedMeterDetails,
-        corrector_loggerSerialNumber: serialNumber,
-        corrector_isMountingBracket: isMountingBracket,
-        corrector_manufacturer: manufacturer,
-        corrector_model: model,
-        corrector_loggerImage: selectedImage,
-      });
-      navigation.goBack();
-    } else {
-      navigation.goBack();
-    }
+    
   };
   console.log(meterDetails);
 
@@ -140,72 +102,6 @@ export default function CorrectorDetailsPage() {
     if (model == null) {
       EcomHelper.showInfoMessage("Please choose model");
       return;
-    }
-
-
-    if (jobType === "Install") {
-      appContext.setMeterDetails({
-        ...meterDetails,
-        loggerSerialNumber: serialNumber,
-        isMountingBracket: isMountingBracket,
-        manufacturer: manufacturer,
-        model: model,
-        loggerImage: selectedImage,
-      });
-      const isMeter = meterDetails?.isMeter;
-      if (isMeter) {
-        navigation.navigate("NewEcvPhotoPage");
-      } else {
-        navigation.navigate("MeterDetailsPage");
-      }
-    } else if (jobType === "Maintenance" && !isStartRemoval) {
-      const isMeter = meterDetails?.isMeter;
-      if (isMeter) {
-        navigation.navigate("NewEcvPhotoPage");
-      } else {
-        navigation.navigate("MaintenanceQuestionsPage");
-      }
-    } else if (
-      jobType === "Removal" ||
-      jobType === "Exchange" ||
-      jobType === "Warrant" ||
-      jobType === "Maintenance"
-    ) {
-      if (isPassedRemoval) {
-        appContext.setMeterDetails({
-          ...meterDetails,
-          corrector_loggerSerialNumber: serialNumber,
-          corrector_isMountingBracket: isMountingBracket,
-          corrector_manufacturer: manufacturer,
-          corrector_model: model,
-          corrector_loggerImage: selectedImage,
-        });
-
-        const isMeter = meterDetails?.isMeter;
-        if (isMeter) {
-          //isMeter
-          navigation.navigate("NewEcvPhotoPage");
-        } else {
-          navigation.navigate("MeterDetailsPage");
-        }
-        return;
-      }
-      appContext.setRemovedMeterDetails({
-        ...removedMeterDetails,
-        corrector_loggerSerialNumber: serialNumber,
-        corrector_isMountingBracket: isMountingBracket,
-        corrector_manufacturer: manufacturer,
-        corrector_model: model,
-        corrector_loggerImage: selectedImage,
-      });
-      if (isStartRemoval) {
-        const isMeter = removedMeterDetails?.isMeter;
-        if (isMeter) {
-          navigation.navigate("NewEcvPhotoPage");
-        } else {
-          navigation.navigate("RemovedMeterDetailsPage");
-        }
-      }
     }
   };
   const [manufacturers, setManufacturers] = useState([]);
@@ -238,55 +134,6 @@ const onManufacturerChange = async (item) => {
     setSerialNumber(codes.data);
   };
 
-  const handleImagePicker = () => {
-    Alert.alert("Choose Image", "how to choose image ?", [
-      {
-        text: "Cancel",
-        onPress: () => {},
-        style: "cancel",
-      },
-      {
-        text: "Choose from gallery",
-        onPress: chooseFromGallery,
-      },
-      {
-        text: "Take photo",
-        onPress: takePhoto,
-      },
-      {},
-    ]);
-  };
-  const takePhoto = () => {
-    const options = {
-      title: "Take Photo",
-      mediaType: "photo",
-      quality: 1,
-    };
-
-    ExpoImagePicker.launchCameraAsync(options)
-      .then((response) => {
-        setSelectedImage(response.assets[0].uri);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const chooseFromGallery = () => {
-    const options = {
-      title: "Choose from Gallery",
-      mediaType: "photo",
-      quality: 1,
-    };
-
-    ExpoImagePicker.launchImageLibraryAsync(options)
-      .then((response) => {
-        setSelectedImage(response.assets[0].uri);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
 
   return (
     <SafeAreaView style={styles.content}>
@@ -321,7 +168,11 @@ const onManufacturerChange = async (item) => {
                   <View style={{ ...styles.row, width: width * 0.35 }}>
                     <TextInput
                       onChangeText={(txt) => {
-                        if (alphanumericRegex.test(txt)) setSerialNumber(txt.toUpperCase);
+                        if (alphanumericRegex.test(txt)) {
+                          setSerialNumber(txt.toUpperCase());
+                        } else {
+                          setSerialNumber(txt);
+                        }
                       }}
                       style={{
                         ...styles.input,
@@ -389,9 +240,24 @@ const onManufacturerChange = async (item) => {
                   }}
                 />
               </View>
+              <View style={styles.spacer} />
+            <InputRowWithTitle
+              title1="Uncorrected Reads"
+              title2="Corrected Reads"
+              onChangeText1={(text) => setUncorrectedReads(text)}
+              onChangeText2={(text) => setCorrectedReads(text)}
+              placeholder1="Enter Uncorrected Reads"
+              placeholder2="Enter Corrected Reads"
+              keyboardType1="numeric"
+              keyboardType2="numeric"
+            />
             </View>
             <View style={styles.spacer} />
             <Text type={TextType.BODY_1}>Picture</Text>
+            
+            <ImagePickerButton
+              onImageSelected={(uri) => setSelectedImage(uri)}
+            />
             {selectedImage && (
               <Image
                 source={{ uri: selectedImage }}
@@ -399,15 +265,8 @@ const onManufacturerChange = async (item) => {
                 resizeMode="contain"
               />
             )}
-            <View style={styles.row}>
-              <Button
-                title={
-                  selectedImage === undefined ? "Choose Image" : "Change Image"
-                }
-                onPress={handleImagePicker}
-              />
-            </View>
           </View>
+         
           {isModal && (
             <BarcodeScanner
               setIsModal={setIsModal}

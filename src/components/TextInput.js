@@ -50,7 +50,7 @@ export const TextInputWithTitle = forwardRef(
 
 // Adjusted InputRowWithTitle to accept refs for each input
 export const InputRowWithTitle = forwardRef(
-  ({ title1, title2, placeholderTextColor, style, onChangeText1, onChangeText2, ref1, ref2, ...otherProps }, ref) => {
+  ({ title1, title2, placeholderTextColor, style, onChangeText1, onChangeText2, ref1, ref2,placeholder1,keyboardType1,keyboardType2,placeholder2, ...otherProps }, ref) => {
     const { width } = useScreenDimensions(); // Use the custom hook for dynamic dimensions
     const dynamicGap = width * 0.02;
 
@@ -62,7 +62,9 @@ export const InputRowWithTitle = forwardRef(
             placeholderTextColor={placeholderTextColor}
             onChangeText={onChangeText1}
             style={style}
-            ref={ref1} // Pass ref to the first TextInputWithTitle
+            ref={ref1}
+            placeholder={placeholder1}
+            keyboardType={keyboardType1}// Pass ref to the first TextInputWithTitle
             {...otherProps}
           />
         </View>
@@ -72,7 +74,9 @@ export const InputRowWithTitle = forwardRef(
             placeholderTextColor={placeholderTextColor}
             onChangeText={onChangeText2}
             style={style}
-            ref={ref2} // Pass ref to the second TextInputWithTitle
+            ref={ref2}
+            keyboardType={keyboardType2}
+            placeholder={placeholder2}
             {...otherProps}
           />
         </View>

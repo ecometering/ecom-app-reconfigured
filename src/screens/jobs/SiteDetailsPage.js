@@ -224,12 +224,14 @@ function SiteDetailsPage() {
   return (
     <SafeAreaView style={{flex:1}}>
       <Header
+        
         hasLeftBtn={true}
         hasCenterText={true}
         hasRightBtn={true}
         centerText={""}
         leftBtnPressed={backPressed}
         rightBtnPressed={nextPressed}
+        hasMenuButton={true}
         totalPages={params.totalPages}
         currentPage={params.currentPage}
         onPageChange={(pageNum) => console.log("navigated to pageL:", pageNum)}

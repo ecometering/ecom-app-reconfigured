@@ -93,7 +93,14 @@ async function createJobsTable(db) {
         jobStatus TEXT,
         progress INT,
         siteDetails TEXT,
-        photos TEXT
+        photos TEXT,
+        standards TEXT,
+        corrector TEXT,
+        meter TEXT, 
+        corrector TEXT,
+        gasSafeWarning TEXT, 
+        regulator TEXT,
+        other  TEXT
       );`,
       [],
       () => console.log('[createJobsTable] Jobs table created or already exists.'),
@@ -350,7 +357,53 @@ const addOrUpdateJobData = (jobId, jobData) => {
     });
   };
 
+  async function fetchAllJobData(db) {
+    console.log("[fetchAllJobData] Fetching all job data excluding photos...");
+    return new Promise((resolve, reject) => {
+      db.transaction(tx => {
+        tx.executeSql(
+          `SELECT id, jobType, jobNumber, startDate, endDate, jobStatus, progress, siteDetails FROM Jobs;`,
+          [],
+          (_, { rows }) => {
+            console.log(`[fetchAllJobData] Received ${rows.length} rows.`);
+            resolve(rows._array); // Assuming _array contains all row data
+          },
+          (_, error) => {
+            console.error('[fetchAllJobData] Error fetching job data:', error);
+            reject(error);
+          }
+        );
+      });
+    });
+  }
+  
+  async function uploadData(jsonData) {
+    const apiURL = 'https://test.ecomdata.co.uk/api/jobs'; // Replace with your actual API endpoint
+    console.log("[uploadData] Uploading data to API...");
+  
+    try {
+      const response = await fetch(apiURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonData,
+      });
+  
+      if (!response.ok) {
+        throw new Error('API upload failed with status ' + response.status);
+      }
+  
+      console.log("[uploadData] Data uploaded successfully.");
+      const responseData = await response.json();
+      return responseData;
+    } catch (error) {
+      console.error("[uploadData] Error uploading data:", error);
+      throw error;
+    }
+  }
+  
   export { fetchManufacturersForMeterType, fetchModelsForManufacturer,getDatabaseTables,openDatabase
     ,testDatabaseAndTables,addColumnForJSONStorage,saveJSONStringToColumn,loadDataAndSetContext,testFileSystemAccess,
-    addOrUpdateJobData,loadJobData,createJobsTable};
+    addOrUpdateJobData,loadJobData,createJobsTable,fetchAllJobData,uploadData};
   
