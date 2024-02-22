@@ -1,4 +1,5 @@
-import React, { useContext, useState,useRef, useEffect } from "react";
+import { useNavigation,useRoute } from "@react-navigation/native";
+import React,{ useContext,useEffect,useRef,useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -8,16 +9,15 @@ import {
   Text,
   View,
 } from "react-native";
-import Header from "../../components/Header";
-import { useNavigation,useRoute } from "@react-navigation/native";
-import TextInput, { TextInputWithTitle,InputRowWithTitle } from "../../components/TextInput";
-import {TextType } from "../../theme/typography";
-import { PrimaryColors } from "../../theme/colors";
-import OptionalButton from "../../components/OptionButton";
-import { AppContext } from "../../context/AppContext";
-import EcomHelper from "../../utils/ecomHelper";
 import EcomDropDown from "../../components/DropDown";
+import Header from "../../components/Header";
+import OptionalButton from "../../components/OptionButton";
+import { TextInputWithTitle } from "../../components/TextInput";
+import { AppContext } from "../../context/AppContext";
+import { PrimaryColors } from "../../theme/colors";
+import { TextType } from "../../theme/typography";
 import { openDatabase } from "../../utils/database";
+import EcomHelper from "../../utils/ecomHelper";
 
 const ukPostCodeRegex = /^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i;
 const phoneNumberRegex =
@@ -50,7 +50,7 @@ function SiteDetailsPage() {
     // Assume route.params.jobType exists
     const routeJobType = route.params.jobType;
     if (routeJobType) {
-      appContext.setJobType(routeJobType);
+      appContext.setJobTypes(routeJobType);
     }
   }, []);
 
@@ -240,7 +240,7 @@ function SiteDetailsPage() {
       >
         <ScrollView style={{flex:1}} >
           <TextInputWithTitle
-            title={"MPRN *"}
+            title={"MPRN333 *"}
             value={mprn}
             onChangeText={(txt) => {
               const filteredText = txt.replace(/[^0-9]/g, "");

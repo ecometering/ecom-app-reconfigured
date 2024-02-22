@@ -1,23 +1,13 @@
-import React, { useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { AppContextProvider } from './src/context/AppContext';
+import React,{ useEffect } from 'react';
+import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { AppContextProvider } from './src/context/AppContext';
 import MainNavigator from './src/navigation/MainNavigator';
-import MeterDetailsPage from "./src/screens/jobs/MeterDetailsPage";
-import InstallFlowNavigator from './src/navigation/installFlowNavigator';
 
 // Import database functions
-import { createJobsInProgressTable, openDatabase,testFileSystemAccess } from './src/utils/database';
+import { createJobsTable,getDatabaseTables,openDatabase,testDatabaseAndTables,testFileSystemAccess } from './src/utils/database';
 
 import { createStackNavigator } from "@react-navigation/stack";
-import * as FileSystem from 'expo-file-system';
-
-
-const Stack = createStackNavigator();
-
 const App = () => {
   useEffect(() => {
     
@@ -25,13 +15,15 @@ const App = () => {
     // Call this function at the start of your app or before openDatabase to see if it works.
     testFileSystemAccess();
     async function prepareDatabase() {
-      // try {
-      //   const db = await openDatabase(); // Open or create the database
-      //   await createJobsInProgressTable(db); // Create the table if it doesn't exist
-      //   // Optionally, you could call testDatabaseAndTables here to verify everything is set up correctly
-      // } catch (error) {
-      //   console.error("Failed to prepare database:", error);
-      // }
+      try {
+        const db = await openDatabase(); // Open or create the database
+       // getDatabaseTables()
+        let data  = await testDatabaseAndTables()
+        let job_table = await createJobsTable(db)
+        console.log(job_table);
+      } catch (error) {
+        console.error("Failed to prepare database:", error);
+      }
     }
 
     prepareDatabase(); // Call the async function to prepare the database
