@@ -43,6 +43,7 @@ const App = () => {
         <NavigationContainer>
         <InstallFlowNavigator/>
         </NavigationContainer>
+        {/* <MainNavigator/> */}
       </GestureHandlerRootView>
     </AppContextProvider>
   );

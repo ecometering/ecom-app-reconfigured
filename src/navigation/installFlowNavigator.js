@@ -18,7 +18,7 @@ import React, { useState, useEffect, useContext,createContext } from "react";
 
 // import gateways 
 import InstallGatewayScreen from "../screens/gateways/installGateWay";
-
+import CorrectorGateway from "../screens/gateways/correctorGateway";
 
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -167,8 +167,8 @@ const InstallFlowNavigator = () => {
     {/* DataLogger process */}
     <Stack.Screen name="DataLoggerDetails" component={DataLoggerDetailsPage} initialParams={{title:'New AMR installed',nextScreen:()=> nextAfterDataLogger}}/>
     {/*  Corrector Process */}
-    <Stack.Screen name ="CorrectorDetails" component={CorrectorDetailsPage} initialParams={{title: 'New Corrector installed',nextScreen:()=>nextAfterCorrector}} />
-    
+    <Stack.Screen name ="CorrectorDetails" component={CorrectorDetailsPage} initialParams={{title: 'New Corrector installed',nextScreen:'CorrectorGateway'}} />
+    <Stack.Screen name="CorrectorGateway" component={CorrectorGateway} />
     {/* set and seal details  */}
     <Stack.Screen name="StreamsSetSealDetails" component={StreamsSetSealDetailsPage} />
       {generateScreenInstancesForStreams(numberOfStreams).map((screen, index) => (
