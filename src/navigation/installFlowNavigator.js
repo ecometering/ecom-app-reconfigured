@@ -18,7 +18,7 @@ import React, { useState, useEffect, useContext,createContext } from "react";
 
 // import gateways 
 import InstallGatewayScreen from "../screens/gateways/installGateWay";
-import CorrectorGateway from "../screens/gateways/correctorGateway";
+import CorrectorGateway from "../screens/gateways/CorrectorGateWay";
 
 import { createStackNavigator } from "@react-navigation/stack";
 

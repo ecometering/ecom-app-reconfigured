@@ -97,10 +97,13 @@ async function createJobsTable(db) {
         standards TEXT,
         corrector TEXT,
         meter TEXT, 
+        streams TEXT,
         corrector TEXT,
         gasSafeWarning TEXT, 
         regulator TEXT,
         other  TEXT
+
+  
       );`,
       [],
       () => console.log('[createJobsTable] Jobs table created or already exists.'),

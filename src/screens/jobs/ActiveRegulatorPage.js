@@ -7,6 +7,8 @@ import ImagePickerButton from '../../components/ImagePickerButton';
 import { PrimaryColors } from '../../theme/colors'; // Adjust path as needed
 import Header from "../../components/Header";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { openDatabase,addOrUpdateJobData } from '../../utils/database';
+
 
 const ActiveRegulatorPage = () => {
   const [manufacturer, setManufacturer] = useState('');
@@ -21,14 +23,37 @@ const ActiveRegulatorPage = () => {
     { label: 'Medium', value: 'medium' },
     { label: 'Large', value: 'large' },
   ];
-
+  const details = {
+    manufacturer,
+    serialNumber,
+    size,
+  };
+  
+  const imageData = {
+    imageUri,
+  };
+  
   const backPressed = () => {
     console.log("Back button pressed");
+
+
     navigation.goBack();
   };
 
   const nextPressed = async () => {
     console.log("Next button pressed");
+
+    try {
+      // Save the data using the route title as an identifier
+      await saveStreamData(route.params.title, streamData);
+      console.log("Data saved successfully. Navigating to next screen.");
+    } catch (error) {
+      console.error("Failed to save data:", error);
+      // Optionally handle the error, e.g., show an alert to the user
+    }
+  
+    // Proceed to navigate after saving
+  
     console.log("Navigating to next screen:", nextScreen);
     navigation.navigate(nextScreen);
   };

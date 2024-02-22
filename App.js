@@ -40,10 +40,10 @@ const App = () => {
   return (
     <AppContextProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <NavigationContainer>
+        {/* <NavigationContainer>
         <InstallFlowNavigator/>
-        </NavigationContainer>
-        {/* <MainNavigator/> */}
+        </NavigationContainer> */}
+        <MainNavigator/>
       </GestureHandlerRootView>
     </AppContextProvider>
   );
