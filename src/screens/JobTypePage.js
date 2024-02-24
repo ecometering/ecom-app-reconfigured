@@ -7,7 +7,7 @@ import Text from "../components/Text";
 import { useNavigation } from "@react-navigation/native";
 import { AppContext } from "../context/AppContext";
 import Header from "../components/Header";
-import { addOrUpdateJobData, openDatabase } from '../utils/database';
+import { addOrUpdateJobData, fetchJobDataById } from '../utils/database';
 
 function JobTypePage() {
   const navigation = useNavigation();
@@ -15,24 +15,25 @@ function JobTypePage() {
 
   const setJobTypeAndNavigate = async (jobType) => {
     console.log(`Setting job type to: ${jobType} and navigating.`);
-
+    
     try {
+       const jobId = `JOB-${Date.now()}`;
+        // await addOrUpdateJobData(jobId, { jobId: jobId });
       const jobData = {
         jobType: jobType,
-        jobNumber: `JOB-${Date.now()}`,
         startDate: new Date().toISOString(),
         jobStatus: "in progress",
         progress: 0, // Assuming progress starts at 0
-        siteDetails: "", // Assuming initial empty value
-        photos: "{}", // Assuming photos are stored as a JSON string
       };
 
       // Directly save job data to the Jobs table without checking for table existence
       // as we assume table creation is handled at app initialization level
-       addOrUpdateJobData(jobData.jobNumber, jobData); // jobNumber is assumed to be unique identifier
-
+      // await addOrUpdateJobData(jobId, jobData); // jobNumber is assumed to be unique identifier
+      // const updatedJob = await fetchJobDataById(jobId);
+      // console.log(`Updated job entry:`, updatedJob);
       console.log(`Job type ${jobType} saved successfully.`);
-      navigation.navigate("SiteDetailsPage", { jobType: jobType, jobNumber: jobData.jobNumber });
+      navigation.navigate("SiteDetailsPage",{'totalPages':9,'currentPage':1,'jobId':jobId,'jobType':jobType});
+
     } catch (error) {
       console.error("Error setting job type and navigating:", error);
     }

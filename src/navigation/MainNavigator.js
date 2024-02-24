@@ -12,9 +12,10 @@ import InProgressJobsPage from "../screens/InProgressJobsPage";
 import JobTypePage from "../screens/JobTypePage";
 import PlannedJobPage from "../screens/PlannedJobPage";
 import SubmitSuccessPage from "../screens/SubmitSuccessPage";
+import RebookPage from "../screens/jobs/rebook";
 // calendar imports
 import CalendarPage from "../screens/calendar/CalendarPage";
-
+import LoginPage from "../screens/LoginPage";
 // maintenance pages imports
 
 //import standards inport from ../screens/standards
@@ -107,6 +108,11 @@ const MainNavigator = () => {
 	return (
 		<NavigationContainer>
 			<Stack.Navigator screenOptions={{ headerShown: false }}>
+			{!userLogged ? (
+          <Stack.Group>
+            <Stack.Screen name="LogIn" component={LoginPage} />
+          </Stack.Group>
+		  ) : (
 				<Stack.Group>
 					<Stack.Screen name="Home" component={HomePage} />
 					<Stack.Screen name="CalendarPage" component={CalendarPage} />
@@ -151,11 +157,11 @@ const MainNavigator = () => {
 					{AdditionalPhotosProcess().map((screen) => (
 						<Stack.Screen key={screen.key} name={screen.name} component={screen.component} initialParams={screen.initialParams} />
 					))}
-
+					<Stack.Screen name="RebookPage" component={RebookPage} />
 					<Stack.Screen name="SubmitSuccessPage" component={SubmitSuccessPage} />
 				</Stack.Group>
-				{/* )}
-				 */}
+				)}
+				
 			</Stack.Navigator>
 		</NavigationContainer>
 	);

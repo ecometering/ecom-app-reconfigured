@@ -42,9 +42,7 @@ function GasSafeWarningPage() {
   const [isCustomerAvailable, setIsCustomerAvailable] = useState(
     standardDetails?.isCustomerAvailable
   );
-  const [customerEmail, setCustomerEmail] = useState(
-    standardDetails?.customerEmail
-  );
+                                     
   const [isModal, setIsModal] = useState(false);
   const [isCustomerSign, setIsCustomerSign] = useState(true);
   const [customerSign, setCustomerSign] = useState(
@@ -78,7 +76,6 @@ function GasSafeWarningPage() {
       emergencyService: emergencyService,
       isPropertyRented: isPropertyRented,
       isCustomerAvailable: isCustomerAvailable,
-      customerEmail: customerEmail,
       engineerSign: engineerSign,
       customerSign: customerSign,
     });
@@ -115,10 +112,6 @@ function GasSafeWarningPage() {
       );
       return;
     }
-    if (customerEmail == null) {
-      EcomHelper.showInfoMessage("Please enter customer email");
-      return;
-    }
     if (customerSign == null) {
       EcomHelper.showInfoMessage("Please check Customer Signature");
       return;
@@ -136,7 +129,6 @@ function GasSafeWarningPage() {
       emergencyService: emergencyService,
       isPropertyRented: isPropertyRented,
       isCustomerAvailable: isCustomerAvailable,
-      customerEmail: customerEmail,
       engineerSign: engineerSign,
       customerSign: customerSign,
     });
@@ -268,17 +260,7 @@ function GasSafeWarningPage() {
               </View>
             </View>
           </View>
-          <View style={styles.spacer} />
-          <TextInputWithTitle
-            title={"Customer Email Address"}
-            keyboardType="email-address"
-            placeholder={""}
-            onChangeText={(txt) => {
-              setCustomerEmail(txt);
-            }}
-            value={customerEmail}
-            containerStyle={styles.inputContainer}
-          />
+          
           <View style={styles.spacer} />
           <View style={styles.row}>
             <View>

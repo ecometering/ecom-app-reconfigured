@@ -3,30 +3,29 @@ import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AppContextProvider } from './src/context/AppContext';
 import MainNavigator from './src/navigation/MainNavigator';
-
 // Import database functions
-import { createJobsTable,getDatabaseTables,openDatabase,testDatabaseAndTables,testFileSystemAccess } from './src/utils/database';
+import { createJobsTable,getDatabaseTables,openDatabase,testDatabaseAndTables,testFileSystemAccess,deleteDatabase,JobsDatabaseTest } from './src/utils/database';
 
 import { createStackNavigator } from "@react-navigation/stack";
 const App = () => {
   useEffect(() => {
-    
-    
-    // Call this function at the start of your app or before openDatabase to see if it works.
-    testFileSystemAccess();
-    async function prepareDatabase() {
+    async function initializeApp() {
       try {
-        const db = await openDatabase(); // Open or create the database
-       // getDatabaseTables()
-        let data  = await testDatabaseAndTables()
-        let job_table = await createJobsTable(db)
-        console.log(job_table);
+        // Delete the existing database to reset the schema
+        
+        console.log(JobsDatabaseTest)
+
+        // Proceed with opening and setting up a new database
+        const db = await openDatabase();
+        await createJobsTable(db); // Ensure the Jobs table is created
+        console.log("Database prepared and Jobs table created.");
+        // Any other initialization logic can go here
       } catch (error) {
-        console.error("Failed to prepare database:", error);
+        console.error("Failed to initialize app:", error);
       }
     }
 
-    prepareDatabase(); // Call the async function to prepare the database
+    initializeApp(); // Call the async function to initialize the app
   }, []);
 
   return (
@@ -51,3 +50,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+

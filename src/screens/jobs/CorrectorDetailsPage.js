@@ -39,55 +39,57 @@ export default function CorrectorDetailsPage() {
   const appContext = useContext(AppContext);
   const navigation = useNavigation();
   const jobType = appContext.jobType;
-  const title = jobType === "Install" ? "New Meter Details" : jobType;
-  const meterDetails = appContext.meterDetails;
-  const removedMeterDetails = appContext.removedMeterDetails;
-  const camera = useRef(null);
 
-  const isPassedRemoval = appContext.passedRemoval;
-  const isStartRemoval = appContext.startRemoval;
-  console.log(">>> Passed Removal >>>", isPassedRemoval);
-  console.log(">>> Start Removal >>>", isStartRemoval);
   console.log("CorrectorDetailsPage");
 
-  const regulatorDetails = appContext.regulatorDetails;
-  const [serialNumber, setSerialNumber] = useState('');
+  const correctorDetails = appContext.correctorDetails;
+  const [correctorSerialNumber, setCorrectorSerialNumber] = useState('');
   const [isMountingBracket, setIsMountingBracket] = useState(
-    regulatorDetails?.isMountingBracket
+    correctorDetails?.isMountingBracket
   );
 
   const [manufacturer, setManufacturer] = useState(
-    regulatorDetails?.manufacturer
+    correctorDetails?.manufacturer
   );
-  const [model, setModel] = useState(regulatorDetails?.model);
+  const [model, setModel] = useState(correctorDetails?.model);
   
-  const [selectedImage, setSelectedImage] = useState(
-    regulatorDetails?.loggerImage
+  const [correctorImage, setcorrectorImage] = useState(
+    correctorDetails?.loggerImage
   );
   const [isModal, setIsModal] = useState(false);
-  const [uncorrectedReads, setUncorrectedReads] = useState('');
-  const [correctedReads, setCorrectedReads] = useState('');
+  const [uncorrectedReads, setUncorrectedReads] = useState(correctorDetails?.uncorrectedReads);
+  const [correctedReads, setCorrectedReads] = useState(correctorDetails?.correctedReads);
 
   const backPressed = () => {
-   
+    const currentCorrectorDetails ={ 
+      ...AppContext.correctorDetails,
+      isMountingBracket: isMountingBracket,
+      manufacturer: manufacturer,
+      model: model,
+      correctorImage: correctorImage,
+      uncorrectedReads: uncorrectedReads,
+      correctedReads: correctedReads,
+      correctorSerialNumber: correctorSerialNumber,
+    };
+    appContext.setCorrectorDetails(currentCorrectorDetails);
       navigation.goBack();
     
   };
-  console.log(meterDetails);
 
   const nextPressed = async () => {
-    if (!selectedImage) {
+    console.log("nextPressed invoked.");
+    if (!correctorImage) {
       EcomHelper.showInfoMessage("Please choose image");
       return;
     }
     try {
-      const response = await fetch(selectedImage);
+      const response = await fetch(correctorImage);
       const blob = await response.blob();
       appContext.setBlobs((prev) => [...prev, blob]);
     } catch (err) {
       console.log(err);
     }
-    if (!serialNumber || serialNumber === "") {
+    if (!correctorSerialNumber || correctorSerialNumber === "") {
       EcomHelper.showInfoMessage("Please enter serial number");
       return;
     }
@@ -103,6 +105,10 @@ export default function CorrectorDetailsPage() {
       EcomHelper.showInfoMessage("Please choose model");
       return;
     }
+    
+    navigation.navigate("CorrectorGateWay",{jobType:jobType});
+   
+
   };
   const [manufacturers, setManufacturers] = useState([]);
   const [models, setModels] = useState([]);
@@ -131,7 +137,7 @@ const onManufacturerChange = async (item) => {
 
   const readSerialNumber = (codes) => {
     setIsModal(false);
-    setSerialNumber(codes.data);
+    setCorrectorSerialNumber(codes.data);
   };
 
 
@@ -141,7 +147,7 @@ const onManufacturerChange = async (item) => {
         hasLeftBtn={true}
         hasCenterText={true}
         hasRightBtn={true}
-        centerText={title}
+        centerText={"Corrector Details"}
         leftBtnPressed={backPressed}
         rightBtnPressed={nextPressed}
       />
@@ -168,18 +174,16 @@ const onManufacturerChange = async (item) => {
                   <View style={{ ...styles.row, width: width * 0.35 }}>
                     <TextInput
                       onChangeText={(txt) => {
-                        if (alphanumericRegex.test(txt)) {
-                          setSerialNumber(txt.toUpperCase());
-                        } else {
-                          setSerialNumber(txt);
-                        }
+                        const withSpacesAllowed = txt.toUpperCase();
+                          const formattedText = withSpacesAllowed.replace(/[^A-Z0-9]+/g, '');
+                          setCorrectorSerialNumber(formattedText);
                       }}
                       style={{
                         ...styles.input,
                         width: width * 0.25,
                         alignSelf: "flex-end",
                       }}
-                      value={serialNumber}
+                      value={correctorSerialNumber}
                     />
                     <Button title="📷" onPress={scanBarcode} />
                   </View>
@@ -256,11 +260,11 @@ const onManufacturerChange = async (item) => {
             <Text type={TextType.BODY_1}>Picture</Text>
             
             <ImagePickerButton
-              onImageSelected={(uri) => setSelectedImage(uri)}
+              onImageSelected={(uri) => setcorrectorImage(uri)}
             />
-            {selectedImage && (
+            {correctorImage && (
               <Image
-                source={{ uri: selectedImage }}
+                source={{ uri: correctorImage }}
                 style={styles.image}
                 resizeMode="contain"
               />

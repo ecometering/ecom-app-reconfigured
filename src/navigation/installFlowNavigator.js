@@ -20,6 +20,7 @@ import React, { useState, useEffect, useContext,createContext } from "react";
 import InstallGatewayScreen from "../screens/gateways/installGateWay";
 import CorrectorGateway from "../screens/gateways/CorrectorGateWay";
 
+
 import { createStackNavigator } from "@react-navigation/stack";
 
 
@@ -137,24 +138,24 @@ const InstallFlowNavigator = () => {
         name="NewEcvToMov"
         component ={GenericPhotoPage} 
         initialParams={{title: 'New ECV to MOV',
-         photoKey: 'NewEcvToMov',nextScreen:()=>meterBadge(meterType)}}
+         photoKey: 'NewEcvToMov',nextScreen:meter}}
     />
     
     
     <Stack.Screen 
-    key = "MeterDataBadge"
-    name ="MeterDataBadge" 
+    key = "NewMeterDataBadge"
+    name ="NewMeterDataBadge" 
     component={GenericPhotoPage}
     initialParams={{
         title: 'New Meter data badge',
-        photoKey: 'MeterDataBadge',
-        nextScreen:'MeterIndex'}} />
+        photoKey: 'NewMeterDataBadge',
+        nextScreen:'NewMeterIndex'}} />
    
     <Stack.Screen 
-    key = "MeterIndex"
-    name="MeterIndex"
+    key = "NewMeterIndex"
+    name="NewMeterIndex"
      component= {MeterDetailsPage}
-        initialParams={{title: 'New Meter index',photoKey: 'MeterIndex',nextScreen:'NewMeterPhoto'}}
+        initialParams={{title: 'New Meter index',photoKey: 'NewMeterIndex',nextScreen:'NewMeterPhoto'}}
          />
 
     <Stack.Screen
@@ -168,7 +169,7 @@ const InstallFlowNavigator = () => {
     <Stack.Screen name="DataLoggerDetails" component={DataLoggerDetailsPage} initialParams={{title:'New AMR installed',nextScreen:()=> nextAfterDataLogger}}/>
     {/*  Corrector Process */}
     <Stack.Screen name ="CorrectorDetails" component={CorrectorDetailsPage} initialParams={{title: 'New Corrector installed',nextScreen:'CorrectorGateway'}} />
-    <Stack.Screen name="CorrectorGateway" component={CorrectorGateway} />
+    <Stack.Screen name="CorrectorGateWay" component={CorrectorGateway} />
     {/* set and seal details  */}
     <Stack.Screen name="StreamsSetSealDetails" component={StreamsSetSealDetailsPage} />
       {generateScreenInstancesForStreams(numberOfStreams).map((screen, index) => (

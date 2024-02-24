@@ -24,9 +24,9 @@ function StandardPage() {
   const navigation = useNavigation();
   const appContext = useContext(AppContext);
   const jobType = appContext.jobType;
-  const title = jobType === "Install" ? "New Meter Details" : jobType;
   const standardDetails = appContext.standardDetails;
   const meterDetails = appContext.meterDetails;
+  const title = "Standard Details";
 
   const [testPassed, setTestPassed] = useState(standardDetails?.testPassed);
   const [confirmStandard, setConfirmStandard] = useState(
@@ -75,10 +75,7 @@ function StandardPage() {
       EcomHelper.showInfoMessage("Please set inlet pressure");
       return;
     }
-    if (confirmText == null) {
-      EcomHelper.showInfoMessage("Please confirm if all works was carried out");
-      return;
-    }
+   
     if (signature == null) {
       EcomHelper.showInfoMessage("Please enter signature");
       return;
@@ -227,14 +224,9 @@ function StandardPage() {
                 }}
                 keyboardType='numeric'
               />
-          
-            <View style={styles.spacer} />
-            <Text>{`I confirm that all works have been carried out in 
-accordance with current industry standards and 
-health safety policies`}</Text>
-            <View style={styles.spacer} />
-          
-              <TextInputWithTitle
+              
+              <View style={styles.spacer} />
+          <TextInputWithTitle
                 title={"Notes"}
                 value={confirmText}
                 onChangeText={(text) => {
@@ -247,6 +239,13 @@ health safety policies`}</Text>
                 }}
                 multiline={true}
               />
+            <View style={styles.spacer} />
+            <Text>{`I confirm that all works have been carried out in 
+accordance with current industry standards and 
+health safety policies`}</Text>
+            
+          
+              
           
 
             <View style={styles.spacer} />

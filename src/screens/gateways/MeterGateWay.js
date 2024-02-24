@@ -2,27 +2,46 @@ import React, { useEffect,useState,useContext } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { AppContext } from '../../context/AppContext';
 
-const  CorrectorGatewayScreen= () => {
+const  MeterGatewayScreen= () => {
     const navigation = useNavigation();
     const route = useRoute();
+    const {pageRoute} = route.params;
     const {  jobType,meterDetails } = useContext(AppContext);
-    console.log("CorrectorGatewayScreen",meterDetails);
-    console.log("CorrectorGatewayScreen",jobType);
+    console.log("MeterGatewayScreen",meterDetails);
+    console.log("MeterGatewayScreen",jobType);
     const [isCorrector,SetIsCorrector] = useState(meterDetails?.isCorrector );
     const [isAmr,SetIsAmr] = useState(meterDetails?.isAmr );
-    const [isMeter,SetIsMeter] = useState(meterDetails?.isMeter );
-console.log(" gateway screen",isMeter,isCorrector,isAmr);
+    const [metertype, setType] = useState(meterDetails?.type);
+    const [pressureTier, setPressureTier] = useState(meterDetails?.pressureTier);
+    const diaphragmMeterTypes = ['1', '2', '4'];
+
+console.log(" Meter gateway screen",type,pressureTier,isCorrector,isAmr);
     useEffect(() => {
         console.log('CorrectorGatewayScreen Mounted');
         // Enhanced conditional logic
         navigateBasedOnJobType();
-      }, [isCorrector, isAmr, isMeter, navigation, jobType]);
+      }, [isCorrector, isAmr, pressureTier,meterType, navigation, jobType]);
   
       
   
             function navigateBasedOnJobType() {
               switch (jobType) {
                   case "Install":
+                    if (pageRoute ===1){
+                        cosole.log("MeterGatewayScreen",pageRoute); 
+                        if (meterType.value === '1' || meterType.value === '2' || meterType.value === '4') {
+                            navigation.replace('NewMeterDataBadge');
+                        } else {
+                            navigation.replace('NewMeterIndex');
+                        }
+                    }
+                    if (pageRoute ===2){
+                        if (isCorrector===true){
+                            navigation.replace('CorrectorDetails');
+                        } else if (isAmr===true){
+                            navigation.replace('DataLoggerDetails');
+                        }}
+
                     if (isAmr) {
                       navigation.replace('DataLoggerDetails');
                   } else if (isMeter) {
@@ -88,4 +107,4 @@ console.log(" gateway screen",isMeter,isCorrector,isAmr);
           }
 
 }
-export default CorrectorGatewayScreen;
+export default MeterGatewayScreen;

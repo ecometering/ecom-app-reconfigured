@@ -3,6 +3,17 @@ import * as FileSystem from "expo-file-system";
 import * as SQLite from "expo-sqlite";
 
 const databaseName = "options.sqlite";
+const dbFilePath = `${FileSystem.documentDirectory}SQLite/${databaseName}`;
+
+
+async function deleteDatabase() {
+	try {
+	  await FileSystem.deleteAsync(dbFilePath);
+	  console.log('Database file deleted successfully.');
+	} catch (error) {
+	  console.error('Error deleting database file:', error);
+	}
+  }
 
 async function testFileSystemAccess() {
 	try {
@@ -47,9 +58,11 @@ async function fetchTableNames(db) {
 
 						tables[tableName] = [];
 					}
+					console.log("Fetched table names:", tables);
 					resolve(tables);
 				},
 				(_, error) => {
+					console.error("Failed to fetch table names", error);
 					reject(error);
 				}
 			);
@@ -63,8 +76,9 @@ async function createJobsTable(db) {
 		tx.executeSql(
 			`CREATE TABLE IF NOT EXISTS Jobs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+		jobId TEXT,
         jobType TEXT NOT NULL,
-        jobNumber TEXT,
+        MPRN TEXT,
         startDate DATE,
         endDate DATE,
         jobStatus TEXT,
@@ -179,29 +193,7 @@ const fetchModelsForManufacturer = async (meterType, manufacturer) => {
 	});
 };
 
-const addColumnForJSONStorage = (db) => {
-	console.log("Adding jsonData column to JobsInProgress table...");
-	db.transaction((tx) => {
-		tx.executeSql(
-			`ALTER TABLE jobsInProgress ADD COLUMN jsonData TEXT;`,
-			[],
-			() => console.log("Column jsonData added successfully."),
-			(_, error) => console.error("Error adding jsonData column:", error)
-		);
-	});
-};
 
-const saveJSONStringToColumn = async (id, jsonString) => {
-	const db = await openDatabase();
-	db.transaction((tx) => {
-		tx.executeSql(
-			`UPDATE jobsInProgress SET jsonData = ? WHERE id = ?;`,
-			[jsonString, id],
-			() => console.log("JSON string saved successfully."),
-			(_, error) => console.error("Error saving JSON string:", error)
-		);
-	});
-};
 
 const loadDataAndSetContext = async (id) => {
 	const db = await openDatabase();
@@ -223,114 +215,51 @@ const loadDataAndSetContext = async (id) => {
 	});
 };
 
-const addOrUpdateJobData = async (jobId, jobData) => {
-	console.log("[addOrUpdateJobData] Adding or updating job data", { jobId, jobData });
-	const db = await openDatabase();
 
-	return new Promise((resolve, reject) => {
-		db?.transaction(
-			(tx) => {
-				console.log("[addOrUpdateJobData] Transaction started");
-				tx.executeSql(
-					`SELECT * FROM Jobs WHERE id = ?;`,
-					[jobId],
-					(_, result) => {
-						console.log("[addOrUpdateJobData] Job selection query completed");
-						if (result.rows.length > 0) {
-							console.log(`[addOrUpdateJobData] Job with id ${jobId} exists, updating...`);
-							const updatedPhotos = JSON.stringify({ ...JSON.parse(result.rows._array[0].photos), ...jobData.photos });
-							tx?.executeSql(
-								`UPDATE Jobs SET photos = ? WHERE id = ?;`,
-								[updatedPhotos, jobId],
-								() => {
-									console.log(`[addOrUpdateJobData] Job data updated for jobId: ${jobId}`);
-									resolve();
-								},
-								(_, error) => {
-									console.error(`[addOrUpdateJobData] Failed to update job data for jobId: ${jobId}`, error);
-									reject(error);
-								}
-							);
-						} else {
-							console.log(`[addOrUpdateJobData] Job with id ${jobId} does not exist, adding new entry...`);
-							const { jobType, photos } = jobData;
-							const photosJson = JSON.stringify(photos);
-							tx.executeSql(
-								`INSERT INTO Jobs (id, jobType, photos) VALUES (?, ?, ?);`,
-								[jobId, jobType, photosJson],
-								() => {
-									console.log(`[addOrUpdateJobData] New job data added for jobId: ${jobId}`);
-									resolve();
-								},
-								(_, error) => {
-									console.error(`[addOrUpdateJobData] Failed to add new job data for jobId: ${jobId}`, error);
-									reject(error);
-								}
-							);
-						}
-					},
-					(_, error) => {
-						console.error(`[addOrUpdateJobData] Failed to retrieve job data for jobId: ${jobId}`, error);
-						reject(error);
-					}
-				);
-			},
-			(_, error) => {
-				console.error("[addOrUpdateJobData] Transaction error on job data update/addition", error);
-				reject(error);
-			},
-			() => {
-				console.log("[addOrUpdateJobData] Transaction successful for job data update/addition");
-			}
-		);
+
+
+
+
+  const printTableSchema = async (tableName) => {
+	const db = SQLite.openDatabase(databaseName);
+  
+	db.transaction(tx => {
+	  tx.executeSql(
+		`PRAGMA table_info(${tableName});`, // This PRAGMA command returns table structure
+		[],
+		(_, { rows }) => {
+		  console.log(`Schema of ${tableName}:`, JSON.stringify(rows._array, null, 2));
+		},
+		(_, error) => {
+		  console.error(`Failed to log schema of table ${tableName}:`, error);
+		  return true; // To stop the transaction
+		}
+	  );
 	});
-};
+  };
 
-const loadJobData = async (jobId) => {
-	const db = openDatabase();
-
-	return new Promise((resolve, reject) => {
-		db.transaction(
-			(tx) => {
-				tx.executeSql(
-					`SELECT * FROM Jobs WHERE id = ?;`,
-					[jobId],
-					(_, { rows }) => {
-						if (rows.length > 0) {
-							let jobData = rows._array[0];
-							// Parse photos JSON string back into an object
-							jobData.photos = jobData.photos ? JSON.parse(jobData.photos) : {};
-							console.log(`Job data loaded for jobId: ${jobId}`, jobData);
-							resolve(jobData);
-						} else {
-							console.log(`No job data found for jobId: ${jobId}`);
-							resolve(null);
-						}
-					},
-					(_, error) => {
-						console.error(`Failed to load job data for jobId: ${jobId}`, error);
-						reject(error);
-					}
-				);
-			},
-			(error) => console.error("Transaction error on loading job data", error),
-			() => console.log("Transaction successful for loading job data")
-		);
+const JobsDatabaseTest = async () => {
+	db.transaction(tx => {
+	tx.executeSql(
+		`Select * from Jobs`,null,
+		(txObj,resultSet) => SetJobs (resultSet.rows._array),
+		(txObj,error) => console.log(error)
+	);
 	});
-};
+}
+
 
 export {
-  addColumnForJSONStorage,
-  addOrUpdateJobData,
   createJobsTable,
   fetchManufacturersForMeterType,
   fetchModelsForManufacturer,
   getDatabaseTables,
   loadDataAndSetContext,
-  loadJobData,
   openDatabase,
-  saveJSONStringToColumn,
   testDatabaseAndTables,
-  testFileSystemAccess
+  testFileSystemAccess,
+  printTableSchema,
+  deleteDatabase,
+  JobsDatabaseTest
 };
 

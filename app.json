@@ -2,7 +2,7 @@
   "expo": {
     "name": "ecomJobsApp",
     "slug": "ecomjobsapp",
-    "version": "2.1.27",
+    "version": "2.1.28",
     "orientation": "default",
     "icon": "./assets/icons/logo167.png",
     "userInterfaceStyle": "light",
@@ -19,7 +19,8 @@
       "supportsTablet": true,
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",
-        "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos."
+        "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos.",
+        "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos."
       },
       "bundleIdentifier": "ECM.ecomJobsApp"
     },
@@ -43,7 +44,9 @@
     },
     "permissions": [
       "android.permission.RECORD_AUDIO",
-      "android.permission.CAMERA"
+      "android.permission.CAMERA",
+      "android.permission.READ_EXTERNAL_STORAGE",
+      "android.permission.WRITE_EXTERNAL_STORAGE"
     ],
     "package": "ECM.ecomJobsApp"
   },

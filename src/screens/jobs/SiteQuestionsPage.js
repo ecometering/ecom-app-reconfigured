@@ -7,20 +7,22 @@ import {
   ScrollView,
   StyleSheet,
   View,
+  Dimensions
 } from "react-native";
 import Text from "../../components/Text";
 import { TextInputWithTitle } from "../../components/TextInput";
 import Header from "../../components/Header";
 import { useNavigation,useRoute } from "@react-navigation/native";
 import OptionalButton from "../../components/OptionButton";
-import { unitH, width } from "../../utils/constant";
 import { AppContext } from "../../context/AppContext";
 import EcomHelper from "../../utils/ecomHelper";
 import * as ExpoImagePicker from "expo-image-picker";
 import ImagePickerButton from "../../components/ImagePickerButton";
+const { width, height } = Dimensions.get('window');
+
 function SiteQuestionsPage() {
   const navigation = useNavigation();
-
+const route = useRoute();
   const appContext = useContext(AppContext);
   const jobType = appContext.jobType;
   console.log("Job Type:", jobType);
@@ -57,69 +59,95 @@ function SiteQuestionsPage() {
     navigation.goBack();
   };
 
-  const nextPressed = async () => {
+const nextPressed = async () => {
     console.log("nextPressed invoked.");
   
-    // Validation checks
-    if (
-      isSafe === null ||
-      isGerneric === null ||
-      isCarryOut === null ||
-      isFitted === null ||
-      isStandard === null
-    ) {
-      EcomHelper.showInfoMessage("Please answer all questions");
-      console.log("Validation failed: Not all questions answered.");
+    // Individual validation checks with specific messages
+    if (isSafe === null) {
+      EcomHelper.showInfoMessage("Please indicate if the meter location is safe.");
       return;
     }
+    if (isGerneric === null) {
+      EcomHelper.showInfoMessage("Please indicate if the job is covered by the generic risk assessment.");
+      return;
+    }
+    if (isCarryOut === null) {
+      EcomHelper.showInfoMessage("Please indicate if the job can be carried out.");
+      return;
+    }
+    if (isCarryOut === false && (!carryOutReason || carryOutReason.trim().length === 0)) {
+      EcomHelper.showInfoMessage("Please indicate why the job can't be carried out.");
+      return;
+    }  
+    if (isFitted === null) {
+      EcomHelper.showInfoMessage("Please indicate if a bypass is fitted.");
+      return;
+    }
+    if (isStandard === null) {
+      EcomHelper.showInfoMessage("Please indicate if the customer installation conforms to current standards.");
+      return;
+    }
+    // Add additional checks here as needed
   
-    // Attempt to upload bypass image if present
-  
-    // Update meter details in context
+    // If all checks pass, update meter details in context
     const currentMeterDetails = {
       ...appContext.meterDetails,
-      isSafe: isSafe,
-      isGerneric: isGerneric,
-      genericReason: genericReason,
-      isCarryOut: isCarryOut,
-      carryOutReason: carryOutReason,
-      isFitted: isFitted,
-      isStandard: isStandard,
-      byPassImage: byPassImage,
+      isSafe,
+      isGerneric,
+      genericReason,
+      isCarryOut,
+      carryOutReason,
+      isFitted,
+      isStandard,
+      byPassImage,
     };
   
     appContext.setMeterDetails(currentMeterDetails);
     console.log("Meter details updated in context:", currentMeterDetails);
   
-    // Conditional navigation based on jobType
-    switch(jobType) {
-      case "Warrant":
-      case "Removal":
-        navigation.navigate("removal");
-        console.log("Navigating to RemovalFlowNavigator");
-        break;
-      case "Exchange":
-        navigation.navigate("exchange");
-        console.log("Navigating to ExchangeFlowNavigator");
-        break;
-      case "Install":
-        navigation.navigate("install");
-        console.log("Navigating to InstallFlowNavigator");
-        break;
-      case "Maintenance":
-        navigation.navigate("maintenance");
-        console.log("Navigating to MaintenanceFlowNavigator");
-        break;
-      case "Survey":
-        navigation.navigate("survey");
-        console.log("Navigating to SurveyFlowNavigator");
-        break;
-      default:
-        console.log(`Unknown job type: ${jobType}`);
-        // Fallback navigation or error handling
-        break;
+    // Continue with conditional navigation based on jobType and conditions
+    handleNavigationBasedOnConditions();
+};
+
+const handleNavigationBasedOnConditions = () => {
+    if (!isSafe || !isStandard) {
+      navigation.navigate("StandardPage", { fromPage: "SiteQuestionsPage" });
+      console.log("Navigating to StandardPage");
+    } else if (!isCarryOut) {
+      navigation.navigate("RebookPage", { fromPage: "SiteQuestionsPage" });
+      console.log("Navigating to RebookPage");
+    } else {
+      // Continue with conditional navigation based on jobType
+      switch (jobType) {
+        case "Warrant":
+        case "Removal":
+          navigation.navigate("removal");
+          console.log("Navigating to RemovalFlowNavigator");
+          break;
+        case "Exchange":
+          navigation.navigate("exchange");
+          console.log("Navigating to ExchangeFlowNavigator");
+          break;
+        case "Install":
+          navigation.navigate("install");
+          console.log("Navigating to InstallFlowNavigator");
+          break;
+        case "Maintenance":
+          navigation.navigate("maintenance");
+          console.log("Navigating to MaintenanceFlowNavigator");
+          break;
+        case "Survey":
+          navigation.navigate("survey");
+          console.log("Navigating to SurveyFlowNavigator");
+          break;
+        default:
+          console.log(`Unknown job type: ${jobType}`);
+          // Fallback navigation or error handling
+          break;
+      }
     }
-  };  
+};
+  
   return (
     <SafeAreaView style={styles.content}>
       <Header
@@ -276,19 +304,19 @@ const styles = StyleSheet.create({
     marginHorizontal: width * 0.1,
   },
   optionContainer: {
-    width: 100,
-    marginVertical: unitH * 10,
+    width: width * 0.25, // Example adjustment, assuming you want the container to be 25% of screen width
+    marginVertical: height * 0.01, // Adjusted based on screen height
     alignSelf: "flex-start",
   },
   spacer: {
-    height: unitH * 10,
+    height: height * 0.01, // Adjusted based on screen height
   },
   inputContainer: {
     flex: 1,
   },
   image: {
-    width: 200,
-    height:200,
+    width: width * 0.5, // Adjusted to be half of screen width
+    height: height * 0.25, // Example adjustment, assuming you want the image to be 25% of screen height
     alignSelf: "center",
   },
 });

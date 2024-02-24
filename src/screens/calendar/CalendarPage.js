@@ -18,6 +18,7 @@ import Text from "../../components/Text";
 import Header from "../../components/Header";
 import OptionalButton from "../../components/OptionButton";
 import DailyView from "../../components/calendar/DailyView";
+import WeeklyCalendarScreen from "../../components/calendar/WeeklyView";
 import { MaterialCommunityIcons } from "@expo/vector-icons"
 
 
@@ -189,7 +190,6 @@ function CalendarPage() {
         centerText="Calendar"
         leftBtnPressed={() => navigation.goBack()}
       />
-      <ScrollView style={{ flex: 1, width: "100%" }}>
         <View style={{ flex: 1, width: "100%" }}>
           <View style={{ paddingVertical: unitH * 20, flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
             <OptionalButton
@@ -226,7 +226,46 @@ function CalendarPage() {
                 <MaterialCommunityIcons name={`arrow-${direction}`} size={unitH * 30} color="black" />
               )}
             />
-          )}
+          )}  
+          {viewMode === "Week" && (
+            <Agenda
+            selected={selectedDate}
+            items={agendaItem}
+            onDayPress={(day) => {
+              console.log("Selected day:", day);
+              let dateString = day.dateString;
+              setSelectedDate(dateString);
+              setAgendaItem({
+                [dateString]: sampleEvents[dateString],
+              });
+            }}
+            renderItem={(item, firstItemInDay) => {
+              return (
+                <TouchableOpacity onPress={() => {}}>
+                  <View style={styles.eventContainer}>
+                    <Text style={styles.eventTitle}>{item.title}</Text>
+                    <Text
+                      style={styles.eventTime}
+                    >{`${item.startTime} - ${item.endTime}`}</Text>
+                    <Text style={styles.eventLocation}>{item.location}</Text>
+                    <Text style={styles.eventDescription}>
+                      {item.description}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              );
+            }}
+            hideKnob={true}
+            renderEmptyData={() => (
+              <View style={styles.noEventDataContainer}>
+                <Text style={styles.noEventDataText}>
+                  No events for this day
+                </Text>
+              </View>
+            )}
+           
+          />)}
+
           {viewMode === "Day" && (
             <DailyView
               selectedDate={selectedDate}
@@ -243,7 +282,7 @@ function CalendarPage() {
             />
           )}
         </View>
-      </ScrollView>
+    
       <EventModal
         isVisible={modalVisible}
         onClose={() => setModalVisible(false)}

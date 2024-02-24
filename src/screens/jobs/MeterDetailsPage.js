@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState,useEffect } from "react";
+import { useContext, useRef, useState,useEffect } from "react";
 import {
   Button,
   KeyboardAvoidingView,
@@ -6,11 +6,12 @@ import {
   ScrollView,
   StyleSheet,
   View,
-  useWindowDimensions,
+  Dimensions,
+  Platform
 } from "react-native";
 import {
-  height,
-  isIos,
+
+
 
   NUMBER_OF_DIALS,
   PULSE_VALUE,
@@ -19,12 +20,12 @@ import {
   METER_POINT_STATUS_CHOICES,
   UNIT_OF_MEASURE_CHOICES,
   METER_TYPE_CHOICES,
-  MECHANISM_TYPE_CHOICES,
-  width,
+  MECHANISM_TYPE_CHOICES
+
   
 } from "../../utils/constant";
 import {getDatabaseTables}from "../../utils/database";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation,useRoute } from "@react-navigation/native";
 import Header from "../../components/Header";
 import Text from "../../components/Text";
 import OptionalButton from "../../components/OptionButton";
@@ -36,16 +37,18 @@ import BarcodeScanner from "../../components/BarcodeScanner";
 import { fetchManufacturersForMeterType, fetchModelsForManufacturer } from '../../utils/database';
 
 const alphanumericRegex = /^[a-zA-Z0-9]*$/;
-
+const { width, height } = Dimensions.get('window');
 function MeterDetailsPage() {
-  const { width, height } = useWindowDimensions();
   const navigation = useNavigation();
+  const route = useRoute(); 
+  const { title,nextScreen} = route.params; 
   const appContext = useContext(AppContext);
   const camera = useRef(null);
   const jobType = appContext.jobType;
   const meterDetails = appContext.meterDetails;
-  console.log("MeterDetailsPage");
 
+  console.log("MeterDetailsPage");
+  const isIos = Platform.OS === 'ios';
   const [location, setLocation] = useState(meterDetails?.location);
   const [model, setModel] = useState(meterDetails?.model);
   const [manufacturer, setManufacturer] = useState(meterDetails?.manufacturer);
@@ -93,6 +96,22 @@ function MeterDetailsPage() {
   const [isModal, setIsModal] = useState(false);
   const [manufacturers, setManufacturers] = useState([]);
   const [models, setModels] = useState([]);
+  const diaphragmMeterTypes = ['1', '2', '4'];
+
+  useEffect(() => {
+    if (type && diaphragmMeterTypes.includes(type.value)) {
+      setPressureTierList([
+        { label: "LP", value: "LP" },
+        { label: "MP", value: "MP" }
+      ]);
+      if (!['LP', 'MP'].includes(pressureTier?.value)) {
+        setPressureTier(null);
+      }
+    } else {
+      setPressureTierList(METER_PRESSURE_TIER_CHOICES);
+    }
+  }, [type, pressureTier]);
+
   useEffect(() => {
     console.log("+++++++type changed", type)
     if (type) {
@@ -179,7 +198,7 @@ function MeterDetailsPage() {
     }
 
     // navigate
-    navigation.navigate("MeterIndexPhotoPage");
+    navigation.navigate(nextScreen);
   };
 
   const backPressed = () => {
@@ -217,7 +236,6 @@ function MeterDetailsPage() {
     setSerialNumber(codes.data);
   };
 
-  const pageTitle = jobType === "Install" ? "New Meter Details" : jobType;
 
  
 
@@ -227,13 +245,14 @@ function MeterDetailsPage() {
         hasLeftBtn={true}
         hasCenterText={true}
         hasRightBtn={true}
-        centerText={pageTitle}
+        centerText={""}
         leftBtnPressed={backPressed}
         rightBtnPressed={nextPressed}
       />
       <KeyboardAvoidingView
         style={styles.content}
-        behavior={isIos ? "padding" : null}
+        behavior={isIos ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
         <ScrollView style={styles.content}>
           <View style={styles.spacer} />
@@ -250,101 +269,112 @@ function MeterDetailsPage() {
             />
             <View style={styles.spacer} />
             <View style={styles.row}>
-              <EcomDropDown
-                width={width *0.5}
-                value={type}
-                valueList={[
-                  {label: 'D-DIAPHRAGM OF UNKOWN MATERIAL', value: "1"},
-                  {label: 'L-LEATHER DIAPHRAGM', value: "2"},
-                  {label: 'R-ROTARY', value: "3"},
-                  {label: 'S-SYNTHETIC DIAPHRAGM', value: "4"},
-                  {label: 'T-TURBINE', value: "5"},
-                  {label: 'U-ULTRASONIC', value: "6"}
-                ]}
-                placeholder={"Meter type"}
-                onChange={(item) => {
-                  console.log("==============item", item);
-                  setType(item);
-                  let isDiaphragm = [1, 2, 4].includes(item.value);
-                  let isML = [3, 2].includes(pressureTier?.value);
-                  if (isDiaphragm) {
-                    setPressureTierList([
-                      { label: "LP", data: "LP", value: 3 },
-                      { label: "MP", data: "MP", value: 2 },
-                    ]);
-                  } else {
-                    setPressureTierList(METER_PRESSURE_TIER_CHOICES);
-                  }
-                  if (!isDiaphragm && isML) {
-                    setPressureTier(null);
-                  }
-                }}
-              />
-              <EcomDropDown
-    width={width}
-    value={manufacturer}
-    valueList={manufacturers} // Dynamically populated from SQLite database
-    placeholder={"Meter Manufacturer"}
-    onChange={(item) => {
-      console.log(item);
-      setManufacturer(item);
-      // Reset models when manufacturer changes
-      setModels([]);
-    }}
-  />
-            </View>
-            <View style={styles.spacer} />
-            <View style={styles.row}>
-              <EcomDropDown
-                width={width * 0.35}
-                value={uom}
-                valueList={UNIT_OF_MEASURE_CHOICES}
-                placeholder={"UOM"}
-                onChange={(item) => {
-                  console.log(item);
-                  setUom(item);
-                }}
-              />
-              <EcomDropDown
-    width={width * 0.5}
-    value={model}
-    valueList={models} // Dynamically populated based on the selected manufacturer
-    placeholder={"Meter Model"}
-    onChange={(item) => {
-      console.log(item);
-      setModel(item);
-    }}
-  />
-            </View>
-            <View style={styles.spacer} />
-            <View style={styles.row}>
-              <View style={{ width: width * 0.35 }}>
-                <Text>{"Meter pulse"}</Text>
-                <View style={{ height: 5 }} />
-                <View style={{ alignItems: "flex-start" }}>
-                  <OptionalButton
-                    options={["Yes", "No"]}
-                    actions={[
-                      () => {
-                        setHavePulseValue(true);
-                      },
-                      () => {
-                        setHavePulseValue(false);
-                        setPulseValue(null);
-                      },
+              <View style={{ flex: 0.5 }}>
+                  <EcomDropDown
+                    width={width *0.5}
+                    value={type}
+                    valueList={[
+                      {label: 'D-DIAPHRAGM OF UNKOWN MATERIAL', value: "1"},
+                      {label: 'L-LEATHER DIAPHRAGM', value: "2"},
+                      {label: 'R-ROTARY', value: "3"},
+                      {label: 'S-SYNTHETIC DIAPHRAGM', value: "4"},
+                      {label: 'T-TURBINE', value: "5"},
+                      {label: 'U-ULTRASONIC', value: "6"}
                     ]}
-                    value={
-                      havePulseValue === null
-                        ? null
-                        : havePulseValue
-                        ? "Yes"
-                        : "No"
-                    }
+                    placeholder={"Meter type"}
+                    onChange={(item) => {
+                      console.log("==============item", item);
+                      setType(item);
+                      let isDiaphragm = [1, 2, 4].includes(item.value);
+                      let isML = [3, 2].includes(pressureTier?.value);
+                      if (isDiaphragm) {
+                        setPressureTierList([
+                          { label: "LP", data: "LP", value: 3 },
+                          { label: "MP", data: "MP", value: 2 },
+                        ]);
+                      } else {
+                        setPressureTierList(METER_PRESSURE_TIER_CHOICES);
+                      }
+                      if (!isDiaphragm && isML) {
+                        setPressureTier(null);
+                      }
+                    }}
                   />
-                </View>
               </View>
+            
+              <View style={{ flex: 0.5 }}>
+                                <EcomDropDown
+                      width={width *1}
+                      value={manufacturer}
+                      valueList={manufacturers} // Dynamically populated from SQLite database
+                      placeholder={"Meter Manufacturer"}
+                      onChange={(item) => {
+                        console.log(item);
+                        setManufacturer(item);
+                        // Reset models when manufacturer changes
+                        setModels([]);
+                      }}
+                    />
+              </View>
+            </View>
+            <View style={styles.spacer} />
+            <View style={styles.row}>
+              <View style={{ flex: 0.5 }}>
+                    <EcomDropDown
+                      width={width * 0.35}
+                      value={uom}
+                      valueList={UNIT_OF_MEASURE_CHOICES}
+                      placeholder={"UOM"}
+                      onChange={(item) => {
+                        console.log(item);
+                        setUom(item);
+                      }}
+                    />
+              </View>
+              <View style={{ flex: 0.5 }}>
+                    <EcomDropDown
+                          width={width * 0.5}
+                          value={model}
+                          valueList={models} // Dynamically populated based on the selected manufacturer
+                          placeholder={"Meter Model"}
+                          onChange={(item) => {
+                            console.log(item);
+                            setModel(item);
+                          }}
+                        />
+              </View>
+            </View>
 
+            <View style={styles.spacer} />
+            <View style={styles.row}>
+              <View style={{flex: 0.5}}>
+                    <Text>{"Meter pulse"}</Text>
+                    <View style={{ height: 5 }} />
+                    <View style={{ alignItems: "flex-start" }}>
+                      <OptionalButton
+                        options={["Yes", "No"]}
+                        actions={[
+                          () => {
+                            setHavePulseValue(true);
+                          },
+                          () => {
+                            setHavePulseValue(false);
+                            setPulseValue(null);
+                          },
+                        ]}
+                        value={
+                          havePulseValue === null
+                            ? null
+                            : havePulseValue
+                            ? "Yes"
+                            : "No"
+                        }
+                      />
+                    </View>
+                  </View>
+                        
               {havePulseValue === true ? (
+                <View style={{ flex: 0.5 }}>
                 <EcomDropDown
                   width={width * 0.35}
                   value={pulseValue}
@@ -355,122 +385,148 @@ function MeterDetailsPage() {
                     setPulseValue(item);
                   }}
                 />
+              </View>
               ) : (
                 <View style={{ flex: 1 }} />
               )}
             </View>
+
+
             <View style={styles.spacer} />
             <View style={styles.row}>
-              <TextInputWithTitle
-                title={"Measuring capacity"}
-                value={measuringCapacity}
-                onChangeText={(txt) => {
-                  const numericValue = txt.replace(/[^0-9]/g, "");
-                  setMeasuringCapacity(numericValue);
-                }}
-                keyboardType="numeric"
-                style={styles.input}
-              />
-              <EcomDropDown
-                width={width * 0.35}
-                value={year}
-                valueList={EcomHelper.getYears(1901)}
-                placeholder={"Year of manufacturer"}
-                onChange={(item) => {
-                  console.log(item);
-                  setYear(item);
-                }}
-              />
-            </View>
-            <View style={styles.spacer} />
-            <View style={styles.row}>
-              <TextInputWithTitle
-                value={reading}
-                title={"Meter Reading"}
-                onChangeText={(txt) => {
-                  //validation
-                  const numericValue = txt.replace(/[^0-9]/g, "");
-                  setReading(numericValue);
-                }}
-                keyboardType="numeric"
-                style={styles.input}
-              />
-              <EcomDropDown
-                width={'35%'}
-                value={dialNumber}
-                valueList={NUMBER_OF_DIALS}
-                placeholder={"Number of dials"}
-                onChange={(item) => {
-                  console.log(item);
-                  setDialNumber(item);
-                }}
-              />
-            </View>
-            <View style={styles.spacer} />
-            <View style={styles.row}>
-              <View style={{ width: '65%'}}>
-                <Text>{"Meter serial number"}</Text>
-                <View style={{ height: 5 }} />
-                <View style={styles.row}>
-                  <TextInput
-                    value={serialNumber}
+                <View style={{ flex: 0.5 }}>
+                  <TextInputWithTitle
+                    title={"Measuring capacity"}
+                    value={measuringCapacity}
                     onChangeText={(txt) => {
-                      if (alphanumericRegex.test(txt)) setSerialNumber(txt);
+                      const numericValue = txt.replace(/[^0-9]/g, "");
+                      setMeasuringCapacity(numericValue);
                     }}
-                    style={{ ...styles.input, width: '45%' }}
+                    keyboardType="numeric"
+                    style={styles.input}
                   />
-                  <Button
-                    title="📷"
-                    style={styles.scanBtn}
-                    onPress={scanBarcode}
+                </View>
+                <View style={{ flex: 0.5 }}>
+                  <EcomDropDown
+                    width={width * 0.35}
+                    value={year}
+                    valueList={EcomHelper.getYears(1901)}
+                    placeholder={"Year of manufacturer"}
+                    onChange={(item) => {
+                      console.log(item);
+                      setYear(item);
+                    }}
                   />
                 </View>
               </View>
 
-              <EcomDropDown
-                width={'35%'}
-                value={status}
-                valueList={METER_POINT_STATUS_CHOICES}
-                placeholder={"Meter status"}
-                onChange={(item) => {
-                  console.log(item);
-                  setStatus(item);
-                }}
-              />
-            </View>
+
             <View style={styles.spacer} />
             <View style={styles.row}>
-              <EcomDropDown
-                width={'35%'}
-                value={mechanism}
-                valueList={MECHANISM_TYPE_CHOICES}
-                placeholder={"Meter Mechanism"}
-                onChange={(item) => {
-                  console.log(item);
-                  setMechanism(item);
-                }}
-              />
-              <EcomDropDown
-                width={'35%'}
-                value={pressureTier}
-                valueList={pressureTierList} //METER_PRESSURE_TIER_CHOICES
-                placeholder={"Metering pressure tier"}
-                onChange={(item) => {
-                  console.log(item);
-                  setPressureTier(item);
-                }}
-              />
+              <View style={{ flex: 0.5 }}>
+                    <TextInputWithTitle
+                      value={reading}
+                      title={"Meter Reading"}
+                      onChangeText={(txt) => {
+                        //validation
+                        const numericValue = txt.replace(/[^0-9]/g, "");
+                        setReading(numericValue);
+                      }}
+                      keyboardType="numeric"
+                      maxLength={dialNumber ? parseInt(dialNumber.value) : 0} 
+                      style={styles.input}
+                    />
+              </View>
+              <View style={{ flex: 0.5 }}>
+                    <EcomDropDown
+                      
+                      value={dialNumber}
+                      valueList={NUMBER_OF_DIALS}
+                      placeholder={"Number of dials"}
+                      onChange={(item) => {
+                        console.log(item);
+                        setDialNumber(item);
+                      }}
+                    />
+              </View>
             </View>
-            <View style={styles.spacer} />
+
+
             <View style={styles.spacer} />
             <View style={styles.row}>
-              <View style={{ width: '35%' }}>
+              <View style={{ flex:0.5}}>
+                    <Text>{"Meter serial number"}</Text>
+                    <View style={{ height: 5 }} />
+                    <View style={styles.row}>
+                      <TextInput
+                        value={serialNumber}
+                        onChangeText={(txt) => {
+                          const withSpacesAllowed = txt.toUpperCase();
+                          const formattedText = withSpacesAllowed.replace(/[^A-Z0-9]+/g, '');
+                          setSerialNumber(formattedText);
+                        }}
+                        style={{ ...styles.input,  }}
+                      />
+                      <Button
+                        title="📷"
+                        style={styles.scanBtn}
+                        onPress={scanBarcode}
+                      />
+                    </View>
+                  </View>
+              <View style={{ flex: 0.5 }}>  
+                  <EcomDropDown
+                    width={'35%'}
+                    value={status}
+                    valueList={METER_POINT_STATUS_CHOICES}
+                    placeholder={"Meter status"}
+                    onChange={(item) => {
+                      console.log(item);
+                      setStatus(item);
+                    }}
+                  />
+              </View>
+            </View>
+
+
+            <View style={styles.spacer} />
+            <View style={styles.row}>
+            
+            <View style={{ flex: 0.5 }}>
+              
+                  <EcomDropDown
+              
+                    value={mechanism}
+                    valueList={MECHANISM_TYPE_CHOICES}
+                    placeholder={"Meter Mechanism"}
+                    onChange={(item) => {
+                      console.log(item);
+                      setMechanism(item);
+                    }}
+                  />
+            </View>
+            <View style={{ flex: 0.5 }}>
+                  <EcomDropDown
+                    width={'35%'}
+                    value={pressureTier}
+                    valueList={pressureTierList} //METER_PRESSURE_TIER_CHOICES
+                    placeholder={"Metering pressure tier"}
+                    onChange={(item) => {
+                      console.log(item);
+                      setPressureTier(item);
+                    }}
+                  />
+              </View>
+            </View>
+           
+            <View style={styles.spacer} />
+            <View style={styles.row}>
+              <View style={{flex:1 }}>
                 <Text>Meter Outlet Working Pressure</Text>
                 <View style={{ height: 5 }} />
                 <View
                   style={{
-                    ...styles.row,
-                    alignItems: "center",
+                    flexDirection: "row",alignItems: "center",
                   }}
                 >
                   <TextInput
@@ -498,6 +554,9 @@ function MeterDetailsPage() {
             </View>
             <View style={styles.spacer} />
             <View style={styles.spacer} />
+            <View style={styles.spacer} />
+
+           
           </View>
           {isModal && (
             <BarcodeScanner
@@ -517,7 +576,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   body: {
-    marginHorizontal: '8%',
+    marginHorizontal: width * 0.05,
   },
   row: {
     flexDirection: "row",
@@ -525,17 +584,17 @@ const styles = StyleSheet.create({
     alignItems: "center", // Ensure vertical alignment is centered for row items
   },
   input: {
-    width: '100%', // Adjust to use full width of its container for better visibility
+    width: '75%', // Adjust to use full width of its container for better visibility
     height: 40, // Ensure this is a number, not a string
-    padding: 10, // Add padding for text input
-    // Consider adding margin if needed
+    borderColor: 'gray', // Optional: for border
+    borderWidth: 1, // Optional: for border
+    padding: 10,
   },
   scanBtn: {
     // If you are using a custom button, ensure it is visible and accessible
   },
   spacer: {
     height: 20, 
-    width :width*0.0001,
   },
     // Adjust the dropdown and input container widths in the row
   scanBtn: {

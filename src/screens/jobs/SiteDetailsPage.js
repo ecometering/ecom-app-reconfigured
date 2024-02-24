@@ -231,7 +231,7 @@ function SiteDetailsPage() {
         centerText={""}
         leftBtnPressed={backPressed}
         rightBtnPressed={nextPressed}
-        hasMenuButton={true}
+        hasMenuButton={false}
         totalPages={params.totalPages}
         currentPage={params.currentPage}
         onPageChange={(pageNum) => console.log("navigated to pageL:", pageNum)}
@@ -242,7 +242,7 @@ function SiteDetailsPage() {
       >
         <ScrollView style={{flex:1}} >
           <TextInputWithTitle
-            title={"MPRN333 *"}
+            title={"MPRN *"}
             value={mprn}
             onChangeText={(txt) => {
               const filteredText = txt.replace(/[^0-9]/g, "");
@@ -367,6 +367,13 @@ function SiteDetailsPage() {
             <TextInputWithTitle
             style={{width:"100%"}}
               title={"Site Contact"}
+              value={contact}
+              onChangeText={(txt) => {
+                const filteredText = txt.replace(/[^a-zA-Z ]/g, "");
+                setContact(filteredText);
+              }}
+
+              
             />
             </View>
               

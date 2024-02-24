@@ -1,16 +1,14 @@
 import React from "react";
-import { Modal, StyleSheet, TouchableOpacity, View } from "react-native";
-import { useScreenDimensions } from "../utils/constant";
+import { Modal, StyleSheet, TouchableOpacity, View, Dimensions } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Camera } from "expo-camera"
 import { BarCodeScanner  } from "expo-barcode-scanner";
-
+const { width, height } = Dimensions.get('window');
 const BarcodeScanner = ({
   setIsModal,
   cameraRef,
   barcodeRecognized,
 }) => {
-  const { width, height } = useScreenDimensions();
 
  
   return (
@@ -36,11 +34,13 @@ const BarcodeScanner = ({
             // Dynamically adjust the camera size
             width: width * 0.8, // Example: 80% of screen width
             height: height * 0.5, // Example: 50% of screen height
-          }]}          barCodeScannerSettings={{
+          }]}          
+          autoFocus={Camera.Constants.AutoFocus.on}
+          barCodeScannerSettings={{
             barCodeTypes: [
               BarCodeScanner.Constants.BarCodeType.codabar,
-              BarCodeScanner.Constants.BarCodeType.code93,
               BarCodeScanner.Constants.BarCodeType.code39,
+              BarCodeScanner.Constants.BarCodeType.code93,
               BarCodeScanner.Constants.BarCodeType.code128,
               BarCodeScanner.Constants.BarCodeType.ean_13,
               BarCodeScanner.Constants.BarCodeType.ean_8,

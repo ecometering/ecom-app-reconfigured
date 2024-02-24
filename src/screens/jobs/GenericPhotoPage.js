@@ -1,23 +1,20 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
-  Alert,
-  Button,
   Image,
   SafeAreaView,
   ScrollView,
+  StyleSheet,
+  Dimensions,
   View,
-  StyleSheet
 } from "react-native";
-import Text from "../../components/Text";
 import Header from "../../components/Header";
+import Text from "../../components/Text";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { AppContext } from "../../context/AppContext";
+import ImagePickerButton from "../../components/ImagePickerButton"; // Assuming it's correctly imported
 import EcomHelper from "../../utils/ecomHelper";
-import * as ExpoImagePicker from "expo-image-picker";
-import * as MediaLibrary from 'expo-media-library';
-import { TextType, TextStyles } from '../../theme/typography'; 
 
-
+const { width, height } = Dimensions.get('window');
 
 function GenericPhotoPage() {
   const navigation = useNavigation();
@@ -25,88 +22,29 @@ function GenericPhotoPage() {
   const appContext = useContext(AppContext);
 
   const { title, onPhotoSelected, photoKey, nextScreen } = route.params;
-const jobType = appContext.jobType; 
-console.log("jobType", jobType);
   const existingPhoto = appContext[photoKey];
   const [selectedImage, setSelectedImage] = useState(existingPhoto);
 
-  console.log("GenericPhotoPage rendered with params:", { title, photoKey, nextScreen });
-  console.log("Existing photo:", existingPhoto);
+  useEffect(() => {
+    // Assuming permissions are handled within ImagePickerButton or elsewhere as needed
+  }, []);
 
   const backPressed = () => {
-    console.log("Back button pressed");
     navigation.goBack();
   };
 
-  const nextPressed = async () => {
-    console.log("Next button pressed");
-
+  const nextPressed = () => {
     if (!selectedImage) {
-      console.log("No image selected");
       EcomHelper.showInfoMessage("Please choose an image");
       return;
     }
 
-    console.log("Selected image:", selectedImage);
-    // onPhotoSelected(selectedImage, appContext);
-    console.log("Navigating to next screen:", nextScreen);
-    navigation.navigate(nextScreen);
+    onPhotoSelected && onPhotoSelected(selectedImage, appContext);
+    navigation.navigate(nextScreen, { jobType: appContext.jobType, jobId: appContext.jobId });
   };
 
-  const requestMediaLibraryPermission = async () => {
-    const { status } = await MediaLibrary.requestPermissionsAsync();
-    console.log("Media library permission status:", status);
-    return status === 'granted';
-  };
-
-  const handleImagePicker = () => {
-    console.log("Opening image picker alert");
-    Alert.alert("Choose Image", "How would you like to choose the image?", [
-      {
-        text: "Cancel",
-        onPress: () => {},
-        style: "cancel",
-      },
-      {
-        text: "Choose from Gallery",
-        onPress: chooseFromGallery,
-      },
-      {
-        text: "Take Photo",
-        onPress: takePhoto,
-      },
-    ]);
-  };
-
-  const takePhoto = async () => {
-    const hasPermission = await requestMediaLibraryPermission();
-    if (!hasPermission) {
-      EcomHelper.showInfoMessage("Permissions to access camera and media library are required!");
-      return;
-    }
-    let options = {
-        mediaTypes: ExpoImagePicker.MediaTypeOptions.Images,
-        quality: 1,
-    };
-
-    let result = await ExpoImagePicker.launchCameraAsync(options);
-
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-      const asset = await MediaLibrary.createAssetAsync(result.assets[0].uri);
-      setSelectedImage(asset.uri);
-    }
-  };
-
-  const chooseFromGallery = async () => {
-    const options = {
-      mediaType: ExpoImagePicker.MediaTypeOptions.Images,
-      quality: 1,
-    };
-
-    const result = await ExpoImagePicker.launchImageLibraryAsync(options);
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-      setSelectedImage(result.assets[0].uri);
-    }
+  const updateSelectedImage = (uri) => {
+    setSelectedImage(uri);
   };
 
   return (
@@ -118,48 +56,43 @@ console.log("jobType", jobType);
         hasRightBtn={true}
         rightBtnPressed={nextPressed}
       />
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.content}>
+      <ScrollView style={styles.flex}>
+        <View style={styles.body}>
           <Text type="caption" style={styles.text}>{title}</Text>
+          <ImagePickerButton
+            onImageSelected={updateSelectedImage}
+            currentImage={selectedImage}
+          />
           {selectedImage && (
             <Image source={{ uri: selectedImage }} style={styles.image} />
           )}
-          <Button
-            title={selectedImage ? "Change Image" : "Choose Image"}
-            onPress={handleImagePicker}
-          />
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
-  scrollView: {
-    width: '100%',
-    height: '100%',
+  container: {
+    flex: 1,
   },
-  content: {
+  flex: {
     flex: 1,
   },
   body: {
-    marginHorizontal: '10%',
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
   },
   text: {
-    alignSelf: "flex-start",
+    fontSize: 18,
   },
   image: {
-    width: 200,
-    height: 200,
-    alignSelf: "center",
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  spacer: {
-    height: 50, // Adjust based on layout needs, possibly using useScreenDimensions
+    width: width * 0.8, // Adjust width as needed
+    height: height * 0.4, // Adjust height as needed
+    marginTop: 20,
+    resizeMode: 'contain', // Ensure the entire image fits within the container
   },
 });
-
 
 export default GenericPhotoPage;
