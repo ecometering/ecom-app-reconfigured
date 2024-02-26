@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Dimensions, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
-import { fetchJobsFromDatabase, deleteJobById } from '../utils/database'; // Importing required functions
+import { fetchJobsFromDatabase, deleteJobById, getDatabaseTables, openDatabase, getDatabaseJob } from '../utils/database'; // Importing required functions
 
 const { width } = Dimensions.get('window'); // Get the screen width
 
@@ -15,29 +15,51 @@ const JobsTable = () => {
 
   useEffect(() => {
     fetchData(); // Call fetchData on component mount
-  }, []);
+  }, [filteredData]);
+  
 
   const fetchData = async () => {
-    const data = await fetchJobsFromDatabase(); // Fetch jobs with "In Progress" status
-    setJobs(data);
+  
+    const data = await getDatabaseJob(setJobs);
+
+    
   };
+
+  const filteredData = jobs.filter(item => item.jobStatus === 'InProgress');
+
 
   const handleRowClick = (jobId) => {
     navigation.navigate('JobDetails', { jobId });
   };
 
   const handleDeleteJob = async (jobId) => {
+    const db = await openDatabase(); 
     Alert.alert("Delete Job", "Are you sure you want to delete this job?", [
       { text: "Cancel" },
       { text: "Yes", onPress: async () => {
-        await deleteJobById(jobId);
-        fetchData(); // Refresh the job list after deletion
+    
+          db.transaction(tx => {
+            tx.executeSql(
+              'DELETE FROM Jobs WHERE id = ?',
+              [jobId],
+              () => {
+                console.log('Record deleted successfully');
+                fetchData(); 
+              },
+              error => {
+                console.error('Error deleting record', error);
+              }
+            );
+          });
+        
+        
       }}
     ]);
   };
 
   const TableHeader = () => (
     <View style={[styles.headerRow, { padding: dynamicPadding }]}>
+      <Text style={[styles.headerCell, { fontSize: dynamicFontSize }]}>id</Text>
       <Text style={[styles.headerCell, { fontSize: dynamicFontSize }]}>MPRN</Text>
       <Text style={[styles.headerCell, { fontSize: dynamicFontSize }]}>Job Type</Text>
       <Text style={[styles.headerCell, { fontSize: dynamicFontSize }]}>Postcode</Text>
@@ -49,25 +71,28 @@ const JobsTable = () => {
   );
 
   const TableRow = ({ item }) => (
-    <View style={[styles.row, { padding: dynamicPadding }]}>
-      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.mprn}</Text>
+    <TouchableOpacity onPress={()=>navigation.navigate('SiteDetailsPage', {
+      jobData : item
+    })} style={[styles.row, { padding: dynamicPadding }]}>
+      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.id}</Text>
+      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.MPRN}</Text>
       <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.jobType}</Text>
       <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.postcode}</Text>
       <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.startDate}</Text>
-      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.startTime}</Text>
-      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.status}</Text>
+      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.endDate}</Text>
+      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.jobStatus}</Text>
       <TouchableOpacity onPress={() => handleDeleteJob(item.id)}>
         <Text style={{ color: 'red', padding: 10 }}>Delete</Text>
       </TouchableOpacity>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
     <ScrollView style={styles.container}>
       <Header hasLeftBtn={true} hasCenterText={true} hasRightBtn={false} centerText={'Jobs in progress'} leftBtnPressed={() => navigation.goBack()} />
       <TableHeader />
-      {jobs.length > 0 ? (
-        jobs.map((item) => <TableRow key={item.id.toString()} item={item} />)
+      {filteredData.length > 0 ? (
+        filteredData.map((item) => <TableRow key={item.id.toString()} item={item} />)
       ) : (
         <Text style={styles.noJobsText}>No jobs available</Text>
       )}

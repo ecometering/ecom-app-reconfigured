@@ -31,7 +31,7 @@ function SiteDetailsPage() {
   const jobType = appContext.jobType;
   const route = useRoute();
  const params = route.params;
- 
+  appContext?.setJobdata(route?.params?.jobData) 
   const SiteDetails = appContext.SiteDetails;
   const email1Ref = useRef(null);
   const email2Ref = useRef(null);
@@ -54,7 +54,7 @@ function SiteDetailsPage() {
     }
   }, []);
 
-  const [mprn, setMprn] = useState(SiteDetails?.mprn ?? "");
+  const [mprn, setMprn] = useState(route?.params?.jobData?.MPRN ?? "");
   const [address1, setAddress1] = useState(SiteDetails?.address1 ?? "");
   const [address2, setAddress2] = useState(SiteDetails?.address2 ?? "");
   const [address3, setAddress3] = useState(SiteDetails?.address3 ?? "");
@@ -75,7 +75,9 @@ function SiteDetailsPage() {
   );
 
  const saveSiteDetailsToDatabase = async () => {
+  console.log('Mustafa')
   const db = await openDatabase();
+  console.log('09090909', db)
   const jsonString = JSON.stringify({
     ...SiteDetails,
     // Include all other details you're capturing from the form
@@ -98,12 +100,19 @@ function SiteDetailsPage() {
   });
 
   // Assuming SiteDetails.id is the correct identifier for your record
-  const jobId = SiteDetails.id; // Ensure this is the correct way to access the job's ID
+  const jobId = 23;
+  const jobType = 'Engineer';
+  const jobStatus = 'InProgress'
+  const progress = '';
+  const startDate = 23;
+  const endDate = 23;
+  const photos = '';  // Ensure this is the correct way to access the job's ID
+ 
 
   db.transaction((tx) => {
     tx.executeSql(
-      `UPDATE jobsInProgress SET siteDetails = ?, progress = 2 WHERE id = ?;`,
-      [jsonString, jobId],
+      `INSERT INTO Jobs (jobId,jobType,MPRN,startDate,endDate,jobStatus,progress,siteDetails,photos) VALUES (?,?,?,?,?,?,?,?,?);`,
+      [jobId,jobType,mprn,startDate,endDate,jobStatus,progress,jsonString, photos],
       (_, result) => console.log('Site details and progress updated in database', result),
       (_, error) => console.log('Error updating site details in database', error)
     );

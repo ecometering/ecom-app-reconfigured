@@ -37,6 +37,7 @@ const AppContextProvider = (props) => {
   const [blobs, setBlobs] = useState([]);
 
   const [userLogged, setUserLogged] = useState(false);
+  const [jobData, setJobdata] = useState(null);
 
   useEffect(() => {
     console.log("appcontenxt, jobType", jobType);
@@ -51,6 +52,7 @@ const AppContextProvider = (props) => {
     jobType,
     isWarrant,
     hasStreamNumber,
+    jobData,
     streamNumber,
     streamValue,
     streamCounter,
@@ -66,6 +68,7 @@ const AppContextProvider = (props) => {
     maintenanceDetails,
     startRemoval,
     setStartRemoval,
+    setJobdata,
     setMaintenanceDetails,
     setWarrantDetails,
     setPassedRemoval,

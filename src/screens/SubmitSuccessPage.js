@@ -1,26 +1,31 @@
 import { View, Text, Button } from "react-native";
-import React from "react";
+import React, {useContext} from "react";
 import { useNavigation } from "@react-navigation/native";
+import { AppContext } from "../context/AppContext";
+import {  openDatabase} from '../utils/database'; // Importing required functions
+
 
 const SubmitSuccessPage = () => {
+  
+  const appContext = useContext(AppContext);
   const navigation = useNavigation();
   async function fetchAndUploadJobData() {
-    try {
-      const db = await openDatabase();
-       // Make sure this is the correct way to get your db instance
-       console.log("DB: ", db);
-      console.log ("[fetchAndUploadJobData] Fetching job data from local database.");
-
-       const allJobData = await fetchAllJobData(db);
-      console.log("[fetchAndUploadJobData] Job data fetched successfully.");
-      console.log("[fetchAndUploadJobData] converting to large  JSON string...");
-      const jsonData = JSON.stringify(allJobData);
-console.log("[fetchAndUploadJobData] Uploading job data to server...");
-      await uploadData(jsonData);
-      console.log("[fetchAndUploadJobData] Job data uploaded successfully.");
-    } catch (error) {
-      console.error("[fetchAndUploadJobData] Error:", error);
-    }
+    const db = await openDatabase(); 
+    const status = 'Completed'; // New name you want to set
+    db.transaction(tx => {
+      tx.executeSql(
+        'UPDATE Jobs SET jobStatus = ? WHERE id = ?',
+        [status,appContext?.jobData?.id],
+        () => {
+          navigation.navigate("Home");
+          console.log('Record updated successfully');
+          // fetchRecords(); // Fetch records again to update the state
+        },
+        error => {
+          console.error('Error updating record', error);
+        }
+      );
+    });
   }
   return (
     <View style={{ padding: 20 }}>
@@ -29,7 +34,7 @@ console.log("[fetchAndUploadJobData] Uploading job data to server...");
         title="Yes"
         onPress={() => {
           fetchAndUploadJobData();
-          navigation.navigate("Home");
+        
         }}
       />
     </View>
