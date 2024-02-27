@@ -9,23 +9,22 @@ const { width } = Dimensions.get('window'); // Get the screen width
 const dynamicFontSize = width < 360 ? 9 : width < 600 ? 11 : 13; // Adjust font size based on screen width
 const dynamicPadding = width < 360 ? 6 : 8; // Adjust padding based on screen width
 
-const JobsTable = () => {
+const JobsTable = ({route}) => {
   const [jobs, setJobs] = useState([]);
   const navigation = useNavigation();
-
   useEffect(() => {
     fetchData(); // Call fetchData on component mount
-  }, [filteredData]);
+  }, [route?.params]);
   
 
   const fetchData = async () => {
   
-    const data = await getDatabaseJob(setJobs);
+    await getDatabaseJob(setJobs);
 
     
   };
 
-  const filteredData = jobs.filter(item => item.jobStatus === 'In Progress');
+  const filteredData = jobs.filter(item => item.jobStatus === 'InProgress');
 
 
   const handleRowClick = (jobId) => {

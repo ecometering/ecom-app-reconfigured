@@ -30,20 +30,20 @@ function SiteDetailsPage() {
   const jobNumber = appContext.jobNumber;
   const jobType = appContext.jobType;
   const route = useRoute();
- const params = route.params;
-  appContext?.setJobdata(route?.params?.jobData) 
-  const SiteDetails = appContext.SiteDetails;
+ const params = route?.params;
+ const data =  appContext?.setJobdata(route?.params?.jobData) 
+  const SiteDetails = appContext?.SiteDetails;
   const email1Ref = useRef(null);
   const email2Ref = useRef(null);
   const number1Ref = useRef(null);
   const number2Ref = useRef(null);
-  console.log("SiteDetailsPage");
-  console.log("jobType", jobType);
+  const siteDetails = route?.params?.jobData?.siteDetails ? JSON.parse(route?.params?.jobData?.siteDetails) : ''
+
   const [companyName, setCompanyName] = useState(
-    SiteDetails?.companyName ?? ""
+    siteDetails?.companyName ?? ""
   );
   const [buildingName, setBuildingName] = useState(
-    SiteDetails?.buildingName ?? ""
+    siteDetails?.buildingName ?? ""
   );
 
   useEffect(() => {
@@ -53,35 +53,54 @@ function SiteDetailsPage() {
       appContext.setJobTypes(routeJobType);
     }
   }, []);
-
+  
   const [mprn, setMprn] = useState(route?.params?.jobData?.MPRN ?? "");
-  const [address1, setAddress1] = useState(SiteDetails?.address1 ?? "");
-  const [address2, setAddress2] = useState(SiteDetails?.address2 ?? "");
-  const [address3, setAddress3] = useState(SiteDetails?.address3 ?? "");
-  const [town, setTown] = useState(SiteDetails?.town ?? "");
-  const [county, setCounty] = useState(SiteDetails?.county ?? "");
-  const [postCode, setPostCode] = useState(SiteDetails?.postCode ?? "");
-  const [title, setTitle] = useState(SiteDetails?.title ?? "");
-  const [contact, setContact] = useState(SiteDetails?.contact ?? "");
-  const [email1, setEmail1] = useState(SiteDetails?.email1 ?? "");
-  const [email2, setEmail2] = useState(SiteDetails?.email2 ?? "");
-  const [number1, setNumber1] = useState(SiteDetails?.number1 ?? "");
-  const [number2, setNumber2] = useState(SiteDetails?.number2 ?? "");
+  const [address1, setAddress1] = useState( siteDetails?.address1 ?? "");
+  const [address2, setAddress2] = useState( siteDetails?.address2 ?? "");
+  const [address3, setAddress3] = useState( siteDetails?.address3?? "");
+  const [town, setTown] = useState( siteDetails?.town ?? "");
+  const [county, setCounty] = useState( siteDetails?.county ?? "");
+  const [postCode, setPostCode] = useState( siteDetails?.postCode ?? "");
+  const [title, setTitle] = useState( siteDetails?.title ?? "");
+  const [contact, setContact] = useState( siteDetails?.contact ?? "");
+  const [email1, setEmail1] = useState( siteDetails?.email1 ?? "");
+  const [email2, setEmail2] = useState( siteDetails?.email2 ?? "");
+  const [number1, setNumber1] = useState(siteDetails?.number1 ?? "");
+  const [number2, setNumber2] = useState( siteDetails?.number2 ?? "");
   const [instructions, setInstructions] = useState(
-    SiteDetails?.instructions ?? ""
+    siteDetails?.instructions ?? ""
   );
   const [progress , setProgress] = useState(0);
   
   const [confirmContact, setConfirmContact] = useState(
-    SiteDetails?.confirmContact
+    siteDetails?.confirmContact
   );
 
- const saveSiteDetailsToDatabase = async () => {
-  console.log("creating job")
-  const db = await openDatabase();
-  console.log('Db status:', db)
-  const siteDetails = JSON.stringify({
-    ...SiteDetails,
+  let update = false
+
+  async function UpdateData() {
+    const db = await openDatabase(); 
+    const status = 'Completed'; // New name you want to set
+    db.transaction(tx => {
+      tx.executeSql(
+        'UPDATE Jobs SET MPRN = ?, siteDetails = ? WHERE id = ?',
+        [mprn,jsonString,appContext?.jobData?.id],
+        () => {
+
+          navigation.navigate('InProgressJobsPage', {
+            update: update
+          })
+
+          console.log('Record updated successfully');
+          // fetchRecords(); // Fetch records again to update the state
+        },
+        error => {
+          console.error('Error updating record', error);
+        }
+      );
+    });
+  }
+  const jsonString = JSON.stringify({
     companyName,
     buildingName,
     address1,
@@ -99,32 +118,27 @@ function SiteDetailsPage() {
 
   });
 
-  // Assuming SiteDetails.id is the correct identifier for your record
+ const saveSiteDetailsToDatabase = async () => {
+  const db = await openDatabase();
 
-  const getCurrentDateTime = () => {
-    return moment().format('YYYY-MM-DD HH:mm');
-  };
-  
-  const jobStatus = 'In Progress'
-  const progress = '1';
-  const startDate = getCurrentDateTime();
-  // Ensure this is the correct way to access the job's ID
- 
+
+
+  // Assuming SiteDetails.id is the correct identifier for your record
+  const jobId = SiteDetails.id; // Ensure this is the correct way to access the job's ID
 
   db.transaction((tx) => {
     tx.executeSql(
-      `INSERT INTO Jobs (jobType,MPRN,postcode,startDate,jobStatus,progress,siteDetails) VALUES (?,?,?,?,?,?,?);`,
-      [jobType,mprn,startDate,postCode,jobStatus,progress,siteDetails ],
-      (_, result) => {
-        console.log('Site details and progress updated in database. Generated ID:', result.insertId);
-        // Pass the result.insertId as JobId parameter to the next navigation call
-        navigation.navigate("SitePhotoPage", { JobId: result.insertId });
-      },
-      (_, error) => console.log('Error updating site details in database:', error)
+      `UPDATE jobsInProgress SET siteDetails = ?, progress = 2 WHERE id = ?;`,
+      [jsonString, jobId],
+      (_, result) => console.log('Site details and progress updated in database', result),
+      (_, error) => console.log('Error updating site details in database', error)
     );
   });
+
+
+
 };
-  const backPressed = () => {
+  const backPressed =async () => {
     appContext.setSiteDetails({
       ...SiteDetails,
       mprn: mprn,
@@ -145,9 +159,18 @@ function SiteDetailsPage() {
       instructions: instructions,
       confirmContact: confirmContact,
     });
-    
+
+    if (appContext?.jobData?.id){
+      await UpdateData()
+    }
+
+    else {
+      saveSiteDetailsToDatabase();
+      // navigation.goBack()
+    }
+  
     // appContext.setStartRemoval(true);
-    navigation.goBack();
+  
   };
 
   const nextPressed = () => {

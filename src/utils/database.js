@@ -131,7 +131,29 @@ async function getDatabaseJob(setJob) {
 			  }
 			);
 		  });
+		return tables
 	} catch (error) {
+		console.error("Error fetching table names:", error);
+	}
+}
+async function getDatabaseJob(setJob) {
+	try {
+		const db = await openDatabase(); // Open the database
+	
+		db.transaction(tx => {
+			tx.executeSql(
+			  'SELECT * FROM Jobs',
+			  [],
+			  (_, { rows: { _array } }) => {
+				setJob(_array)
+			  },
+			  error => {
+				console.error('Error executing SQL query', error);
+			  }
+			);
+		  });
+	} catch (error) {
+		console.error("Error fetching table names:", error);
 		console.error("Error fetching table names:", error);
 	}
 }
