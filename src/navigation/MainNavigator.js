@@ -120,8 +120,8 @@ const MainNavigator = () => {
 					<Stack.Screen name="PlannedJobPage" component={PlannedJobPage} />
 					<Stack.Screen name="InProgressJobsPage" component={InProgressJobsPage} />
 					<Stack.Screen name="CompletedJobsPage" component={CompletedJobsPage} />
-					<Stack.Screen name="SiteDetailsPage" component={SiteDetailsPage} />
-					<Stack.Screen name="SitePhotoPage" component={GenericPhotoPage} initialParams={{ title: "Site Photo", photoKey: "sitePhoto", nextScreen: "SiteQuestionsPage" }} />
+					<Stack.Screen name="SiteDetailsPage" component={SiteDetailsPage} initialParams={{progress:1}} />
+					<Stack.Screen name="SitePhotoPage" component={GenericPhotoPage} initialParams={{ title: "Site Photo", photoKey: "sitePhoto", nextScreen: "SiteQuestionsPage",progress:2}} />
 					<Stack.Screen name="SiteQuestionsPage" component={SiteQuestionsPage} />
 					<Stack.Screen name="install" component={InstallFlowNavigator} />
 					<Stack.Screen name="exchange" component={ExchangeFlowNavigator} />

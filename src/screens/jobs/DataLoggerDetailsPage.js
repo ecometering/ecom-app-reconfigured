@@ -9,10 +9,10 @@ import {
   ScrollView,
   StyleSheet,
   View,
+  Dimensions
 } from "react-native";
 import Header from "../../components/Header";
 import { useNavigation } from "@react-navigation/native";
-import { unitH, width } from "../../utils/constant";
 import Text from "../../components/Text";
 import TextInput from "../../components/TextInput";
 import OptionalButton from "../../components/OptionButton";
@@ -21,11 +21,11 @@ import { AppContext } from "../../context/AppContext";
 import EcomHelper from "../../utils/ecomHelper";
 import BarcodeScanner from "../../components/BarcodeScanner";
 import { PrimaryColors } from "../../theme/colors";
+import ImagePickerButton from "../../components/ImagePickerButton";
 
-import * as ExpoImagePicker from "expo-image-picker";
 
 const alphanumericRegex = /^[a-zA-Z0-9]+$/;
-
+const { width, height } = Dimensions.get("window");
 export default function DataLoggerDetailsPage() {
 
   const appContext = useContext(AppContext);
@@ -58,74 +58,26 @@ export default function DataLoggerDetailsPage() {
   );
   const [model, setModel] = useState(regulatorDetails?.model);
   const [loggerOwner, setLoggerOwner] = useState(regulatorDetails?.loggerOwner);
-  const [selectedImage, setSelectedImage] = useState(
+  const [dataloggerImage, setdataloggerImage] = useState(
     regulatorDetails?.loggerImage
   );
   const [isModal, setIsModal] = useState(false);
 
   const backPressed = () => {
-    if (jobType === "Install") {
-      appContext.setMeterDetails({
-        ...meterDetails,
-        loggerSerialNumber: serialNumber,
-        isMountingBracket: isMountingBracket,
-        isAdapter: isAdapter,
-        isPulseSplitter: isPulseSplitter,
-        manufacturer: manufacturer,
-        model: model,
-        loggerOwner: loggerOwner,
-        loggerImage: selectedImage,
-      });
+    
       navigation.goBack();
-    } else if (jobType === "Maintenance" && !isStartRemoval) {
-      navigation.goBack();
-    } else if (
-      jobType === "Removal" ||
-      jobType === "Exchange" ||
-      jobType === "Warrant" ||
-      jobType === "Maintenance"
-    ) {
-      if (isPassedRemoval) {
-        appContext.setMeterDetails({
-          ...meterDetails,
-          loggerSerialNumber: serialNumber,
-          isMountingBracket: isMountingBracket,
-          isAdapter: isAdapter,
-          isPulseSplitter: isPulseSplitter,
-          manufacturer: manufacturer,
-          model: model,
-          loggerOwner: loggerOwner,
-          loggerImage: selectedImage,
-        });
-        navigation.goBack();
-        return;
-      }
-      appContext.setRemovedMeterDetails({
-        ...removedMeterDetails,
-        loggerSerialNumber: serialNumber,
-        isMountingBracket: isMountingBracket,
-        isAdapter: isAdapter,
-        isPulseSplitter: isPulseSplitter,
-        manufacturer: manufacturer,
-        model: model,
-        loggerOwner: loggerOwner,
-        loggerImage: selectedImage,
-      });
-      navigation.goBack();
-    } else {
-      navigation.goBack();
-    }
+  
     // navigation.goBack();
   };
   console.log(meterDetails);
 
   const nextPressed = async () => {
-    if (!selectedImage) {
+    if (!dataloggerImage) {
       EcomHelper.showInfoMessage("Please choose image");
       return;
     }
     try {
-      const response = await fetch(selectedImage);
+      const response = await fetch(dataloggerImage);
       const blob = await response.blob();
       appContext.setBlobs(prev => [ ...prev, blob ])
     }
@@ -160,96 +112,12 @@ export default function DataLoggerDetailsPage() {
       EcomHelper.showInfoMessage("Please choose Logger owner");
       return;
     }
-
-    if (jobType === "Install") {
-      appContext.setMeterDetails({
-        ...meterDetails,
-        amr_loggerSerialNumber: serialNumber,
-        amr_isMountingBracket: isMountingBracket,
-        amr_isAdapter: isAdapter,
-        amr_isPulseSplitter: isPulseSplitter,
-        amr_manufacturer: manufacturer,
-        amr_model: model,
-        amr_loggerOwner: loggerOwner,
-        amr_loggerImage: selectedImage,
-      });
-      const isCorrector = meterDetails?.isCorrector;
-      const isAmr = meterDetails?.isAmr;
-      const isMeter = meterDetails?.isMeter;
-      if (isMeter) {
-        //isMeter
-        navigation.navigate("NewEcvPhotoPage");
-      } else {
-        navigation.navigate("MeterDetailsPage");
-      }
-    } else if (jobType === "Maintenance" && !isStartRemoval) {
-      const isCorrector = meterDetails?.isCorrector;
-      const isAmr = meterDetails?.isAmr;
-      const isMeter = meterDetails?.isMeter;
-      if (isMeter) {
-        //isMeter
-        navigation.navigate("NewEcvPhotoPage");
-      } else {
-        navigation.navigate("MaintenanceQuestionsPage");
-      }
-    } else if (
-      jobType === "Removal" ||
-      jobType === "Exchange" ||
-      jobType === "Warrant" ||
-      jobType === "Maintenance"
-    ) {
-      if (isPassedRemoval) {
-        appContext.setMeterDetails({
-          ...meterDetails,
-          amr_loggerSerialNumber: serialNumber,
-          amr_isMountingBracket: isMountingBracket,
-          amr_isAdapter: isAdapter,
-          amr_isPulseSplitter: isPulseSplitter,
-          amr_manufacturer: manufacturer,
-          amr_model: model,
-          amr_loggerOwner: loggerOwner,
-          amr_loggerImage: selectedImage,
-        });
-        const isCorrector = meterDetails?.isCorrector;
-        const isAmr = meterDetails?.isAmr;
-        const isMeter = meterDetails?.isMeter;
-        if (isCorrector) {
-          navigation.navigate("CorrectorDetailsPage");
-        } else if (isAmr) {
-          navigation.navigate("AmrDetailsPage");
-        } else if (isMeter) {
-          //isMeter
-          navigation.navigate("NewEcvPhotoPage");
-        } else {
-          navigation.navigate("MeterDetailsPage");
-        }
+   
+          navigation.navigate("DataloggerGateWay");
+        
         return;
       }
-      appContext.setRemovedMeterDetails({
-        ...removedMeterDetails,
-        amr_loggerSerialNumber: serialNumber,
-        amr_isMountingBracket: isMountingBracket,
-        amr_isAdapter: isAdapter,
-        amr_isPulseSplitter: isPulseSplitter,
-        amr_manufacturer: manufacturer,
-        amr_model: model,
-        amr_loggerOwner: loggerOwner,
-        amr_loggerImage: selectedImage,
-      });
-      if (isStartRemoval) {
-        const isCorrector = removedMeterDetails?.isCorrector;
-        const isAmr = removedMeterDetails?.isAmr;
-        const isMeter = removedMeterDetails?.isMeter;
-        if (isCorrector) {
-          navigation.navigate("CorrectorDetailsPage");
-        } else if (isMeter) {
-          navigation.navigate("NewEcvPhotoPage");
-        } else {
-          navigation.navigate("RemovedMeterDetailsPage");
-        }
-      }
-    }
-  };
+
 
   const scanBarcode = () => {
     setIsModal(true);
@@ -258,56 +126,6 @@ export default function DataLoggerDetailsPage() {
   const readSerialNumber = (codes) => {
     setIsModal(false);
     setSerialNumber(codes.data);
-  };
-
-  const handleImagePicker = () => {
-    Alert.alert("Choose Image", "how to choose image ?", [
-      {
-        text: "Cancel",
-        onPress: () => {},
-        style: "cancel",
-      },
-      {
-        text: "Choose from gallery",
-        onPress: chooseFromGallery,
-      },
-      {
-        text: "Take photo",
-        onPress: takePhoto,
-      },
-      {},
-    ]);
-  };
-  const takePhoto = () => {
-    const options = {
-      title: "Take Photo",
-      mediaType: "photo",
-      quality: 1,
-    };
-
-    ExpoImagePicker.launchCameraAsync(options)
-      .then((response) => {
-        setSelectedImage(response.assets[0].uri);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const chooseFromGallery = () => {
-    const options = {
-      title: "Choose from Gallery",
-      mediaType: "photo",
-      quality: 1,
-    };
-
-    ExpoImagePicker.launchImageLibraryAsync(options)
-      .then((response) => {
-        setSelectedImage(response.assets[0].uri);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
   };
 
   return (
@@ -486,20 +304,17 @@ export default function DataLoggerDetailsPage() {
             </View>
             <View style={styles.spacer} />
             <Text type={TextType.BODY_1}>Picture</Text>
-            {selectedImage && (
+            {dataloggerImage && (
               <Image
-                source={{ uri: selectedImage }}
+                source={{ uri: dataloggerImage }}
                 style={styles.image}
                 resizeMode="contain"
               />
             )}
             <View style={styles.row}>
-              <Button
-                title={
-                  selectedImage === undefined ? "Choose Image" : "Change Image"
-                }
-                onPress={handleImagePicker}
-              />
+            <ImagePickerButton
+              onImageSelected={(uri) => setdataloggerImage(uri)}
+            />
             </View>
           </View>
           {isModal && <BarcodeScanner
@@ -515,7 +330,7 @@ export default function DataLoggerDetailsPage() {
 
 const styles = StyleSheet.create({
   image: {
-    height: unitH * 200,
+    height: height * 0.25, // Example: Adjust the factor according to your needs
   },
   content: {
     flex: 1,
@@ -526,7 +341,7 @@ const styles = StyleSheet.create({
   border: {
     borderWidth: 1,
     borderColor: PrimaryColors.Black,
-    padding: unitH * 20,
+    padding: height * 0.02, // Adjusted from unitH to use a percentage of the screen height
   },
   row: {
     flexDirection: "row",
@@ -552,7 +367,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderBottomWidth: 0,
     borderColor: PrimaryColors.Black,
-    minHeight: 40,
+    minHeight: height * 0.05, // Adjusted
     justifyContent: "center",
     alignItems: "center",
   },
@@ -563,20 +378,20 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
     borderTopWidth: 0,
     borderColor: PrimaryColors.Black,
-    minHeight: 40,
+    minHeight: height * 0.05, // Adjusted
     justifyContent: "center",
     alignItems: "center",
   },
   optionContainer: {
-    width: 100,
-    marginVertical: unitH * 10,
+    width: width * 0.25, // Adjusted
+    marginVertical: height * 0.01, // Adjusted
     alignSelf: "flex-start",
   },
   spacer: {
-    height: unitH * 20,
+    height: height * 0.02, // Adjusted
   },
   spacer2: {
-    height: 10,
+    height: height * 0.01, // Adjusted
   },
   closeButtonContainer: {
     position: "absolute",

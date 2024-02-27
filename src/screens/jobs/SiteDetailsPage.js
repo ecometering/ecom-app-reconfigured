@@ -16,9 +16,9 @@ import { TextInputWithTitle } from "../../components/TextInput";
 import { AppContext } from "../../context/AppContext";
 import { PrimaryColors } from "../../theme/colors";
 import { TextType } from "../../theme/typography";
-import { openDatabase } from "../../utils/database";
+import { openDatabase,printRowById } from "../../utils/database";
 import EcomHelper from "../../utils/ecomHelper";
-
+import moment from "moment"; 
 const ukPostCodeRegex = /^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i;
 const phoneNumberRegex =
   /^(?:(0\d{4})\s?\d{3}\s?\d{3}|(07\d{3})\s?\d{3}\s?\d{3}|(01\d{1,2})\s?\d{3}\s?\d{3,4}|(02\d{1,2})\s?\d{3}\s?\d{4})$/;
@@ -31,7 +31,7 @@ function SiteDetailsPage() {
   const jobType = appContext.jobType;
   const route = useRoute();
  const params = route.params;
- 
+  appContext?.setJobdata(route?.params?.jobData) 
   const SiteDetails = appContext.SiteDetails;
   const email1Ref = useRef(null);
   const email2Ref = useRef(null);
@@ -54,7 +54,7 @@ function SiteDetailsPage() {
     }
   }, []);
 
-  const [mprn, setMprn] = useState(SiteDetails?.mprn ?? "");
+  const [mprn, setMprn] = useState(route?.params?.jobData?.MPRN ?? "");
   const [address1, setAddress1] = useState(SiteDetails?.address1 ?? "");
   const [address2, setAddress2] = useState(SiteDetails?.address2 ?? "");
   const [address3, setAddress3] = useState(SiteDetails?.address3 ?? "");
@@ -70,15 +70,18 @@ function SiteDetailsPage() {
   const [instructions, setInstructions] = useState(
     SiteDetails?.instructions ?? ""
   );
+  const [progress , setProgress] = useState(0);
+  
   const [confirmContact, setConfirmContact] = useState(
     SiteDetails?.confirmContact
   );
 
  const saveSiteDetailsToDatabase = async () => {
+  console.log("creating job")
   const db = await openDatabase();
-  const jsonString = JSON.stringify({
+  console.log('Db status:', db)
+  const siteDetails = JSON.stringify({
     ...SiteDetails,
-    // Include all other details you're capturing from the form
     companyName,
     buildingName,
     address1,
@@ -86,7 +89,6 @@ function SiteDetailsPage() {
     address3,
     town,
     county,
-    postCode,
     title,
     contact,
     email1,
@@ -94,18 +96,31 @@ function SiteDetailsPage() {
     number1,
     number2,
     instructions,
-    confirmContact,
+
   });
 
   // Assuming SiteDetails.id is the correct identifier for your record
-  const jobId = SiteDetails.id; // Ensure this is the correct way to access the job's ID
+
+  const getCurrentDateTime = () => {
+    return moment().format('YYYY-MM-DD HH:mm');
+  };
+  
+  const jobStatus = 'In Progress'
+  const progress = '1';
+  const startDate = getCurrentDateTime();
+  // Ensure this is the correct way to access the job's ID
+ 
 
   db.transaction((tx) => {
     tx.executeSql(
-      `UPDATE jobsInProgress SET siteDetails = ?, progress = 2 WHERE id = ?;`,
-      [jsonString, jobId],
-      (_, result) => console.log('Site details and progress updated in database', result),
-      (_, error) => console.log('Error updating site details in database', error)
+      `INSERT INTO Jobs (jobType,MPRN,postcode,startDate,jobStatus,progress,siteDetails) VALUES (?,?,?,?,?,?,?);`,
+      [jobType,mprn,startDate,postCode,jobStatus,progress,siteDetails ],
+      (_, result) => {
+        console.log('Site details and progress updated in database. Generated ID:', result.insertId);
+        // Pass the result.insertId as JobId parameter to the next navigation call
+        navigation.navigate("SitePhotoPage", { JobId: result.insertId });
+      },
+      (_, error) => console.log('Error updating site details in database:', error)
     );
   });
 };
@@ -130,7 +145,7 @@ function SiteDetailsPage() {
       instructions: instructions,
       confirmContact: confirmContact,
     });
-    saveSiteDetailsToDatabase();
+    
     // appContext.setStartRemoval(true);
     navigation.goBack();
   };
@@ -217,7 +232,6 @@ function SiteDetailsPage() {
     });
  
     saveSiteDetailsToDatabase();
-      navigation.navigate("SitePhotoPage");
   
   };
 

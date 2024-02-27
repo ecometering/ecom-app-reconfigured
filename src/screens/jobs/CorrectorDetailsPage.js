@@ -9,14 +9,14 @@ import {
   ScrollView,
   StyleSheet,
   View,
+  Dimensions
 } from "react-native";
 import Header from "../../components/Header";
 import { useNavigation } from "@react-navigation/native";
 import {
   METER_MANUFACTURER_LIST,
   METER_MODEL_LIST,
-  unitH,
-  width,
+
   CORRECTOR_METER_MANUFACTURER_LIST,
   CORRECTOR_METER_MODEL_LIST
 } from "../../utils/constant";
@@ -28,13 +28,13 @@ import { AppContext } from "../../context/AppContext";
 import EcomHelper from "../../utils/ecomHelper";
 import BarcodeScanner from "../../components/BarcodeScanner";
 import { PrimaryColors } from "../../theme/colors";
-import { openDatabase } from "../../utils/database";
+import { openDatabase,fetchPhotosJSON,appendPhotoDetail } from "../../utils/database";
 import ImagePickerButton from "../../components/ImagePickerButton";
 import * as ExpoImagePicker from "expo-image-picker";
 import EcomDropDown from "../../components/DropDown";
 import { fetchManufacturersForMeterType, fetchModelsForManufacturer } from "../../utils/database";
 const alphanumericRegex = /^[a-zA-Z0-9]+$/;
-
+const { width, height } = Dimensions.get("window");
 export default function CorrectorDetailsPage() {
   const appContext = useContext(AppContext);
   const navigation = useNavigation();
@@ -75,6 +75,58 @@ export default function CorrectorDetailsPage() {
       navigation.goBack();
     
   };
+const updateCorrectorDetails = async() => { 
+  const db = await openDatabase(); 
+  const photosJSON = await fetchPhotosJSON(db,jobId);
+  const photoDetails = {
+    title: "Corrector Image",
+    uri: correctorImage,
+    photoKey: "correctorImage",
+  };
+  const updatedPhotosJSON = appendPhotoDetail(photosJSON, photoDetail);
+
+  let existingCorrectorDetailsJSON = '';
+  db.transaction(tx => {
+    tx.executeSql(
+      'SELECT correctorDetails FROM Jobs WHERE id = ?',
+      [jobId],
+      (_, { rows }) => {
+        if (rows.length > 0 && rows._array[0].correctorDetails) {
+          existingCorrectorDetailsJSON = rows._array[0].correctorDetails;
+        }
+
+        // Parse existing corrector details JSON, or initialize to an empty array if none exist
+        const existingCorrectorDetails = existingCorrectorDetailsJSON ? JSON.parse(existingCorrectorDetailsJSON) : [];
+
+        // New corrector details to append
+        const newCorrectorDetails = {
+          correctorSerialNumber,
+          isMountingBracket,
+          manufacturer,
+          model,
+          uncorrectedReads,
+          correctedReads,
+          correctorImage, // Assuming you want to save the image path as part of the corrector details
+        };
+
+        // Append new corrector details
+        existingCorrectorDetails.push(newCorrectorDetails);
+
+        // Convert back to JSON string
+        const updatedCorrectorDetailsJSON = JSON.stringify(existingCorrectorDetails);
+
+        // Update the database with the new JSON string
+        tx.executeSql(
+          'UPDATE Jobs SET correctorDetails = ? WHERE id = ?',
+          [updatedCorrectorDetailsJSON, jobId],
+          () => console.log('Corrector details updated successfully'),
+          (_, error) => console.log('Error updating corrector details:', error)
+        );
+      },
+      (_, error) => console.log('Error fetching existing corrector details:', error)
+    );
+  });
+};
 
   const nextPressed = async () => {
     console.log("nextPressed invoked.");
@@ -286,7 +338,7 @@ const onManufacturerChange = async (item) => {
 
 const styles = StyleSheet.create({
   image: {
-    height: unitH * 200,
+    height: height * 0.25, // Adjust the multiplier to fit your design needs
   },
   content: {
     flex: 1,
@@ -297,7 +349,7 @@ const styles = StyleSheet.create({
   border: {
     borderWidth: 1,
     borderColor: PrimaryColors.Black,
-    padding: unitH * 20,
+    padding: height * 0.02, // Adjust the multiplier to fit your design needs
   },
   row: {
     flexDirection: "row",
@@ -339,15 +391,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   optionContainer: {
-    width: 100,
-    marginVertical: unitH * 10,
+    width: width * 0.25, // Adjusted for responsiveness
+    marginVertical: height * 0.01, // Adjusted based on screen height
     alignSelf: "flex-start",
   },
   spacer: {
-    height: unitH * 20,
+    height: height * 0.02, // Adjusted based on screen height
   },
   spacer2: {
-    height: 10,
+    height: height * 0.01, // Adjusted based on screen height
   },
   closeButtonContainer: {
     position: "absolute",
@@ -357,6 +409,6 @@ const styles = StyleSheet.create({
   closeButtonIcon: {
     width: 20,
     height: 20,
-    // Other styles for the close icon
+    // Add any additional styles you need for the close icon
   },
 });

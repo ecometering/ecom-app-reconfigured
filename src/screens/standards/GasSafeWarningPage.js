@@ -141,7 +141,7 @@ function GasSafeWarningPage() {
         hasLeftBtn={true}
         hasCenterText={true}
         hasRightBtn={true}
-        centerText={title}
+        centerText={"Gas Safe Warning Notice"}
         leftBtnPressed={backPressed}
         rightBtnPressed={nextPressed}
       />
@@ -336,51 +336,40 @@ function GasSafeWarningPage() {
 }
 
 const styles = StyleSheet.create({
-  row: {
-    // width: width * 0.8,
-    alignSelf: "center",
-    flexDirection: "row",
-  },
   content: {
     flex: 1,
-   
+  },
+  scrollView: {
+    flex: 1,
   },
   inputContainer: {
-    width: '100%',
-    alignSelf: "center",
+    marginBottom: 20,
   },
-  input: {
-    width: "45%",
-    alignSelf: "center",
-  },
-  contactContainer: {
-    width: "80%",
-    alignSelf: "center",
-    alignItems: "flex-start",
-  },
-  contactContent: {
-    // flex: 1,
-    width: "100%",
-    justifyContent: "space-between",
+  optionsContainer: {
     flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: width * 0.1,
+    alignItems: "center",
+    marginBottom: 20,
   },
-  signature: {
+  optionTitle: {
+    fontSize: 16,
+  },
+  signatureSection: {
+    alignItems: "center",
+    marginVertical: 20,
+  },
+  signImage: {
     width: width * 0.8,
     height: 150,
-    borderWidth: 1,
-    borderColor: PrimaryColors.Black,
+    resizeMode: "contain",
+    marginVertical: 15,
   },
-  optionContainer: {
-    width: 100,
-    justifyContent: "space-between",
+  modalView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  spacer: {
-    height: unitH * 20,
-  },
-  spacer2: {
-    height: 10,
-  },
-  signImage: { width: unitH * 150, height: unitH * 75, alignSelf: "center" },
 });
 
 export default GasSafeWarningPage;

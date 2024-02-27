@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, TextInput, Button, Alert } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import moment from 'moment'; // For handling dates
-
+import openDatabase from '../../utils/database';
 const { width } = Dimensions.get('window');
 
 const RebookPage = () => {
@@ -12,8 +12,30 @@ const RebookPage = () => {
 
   const twoWeeksFromNow = moment().add(14, 'days').format('YYYY-MM-DD');
   const minDate = moment().add(1, 'days').format('YYYY-MM-DD');
-
-  const handleConfirmRebook = () => {
+  const updateRebookDetails = async () => {
+    const db = openDatabase();
+  
+    // Create a JSON object with all details
+    const rebookDetailsJSON = JSON.stringify({
+      canRebookToday,
+      selectedDate: canRebookToday ? selectedDate : null,
+      rebookReason: canRebookToday ? null : rebookReason,
+    });
+  
+    db.transaction(tx => {
+      // Update the database with the JSON object
+      tx.executeSql(
+        'UPDATE Jobs SET rebookDetails = ? WHERE id = ?',
+        [rebookDetailsJSON, jobId],
+        (_, results) => {
+          console.log('Rebook details updated successfully', results);
+        },
+        (tx, error) => {
+          console.log('Failed to update rebook details', error);
+        }
+      );
+    });
+  };  const handleConfirmRebook = () => {
     Alert.alert(
       "Confirm Rebook Date",
       `Are you sure you want to rebook for ${selectedDate}?`,

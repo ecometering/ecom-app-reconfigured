@@ -7,12 +7,13 @@ import Text from "../components/Text";
 import { useNavigation } from "@react-navigation/native";
 import { AppContext } from "../context/AppContext";
 import Header from "../components/Header";
-import { addOrUpdateJobData, fetchJobDataById } from '../utils/database';
+import { addOrUpdateJobData, fetchJobDataById,createJob } from '../utils/database';
 
 function JobTypePage() {
   const navigation = useNavigation();
   const appContext = useContext(AppContext);
 
+  
   const setJobTypeAndNavigate = async (jobType) => {
     console.log(`Setting job type to: ${jobType} and navigating.`);
     
@@ -25,7 +26,7 @@ function JobTypePage() {
         jobStatus: "in progress",
         progress: 0, // Assuming progress starts at 0
       };
-
+       
       // Directly save job data to the Jobs table without checking for table existence
       // as we assume table creation is handled at app initialization level
       // await addOrUpdateJobData(jobId, jobData); // jobNumber is assumed to be unique identifier

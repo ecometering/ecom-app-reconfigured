@@ -10,8 +10,8 @@ export const useScreenDimensions = () => {
       setScreenData(result.window);
     };
 
-    Dimensions.addEventListener('change', onChange);
-    return () => Dimensions.removeEventListener('change', onChange);
+    // Dimensions.addEventListener('change', onChange);
+    // return () => Dimensions.removeEventListener('change', onChange);
   }, []);
 
   return {

@@ -19,10 +19,11 @@ import EcomHelper from "../../utils/ecomHelper";
 import * as ExpoImagePicker from "expo-image-picker";
 import ImagePickerButton from "../../components/ImagePickerButton";
 const { width, height } = Dimensions.get('window');
-
+import { openDatabase,appendPhotoDetail,fetchPhotosJSON } from "../../utils/database";
 function SiteQuestionsPage() {
   const navigation = useNavigation();
 const route = useRoute();
+const { jobId } = route.params;
   const appContext = useContext(AppContext);
   const jobType = appContext.jobType;
   console.log("Job Type:", jobType);
@@ -58,6 +59,45 @@ const route = useRoute();
     appContext.setMeterDetails(currentMeterDetails);
     navigation.goBack();
   };
+
+const updateSiteQuestions = async () => {
+  const db = await openDatabase();
+  const photosJSON = await fetchPhotosJSON(db, jobId);
+  const photoDetails = {
+    title: "Bypass Image", // Example title, adjust as needed
+    uri: byPassImage,
+    photoKey: "bypassImage" // Example photoKey, adjust as needed
+  };
+
+  // JSONify the photoDetails object
+  const photoDetailsJSON = JSON.stringify(photoDetails);
+ const updatedPhotosJSON = appendPhotoDetail(photosJSON, photoDetailsJSON);
+
+ const siteQuestionsJSON = JSON.stringify({
+  isSafe,
+  isGerneric,
+  genericReason,
+  isCarryOut,
+  carryOutReason,
+  isFitted,
+  isStandard
+});
+
+db.transaction(tx => {
+  tx.executeSql(
+    'UPDATE Jobs SET siteQuestions = ?, photos = ? WHERE id = ?',
+    [siteQuestionsJSON, updatedPhotosJSON, jobId],
+    (_, result) => {
+      console.log('Site questions and photos updated successfully');
+      handleNavigationBasedOnConditions();
+    },
+    (_, error) => {
+      console.log('Error updating site questions and photos in database:', error);
+    }
+  );
+
+  });
+};
 
 const nextPressed = async () => {
     console.log("nextPressed invoked.");
@@ -121,23 +161,23 @@ const handleNavigationBasedOnConditions = () => {
       switch (jobType) {
         case "Warrant":
         case "Removal":
-          navigation.navigate("removal");
+          navigation.navigate("removal", { jobId });
           console.log("Navigating to RemovalFlowNavigator");
           break;
         case "Exchange":
-          navigation.navigate("exchange");
+          navigation.navigate("exchange", { jobId });
           console.log("Navigating to ExchangeFlowNavigator");
           break;
         case "Install":
-          navigation.navigate("install");
+          navigation.navigate("install", { jobId });
           console.log("Navigating to InstallFlowNavigator");
           break;
         case "Maintenance":
-          navigation.navigate("maintenance");
+          navigation.navigate("maintenance", { jobId });
           console.log("Navigating to MaintenanceFlowNavigator");
           break;
         case "Survey":
-          navigation.navigate("survey");
+          navigation.navigate("survey", { jobId });
           console.log("Navigating to SurveyFlowNavigator");
           break;
         default:

@@ -9,18 +9,17 @@ import {
   ScrollView,
   StyleSheet,
   View,
+  Dimensions
 } from "react-native";
 import Text from "../../components/Text";
 import Header from "../../components/Header";
 import { useNavigation } from "@react-navigation/native";
-import { width, unitH } from "../../utils/constant";
 import TextInput from "../../components/TextInput";
 import EcomHelper from "../../utils/ecomHelper";
 import { AppContext } from "../../context/AppContext";
 import BarcodeScanner from "../../components/BarcodeScanner";
-
-import * as ExpoImagePicker from "expo-image-picker";
-
+import ImagePickerButton from "../../components/ImagePickerButton";
+const { width, height } = Dimensions.get("window");
 const alphanumericRegex = /^[a-zA-Z0-9]+$/;
 
 function ChatterBoxPage() {
@@ -37,19 +36,63 @@ function ChatterBoxPage() {
   const [manufacturer, setManufacturer] = useState(
     regulatorDetails?.chatterManufacturer
   );
-  const [selectedImage, setSelectedImage] = useState(
+  const [chatterBoxImage, setchatterBoxImage] = useState(
     regulatorDetails?.chatterImage
   );
   const [model, setModel] = useState(regulatorDetails?.chatterModel);
 
+  const updateChatterBoxDetails = async () => {
+    // Open the database connection
+    const db = await openDatabase();
+    // Assuming jobId is available in your component's state or context
+    const jobId = appContext.jobId; 
+  
+    // Serialize the photo details if you're storing images as part of the chatter box details
+    const photoDetails = {
+      title: "ChatterBox Image",
+      uri: chatterBoxImage,
+      photoKey: "chatterBoxImage"
+    };
+    const photoDetailsJSON = JSON.stringify(photoDetails);
+  
+    // Fetch existing photos JSON from the database, append new photo details, and update
+    const existingPhotosJSON = await fetchPhotosJSON(db, jobId);
+    const updatedPhotosJSON = appendPhotoDetail(existingPhotosJSON, photoDetailsJSON);
+  
+    // Serialize all chatter box details into a JSON string
+    const chatterBoxDetailsJSON = JSON.stringify({
+      manufacturer,
+      model,
+      serialNumber,
+      imageUri: chatterBoxImage,
+    });
+  
+    // Execute the SQL transaction to update the chatter box details and photos for the given jobId
+    db.transaction(tx => {
+      tx.executeSql(
+        'UPDATE Jobs SET chatterBoxDetails = ?, photos = ? WHERE id = ?',
+        [chatterBoxDetailsJSON, updatedPhotosJSON, jobId],
+        (_, result) => {
+          console.log('Chatter box details updated successfully');
+          // Optionally, navigate away or update UI to reflect the changes
+          navigation.navigate("standardPage"); // Adjust navigation as needed
+        },
+        (_, error) => {
+          console.error('Error updating chatter box details in database:', error);
+        }
+      );
+    });
+  };
+
+
   const nextPressed = async () => {
-    if (!selectedImage) {
+    if (!chatterBoxImage) {
       EcomHelper.showInfoMessage("Please choose image");
       return;
     }
 
     try {
-      const response = await fetch(selectedImage);
+      const response = await fetch(chatterBoxImage);
       const blob = await response.blob();
       appContext.setBlobs((prev) => [...prev, blob]);
     } catch (err) {
@@ -73,7 +116,7 @@ function ChatterBoxPage() {
       chatterManufacturer: manufacturer,
       chatterSerialNumber: serialNumber,
       chatterModel: model,
-      chatterImage: selectedImage,
+      chatterImage: chatterBoxImage,
     });
 
     navigation.navigate("StandardPage");
@@ -84,7 +127,7 @@ function ChatterBoxPage() {
       chatterManufacturer: manufacturer,
       chatterSerialNumber: serialNumber,
       chatterModel: model,
-      chatterImage: selectedImage,
+      chatterImage: chatterBoxImage,
     });
     navigation.goBack();
   };
@@ -100,55 +143,7 @@ function ChatterBoxPage() {
     setSerialNumber(codes.data);
   };
 
-  const handleImagePicker = () => {
-    Alert.alert("Choose Image", "how to choose image ?", [
-      {
-        text: "Cancel",
-        onPress: () => {},
-        style: "cancel",
-      },
-      {
-        text: "Choose from gallery",
-        onPress: chooseFromGallery,
-      },
-      {
-        text: "Take photo",
-        onPress: takePhoto,
-      },
-      {},
-    ]);
-  };
-  const takePhoto = () => {
-    const options = {
-      title: "Take Photo",
-      mediaType: "photo",
-      quality: 1,
-    };
 
-    ExpoImagePicker.launchCameraAsync(options)
-      .then((response) => {
-        setSelectedImage(response.assets[0].uri);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const chooseFromGallery = () => {
-    const options = {
-      title: "Choose from Gallery",
-      mediaType: "photo",
-      quality: 1,
-    };
-
-    ExpoImagePicker.launchImageLibraryAsync(options)
-      .then((response) => {
-        setSelectedImage(response.assets[0].uri);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
 
   return (
     <SafeAreaView style={styles.content}>
@@ -223,20 +218,17 @@ function ChatterBoxPage() {
 
             <Text>{"Chatter Box Image"}</Text>
             <View style={styles.spacer} />
-            {selectedImage && (
+            {chatterBoxImage && (
               <Image
-                source={{ uri: selectedImage }}
+                source={{ uri: chatterBoxImage }}
                 style={styles.image}
                 resizeMode="contain"
               />
             )}
             <View style={styles.row}>
-              <Button
-                title={
-                  selectedImage === undefined ? "Choose Image" : "Change Image"
-                }
-                onPress={handleImagePicker}
-              />
+              <ImagePickerButton
+              onImageSelected={(uri) => setchatterBoxImage(uri)}
+            />
             </View>
             <View style={styles.spacer} />
           </View>
@@ -266,7 +258,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   input: {
-    width: width * 0.35,
+    width: width * 0.35, // Example adjustment
   },
   optionContainer: {
     alignSelf: "flex-start",
@@ -278,10 +270,10 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   spacer: {
-    height: unitH * 20,
+    height: height * 0.02, // Example adjustment based on height
   },
   spacer2: {
-    height: 10,
+    height: height * 0.01, // Example adjustment based on height
   },
   closeButtonContainer: {
     position: "absolute",
@@ -293,7 +285,7 @@ const styles = StyleSheet.create({
     height: 20,
   },
   image: {
-    height: unitH * 200,
+    height: height * 0.25, // Adjusted to use height for responsiveness
   },
 });
 

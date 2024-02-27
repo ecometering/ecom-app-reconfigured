@@ -101,15 +101,23 @@ const EventModal = ({ isVisible, onClose, onSubmit, event = {} }) => {
   );
 };
 
-const API_BASE_URL = 'https://test.ecomdata.com/api/calendar-events';
-const fetchEvents = async (date) => {
+const fetchEvents = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}?date=${date}`);
+    const response = await fetch('https://test.ecomdata.co.uk/api/events');
     const data = await response.json();
-    return data.events; // Adjust according to your API response structure
+    const formattedEvents = data.reduce((acc, curr) => {
+      const { start_date, title, ...rest } = curr;
+      const date = moment(start_date).format('YYYY-MM-DD');
+      if (!acc[date]) {
+        acc[date] = [];
+      }
+      acc[date].push({ title, ...rest });
+      return acc;
+    }, {});
+    return formattedEvents;
   } catch (error) {
     console.error('Fetching events failed:', error);
-    return [];
+    return {};
   }
 };
 

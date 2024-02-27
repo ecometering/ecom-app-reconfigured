@@ -34,23 +34,24 @@ console.log(" Meter gateway screen",type,pressureTier,isCorrector,isAmr);
                         } else {
                             navigation.replace('NewMeterIndex');
                         }
+
                     }
                     if (pageRoute ===2){
                         if (isCorrector===true){
                             navigation.replace('CorrectorDetails');
                         } else if (isAmr===true){
                             navigation.replace('DataLoggerDetails');
-                        }}
+                        }else if ((meterType.value === 1 || meterType.value === 2 || meterType.value === 4) && pressureTier === "medium" || !isDiaphragm) {
+                            // Code block for when conditions are met
+                            navigation.replace('StreamsSetSealDetails')
+                        } else {
+                            // Code block for when it should be considered a regulator
+                            navigation.replace('Regulator');
+                        }
 
-                    if (isAmr) {
-                      navigation.replace('DataLoggerDetails');
-                  } else if (isMeter) {
-                      // Assuming setAndSeal is a function that determines the next screen based on meter type and pressure
-                      // This placeholder should be replaced with actual logic to determine the next step in the set and seal process
-                      const nextScreen = setAndSeal(meterDetails?.meterType, meterDetails?.meterPressure);
-                      navigation.replace(nextScreen);
-                  } else {
-                      navigation.replace('StandardPage');}
+                    }
+
+                    
                   
                       break;
                   case "Maintenance":
@@ -66,32 +67,30 @@ console.log(" Meter gateway screen",type,pressureTier,isCorrector,isAmr);
                       // Add specific logic for Maintenance job type
                       break;
                   case "Removal":
-                    if (datalogger) {
-                      return 'RemovedDataLoggerDetails'; // Navigate to DataLogger if true
-                    // Use setAndSeal logic if meter is present
-                    } else {
-                      return 'StandardPage'; // Fallback to StandardsNavigation
+                    if (pageRoute ===1){
+                        cosole.log("MeterGatewayScreen",pageRoute); 
+                        if (meterType.value === '1' || meterType.value === '2' || meterType.value === '4') {
+                            navigation.replace('NewMeterDataBadge');
+                        } else {
+                            navigation.replace('NewMeterIndex');
+                        }
+
                     }
                       break;
                   case "Survey":
-                    const nextAfterCorrector = ({ datalogger, meter, meterType, meterPressure }) => {
-                      if (datalogger) {
-                        return 'ExistingDataLoggerDetails'; // Navigate to DataLogger if true
-                      } else if (meter) {
-                        return setAndSeal(meterType, meterPressure); // Use setAndSeal logic if meter is present
-                      } else {
-                        return 'StandardPage'; // Fallback to StandardsNavigation
-                      }
-                    };
+                   
                     
                       // Add specific logic for Survey job type
                       break;
                   case "Warant":
-                    if (datalogger) {
-                      return 'RemovedDataLoggerDetails'; // Navigate to DataLogger if true
-                    // Use setAndSeal logic if meter is present
-                    } else {
-                      return 'StandardPage'; // Fallback to StandardsNavigation
+                    if (pageRoute ===1){
+                        cosole.log("MeterGatewayScreen",pageRoute); 
+                        if (meterType.value === '1' || meterType.value === '2' || meterType.value === '4') {
+                            navigation.replace('RemovedMeterDataBadge');
+                        } else {
+                            navigation.replace('RemovedMeterIndex');
+                        }
+
                     }
 
                   break;

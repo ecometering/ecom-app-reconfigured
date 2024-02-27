@@ -17,9 +17,9 @@ import { AppContext } from "../context/AppContext";
 import React, { useState, useEffect, useContext,createContext } from "react";
 
 // import gateways 
-import InstallGatewayScreen from "../screens/gateways/installGateWay";
+import AssetSelectGatewayScreen from "../screens/gateways/AssetSelectGateWay";
 import CorrectorGateway from "../screens/gateways/CorrectorGateWay";
-
+import MeterGatewayScreen from "../screens/gateways/MeterGateWay";
 
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -127,10 +127,12 @@ const InstallFlowNavigator = () => {
 
  return(
  <Stack.Navigator> 
-    <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being installed',nextScreen: 'InstallGatewayScreen' }} />
-    <Stack.Screen name="InstallGatewayScreen" component={InstallGatewayScreen} />
+    <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being installed',nextScreen: 'AssetSelectGateway' }} />
+    <Stack.Screen name="AssetSelectGateway" component={AssetSelectGatewayScreen} />
+    
+    
     {/* meter process */}
-    <Stack.Screen  name="MeterDetails" component={MeterDetailsPage}
+    <Stack.Screen  name="NewMeterDetails" component={MeterDetailsPage}
     initialParams={{title: 'New Meter Details',nextScreen: 'NewEcvToMov'
     }}  />  
     <Stack.Screen 
@@ -138,24 +140,24 @@ const InstallFlowNavigator = () => {
         name="NewEcvToMov"
         component ={GenericPhotoPage} 
         initialParams={{title: 'New ECV to MOV',
-         photoKey: 'NewEcvToMov',nextScreen:meter}}
+         photoKey: 'NewEcvToMov',nextScreen:()=>meterBadge(meterType)}}
     />
     
     
     <Stack.Screen 
-    key = "NewMeterDataBadge"
-    name ="NewMeterDataBadge" 
+    key = "MeterDataBadge"
+    name ="MeterDataBadge" 
     component={GenericPhotoPage}
     initialParams={{
         title: 'New Meter data badge',
-        photoKey: 'NewMeterDataBadge',
-        nextScreen:'NewMeterIndex'}} />
+        photoKey: 'MeterDataBadge',
+        nextScreen:'MeterIndex'}} />
    
     <Stack.Screen 
-    key = "NewMeterIndex"
-    name="NewMeterIndex"
+    key = "MeterIndex"
+    name="MeterIndex"
      component= {MeterDetailsPage}
-        initialParams={{title: 'New Meter index',photoKey: 'NewMeterIndex',nextScreen:'NewMeterPhoto'}}
+        initialParams={{title: 'New Meter index',photoKey: 'MeterIndex',nextScreen:'NewMeterPhoto'}}
          />
 
     <Stack.Screen
@@ -169,7 +171,7 @@ const InstallFlowNavigator = () => {
     <Stack.Screen name="DataLoggerDetails" component={DataLoggerDetailsPage} initialParams={{title:'New AMR installed',nextScreen:()=> nextAfterDataLogger}}/>
     {/*  Corrector Process */}
     <Stack.Screen name ="CorrectorDetails" component={CorrectorDetailsPage} initialParams={{title: 'New Corrector installed',nextScreen:'CorrectorGateway'}} />
-    <Stack.Screen name="CorrectorGateWay" component={CorrectorGateway} />
+    <Stack.Screen name="CorrectorGateway" component={CorrectorGateway} />
     {/* set and seal details  */}
     <Stack.Screen name="StreamsSetSealDetails" component={StreamsSetSealDetailsPage} />
       {generateScreenInstancesForStreams(numberOfStreams).map((screen, index) => (

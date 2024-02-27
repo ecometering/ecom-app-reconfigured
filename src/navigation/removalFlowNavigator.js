@@ -6,7 +6,12 @@ import AssetTypeSelectionPage from "../screens/jobs/AssetTypeSelectionPage";
 import AdditionalMaterialPage from "../screens/jobs/AdditionalMaterialPage";
 import { AppContext } from "../context/AppContext";
 import React, { useState, useEffect,useContext } from "react";
-import RemovalGatewayScreen from "../screens/gateways/removalGateWay";
+
+// gateways
+import AssetSelectGatewayScreen from "../screens/gateways/AssetSelectGateWay";
+import MeterGatewayScreen from "../screens/gateways/MeterGateWay";
+import CorrectorGatewayScreen from "../screens/gateways/CorrectorGateWay";
+
 
 import { createStackNavigator } from "@react-navigation/stack";
 

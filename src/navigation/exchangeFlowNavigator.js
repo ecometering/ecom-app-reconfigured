@@ -15,6 +15,10 @@ import ActiveRegulatorPage from "../screens/jobs/ActiveRegulatorPage";
 import FilterPage from "../screens/jobs/FilterPage";
 import { AppContext } from "../context/AppContext";
 import React, { useState, useEffect, useContext } from "react";
+// gateways 
+import AssetSelectGatewayScreen from "../screens/gateways/AssetSelectGateWay";
+import CorrectorGateway from "../screens/gateways/CorrectorGateWay";
+import MeterGatewayScreen from "../screens/gateways/MeterGateWay";
 
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -130,7 +134,9 @@ const ExchangeFlowNavigator = () => {
 
   return(
   <Stack.Navigator >
-  <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being Exchanged',nextScreen: ()=>assetSelection({ meter, corrector, datalogger }, 'Removal')}} />
+  <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being Exchanged',nextScreen:"AssetSelectGatewayScreen"}} />
+  <Stack.Screen name="AssetSelectGatewayScreen" component={AssetSelectGatewayScreen} />
+  
   <Stack.Screen name="RemovedMeterDetails" component={MeterDetailsPage} initialParams={{title:' Removed Meter Details',nextScreen: ()=>RemovedmeterBadge(meterType)}} />
   <Stack.Screen name ="RemovedMeterDataBadge" component={GenericPhotoPage} initialParams={{title: 'Removed Meter data badge',photoKey: 'RemovedMeterDataBadge',nextScreen:'RemovedMeterIndex'}} />
   <Stack.Screen name="RemovedMeterIndex" component= {MeterDetailsPage} initialParams={{title: 'Removed Meter index',photoKey: 'RemovedMeterIndex',nextScreen:'RemovedMeterPhoto'}} />

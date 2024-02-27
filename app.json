@@ -1,8 +1,8 @@
 {
   "expo": {
     "name": "ecomJobsApp",
-    "slug": "ecomjobsapp",
-    "version": "2.1.28",
+    "slug": "ecom-mobile-app",
+    "version": "2.2.03",
     "orientation": "default",
     "icon": "./assets/icons/logo167.png",
     "userInterfaceStyle": "light",
@@ -22,20 +22,22 @@
         "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos.",
         "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos."
       },
-      "bundleIdentifier": "ECM.ecomJobsApp"
+      "bundleIdentifier": "ECM.ecomTestJobsApp"
     },
     "android": {
       "jsEngine": "hermes",
-      "package": "ECM.ecomJobsApp"
+      "package": "ECM.ecomTestJobsApp"
+      
     },
     "plugins": [
       "expo-build-properties"
     ],
     "extra": {
       "eas": {
-        "projectId": "ad335d98-531d-4bcc-8c63-8d07df138c91"
+        "projectId": "49d5b6fb-aae5-4bba-ad61-d08dcc19a535"
       }
-    }
+    },
+    "owner": "ecometeringsolutions"
   },
   "android": {
     "adaptiveIcon": {

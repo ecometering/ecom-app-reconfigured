@@ -16,6 +16,12 @@ import FilterPage from "../screens/jobs/FilterPage";
 import { AppContext } from "../context/AppContext";
 import React, { useState, useEffect,useContext } from "react";
 
+// Gateways 
+import AssetSelectGatewayScreen from "../screens/gateways/AssetSelectGateWay";
+import CorrectorGateway from "../screens/gateways/CorrectorGateWay";
+import MeterGatewayScreen from "../screens/gateways/MeterGateWay";
+
+
 import { createStackNavigator } from "@react-navigation/stack";
 
 

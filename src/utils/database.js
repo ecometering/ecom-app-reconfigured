@@ -4,6 +4,7 @@ import * as SQLite from "expo-sqlite";
 
 const databaseName = "options.sqlite";
 const dbFilePath = `${FileSystem.documentDirectory}SQLite/${databaseName}`;
+console.log("Database file path:", dbFilePath);
 
 
 async function deleteDatabase() {
@@ -79,12 +80,24 @@ async function createJobsTable(db) {
 		jobId TEXT,
         jobType TEXT NOT NULL,
         MPRN TEXT,
+		postcode TEXT,
         startDate DATE,
         endDate DATE,
         jobStatus TEXT,
         progress INT,
         siteDetails TEXT,
-        photos TEXT
+		siteQuestions TEXT,
+		maintenanceQuestions TEXT,
+        meterDetails TEXT,
+		correctorDetails TEXT,
+		dataloggerDetails TEXT,
+		streams TEXT, 
+		regulator TEXT,
+		additionalMaterials TEXT,
+		chatterboxDetails TEXT, 
+		standards TEXT, 
+		rebook TEXT,
+		photos TEXT
       );`,
 			[],
 			() => console.log("[createJobsTable] Jobs table created or already exists."),
@@ -97,10 +110,29 @@ async function getDatabaseTables() {
 	try {
 		const db = await openDatabase(); // Open the database
 		const tables = await fetchTableNames(db); // Fetch the table names
-		//console.log("Database tables:", tables);
-		return tables;
+		return tables
 	} catch (error) {
-		//console.error("Error fetching table names:", error);
+		console.error("Error fetching table names:", error);
+	}
+}
+async function getDatabaseJob(setJob) {
+	try {
+		const db = await openDatabase(); // Open the database
+	
+		db.transaction(tx => {
+			tx.executeSql(
+			  'SELECT * FROM Jobs',
+			  [],
+			  (_, { rows: { _array } }) => {
+				setJob(_array)
+			  },
+			  error => {
+				console.error('Error executing SQL query', error);
+			  }
+			);
+		  });
+	} catch (error) {
+		console.error("Error fetching table names:", error);
 	}
 }
 
@@ -247,8 +279,46 @@ const JobsDatabaseTest = async () => {
 	);
 	});
 }
+const printRowById = (id) => {
+	db.transaction((tx) => {
+	  tx.executeSql(
+		"SELECT * FROM Jobs WHERE id = ?",
+		[id],
+		(_, { rows }) => {
+		  if (rows.length > 0) {
+			console.log("Row data:", rows.item(0));
+		  } else {
+			console.log("No row found with the specified ID.");
+		  }
+		},
+		(_, error) => console.error("Failed to fetch row:", error)
+	  );
+	});
+  };
 
+  
+  export const fetchPhotosJSON = async (jobId) => {
+	const db = await openDatabase();
+	return new Promise((resolve, reject) => {
+	  db.transaction(tx => {
+		tx.executeSql(
+		  'SELECT photos FROM Jobs WHERE id = ?',
+		  [jobId],
+		  (_, { rows }) => {
+			const existingPhotosJSON = rows.length > 0 ? rows._array[0].photos : JSON.stringify([]);
+			resolve(existingPhotosJSON);
+		  },
+		  (_, error) => reject(error)
+		);
+	  });
+	});
+  };
 
+  export const appendPhotoDetail = (existingPhotosJSON, newPhotoDetail) => {
+	const photos = JSON.parse(existingPhotosJSON);
+	photos.push(newPhotoDetail);
+	return JSON.stringify(photos);
+  };
 export {
   createJobsTable,
   fetchManufacturersForMeterType,
@@ -260,6 +330,7 @@ export {
   testFileSystemAccess,
   printTableSchema,
   deleteDatabase,
-  JobsDatabaseTest
+  JobsDatabaseTest,
+  getDatabaseJob,
+  printRowById
 };
-

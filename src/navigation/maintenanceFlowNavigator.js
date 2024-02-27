@@ -7,7 +7,6 @@ import RegulatorPage from "../screens/jobs/RegulatorPage";
 import ChatterBoxPage from "../screens/jobs/ChatterBoxPage";
 import AdditionalMaterialPage from "../screens/jobs/AdditionalMaterialPage";
 import AssetTypeSelectionPage from "../screens/jobs/AssetTypeSelectionPage";
-import ExistingGatewayScreen from "../screens/gateways/exisitingGateWay";
 import MaintenanceQuestionsPage from "../screens/maintenance/MaintenanceQuestionsPage";
 import SlamshutPage from "../screens/jobs/SlamshutPage";
 import WaferCheckPage from "../screens/jobs/WaferCheckPage";
@@ -16,6 +15,14 @@ import ActiveRegulatorPage from "../screens/jobs/ActiveRegulatorPage";
 import FilterPage from "../screens/jobs/FilterPage";
 import { AppContext } from "../context/AppContext";
 import React, { useState, useEffect,useContext } from "react";
+
+
+// gateways
+import AssetSelectGatewayScreen from "../screens/gateways/AssetSelectGateWay";
+import CorrectorGateway from "../screens/gateways/CorrectorGateWay";
+import MeterGatewayScreen from "../screens/gateways/MeterGateWay";
+
+
 
 import { createStackNavigator } from "@react-navigation/stack";
 

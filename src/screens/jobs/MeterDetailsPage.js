@@ -24,7 +24,7 @@ import {
 
   
 } from "../../utils/constant";
-import {getDatabaseTables}from "../../utils/database";
+import {getDatabaseTables,}from "../../utils/database";
 import { useNavigation,useRoute } from "@react-navigation/native";
 import Header from "../../components/Header";
 import Text from "../../components/Text";
@@ -34,7 +34,7 @@ import TextInput, { TextInputWithTitle } from "../../components/TextInput";
 import { AppContext } from "../../context/AppContext";
 import EcomHelper from "../../utils/ecomHelper";
 import BarcodeScanner from "../../components/BarcodeScanner";
-import { fetchManufacturersForMeterType, fetchModelsForManufacturer } from '../../utils/database';
+import { fetchManufacturersForMeterType, fetchModelsForManufacturer,openDatabase } from '../../utils/database';
 
 const alphanumericRegex = /^[a-zA-Z0-9]*$/;
 const { width, height } = Dimensions.get('window');
@@ -130,8 +130,47 @@ function MeterDetailsPage() {
   }, [manufacturer]);
 
 
+  const saveMeterDetailsToDatabase = async () => {
+    const db = await openDatabase();
+    const currentDateTime = moment().format('YYYY-MM-DD HH:mm:ss');
+    const jobStatus = 'In Progress'; // Example status
+    const progress = 'Updated with Meter Details'; // Example progress
 
-  const nextPressed = () => {
+    const meterDetailsJson = JSON.stringify({
+      location,
+      model,
+      manufacturer,
+      uom,
+      type,
+      status,
+      measuringCapacity,
+      year,
+      reading,
+      dialNumber,
+      serialNumber,
+      pulseValue,
+      mechanism,
+      pressureTier,
+      pressure,
+      havePulseValue,
+      haveSerialNumber,
+    });
+
+    db.transaction(tx => {
+      tx.executeSql(
+        `UPDATE Jobs SET meterDetails = ?, progress = ? WHERE id = ?`,
+        [meterDetailsJson,progress, jobId], // Assuming appContext.jobId is the current job's ID
+        (_, result) => {
+          console.log('Meter details updated in database.');
+        },
+        (_, error) => {
+          console.log('Error updating meter details in database:', error);
+        }
+      );
+    });
+  };
+
+  const nextPressed = async() => {
     if (location == null) {
       EcomHelper.showInfoMessage("Please Choose 'Meter Location'");
       return;
@@ -197,8 +236,10 @@ function MeterDetailsPage() {
       return;
     }
 
-    // navigate
-    navigation.navigate(nextScreen);
+    await saveMeterDetailsToDatabase();
+
+    // Proceed to the next screen
+    navigation.navigate(nextScreen, { jobId: appContext.jobId });
   };
 
   const backPressed = () => {

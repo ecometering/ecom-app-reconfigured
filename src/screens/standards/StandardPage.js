@@ -8,8 +8,9 @@ import {
   ScrollView,
   StyleSheet,
   View,
+  Dimensions
 } from "react-native";
-import { isIos, unitH, width } from "../../utils/constant";
+import { isIos } from "../../utils/constant";
 import { useNavigation } from "@react-navigation/native";
 import Header from "../../components/Header";
 import Text from "../../components/Text";
@@ -20,6 +21,7 @@ import EcomHelper from "../../utils/ecomHelper";
 import { PrimaryColors } from "../../theme/colors";
 import SignatureScreen from "react-native-signature-canvas";
 
+const { width, height } = Dimensions.get("window");
 function StandardPage() {
   const navigation = useNavigation();
   const appContext = useContext(AppContext);
@@ -29,8 +31,8 @@ function StandardPage() {
   const title = "Standard Details";
 
   const [testPassed, setTestPassed] = useState(standardDetails?.testPassed);
-  const [confirmStandard, setConfirmStandard] = useState(
-    standardDetails?.confirmStandard
+  const [conformStandard, setconformStandard] = useState(
+    standardDetails?.conformStandard
   );
   const [riddorReportable, setRiddorReportable] = useState(
     standardDetails?.riddorReportable == null
@@ -39,7 +41,7 @@ function StandardPage() {
   );
   const [useOutlet, setUseOutlet] = useState(standardDetails?.useOutlet);
   const [pressure, setPressure] = useState(standardDetails?.pressure);
-  const [confirmText, setConfirmText] = useState(standardDetails?.confirmText);
+  const [conformText, setconformText] = useState(standardDetails?.conformText);
   const [signature, setSignature] = useState(standardDetails?.signature);
   const [isModal, setIsModal] = useState(false);
 
@@ -57,9 +59,9 @@ function StandardPage() {
       EcomHelper.showInfoMessage("Please answer if tightness test passed");
       return;
     }
-    if (confirmStandard == null) {
+    if (conformStandard == null) {
       EcomHelper.showInfoMessage(
-        "Please answer if the network service/ECV confirm to standards"
+        "Please answer if the network service/ECV conform to standards"
       );
       return;
     }
@@ -84,11 +86,11 @@ function StandardPage() {
     appContext.setStandardDetails({
       ...standardDetails,
       testPassed: testPassed,
-      confirmStandard: confirmStandard,
+      conformStandard: conformStandard,
       riddorReportable: riddorReportable,
       useOutlet: useOutlet,
       pressure: pressure,
-      confirmText: confirmText,
+      conformText: conformText,
       signature,
     });
     appContext.setMeterDetails({
@@ -99,7 +101,7 @@ function StandardPage() {
     if (riddorReportable === true) {
       navigation.navigate("RiddorReportPage");
     } else {
-      if (confirmStandard === true) {
+      if (conformStandard === true) {
         navigation.navigate("SnClientInfoPage");
       } else {
         navigation.navigate("CompositeLabelPage");
@@ -110,11 +112,11 @@ function StandardPage() {
     appContext.setStandardDetails({
       ...standardDetails,
       testPassed: testPassed,
-      confirmStandard: confirmStandard,
+      conformStandard: conformStandard,
       riddorReportable: riddorReportable,
       useOutlet: useOutlet,
       pressure: pressure,
-      confirmText: confirmText,
+      conformText: conformText,
       signature,
     });
 
@@ -154,22 +156,22 @@ function StandardPage() {
               />
             </View>
             <View style={styles.spacer} />
-            <Text>Does the network service /ECV confirm to standards</Text>
+            <Text>Does the network service /ECV conform to standards</Text>
             <View style={styles.optionContainer}>
               <OptionalButton
                 options={["Yes", "No"]}
                 actions={[
                   () => {
-                    setConfirmStandard(true);
+                    setconformStandard(true);
                   },
                   () => {
-                    setConfirmStandard(false);
+                    setconformStandard(false);
                   },
                 ]}
                 value={
-                  confirmStandard == null
+                  conformStandard == null
                     ? null
-                    : confirmStandard
+                    : conformStandard
                     ? "Yes"
                     : "No"
                 }
@@ -228,19 +230,19 @@ function StandardPage() {
               <View style={styles.spacer} />
           <TextInputWithTitle
                 title={"Notes"}
-                value={confirmText}
+                value={conformText}
                 onChangeText={(text) => {
-                  setConfirmText(text);
+                  setconformText(text);
                 }}
                 style={{
                   ...styles.input,
                   width:"100%",
-                  height: unitH * 150,
+                  height: height * 0.2,
                 }}
                 multiline={true}
               />
             <View style={styles.spacer} />
-            <Text>{`I confirm that all works have been carried out in 
+            <Text>{`I conform that all works have been carried out in 
 accordance with current industry standards and 
 health safety policies`}</Text>
             
@@ -311,27 +313,31 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
-  body: {
-    marginHorizontal: width * 0.1,
+  scrollView: {
+    flex: 1,
+  },
+  modalContent: {
+    flex: 1,
+    marginTop: 22,
+  },
+  signImage: {
+    width: width * 0.8,
+    height: height * 0.2,
+    alignSelf: "center",
+  },
+  inputContainer: {
+    marginBottom: 20,
   },
   row: {
     flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  input: {
-    width: width * 0.35,
-    alignSelf: "center",
-    height: unitH * 40,
+    justifyContent: "space-around",
+    marginTop: 20,
   },
   optionContainer: {
-    justifyContent: "center",
-    alignItems: "flex-start",
-    width: width * 0.35,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: width * 0.4, // Adjusted for responsiveness
   },
-  spacer: {
-    height: unitH * 20,
-  },
-  signImage: { width: unitH * 380, height: unitH * 150, alignSelf: "center" },
 });
 
 export default StandardPage;

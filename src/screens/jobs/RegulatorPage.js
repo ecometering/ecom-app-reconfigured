@@ -7,11 +7,11 @@ import {
   ScrollView,
   StyleSheet,
   View,
+  Dimensions,
 } from "react-native";
 import Text from "../../components/Text";
 import Header from "../../components/Header";
 import { useNavigation } from "@react-navigation/native";
-import { width, unitH } from "../../utils/constant";
 import TextInput from "../../components/TextInput";
 import OptionalButton from "../../components/OptionButton";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -19,9 +19,9 @@ import moment from "moment";
 import EcomHelper from "../../utils/ecomHelper";
 import { AppContext } from "../../context/AppContext";
 import BarcodeScanner from "../../components/BarcodeScanner";
-
+import { openDatabase } from "../../utils/database";
 const alphanumericRegex = /^[a-zA-Z0-9]+$/;
-
+const { width, height } = Dimensions.get("window");
 function RegulatorPage() {
   const navigation = useNavigation();
   const appContext = useContext(AppContext);
@@ -56,6 +56,42 @@ function RegulatorPage() {
   const [isNewLogger, setIsNewLogger] = useState(regulatorDetails?.isNewLogger);
   console.log("RegulatorPage");
 
+
+  const updateRegulatorDetails = async () => {
+    const { jobId } = appContext; // Assuming appContext provides the jobId
+    
+    // JSONify regulator details
+    const regulatorDetailsJSON = JSON.stringify({
+      serialNumber,
+      manufacturer,
+      model,
+      size,
+      date: moment(date).format('YYYY-MM-DD'), // Formatting date to string
+      isSealedRegulator,
+      isPurged,
+      isLabelled,
+      isVentilation,
+      isChatBox,
+      serialNoExist,
+      isAdditionalMaterial,
+      isNewLogger
+    });
+  
+    const db = await openDatabase();
+  
+    // Update the database with the new details
+    db.transaction(tx => {
+      tx.executeSql(
+        'UPDATE JobDetails SET regulatorDetails = ? WHERE jobId = ?',
+        [regulatorDetailsJSON, jobId],
+        () => {
+          console.log('Regulator details updated successfully');
+          // Optionally navigate away or update state
+        },
+        (txObj, error) => console.error('Error updating regulator details:', error)
+      );
+    });
+  };
   const nextPressed = () => {
     // validate
     if ( serialNoExist && (serialNumber == null || serialNumber === "")) {
@@ -116,6 +152,8 @@ function RegulatorPage() {
     });
     navigation.navigate("RegulatorPhotoPage");
   };
+
+  
   const backPressed = () => {
     appContext.setRegulatorDetails({
       ...regulatorDetails,
@@ -274,7 +312,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   spacer: {
-    height: unitH * 20,
+    height: height * 0.02,
   },
   spacer2: {
     height: 10,

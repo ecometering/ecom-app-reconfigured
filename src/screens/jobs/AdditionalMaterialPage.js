@@ -17,7 +17,7 @@ import {PrimaryColors, Transparents} from '../../theme/colors';
 import {EcomPressable as Button} from '../../components/ImageButton';
 import {AppContext} from '../../context/AppContext';
 import EcomHelper from '../../utils/ecomHelper';
-
+import { openDatabase } from '../../utils/database';
 function AdditionalMaterialPage() {
   const navigation = useNavigation();
   const appContext = useContext(AppContext);
@@ -29,17 +29,34 @@ function AdditionalMaterialPage() {
 
   const jobType = appContext.jobType;
   const title = jobType === 'Install' ? 'New Meter Details' : jobType;
+  
+  const saveAdditionalMaterialsToDatabase = async () => {
+    console.log("creating job")
+    const db = await openDatabase();
+    console.log('Db status:', db)
 
+    const additionalMaterials = JSON.stringify(materials);
+
+
+  db.transaction((tx) => {
+    tx.executeSql(
+      `UPDATE Jobs SET additionalMaterials=?, progress=? WHERE id=?`,
+      [additionalMaterials,progress , jobId],
+      (_, result) => {
+        console.log('Site details and progress updated in database. Generated ID:', result.insertId);
+        // Pass the result.insertId as JobId parameter to the next navigation call
+        navigation.navigate("StandardPage", { JobId: jobId });
+      },
+      (_, error) => console.log('Error updating site details in database:', error)
+    );
+  });
+};
   const nextPressed = () => {
     if (materials.length === 0) {
       EcomHelper.showInfoMessage('Please add materials');
       return;
     }
-    appContext.setRegulatorDetails({
-      ...regulatorDetails,
-      materials: materials,
-    });
-    navigation.navigate('StandardPage');
+saveAdditionalMaterialsToDatabase()
   };
   const backPressed = () => {
     appContext.setRegulatorDetails({
