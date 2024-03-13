@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
-import { fetchJobsFromDatabase, deleteJobById, getDatabaseTables, openDatabase, getDatabaseJob } from '../utils/database'; // Importing required functions
+import {  getDatabaseJob } from '../utils/database'; // Importing required functions
 
 const { width } = Dimensions.get('window'); // Get the screen width
 
 const dynamicFontSize = width < 360 ? 10 : width < 600 ? 12 : 14; // Adjust font size based on screen width
 const dynamicPadding = width < 360 ? 8 : 10; // Adjust padding based on screen width
 
-const JobsTable = () => {
+const CompletedJobsTable = () => {
   const [jobs, setJobs] = useState([]);
   const navigation = useNavigation();
   
@@ -24,10 +24,10 @@ const JobsTable = () => {
   };
   
 
-  const filteredData = jobs.filter(item => item.jobStatus !== 'InProgress');
+  const filteredData = jobs.filter(item => item.jobStatus === 'Completed');
 
   const handleRowClick = (jobId) => {
-    navigation.navigate('JobDetails', { jobId });
+    
   };
 
   const TableHeader = () => (
@@ -95,4 +95,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default JobsTable;
+export default CompletedJobsTable;

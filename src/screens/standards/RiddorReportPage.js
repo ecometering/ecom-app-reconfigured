@@ -75,7 +75,7 @@ export default function RiddorReportPage() {
     if (confirmStandard === true) {
       navigation.navigate("SnClientInfoPage");
     } else {
-      navigation.navigate("CompositeLabelPage");
+      navigation.navigate("CompositeLabelPhoto");
     }
   };
 
@@ -101,7 +101,7 @@ export default function RiddorReportPage() {
               />
             )}
             <View style={styles.row}>
-              <ImagePickerButton onImageSelected={setRiddorImage} /> // Updated prop
+              <ImagePickerButton onImageSelected={setRiddorImage} /> 
             </View>
           </View>
 

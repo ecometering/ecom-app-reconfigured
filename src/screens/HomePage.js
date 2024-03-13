@@ -8,16 +8,32 @@ import { useNavigation } from "@react-navigation/native";
 import { Button as RnButton } from "react-native";
 import { deleteItemAsync } from "expo-secure-store";
 import { AppContext } from "../context/AppContext";
-
+import { useAuth } from "../context/AuthContext";
+import { getDatabaseJob } from "../utils/database";
 function HomePage() {
   const navigation = useNavigation();
-
+  
+const {OnLogout} =useAuth();
   const appContext = useContext(AppContext)
-
+  console.log("appContext", appContext)
   const navigationToPage = ({ navigationName }) => {
     navigation.navigate(navigationName);
   };
+  const checkJobsAndNavigate = async () => {
+    try {
+      const jobs = await getDatabaseJob();
+      const inProgressJobs = jobs.filter(job => job.status === "In Progress");
 
+      if (inProgressJobs.length >= 6) {
+        Alert.alert("Limit Reached", "Please finish or delete existing jobs to continue.");
+      } else {
+        navigationToPage({ navigationName: "NewJobPage" });
+      }
+    } catch (error) {
+      console.error("Failed to check job status", error);
+      Alert.alert("Error", "Failed to fetch job data.");
+    }
+  };
   return (
     <ScrollView style={styles.scrollView}>
       <View style={styles.body}>
@@ -31,7 +47,7 @@ function HomePage() {
         </Button>
         <Button
           onPress={() => {
-            navigationToPage({ navigationName: "NewJobPage" });
+            checkJobsAndNavigate();
           }}
           style={styles.button}
         >
@@ -63,11 +79,7 @@ function HomePage() {
           <Text style={styles.buttonTxt}>Completed Job</Text>
         </Button>
       </View>
-      <RnButton title="Logout" onPress={() => {
-        deleteItemAsync("userToken").then(() => {
-          appContext.setUserLogged(false)
-        })
-      }} />
+      <RnButton title="Logout" onPress= {OnLogout} />
     </ScrollView>
   );
 }

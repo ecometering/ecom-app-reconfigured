@@ -48,9 +48,10 @@ const assetSelection = ({ meter, corrector, datalogger }) => {
     const meterType = appContext.meterDetails?.type;
 return(
     <Stack.Navigator > 
-    <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being Removed',nextScreen:'RemovedGateway'}} />
-    <stack.Screen name="RemovedGateway" component={RemovalGatewayScreen} />
-    <Stack.Screen name="RemovedMeterDetails" component={MeterDetailsPage} initialParams={{title:' Removed Meter Details',nextScreen: ()=>meterBadge(meterType)}} />
+    <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being Removed',nextScreen:'AssetGateway'}} />
+    <stack.Screen name="AssetGateway" component={RemovalGatewayScreen} />
+    <Stack.Screen name="RemovedMeterDetails" component={MeterDetailsPage} initialParams={{title:' Removed Meter Details',nextScreen:'MeterGatway1'}} />
+    <Stack.Screen name ="MeterGateway1" component={MeterGatewayScreen} initialParams={{pageflow:1}} />
     <Stack.Screen 
     key = "RemovedMeterDataBadge"
     name ="RemovedMeterDataBadge" 
@@ -63,7 +64,7 @@ return(
     <Stack.Screen 
     key = "MeterIndex"
     name="RemovedMeterIndex"
-     component= {MeterDetailsPage}
+     component= {GenericPhotoPage}
         initialParams={{title: 'Removed Meter index',photoKey: 'RemovedMeterIndex',nextScreen:'RemovedMeterPhoto'}}
          />
 
@@ -72,11 +73,14 @@ return(
     name="RemovedMeterPhoto"
     component={GenericPhotoPage}
     initialParams={{title: 'Removed Meter photo',photoKey: 'RemovedMeterPhoto',nextScreen:'EcvPhoto'}} />
-    <Stack.Screen Key = "EcvPhoto" name = "EcvPhoto" component = {GenericPhotoPage} initialParams={{title: 'Ecv Photo',photoKey: 'EcvPhoto',nextScreen:()=>nextAfterMeterPhoto(corrector,datalogger)}} />
-    
+    <Stack.Screen Key = "EcvPhoto" name = "EcvPhoto" component = {GenericPhotoPage} initialParams={{title: 'Ecv Photo',photoKey: 'EcvPhoto',nextScreen:'MeterGateway2'}} />
+    <Stack.Screen name ="MeterGateway2" component={MeterGatewayScreen} initialParams={{pageflow:2}} />
+
     <Stack.Screen name="AdditionalMaterial" component={AdditionalMaterialPage} initialParams={{title: 'Additional Material',nextScreen:()=>nextAfterCorrector(datalogger)}} />
-    <Stack.Screen name="RemovedCorrectorDetails" component={CorrectorDetailsPage} initialParams={{title: ' Removed Corrector Details',nextScreen:()=>nextAfterCorrector(datalogger)}} />
-    <Stack.Screen name="RemovedDataLoggerDetails" component={DataLoggerDetailsPage} initialParams={{title:'Removed AMR ',nextScreen:()=> 'StandardPage'}} />
+    <Stack.Screen name="RemovedCorrectorDetails" component={CorrectorDetailsPage} initialParams={{title: ' Removed Corrector Details',nextScreen:'CorrectorGateway'}} />
+    <Stack.Screen name="CorrectorGateway" component={CorrectorGatewayScreen} />
+
+    <Stack.Screen name="RemovedDataLoggerDetails" component={DataLoggerDetailsPage} initialParams={{title:'Removed AMR ',nextScreen:'StandardPage'}} />
 </Stack.Navigator>
     
     

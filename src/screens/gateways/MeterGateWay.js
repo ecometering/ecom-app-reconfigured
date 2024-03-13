@@ -3,50 +3,58 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { AppContext } from '../../context/AppContext';
 
 const  MeterGatewayScreen= () => {
+    console.log("MeterGatewayScreen we begin");
     const navigation = useNavigation();
+    const {params}= useRoute();
+    const { pageRoute, pageflow } = params;
     const route = useRoute();
-    const {pageRoute} = route.params;
-    const {  jobType,meterDetails } = useContext(AppContext);
-    console.log("MeterGatewayScreen",meterDetails);
-    console.log("MeterGatewayScreen",jobType);
+    console.log("params",params);
+    const {  jobType,meterDetails,updateVisitCount, visitCounts } = useContext(AppContext);
+    console.log("meter details:",meterDetails);
+    console.log("job type:",jobType);
     const [isCorrector,SetIsCorrector] = useState(meterDetails?.isCorrector );
     const [isAmr,SetIsAmr] = useState(meterDetails?.isAmr );
-    const [metertype, setType] = useState(meterDetails?.type);
-    const [pressureTier, setPressureTier] = useState(meterDetails?.pressureTier);
+    const [Type, setType] = useState(meterDetails?.type.value);
+    const [pressureTier, setPressureTier] = useState(meterDetails?.pressureTier.label);
     const diaphragmMeterTypes = ['1', '2', '4'];
-
-console.log(" Meter gateway screen",type,pressureTier,isCorrector,isAmr);
+console.log(" type,pressure and true or false:",Type,pressureTier,isCorrector,isAmr);
     useEffect(() => {
-        console.log('CorrectorGatewayScreen Mounted');
         // Enhanced conditional logic
         navigateBasedOnJobType();
-      }, [isCorrector, isAmr, pressureTier,meterType, navigation, jobType]);
-  
-      
+      }, [isCorrector, isAmr, pressureTier,Type, jobType,pageflow,pageRoute]);
+
+
+    // Determine pageRoute based on visitCounts
   
             function navigateBasedOnJobType() {
+            
+            console.log(`Navigating for jobType: ${jobType}, pageRoute: ${pageRoute}`);
               switch (jobType) {
                   case "Install":
+                    console.log ("starting install job",pageRoute);
                     if (pageRoute ===1){
-                        cosole.log("MeterGatewayScreen",pageRoute); 
-                        if (meterType.value === '1' || meterType.value === '2' || meterType.value === '4') {
-                            navigation.replace('NewMeterDataBadge');
+                        console.log("MeterGatewayScreen",pageRoute); 
+                        if (Type === '1' || Type === '2' || Type === '4') {
+                            navigation.replace('ExistingMeterDataBadge');
                         } else {
-                            navigation.replace('NewMeterIndex');
+                            console.log("Navigating to ExistingMeterIndex");
+                            navigation.replace('ExistingMeterIndex');
                         }
 
                     }
                     if (pageRoute ===2){
                         if (isCorrector===true){
                             navigation.replace('CorrectorDetails');
-                        } else if (isAmr===true){
+                        }else if (isAmr) {
                             navigation.replace('DataLoggerDetails');
-                        }else if ((meterType.value === 1 || meterType.value === 2 || meterType.value === 4) && pressureTier === "medium" || !isDiaphragm) {
-                            // Code block for when conditions are met
-                            navigation.replace('StreamsSetSealDetails')
-                        } else {
-                            // Code block for when it should be considered a regulator
-                            navigation.replace('Regulator');
+                          }else if (isMeter)
+                          {
+                            if ((Type === '1' || Type === '2' || Type === '4') && pressureTier === 'MP' || (Type !== '1' && Type !== '2' && Type !== '4')) {
+                              navigation.replace('StreamsSetSealDetails');
+                          }
+                      
+                        }else {
+                          navigation.replace('StandardPage');
                         }
 
                     }
@@ -67,25 +75,37 @@ console.log(" Meter gateway screen",type,pressureTier,isCorrector,isAmr);
                       // Add specific logic for Maintenance job type
                       break;
                   case "Removal":
+                    console.log("MeterGatewayScreen begining removal job",pageRoute);
                     if (pageRoute ===1){
-                        cosole.log("MeterGatewayScreen",pageRoute); 
-                        if (meterType.value === '1' || meterType.value === '2' || meterType.value === '4') {
-                            navigation.replace('NewMeterDataBadge');
+                        console.log("MeterGatewayScreen",pageRoute); 
+                        if (Type === '1' || Type === '2' || Type === '4') {
+                            navigation.replace('RemovedMeterDataBadge');
                         } else {
-                            navigation.replace('NewMeterIndex');
+                            navigation.replace('RemovedMeterIndex');
                         }
 
                     }
-                      break;
+                    else {
+                        console.log("MeterGatewayScreen",pageRoute);
+                        if (isCorrector===true){
+                            navigation.replace('CorrectorDetails');
+                        } else if (isAmr===true){
+                            navigation.replace('DataLoggerDetails');
+                        }else{
+                            navigate.replace('StandardPage')
+                    }
+                };
+                    break;
                   case "Survey":
                    
                     
                       // Add specific logic for Survey job type
                       break;
                   case "Warant":
+                    console.log("MeterGatewayScreen begining warant job",pageRoute);
                     if (pageRoute ===1){
-                        cosole.log("MeterGatewayScreen",pageRoute); 
-                        if (meterType.value === '1' || meterType.value === '2' || meterType.value === '4') {
+                        console.log("MeterGatewayScreen",pageRoute); 
+                        if (Type === '1' || Type === '2' || Type === '4') {
                             navigation.replace('RemovedMeterDataBadge');
                         } else {
                             navigation.replace('RemovedMeterIndex');
@@ -94,16 +114,76 @@ console.log(" Meter gateway screen",type,pressureTier,isCorrector,isAmr);
                     }
 
                   break;
-                  case "exchange":
-                  
-                  break;
-                  // Add more cases for different jobTypes if needed
-                  default:
-                      // Default case if jobType is not recognized
-                      console.log('Job type not recognized, staying on the current screen or navigating to a default screen.');
-                      break;
-              }
+                  case "Exchange":
+                    console.log("MeterGatewayScreen begining exchange job",pageRoute);
+                    if (pageRoute === 1) {
+                        if (pageflow === 1) {
+                            console.log("Navigating to Screen 1 of Flow 1");
+                            if (Type === '1' || Type === '2' || Type === '4') {
+                                navigation.replace('ExistingMeterDataBadge');
+                            } else {
+                                navigation.replace('ExistingMeterIndex');
+                            }
+    
+                        } else if (pageflow === '2') {
+                            // Navigate to the first screen of the second flow
+                            console.log("Navigating to Screen 1 of Flow 2");
+                            if (corrector) {
+                                navigation.navigate('ExistingCorrectorDetails');
+                              } else if (datalogger) {
+                                navigation.navigate('ExistingDataLoggerDetails');
+                              } else {
+                                navigation.navigate('NewScreen'); // Replace 'NewScreen' with the actual screen name you want to navigate to
+                              }
+                            
+                            // Example: navigateToScreen1Flow2();
+                        } else {
+                            console.log("Invalid page flow for route 1, navigating to default.");
+                            // Example: navigateToDefaultScreen();
+                        }
+                    } else if (pageRoute === '2') {
+                        if (pageflow === '1') {
+                            
+                            console.log("Navigating to Screen 1 of Flow 1 in Route 2");
+                            if (Type === '1' || Type === '2' || Type === '4') {
+                                navigation.replace('InstalledMeterDataBadge');
+                            } else {
+                                navigation.replace('InstalledMeterIndex');
+                            }
+    
+                        } else if (pageflow === '2') {
+                            // Navigate to the first screen of the second flow in the second route
+                            console.log("Navigating to Screen 1 of Flow 2 in Route 2");
+                            if(isCorrector){
+                                navigation.replace('InstalledCorrectorDetails');
+                            }else if (isAmr) {
+                                navigation.replace('InstalledDataLoggerDetails');
+                              }else if (isMeter)
+                              {
+                                if ((Type === '1' || Type === '2' || Type === '4') && pressureTier === 'MP' || (Type !== '1' && Type !== '2' && Type !== '4')) {
+                                  navigation.replace('StreamsSetSealDetails');
+                              }
+                          
+                            }else {
+                              navigation.replace('StandardPage');
+                            }
+                            // Example: navigateToScreen1Flow2Route2();
+                        } else {
+                            console.log("Invalid page flow for route 2, navigating to default.");
+                            // Example: navigateToDefaultScreenRoute2();
+                        }
+                    } else {
+                        console.log("Invalid page route, navigating to a general default screen.");
+                        // Example: navigateToGeneralDefaultScreen();
+                    }
+                    break;
+                // Add more cases for different jobTypes if needed
+                default:
+                    // Default case if jobType is not recognized
+                    console.log('Job type not recognized, staying on the current screen or navigating to a default screen.');
+                    break;
+                }
           }
-
-}
+        }
+       
 export default MeterGatewayScreen;

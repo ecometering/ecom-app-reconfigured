@@ -1,11 +1,13 @@
 import React, { useEffect, useContext } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation,useRoute } from '@react-navigation/native';
 import { AppContext } from '../../context/AppContext';
 
 const AssetSelectGatewayScreen = () => {
     const navigation = useNavigation();
     const { jobType, meterDetails } = useContext(AppContext);
-
+    const route = useRoute();
+    const {  pageflow } = route.params;
+    console.log("Asset select pageflow",pageflow);
     // Log for debugging purposes
     console.log("Unified gateway screen", meterDetails);
 
@@ -15,11 +17,11 @@ const AssetSelectGatewayScreen = () => {
         switch (jobType) {
             case 'Install':
                 if (meterDetails?.isMeter) {
-                    navigation.replace('NewMeterDetails');
+                    navigation.replace('MeterDetails');
                 } else if (meterDetails?.isCorrector) {
-                    navigation.replace('NewCorrectorDetails');
+                    navigation.replace('CorrectorDetails');
                 } else if (meterDetails?.isAmr) {
-                    navigation.replace('NewDataLoggerDetails');
+                    navigation.replace('DataLoggerDetails');
                 }
                 break;
             case 'Removal':
@@ -32,15 +34,43 @@ const AssetSelectGatewayScreen = () => {
                 }
                 break;
             case 'Maintenance':
-            case 'Survey':
-            case 'Exchange':
-                // Assuming you have specific screens for these job types
                 if (meterDetails?.isMeter) {
-                    navigation.replace('ExistingMeterDetails'); // Adjust screen names as needed
+                    navigation.replace('ExistingMeterDetails');
                 } else if (meterDetails?.isCorrector) {
                     navigation.replace('ExistingCorrectorDetails');
                 } else if (meterDetails?.isAmr) {
                     navigation.replace('ExistingDataLoggerDetails');
+                }
+                break;
+            case 'Survey':
+                if (meterDetails?.isMeter) {
+                    navigation.replace('ExistingMeterDetails');
+                } else if (meterDetails?.isCorrector) {
+                    navigation.replace('ExistingCorrectorDetails');
+                } else if (meterDetails?.isAmr) {
+                    navigation.replace('ExistingDataLoggerDetails');
+                }
+                break;
+            case 'Exchange':
+                if (pageflow === 1) {
+                    // Page flow 1 navigation logic
+                    if (meterDetails?.isMeter) {
+                        navigation.replace('ExistingMeterDetails'); // Adjust screen names as needed for page flow 1
+                    } else if (meterDetails?.isCorrector) {
+                        navigation.replace('ExistingCorrectorDetails');
+                    } else if (meterDetails?.isAmr) {
+                        navigation.replace('ExistingDataLoggerDetails');
+                    }
+                } else if (pageflow === 2) {
+                    // Page flow 2 navigation logic
+                    // Assuming different screens or logic for page flow 2
+                    if (meterDetails?.isMeter) {
+                        navigation.replace('InstalledMeterDetailsScreen'); // Example replacement for page flow 2
+                    } else if (meterDetails?.isCorrector) {
+                        navigation.replace('InstalledCorrectorDetailsScreen');
+                    } else if (meterDetails?.isAmr) {
+                        navigation.replace('InstalledDataLoggerDetailsScreen');
+                    }
                 }
                 break;
             default:

@@ -2,10 +2,10 @@
   "expo": {
     "name": "ecomJobsApp",
     "slug": "ecom-mobile-app",
-    "version": "2.2.03",
+    "version": "2.2.09",
     "orientation": "default",
-    "icon": "./assets/icons/logo167.png",
-    "userInterfaceStyle": "light",
+        "icon": "./assets/icons/logo167.png",
+        "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -17,16 +17,20 @@
     "ios": {
       "jsEngine": "hermes",
       "supportsTablet": true,
+      "config": {
+        "usesNonExemptEncryption": false
+
+      },
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",
         "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos.",
         "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos."
       },
-      "bundleIdentifier": "ECM.ecomTestJobsApp"
+      "bundleIdentifier": "ECM.ecomJobsApp"
     },
     "android": {
       "jsEngine": "hermes",
-      "package": "ECM.ecomTestJobsApp"
+      "package": "ECM.ecomJobsApp"
       
     },
     "plugins": [

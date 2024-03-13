@@ -21,7 +21,7 @@ import React, { useState, useEffect,useContext } from "react";
 import AssetSelectGatewayScreen from "../screens/gateways/AssetSelectGateWay";
 import CorrectorGateway from "../screens/gateways/CorrectorGateWay";
 import MeterGatewayScreen from "../screens/gateways/MeterGateWay";
-
+import DataloggerGatewayScreen from "../screens/gateways/DataloggerGateWay";
 
 
 import { createStackNavigator } from "@react-navigation/stack";
@@ -105,10 +105,10 @@ const MaintenanceFlowNavigator = () => {
   
   return(
   <Stack.Navigator > 
-    <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Existing Assets',nextScreen:'ExistingGateway'}} />
-    <Stack.Screen name="ExistingGateway" component={ExistingGatewayScreen} />
+    <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Existing Assets',nextScreen:'AssetSelectGateway'}} />
+    <Stack.Screen name="AssetSelectGateway" component={AssetSelectGatewayScreen} />
     {/* meter process */}
-    <Stack.Screen name="MeterDetails" component={MeterDetailsPage}
+    <Stack.Screen name="ExistingMeterDetails" component={MeterDetailsPage}
     initialParams={{title: 'Existing Meter Details',nextScreen: ExistingEcvToMov
     }}  />  
     <Stack.Screen 
@@ -116,9 +116,9 @@ const MaintenanceFlowNavigator = () => {
         name="ExistingEcvToMov"
         component ={GenericPhotoPage} 
         initialParams={{title: 'New ECV to MOV',
-         photoKey: 'ExistingEcvToMov',nextScreen:()=>meterBadge(meterType)}}
+         photoKey: 'ExistingEcvToMov',nextScreen:'MeterGateway'}}
     />
-    
+    <Stack.Screen name="MeterGateway1" component={MeterGatewayScreen} initialParams={{pageflow:1}}/>
     
     <Stack.Screen 
     key = "ExistingMeterDataBadge"
@@ -132,7 +132,7 @@ const MaintenanceFlowNavigator = () => {
     <Stack.Screen 
     key = "ExistingMeterIndex"
     name="ExistingMeterIndex"
-     component= {MeterDetailsPage}
+     component= {GenericPhotoPage}
         initialParams={{title: 'Existing Meter index',photoKey: 'ExistingMeterIndex',nextScreen:'ExistingMeterPhoto'}}
          />
 
@@ -140,14 +140,18 @@ const MaintenanceFlowNavigator = () => {
     key = "ExistingMeterPhoto"
     name="ExistingMeterPhoto"
     component={GenericPhotoPage}
-    initialParams={{title: 'Existing Meter photo',photoKey: 'ExistingMeterPhoto',nextScreen:()=>nextAfterMeterPhoto(corrector,datalogger,meterType,meterPressure)}} 
+    initialParams={{title: 'Existing Meter photo',photoKey: 'ExistingMeterPhoto',nextScreen:'MeterGateway2'}} 
     
     />
-    {/* DataLogger process */}
-    <Stack.Screen name="ExistingDataLoggerDetails" component={DataLoggerDetailsPage} initialParams={{title:'Existing AMR installed',nextScreen:()=> nextAfterDataLogger}}/>
+        <Stack.Screen name="MeterGateway2" component={MeterGatewayScreen} initialParams={{pageflow:2}}/>
     {/*  Corrector Process */}
-    <Stack.Screen name ="ExistingCorrectorDetails" component={CorrectorDetailsPage} initialParams={{title: 'Existing Corrector installed',nextScreen:()=>nextAfterCorrector}} />
+    <Stack.Screen name ="ExistingCorrectorDetails" component={CorrectorDetailsPage} initialParams={{title: 'Existing Corrector installed',nextScreen:'CorrectorGateway'}} />
+    <Stack.Screen name="CorrectorGateway" component={CorrectorGateway} />
+    {/* DataLogger process */}
+    <Stack.Screen name="ExistingDataLoggerDetails" component={DataLoggerDetailsPage} initialParams={{title:'Existing AMR installed',nextScreen:'DataLoggerGateway'}}/>
+    <Stack.Screen name="DataLoggerGateway" component={DataloggerGatewayScreen} />
     
+   
     {/* set and seal details  */}
     <Stack.Screen
         name="StreamsSetSealDetails"

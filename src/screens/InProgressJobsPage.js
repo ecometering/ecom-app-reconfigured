@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Dimensions, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
-import { fetchJobsFromDatabase, deleteJobById, getDatabaseTables, openDatabase, getDatabaseJob } from '../utils/database'; // Importing required functions
+import { openDatabase, getDatabaseJob } from '../utils/database'; // Importing required functions
 
 const { width } = Dimensions.get('window'); // Get the screen width
 
@@ -24,7 +24,7 @@ const JobsTable = ({route}) => {
     
   };
 
-  const filteredData = jobs.filter(item => item.jobStatus === 'InProgress');
+  const filteredData = jobs.filter(item => item.jobStatus === 'In Progress');
 
 
   const handleRowClick = (jobId) => {
@@ -76,8 +76,9 @@ const JobsTable = ({route}) => {
       <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.id}</Text>
       <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.MPRN}</Text>
       <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.jobType}</Text>
-      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.postcode}</Text>
+      
       <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.startDate}</Text>
+      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.postcode}</Text>
       <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.endDate}</Text>
       <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.jobStatus}</Text>
       <TouchableOpacity onPress={() => handleDeleteJob(item.id)}>

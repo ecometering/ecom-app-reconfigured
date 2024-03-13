@@ -19,16 +19,16 @@ import React, { useState, useEffect, useContext } from "react";
 import AssetSelectGatewayScreen from "../screens/gateways/AssetSelectGateWay";
 import CorrectorGateway from "../screens/gateways/CorrectorGateWay";
 import MeterGatewayScreen from "../screens/gateways/MeterGateWay";
-
+import DataLoggerGatewayScreen from "../screens/gateways/DataloggerGateWay";
 import { createStackNavigator } from "@react-navigation/stack";
 
 const Stack = createStackNavigator();
 
 const assetSelection = ({ meter, corrector, datalogger }, callType) => {
   if (callType === 'Removal') {
-    if (meter) return 'RemovedMeterDetails';
-    if (corrector) return 'RemovedCorrectorDetails';
-    if (datalogger) return 'RemovedDataLoggerDetails';
+    if (meter) return 'ExistingMeterDetails';
+    if (corrector) return 'ExistingCorrectorDetails';
+    if (datalogger) return 'ExistingDataLoggerDetails';
   } else if (callType === 'Install') {
     if (meter) return 'InstalledMeterDetails';
     if (corrector) return 'InstalledCorrectorDetails';
@@ -38,8 +38,8 @@ const assetSelection = ({ meter, corrector, datalogger }, callType) => {
 };
 
 const nextAfterMeterRemoval = ({ meter, corrector, datalogger }) => {
-  if (corrector) return 'RemovedCorrectorDetails';
-  if (datalogger) return 'RemovedDataLoggerDetails';
+  if (corrector) return 'ExistingCorrectorDetails';
+  if (datalogger) return 'ExistingDataLoggerDetails';
 
   // Fallback to Install callType if both corrector and datalogger are false
   return assetSelection({ meter, corrector, datalogger }, 'Install');
@@ -47,7 +47,7 @@ const nextAfterMeterRemoval = ({ meter, corrector, datalogger }) => {
 
 const nextAfterCorrectorRemoval = ({ meter, corrector, datalogger }) => {
   if (datalogger) {
-    return 'RemovedDataLoggerDetails';
+    return 'ExistingDataLoggerDetails';
   } else {
     // Utilize Install callType if datalogger is false
     return assetSelection({ meter, corrector, datalogger }, 'Install');
@@ -120,7 +120,7 @@ const getNextScreen = (currentScreenName) => {
   }
 };
 
-const RemovedmeterBadge = (meterType) => meterType === 'Diaphragm' ? 'RemovedMeterIndex' : 'RemovedMeterDataBadge';
+const ExistingmeterBadge = (meterType) => meterType === 'Diaphragm' ? 'ExistingMeterIndex' : 'ExistingMeterDataBadge';
 const InstalledmeterBadge = (meterType) => meterType === 'Diaphragm' ? 'InstalledMeterIndex' : 'InstalledMeterDataBadge';
 
 const ExchangeFlowNavigator = () => {
@@ -134,25 +134,33 @@ const ExchangeFlowNavigator = () => {
 
   return(
   <Stack.Navigator >
-  <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being Exchanged',nextScreen:"AssetSelectGatewayScreen"}} />
-  <Stack.Screen name="AssetSelectGatewayScreen" component={AssetSelectGatewayScreen} />
+  <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being Exchanged',nextScreen:"AssetSelectGatewayScreenIntial"}} />
+  <Stack.Screen name="AssetSelectGatewayScreenIntitial" component={AssetSelectGatewayScreen}initialParams={{pageRoute:1}} />
+  <Stack.Screen name="ExistingMeterDetails" component={MeterDetailsPage} initialParams={{title:' Existing Meter Details',nextScreen: "ExistingMeterGatewayScreen1"}} />
+  <Stack.Screen name="ExistingMeterGatewayScreen1" component={MeterGatewayScreen} initialParams={{pageRoute:1,pageflow:1}}/>
+  <Stack.Screen name ="ExistingMeterDataBadge" component={GenericPhotoPage} initialParams={{title: 'Existing Meter data badge',photoKey: 'ExistingMeterDataBadge',nextScreen:'ExistingMeterIndex'}} />
+  <Stack.Screen name="ExistingMeterIndex" component= {GenericPhotoPage} initialParams={{title: 'Existing Meter index',photoKey: 'ExistingMeterIndex',nextScreen:'ExistingMeterPhoto'}} />
+  <Stack.Screen name="ExistingMeterPhoto" component={GenericPhotoPage} initialParams={{title: 'Existing Meter Photo',photoKey: 'ExistingMeterPhoto',nextScreen:'EcvPhoto' }} />
+  <Stack.Screen name = "EcvPhoto" component = {GenericPhotoPage} initialParams={{title: 'Ecv Photo',photoKey: 'EcvPhoto',nextScreen:'ExistingCorrectorGatewaySreen'}} />
+  <Stack.Screen name ="ExistingMeterGatewayScreen2" component={MeterGatewayScreen} initialParams={{pageRoute:1,pageflow:2}}/>
+  <Stack.Screen name="ExistingCorrectorDetails" component={CorrectorDetailsPage} initialParams={{title: 'Existing Corrector Details',nextScreen:()=>nextAfterCorrectorRemoval({ meter, corrector, datalogger })}} />
+  <Stack.screen name="ExistingCorrectorGatewaySreen" component={CorrectorGateway} initialParams={{pageRoute:1}} />
+  <Stack.Screen name="ExistingDataLoggerDetails" component={DataLoggerDetailsPage} initialParams={{title: 'Existing DataLogger Details',nextScreen:'AssetSelectGatewayScreenFinal'}} />
+  <Stack.Screen name="AssetSelectGatewayScreenFinal" component={AssetSelectGatewayScreen} initialParams={{pageRoute:2}} />
   
-  <Stack.Screen name="RemovedMeterDetails" component={MeterDetailsPage} initialParams={{title:' Removed Meter Details',nextScreen: ()=>RemovedmeterBadge(meterType)}} />
-  <Stack.Screen name ="RemovedMeterDataBadge" component={GenericPhotoPage} initialParams={{title: 'Removed Meter data badge',photoKey: 'RemovedMeterDataBadge',nextScreen:'RemovedMeterIndex'}} />
-  <Stack.Screen name="RemovedMeterIndex" component= {MeterDetailsPage} initialParams={{title: 'Removed Meter index',photoKey: 'RemovedMeterIndex',nextScreen:'RemovedMeterPhoto'}} />
-  <Stack.Screen name="RemovedMeterPhoto" component={GenericPhotoPage} initialParams={{title: 'Removed Meter Photo',photoKey: 'RemovedMeterPhoto',nextScreen:'EcvPhoto' }} />
-  <Stack.screen name = "EcvPhoto" component = {GenericPhotoPage} initialParams={{title: 'Ecv Photo',photoKey: 'EcvPhoto',nextScreen:()=>nextAfterMeterRemoval({ meter, corrector, datalogger })}} />
-  <Stack.Screen name="RemovedCorrectorDetails" component={CorrectorDetailsPage} initialParams={{title: 'Removed Corrector Details',nextScreen:()=>nextAfterCorrectorRemoval({ meter, corrector, datalogger })}} />
-  <Stack.Screen name="RemovedDataLoggerDetails" component={DataLoggerDetailsPage} initialParams={{title: 'Removed DataLogger Details',nextScreen: ()=>assetSelection({ meter, corrector, datalogger }, 'Install')}} />
   <Stack.Screen name="InstalledMeterDetails" component={MeterDetailsPage} initialParams={{title: 'Installed Meter Details',nextScreen:'EcvToMovphoto'}} />
-  <Stack.Screen name="EcvToMovPhoto" component={GenericPhotoPage} initialParams={{title: 'ECV to MOV Photo',photoKey: 'EcvToMovPhoto',nextScreen: ()=>InstalledmeterBadge(meterType)}} />
-
-  
+  <Stack.Screen name="EcvToMovPhoto" component={GenericPhotoPage} initialParams={{title: 'ECV to MOV Photo',photoKey: 'EcvToMovPhoto',nextScreen:'MeterGatewayScreen1'}} />
+  <Stack.Screen name="MeterGatewayScreen1" component={MeterGatewayScreen} initialParams={{pageRoute:2,pageflow:1}}/>
   <Stack.Screen name="InstalledMeterDataBadge" component={GenericPhotoPage} initialParams={{title: 'Installed Meter data badge',photoKey: 'InstalledMeterDataBadge',nextScreen:'InstalledMeterIndex'}} />
-  <Stack.Screen name="InstalledMeterIndex" component={MeterDetailsPage} initialParams={{title: 'Installed Meter index',photoKey: 'InstalledMeterIndex',nextScreen:'InstalledMeterPhoto'}} />
-  <Stack.Screen name="InstalledMeterPhoto" component={GenericPhotoPage} initialParams={{title: 'Installed Meter Photo',photoKey: 'InstalledMeterPhoto',nextScreen:()=>nextAfterMeterInstallation({ meter, corrector, datalogger, meterType, meterPressure })}} />
-  <Stack.Screen name="InstalledCorrectorDetails" component={CorrectorDetailsPage} initialParams={{title: 'Installed Corrector Details',nextScreen:()=>nextAfterCorrectorInstallation({ meter, corrector, datalogger, meterType, meterPressure })}} />
-  <Stack.Screen name="InstalledDataLoggerDetails" component={DataLoggerDetailsPage} initialParams={{title: 'Installed DataLogger Details',nextScreen:()=>nextAfterDataLoggerInstallation({ meter, corrector, datalogger, meterType, meterPressure })}} />
+  <Stack.Screen name="InstalledMeterIndex" component={GenericPhotoPage} initialParams={{title: 'Installed Meter index',photoKey: 'InstalledMeterIndex',nextScreen:'InstalledMeterPhoto'}} />
+  <Stack.Screen name="InstalledMeterPhoto" component={GenericPhotoPage} initialParams={{title: 'Installed Meter Photo',photoKey: 'InstalledMeterPhoto',nextScreen:'MeterGatewayScreen2'}} />
+  <Stack.Screen name="MeterGatewayScreen2" component={MeterGatewayScreen} initialParams={{pageRoute:2,pageflow:2}}/>
+  <Stack.Screen name="InstalledCorrectorDetails" component={CorrectorDetailsPage} initialParams={{title: 'Installed Corrector Details',nextScreen:'CorrectorGatewayScreen'}} />
+  <Stack.screen name="CorrectorGatewaySreen" component={CorrectorGateway} initialParams={{pageRoute:2}} />
+
+  <Stack.Screen name="InstalledDataLoggerDetails" component={DataLoggerDetailsPage} initialParams={{title: 'Installed DataLogger Details',nextScreen:'DataLoggerGatewayScreen'}} />
+  <Stack.Screen name="DataLoggerGatewayScreen" component={DataLoggerGatewayScreen}  />
+
   <Stack.Screen name="StreamsSetSealDetails" component={StreamsSetSealDetailsPage} />
       {generateScreenInstancesForStreams(numberOfStreams).map((screen, index) => (
         <Stack.Screen

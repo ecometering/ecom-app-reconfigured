@@ -6,60 +6,42 @@ import {
   View,
   StyleSheet,
   Text,
-  Pressable,
+  TextInput,
   Image,
+  Button,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { setItemAsync } from "expo-secure-store";
-import TextInput from "../components/TextInput";
 import { height, unitH, isIos } from "../utils/constant";
 import { PrimaryColors, Transparents } from "../theme/colors";
 import { AppContext } from "../context/AppContext";
+import { useAuth } from "../context/AuthContext";
 
 function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const {OnLogin}=useAuth();
   const navigation = useNavigation();
 
   const appContext = useContext(AppContext)
 
-  const signIn = () => {
+const login =async ()=>{
+  const result = await OnLogin!(username,password);
+  console.log ("file : LoginPage.tsx ~ line 47 ~ login ~ result", result)
+  if (result && result.error){
+alert(result.msg)
+}
+}; 
    
-    try { 
-      console.log("SignIn function called with:", { username, password });
-      fetch("https://test.ecomdata.co.uk/api/token/", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      })
-        .then((res) => {
-          console.log("Response received from server:", res);
-          return res.json();
-        })
-        .then((data) => {
-          console.log("Data received after conversion to JSON:", data);
-          setItemAsync("userToken", data.access).then(() => {
-            appContext.setUserLogged(true)
-          });
-          console.log(data);
-        })
-        .catch((err) => {
-          console.log("Error during fetch or processing:", err);
-          console.log(err);
-        });
-    } catch (error) {
-      console.log("Error in signIn function:", error);
-      setErrorMessage("An error occurred during login. Please try again.");
-    }
-  };
+ 
+
+
+  
 
   const handleLoginPress = () => {
     console.log("Login button pressed");
-    setErrorMessage("");
-    signIn();
+    
+    login();
   };
 
   return (
@@ -74,38 +56,32 @@ function LoginPage() {
               <Image source={require("../../assets/icons/logo167.png")} />
             </View>
             <View style={styles.body}>
-              {errorMessage.length > 0 && (
-                <Text style={styles.errorText}>{errorMessage}</Text>
-              )}
+            
               <TextInput
                 value={username}
-                onChangeText={setUsername}
+                onChangeText={(text:string)=>setUsername(text)}
                 placeholder={"User Name"}
+                autoCapitalize="none"
                 style={styles.input}
               />
               <View style={styles.spacer} />
               <TextInput
                 value={password}
-                onChangeText={setPassword}
+                onChangeText={(text:string)=>setPassword(text)}
                 placeholder={"Password"}
                 secureTextEntry={true}
+                autoCapitalize="none"
                 style={styles.input}
               />
               <View style={styles.spacer} />
-              <Pressable
-                onPress={handleLoginPress}
-                title="Submit"
-                style={styles.button}
-              >
-                <Text style={styles.buttonTxt}>Submit</Text>
-              </Pressable>
+              <Button onPress={handleLoginPress} title="Login" />
             </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   logoContainer: {

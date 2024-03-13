@@ -27,10 +27,8 @@ const AppContextProvider = (props) => {
   const [regulatorDetails, setRegulatorDetails] = useState(null);
   const [standardDetails, setStandardDetails] = useState(null);
   //.. removed
-  const [removedSiteDetails, setRemovedSiteDetails] = useState(null);
   const [removedMeterDetails, setRemovedMeterDetails] = useState(null);
   //.. warant
-  const [warrantDetails, setWarrantDetails] = useState(null);
   // ... Maintenance
   const [maintenanceDetails, setMaintenanceDetails] = useState(null);
 
@@ -47,7 +45,13 @@ const AppContextProvider = (props) => {
     setJobType(job);
     console.log("Job type changed", job);
   };
-
+const [visitCounts, setVisitCounts] = useState({});
+const updateVisitCount = (screenName) => {
+  setVisitCounts((prevCounts) => ({
+      ...prevCounts,
+      [screenName]: (prevCounts[screenName] || 0) + 1,
+  }));
+};
   const providerValue = {
     jobType,
     isWarrant,

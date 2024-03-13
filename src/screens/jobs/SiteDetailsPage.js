@@ -30,21 +30,11 @@ function SiteDetailsPage() {
   const jobNumber = appContext.jobNumber;
   const jobType = appContext.jobType;
   const route = useRoute();
- const params = route?.params;
- const data =  appContext?.setJobdata(route?.params?.jobData) 
-  const SiteDetails = appContext?.SiteDetails;
-  const email1Ref = useRef(null);
-  const email2Ref = useRef(null);
-  const number1Ref = useRef(null);
-  const number2Ref = useRef(null);
-  const siteDetails = route?.params?.jobData?.siteDetails ? JSON.parse(route?.params?.jobData?.siteDetails) : ''
-
-  const [companyName, setCompanyName] = useState(
-    siteDetails?.companyName ?? ""
-  );
-  const [buildingName, setBuildingName] = useState(
-    siteDetails?.buildingName ?? ""
-  );
+ const params = route.params;
+  appContext?.setJobdata(route?.params?.jobData) 
+  console.log("SiteDetailsPage");
+  console.log("jobType", jobType);
+  const initialSiteDetails = route.params?.siteDetails || {};
 
   useEffect(() => {
     // Assume route.params.jobType exists
@@ -53,124 +43,71 @@ function SiteDetailsPage() {
       appContext.setJobTypes(routeJobType);
     }
   }, []);
-  
-  const [mprn, setMprn] = useState(route?.params?.jobData?.MPRN ?? "");
-  const [address1, setAddress1] = useState( siteDetails?.address1 ?? "");
-  const [address2, setAddress2] = useState( siteDetails?.address2 ?? "");
-  const [address3, setAddress3] = useState( siteDetails?.address3?? "");
-  const [town, setTown] = useState( siteDetails?.town ?? "");
-  const [county, setCounty] = useState( siteDetails?.county ?? "");
-  const [postCode, setPostCode] = useState( siteDetails?.postCode ?? "");
-  const [title, setTitle] = useState( siteDetails?.title ?? "");
-  const [contact, setContact] = useState( siteDetails?.contact ?? "");
-  const [email1, setEmail1] = useState( siteDetails?.email1 ?? "");
-  const [email2, setEmail2] = useState( siteDetails?.email2 ?? "");
-  const [number1, setNumber1] = useState(siteDetails?.number1 ?? "");
-  const [number2, setNumber2] = useState( siteDetails?.number2 ?? "");
-  const [instructions, setInstructions] = useState(
-    siteDetails?.instructions ?? ""
-  );
-  const [progress , setProgress] = useState(0);
-  
-  const [confirmContact, setConfirmContact] = useState(
-    siteDetails?.confirmContact
-  );
 
-  let update = false
-
-  async function UpdateData() {
-    const db = await openDatabase(); 
-    const status = 'Completed'; // New name you want to set
-    db.transaction(tx => {
-      tx.executeSql(
-        'UPDATE Jobs SET MPRN = ?, siteDetails = ? WHERE id = ?',
-        [mprn,jsonString,appContext?.jobData?.id],
-        () => {
-
-          navigation.navigate('InProgressJobsPage', {
-            update: update
-          })
-
-          console.log('Record updated successfully');
-          // fetchRecords(); // Fetch records again to update the state
-        },
-        error => {
-          console.error('Error updating record', error);
-        }
-      );
-    });
-  }
-  const jsonString = JSON.stringify({
-    companyName,
-    buildingName,
-    address1,
-    address2,
-    address3,
-    town,
-    county,
-    title,
-    contact,
-    email1,
-    email2,
-    number1,
-    number2,
-    instructions,
-
+  const [siteDetails, setSiteDetails] = useState({
+    mprn: "",
+    companyName: "",
+    buildingName: "",
+    address1: "",
+    address2: "",
+    address3: "",
+    town: "",
+    county: "",
+    postCode: "",
+    title: "",
+    contact: "",
+    email1: "",
+    email2: "",
+    number1: "",
+    number2: "",
+    instructions: "",
+    confirmContact: false,// Assuming confirmContact is a boolean, provide a default value accordingly
   });
 
+  const handleInputChange = (name, value) => {
+    setSiteDetails(prevDetails => ({
+      ...prevDetails,
+      [name]: value,
+    }));
+  };
+const [progress , setProgress] = useState(0);
  const saveSiteDetailsToDatabase = async () => {
+  console.log("creating job")
   const db = await openDatabase();
-
-
+  console.log('Db status:', db)
+  const siteDetailsJSON = JSON.stringify(siteDetails);
 
   // Assuming SiteDetails.id is the correct identifier for your record
-  const jobId = SiteDetails.id; // Ensure this is the correct way to access the job's ID
+
+  const getCurrentDateTime = () => {
+    return moment().format('YYYY-MM-DD HH:mm');
+  };
+  const mprn = siteDetails.mprn;
+  const postcode = siteDetails.postCode; 
+  const jobStatus = 'In Progress'
+  const progress = '1';
+  const startDate = getCurrentDateTime();
+  // Ensure this is the correct way to access the job's ID
+ 
 
   db.transaction((tx) => {
     tx.executeSql(
-      `UPDATE jobsInProgress SET siteDetails = ?, progress = 2 WHERE id = ?;`,
-      [jsonString, jobId],
-      (_, result) => console.log('Site details and progress updated in database', result),
-      (_, error) => console.log('Error updating site details in database', error)
+      `INSERT INTO Jobs (jobType,MPRN,postcode,startDate,jobStatus,progress,siteDetails) VALUES (?,?,?,?,?,?,?);`,
+      [jobType,mprn,startDate,postcode,jobStatus,progress,siteDetailsJSON ],
+      (_, result) => {
+        console.log('Site details and progress updated in database. Generated ID:', result.insertId);
+        // Pass the result.insertId as JobId parameter to the next navigation call
+        navigation.navigate("SitePhotoPage", { JobId: result.insertId });
+      },
+      (_, error) => console.log('Error updating site details in database:', error)
     );
   });
-
-
-
 };
-  const backPressed =async () => {
-    appContext.setSiteDetails({
-      ...SiteDetails,
-      mprn: mprn,
-      companyName: companyName,
-      buildingName: buildingName,
-      address1: address1,
-      address2: address2,
-      address3: address3,
-      town: town,
-      county: county,
-      postCode: postCode,
-      title: title,
-      contact: contact,
-      email1: email1,
-      email2: email2,
-      number1: number1,
-      number2: number2,
-      instructions: instructions,
-      confirmContact: confirmContact,
-    });
+  const backPressed = () => {
+    appContext.setSiteDetails(siteDetails);
+    
 
-    if (appContext?.jobData?.id){
-      await UpdateData()
-    }
-
-    else {
-      saveSiteDetailsToDatabase();
-      // navigation.goBack()
-    }
-  
-    // appContext.setStartRemoval(true);
-  
+    navigation.goBack();
   };
 
   const nextPressed = () => {
@@ -233,26 +170,7 @@ function SiteDetailsPage() {
       return;
     }
 
-    appContext.setSiteDetails({
-      ...SiteDetails,
-      mprn: mprn,
-      companyName: companyName,
-      buildingName: buildingName,
-      address1: address1,
-      address2: address2,
-      address3: address3,
-      town: town,
-      county: county,
-      postCode: postCode,
-      title: title,
-      contact: contact,
-      number1: number1,
-      number2: number2,
-      email1: email1,
-      email2: email2,
-      instructions: instructions,
-      confirmContact: confirmContact,
-    });
+    appContext.setSiteDetails(siteDetails);
  
     saveSiteDetailsToDatabase();
   
@@ -280,7 +198,7 @@ function SiteDetailsPage() {
         <ScrollView style={{flex:1}} >
           <TextInputWithTitle
             title={"MPRN *"}
-            value={mprn}
+            value={siteDetails.mprn}
             onChangeText={(txt) => {
               const filteredText = txt.replace(/[^0-9]/g, "");
               const limitedText = filteredText.slice(0, 15);
@@ -293,9 +211,9 @@ function SiteDetailsPage() {
           <View style={styles.spacer} />
           <TextInputWithTitle
             title={"Company name"}
-            value={companyName}
+            value={siteDetails.companyName}
             onChangeText={(txt) => {
-              const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
+              const filteredText = txt.replace(/[^a-zA-Z0-9\s\-\(\)]/g, "");
               setCompanyName(filteredText);
             }}
             containerStyle={[styles.inputContainer,{width: "90%" }]}
@@ -303,9 +221,9 @@ function SiteDetailsPage() {
           <View style={styles.spacer} />
           <TextInputWithTitle
             title={"Building name/ number *"}
-            value={buildingName}
+            value={siteDetails.buildingName}
             onChangeText={(txt) => {
-              const filteredText = txt.replace(/[^a-zA-Z0-9\s-]/g, "");
+              const filteredText = txt.replace(/[^a-zA-Z0-9\s\-\(\)]/g, "");
               setBuildingName(filteredText);
             }}
             containerStyle={[styles.inputContainer,{width: "90%" }]}
@@ -314,7 +232,7 @@ function SiteDetailsPage() {
           <View style={styles.spacer} />
           <TextInputWithTitle
             title={"Address 1 *"}
-            value={address1}
+            value={siteDetails.address1}
             onChangeText={(txt) => {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
               setAddress1(filteredText);
@@ -324,7 +242,7 @@ function SiteDetailsPage() {
           <View style={styles.spacer} />
           <TextInputWithTitle
             title={"Address 2"}
-            value={address2}
+            value={siteDetails.address2}
             onChangeText={(txt) => {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
               setAddress2(filteredText);
@@ -334,7 +252,7 @@ function SiteDetailsPage() {
           <View style={styles.spacer} />
           <TextInputWithTitle
             title={"Address 3"}
-            value={address3}
+            value={siteDetails.address3}
             onChangeText={(txt) => {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
               setAddress3(filteredText);
@@ -344,7 +262,7 @@ function SiteDetailsPage() {
           <View style={styles.spacer} />
           <TextInputWithTitle
             title={"Town/city *"}
-            value={town}
+            value={siteDetails.town}
             onChangeText={(txt) => {
               const filteredText = txt.replace(/[^a-zA-Z]/g, "");
               setTown(filteredText);
@@ -354,7 +272,7 @@ function SiteDetailsPage() {
           <View style={styles.spacer} />
           <TextInputWithTitle
             title={"County *"}
-            value={county}
+            value={siteDetails.county}
             onChangeText={(txt) => {
               const filteredText = txt.replace(/[^a-zA-Z ]/g, "");
               setCounty(filteredText);
@@ -364,7 +282,7 @@ function SiteDetailsPage() {
           <View style={styles.spacer} />
           <TextInputWithTitle
             title={"Post Code *"}
-            value={postCode}
+            value={siteDetails.postCode}
             onChangeText={(txt) => {
               if (txt.length <= 9 ) {
                 const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
@@ -384,7 +302,7 @@ function SiteDetailsPage() {
           >
             <View style={{flex:0.5}}>
             <EcomDropDown
-                value={title}
+                value={siteDetails.title}
                  valueList={[
                   { _index: 1, label: "Mr", value: "Mr" },
                   { _index: 2, label: "Mrs", value: "Mrs" },
@@ -404,7 +322,7 @@ function SiteDetailsPage() {
             <TextInputWithTitle
             style={{width:"100%"}}
               title={"Site Contact"}
-              value={contact}
+              value={siteDetails.contact}
               onChangeText={(txt) => {
                 const filteredText = txt.replace(/[^a-zA-Z ]/g, "");
                 setContact(filteredText);
@@ -429,7 +347,7 @@ function SiteDetailsPage() {
   <TextInputWithTitle
     style={{width:"100%"}}
     title={"Phone Number 1"}
-    value={number1}
+    value={siteDetails.number1}
     keyboardType="numeric" // Set keyboardType to numeric
     onChangeText={(txt) => {
       const filteredText = txt.replace(/[^0-9]/g, ""); // Allow only numbers
@@ -441,7 +359,7 @@ function SiteDetailsPage() {
   <TextInputWithTitle
     style={{width:"100%"}}
     title={"Phone Number 2"}
-    value={number2}
+    value={siteDetails.number2}
     keyboardType="numeric" // Set keyboardType to numeric
     onChangeText={(txt) => {
       const filteredText = txt.replace(/[^0-9]/g, ""); // Allow only numbers
@@ -462,7 +380,7 @@ function SiteDetailsPage() {
             <TextInputWithTitle
             style={{width:"100%"}}
               title={"Email Number 1"}
-              value={email1}
+              value={siteDetails.email1}
               onChangeText={(txt) => {
                 const filteredText = txt.replace(/[^a-zA-Z]/g, "");
                 setEmail1(txt);
@@ -473,7 +391,7 @@ function SiteDetailsPage() {
             <TextInputWithTitle
             style={{width:"100%"}}
             title={"Email Number 2"}
-              value={email2}
+              value={siteDetails.email2}
               onChangeText={(txt) => {
                 const filteredText = txt.replace(/[^a-zA-Z]/g, "");
                 setEmail2(txt);
@@ -490,7 +408,7 @@ function SiteDetailsPage() {
           <View style={{marginHorizontal:'5%'}} />
           <TextInputWithTitle
             title={"Contact Instructions"}
-            value={instructions}
+            value={siteDetails.instructions}
             onChangeText={(txt) => {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s@.]/g, "");
               setInstructions(filteredText);
@@ -503,19 +421,15 @@ function SiteDetailsPage() {
               {"Is all contact details correct? *"}
             </Text>
             <OptionalButton
-              options={["Yes", "No"]}
-              actions={[
-                () => {
-                  setConfirmContact(true);
-                },
-                () => {
-                  setConfirmContact(false);
-                },
-              ]}
-              value={
-                confirmContact ? "Yes" : confirmContact === false ? "No" : null
-              }
-            />
+  options={["Yes", "No"]}
+  onChange={(selectedOption) => {
+    setSiteDetails(prevDetails => ({
+      ...prevDetails,
+      confirmContact: selectedOption === "Yes",
+    }));
+  }}
+  value={siteDetails.confirmContact ? "Yes" : siteDetails.confirmContact === false ? "No" : ""}
+/>
           </View>
          
         </ScrollView>

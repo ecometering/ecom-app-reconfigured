@@ -41,12 +41,12 @@ const { width, height } = Dimensions.get('window');
 function MeterDetailsPage() {
   const navigation = useNavigation();
   const route = useRoute(); 
-  const { title,nextScreen} = route.params; 
+  const { title,nextScreen,jobId} = route.params; 
   const appContext = useContext(AppContext);
   const camera = useRef(null);
   const jobType = appContext.jobType;
   const meterDetails = appContext.meterDetails;
-
+console.log("job type:",jobType)
   console.log("MeterDetailsPage");
   const isIos = Platform.OS === 'ios';
   const [location, setLocation] = useState(meterDetails?.location);
@@ -116,7 +116,8 @@ function MeterDetailsPage() {
     console.log("+++++++type changed", type)
     if (type) {
       fetchManufacturersForMeterType(type.value)
-        .then(data => {console.log(">>>  4  >>>fetchManufacturersForMeterType>>>", data); setManufacturers(data.map(manufacturer => ({ label: manufacturer.Manufacturer, value: manufacturer.Manufacturer })))})
+        .then(data => {console.log(">>>  4  >>>fetchManufacturersForMeterType>>>", data); 
+        setManufacturers(data.map(manufacturer => ({ label: manufacturer.Manufacturer, value: manufacturer.Manufacturer })))})
         .catch(error => console.error("error", error));
     }
   }, [type]);
@@ -124,7 +125,8 @@ function MeterDetailsPage() {
   useEffect(() => {
     if (manufacturer && type) {
       fetchModelsForManufacturer(type.value, manufacturer.label)
-        .then(data => {console.log(">>>  4  >>>fetchModelsForManufacturer", data); setModels(data.map((model, index) => ({ label: model["Model Code (A0083)"], value: index })))})
+        .then(data => {console.log(">>>  4  >>>fetchModelsForManufacturer", data); 
+        setModels(data.map((model, index) => ({ label: model["Model Code (A0083)"], value: index })))})
         .catch(error => console.error(error));
     }
   }, [manufacturer]);
@@ -132,9 +134,6 @@ function MeterDetailsPage() {
 
   const saveMeterDetailsToDatabase = async () => {
     const db = await openDatabase();
-    const currentDateTime = moment().format('YYYY-MM-DD HH:mm:ss');
-    const jobStatus = 'In Progress'; // Example status
-    const progress = 'Updated with Meter Details'; // Example progress
 
     const meterDetailsJson = JSON.stringify({
       location,
@@ -155,7 +154,7 @@ function MeterDetailsPage() {
       havePulseValue,
       haveSerialNumber,
     });
-
+const progress = 5; 
     db.transaction(tx => {
       tx.executeSql(
         `UPDATE Jobs SET meterDetails = ?, progress = ? WHERE id = ?`,
@@ -226,7 +225,7 @@ function MeterDetailsPage() {
       pressureTier: pressureTier,
       pressure: pressure,
       havePulseValue: havePulseValue,
-      haveSerialNumber: haveSerialNumber,
+   
     });
 
     let isDiaphragm = [1, 2, 4].includes(type.value);
@@ -235,11 +234,15 @@ function MeterDetailsPage() {
       EcomHelper.showInfoMessage("Diagphragm Meter can only be LP or MP");
       return;
     }
-
-    await saveMeterDetailsToDatabase();
-
-    // Proceed to the next screen
-    navigation.navigate(nextScreen, { jobId: appContext.jobId });
+console.log(" navigating to", nextScreen);
+    try {
+      await saveMeterDetailsToDatabase();
+      console.log("Meter details saved, navigating to", nextScreen);
+      navigation.navigate(nextScreen);
+    } catch (error) {
+      console.error("Failed to save meter details or navigate:", error);
+    }
+  
   };
 
   const backPressed = () => {

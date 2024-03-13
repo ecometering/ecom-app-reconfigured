@@ -131,29 +131,8 @@ async function getDatabaseJob(setJob) {
 			  }
 			);
 		  });
-		return tables
-	} catch (error) {
-		console.error("Error fetching table names:", error);
-	}
-}
-async function getDatabaseJob(setJob) {
-	try {
-		const db = await openDatabase(); // Open the database
 	
-		db.transaction(tx => {
-			tx.executeSql(
-			  'SELECT * FROM Jobs',
-			  [],
-			  (_, { rows: { _array } }) => {
-				setJob(_array)
-			  },
-			  error => {
-				console.error('Error executing SQL query', error);
-			  }
-			);
-		  });
 	} catch (error) {
-		console.error("Error fetching table names:", error);
 		console.error("Error fetching table names:", error);
 	}
 }
@@ -194,7 +173,7 @@ const fetchManufacturersForMeterType = async (meterType) => {
 				[],
 				(_, { rows }) => {
 					console.log(">>>  3  >>>", rows);
-					db.closeSync();
+					db.closeAsync();
 					resolve(rows._array);
 				},
 				(_, err) => reject(err)
@@ -203,71 +182,65 @@ const fetchManufacturersForMeterType = async (meterType) => {
 	});
 };
 const fetchModelsForManufacturer = async (meterType, manufacturer) => {
-	console.log("-------------------second dropdown-------------");
-	const tableNameMap = {
-		1: "diaphrgam", // Example mapping, adjust according to your actual data
-		2: "Tin Case Diaphrgam", // Use the actual numeric values as keys
-		3: "rotary",
-		4: "correctors", // Assuming there's a numeric value associated with 'corrector'
-		5: "turbine",
-		6: "ultrasonic"
-	};
+    console.log(`[fetchModelsForManufacturer] Start fetching models. MeterType: ${meterType}, Manufacturer: ${manufacturer}`);
 
-	console.log(`>>>  5  >>>Fetching models for meterType: ${meterType}, manufacturer: ${manufacturer}`);
+    // Mapping of meterType to tableName
+    const tableNameMap = {
+        1: "diaphrgam",
+        2: "Tin Case Diaphrgam",
+        3: "rotary",
+        4: "correctors",
+        5: "turbine",
+        6: "ultrasonic",
+    };
 
-	// Retrieve the table name based on the meter type
-	const tableName = tableNameMap[meterType];
-	if (!tableName) {
-		console.error("Invalid meter type provided:", meterType);
-		return Promise.reject(new Error("Invalid meter type"));
-	}
+    // Retrieve the table name based on the meter type
+    const tableName = tableNameMap[meterType];
+    if (!tableName) {
+        console.error(`[fetchModelsForManufacturer] Invalid meter type provided: ${meterType}`);
+        throw new Error("Invalid meter type");
+    }
+    console.log(`[fetchModelsForManufacturer] Using table: ${tableName} for queries.`);
 
-	console.log(`Using table: ${tableName} for meterType: ${meterType}`);
+    try {
+        const db = await openDatabase();
+        console.log(`[fetchModelsForManufacturer] Database opened successfully.`);
 
-	const db = await openDatabase(); // Ensure openDatabase() is defined and returns a database connection
+        // Execute the query within a promise to use async/await
+        const models = await new Promise((resolve, reject) => {
+            db.transaction(tx => {
+                const query = `SELECT "Model Code (A0083)" FROM "${tableName}" WHERE Manufacturer = ?;`;
+                console.log(`[fetchModelsForManufacturer] Executing query: ${query} with Manufacturer: ${manufacturer}`);
 
-	return new Promise((resolve, reject) => {
-		db.transaction((tx) => {
-			const query = `SELECT "Model Code (A0083)" FROM "${tableName}" WHERE manufacturer = ?;`;
-			console.log(`Executing query: ${query} with manufacturer: ${manufacturer} and tableName ${tableName}`);
+                tx.executeSql(
+                    query,
+                    [manufacturer],
+                    (_, result) => {
+                        const modelsArray = result.rows._array.map(row => ({ label: row["Model Code (A0083)"], value: row["Model Code (A0083)"] }));
+                        console.log(`[fetchModelsForManufacturer] Models fetched successfully. Count: ${modelsArray.length}`);
+                        resolve(modelsArray);
+                    },
+                    (_, error) => {
+                        console.error(`[fetchModelsForManufacturer] Error fetching models for Manufacturer: ${manufacturer}`, error);
+                        reject(error);
+                    }
+                );
+            }, null, () => {
+                // Ensure database is closed after transaction
+                db.close(() => console.log("[fetchModelsForManufacturer] Database closed after fetching models."), error => console.log("[fetchModelsForManufacturer] Error closing database:", error));
+            });
+        });
 
-			tx.executeSql(
-				query,
-				[manufacturer],
-				(_, { rows }) => {
-					console.log(`Query successful, rows returned: ${rows.length}`);
-					resolve(rows._array);
-				},
-				(_, err) => {
-					console.error("Query error:", err);
-					reject(err);
-				}
-			);
-		});
-	});
+        return models;
+    } catch (error) {
+        console.error(`[fetchModelsForManufacturer] Failed to fetch models for MeterType: ${meterType} and Manufacturer: ${manufacturer}:`, error);
+        throw error; // Re-throw the error to be handled by the caller
+    }
 };
 
 
 
-const loadDataAndSetContext = async (id) => {
-	const db = await openDatabase();
-	db.transaction((tx) => {
-		tx.executeSql(
-			`SELECT jsonData FROM jobsInProgress WHERE id = ?;`,
-			[id],
-			(_, { rows }) => {
-				if (rows.length > 0) {
-					const contextData = JSON.parse(rows.item(0).jsonData);
-					console.log("Loaded context data:", contextData);
-					// Here, set the app's context with contextData
-				} else {
-					console.log("No data found.");
-				}
-			},
-			(_, error) => console.error("Error loading data:", error)
-		);
-	});
-};
+
 
 
 
@@ -346,7 +319,7 @@ export {
   fetchManufacturersForMeterType,
   fetchModelsForManufacturer,
   getDatabaseTables,
-  loadDataAndSetContext,
+ 
   openDatabase,
   testDatabaseAndTables,
   testFileSystemAccess,

@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { TextType } from '../theme/typography';
 import { AppContext } from '../context/AppContext';
 import { useScreenDimensions } from '../utils/constant';
-
+import axios from 'axios';
 function PlannedJobPage() {
   const navigation = useNavigation();
   const [plannedJobs, setPlannedJobs] = useState([]);
@@ -19,11 +19,12 @@ function PlannedJobPage() {
   useEffect(() => {
     const fetchPlannedJobs = async () => {
       setIsLoading(true);
-      setError(null); // Reset error state on fetch start
+      setError(null);
       try {
-        const response = await fetch('https://test.ecomdata.co.uk/api/jobs'); // Updated endpoint
-        const data = await response.json();
+        const response = await axios.get('https://test.ecomdata.co.uk/api/jobs');
+        const { data } = response;
         if (data && data.length > 0) {
+          await saveJobsToDatabase(data);
           setPlannedJobs(data);
         } else {
           setError('No planned jobs found');
@@ -34,9 +35,9 @@ function PlannedJobPage() {
         setIsLoading(false);
       }
     };
-
+  
     fetchPlannedJobs();
-  }, []);
+  }, [])
 
   const renderItem = ({ item, index }) => {
     const handleItemClick = () => {

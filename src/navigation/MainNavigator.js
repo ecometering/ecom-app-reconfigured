@@ -4,7 +4,7 @@ import { getItemAsync } from "expo-secure-store";
 import React,{ useContext,useEffect,useState } from "react";
 import { ActivityIndicator,View } from "react-native";
 import { AppContext } from "../context/AppContext";
-
+import { useAuth } from "../context/AuthContext";
 // import screens from "..screens"
 import CompletedJobsPage from "../screens/CompletedJobsPage";
 import HomePage from "../screens/HomePage";
@@ -43,22 +43,24 @@ import SurveyFlowNavigator from "./surveyFlowNavigator";
 const Stack = createStackNavigator();
 
 const MainNavigator = () => {
-	const [isToken, setIsToken] = useState(null);
-	const { extraPhotoCount, setUserLogged, userLogged } = useContext(AppContext);
+	const [isLoading, setIsLoading] = useState(true);
+	const { extraPhotoCount} = useContext(AppContext);
 	const { jobType } = useContext(AppContext);
-
+	const {authState,onLogout} =useAuth();
 	useEffect(() => {
-		getItemAsync("userToken")
-			.then((token) => {
-				setIsToken(token ? true : false);
-				setUserLogged(!!token);
-			})
-			.catch((err) => {
-				setIsToken(false);
-			});
-	}, []);
+		const checkLoginStatus = async () => {
+		  try {
+		  } catch (err) {
+			console.log("Error checking token: ", err);
+		  } finally {
+			setIsLoading(false);
+		  }
+		};
+	
+		checkLoginStatus();
+	  }, []);
 
-	if (isToken === null) {
+	if (isLoading === null) {
 		return (
 			<View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
 				<ActivityIndicator size="large" />
@@ -108,11 +110,7 @@ const MainNavigator = () => {
 	return (
 		<NavigationContainer>
 			<Stack.Navigator screenOptions={{ headerShown: false }}>
-			{!userLogged ? (
-          <Stack.Group>
-            <Stack.Screen name="LogIn" component={LoginPage} />
-          </Stack.Group>
-		  ) : (
+			{authState?.authenticated ?  (
 				<Stack.Group>
 					<Stack.Screen name="Home" component={HomePage} />
 					<Stack.Screen name="CalendarPage" component={CalendarPage} />
@@ -160,7 +158,11 @@ const MainNavigator = () => {
 					<Stack.Screen name="RebookPage" component={RebookPage} />
 					<Stack.Screen name="SubmitSuccessPage" component={SubmitSuccessPage} />
 				</Stack.Group>
-				)}
+				):(
+					<Stack.Group>
+					  <Stack.Screen name="LogIn" component={LoginPage} />
+					</Stack.Group>
+					) }
 				
 			</Stack.Navigator>
 		</NavigationContainer>
