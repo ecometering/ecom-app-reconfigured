@@ -61,17 +61,7 @@ export default function CorrectorDetailsPage() {
   const [correctedReads, setCorrectedReads] = useState(correctorDetails?.correctedReads);
 
   const backPressed = () => {
-    const currentCorrectorDetails ={ 
-      ...AppContext.correctorDetails,
-      isMountingBracket: isMountingBracket,
-      manufacturer: manufacturer,
-      model: model,
-      correctorImage: correctorImage,
-      uncorrectedReads: uncorrectedReads,
-      correctedReads: correctedReads,
-      correctorSerialNumber: correctorSerialNumber,
-    };
-    appContext.setCorrectorDetails(currentCorrectorDetails);
+    appContext.setCorrectorDetails(CorrectorDetails);
       navigation.goBack();
     
   };
@@ -157,7 +147,7 @@ const updateCorrectorDetails = async() => {
       EcomHelper.showInfoMessage("Please choose model");
       return;
     }
-    
+    updateCorrectorDetails();
     navigation.navigate("CorrectorGateWay",{jobType:jobType});
    
 

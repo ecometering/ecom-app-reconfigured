@@ -23,40 +23,34 @@ import { openDatabase,appendPhotoDetail,fetchPhotosJSON } from "../../utils/data
 function SiteQuestionsPage() {
   const navigation = useNavigation();
 const route = useRoute();
-const { jobId } = route.params;
   const appContext = useContext(AppContext);
-  const jobType = appContext.jobType;
+  const{jobDetails,jobType,photos} = appContext;
   console.log("Job Type:", jobType);
-  const meterDetails = appContext.meterDetails;
+
+  const [siteQuestions, setSiteQuestions] = useState({
+    isSafe: "",
+    isGeneric: "",
+    genericReason: "",
+    isCarryOut: "",
+    carryOutReason: "", 
+    isFitted: "",
+    isStandard: "",
+  });
+  const handleInputChange = (name, value) => {
+    setSiteQuestions(prevDetails => ({
+      ...prevDetails,
+      [name]: value,
+    }));
+  };
+
   
-  const [isSafe, setIsSafe] = useState(meterDetails?.isSafe);
-  const [isGerneric, setIsGerneric] = useState(meterDetails?.isGerneric);
-  const [genericReason, setGenericReason] = useState(
-    meterDetails?.genericReason
-  );
-  const [isCarryOut, setIsCarryOut] = useState(meterDetails?.isCarryOut);
-  const [carryOutReason, setCarryOutReason] = useState(
-    meterDetails?.carryOutReason
-  );
-  const [isFitted, setIsFitted] = useState(meterDetails?.isFitted);
-  const [isStandard, setIsStandard] = useState(meterDetails?.isStandard);
+  
 
   const [byPassImage, setByPassImage] = useState(meterDetails?.byPassImage);
 
 
   const backPressed = () => {
-    const currentMeterDetails = {
-      ...appContext.meterDetails,
-      isSafe: isSafe,
-      isGerneric: isGerneric,
-      genericReason: genericReason,
-      isCarryOut: isCarryOut,
-      carryOutReason: carryOutReason,
-      isFitted: isFitted,
-      isStandard: isStandard,
-      byPassImage: byPassImage,
-    };
-    appContext.setMeterDetails(currentMeterDetails);
+    appContext.setSiteQuestions(siteQuestions);
     navigation.goBack();
   };
 
@@ -73,15 +67,7 @@ const updateSiteQuestions = async () => {
   const photoDetailsJSON = JSON.stringify(photoDetails);
  const updatedPhotosJSON = appendPhotoDetail(photosJSON, photoDetailsJSON);
 
- const siteQuestionsJSON = JSON.stringify({
-  isSafe,
-  isGerneric,
-  genericReason,
-  isCarryOut,
-  carryOutReason,
-  isFitted,
-  isStandard
-});
+ const siteQuestionsJSON = JSON.stringify(siteQuestions);
 
 db.transaction(tx => {
   tx.executeSql(
@@ -103,57 +89,45 @@ const nextPressed = async () => {
     console.log("nextPressed invoked.");
   
     // Individual validation checks with specific messages
-    if (isSafe === null) {
+    if (siteQuestions.isSafe === null) {
       EcomHelper.showInfoMessage("Please indicate if the meter location is safe.");
       return;
     }
-    if (isGerneric === null) {
+    if (siteQuestions.isGeneric === null) {
       EcomHelper.showInfoMessage("Please indicate if the job is covered by the generic risk assessment.");
       return;
     }
-    if (isCarryOut === null) {
+    if (siteQuestions.isCarryOut === null) {
       EcomHelper.showInfoMessage("Please indicate if the job can be carried out.");
       return;
     }
-    if (isCarryOut === false && (!carryOutReason || carryOutReason.trim().length === 0)) {
+    if (siteQuestions.carryOutReasonisCarryOut === false && (!siteQuestions.carryOutReason || siteQuestions.carryOutReason.trim().length === 0)) {
       EcomHelper.showInfoMessage("Please indicate why the job can't be carried out.");
       return;
     }  
-    if (isFitted === null) {
+    if (siteQuestions.isFitted === null) {
       EcomHelper.showInfoMessage("Please indicate if a bypass is fitted.");
       return;
     }
-    if (isStandard === null) {
+    if (siteQuestions.isStandard === null) {
       EcomHelper.showInfoMessage("Please indicate if the customer installation conforms to current standards.");
       return;
     }
     // Add additional checks here as needed
   
     // If all checks pass, update meter details in context
-    const currentMeterDetails = {
-      ...appContext.meterDetails,
-      isSafe,
-      isGerneric,
-      genericReason,
-      isCarryOut,
-      carryOutReason,
-      isFitted,
-      isStandard,
-      byPassImage,
-    };
-  
-    appContext.setMeterDetails(currentMeterDetails);
-    console.log("Meter details updated in context:", currentMeterDetails);
+    appContext.setSiteQuestions(siteQuestions);
+    console.log("Site questions updated in context:", appContext);
   
     // Continue with conditional navigation based on jobType and conditions
     handleNavigationBasedOnConditions();
 };
 
 const handleNavigationBasedOnConditions = () => {
-    if (!isSafe || !isStandard) {
+    if (!siteQuestions.isSafe || !siteQuestions.isStandard) {
       navigation.navigate("StandardPage", { fromPage: "SiteQuestionsPage" });
       console.log("Navigating to StandardPage");
-    } else if (!isCarryOut) {
+    } else if (!siteQuestions.isCarryOut) {
       navigation.navigate("RebookPage", { fromPage: "SiteQuestionsPage" });
       console.log("Navigating to RebookPage");
     } else {
@@ -210,13 +184,13 @@ const handleNavigationBasedOnConditions = () => {
               options={["Yes", "No"]}
               actions={[
                 () => {
-                  setIsSafe(true);
+                  handleInputChange("isSafe", true);
                 },
                 () => {
-                  setIsSafe(false);
+                  handleInputChange("isSafe", false);
                 },
               ]}
-              value={isSafe === null ? null : isSafe ? "Yes" : "No"}
+              value={siteQuestions.isSafe === null ? null : siteQuestions.isSafe ? "Yes" : "No"}
             />
           </View>
           <View style={styles.spacer} />
@@ -227,16 +201,16 @@ const handleNavigationBasedOnConditions = () => {
               options={["Yes", "No"]}
               actions={[
                 () => {
-                  setIsGerneric(true);
+                  handleInputChange("isGeneric", true);
                 },
                 () => {
-                  setIsGerneric(false);
+                  handleInputChange("isGeneric", false);
                 },
               ]}
-              value={isGerneric === null ? null : isGerneric ? "Yes" : "No"}
+              value={siteQuestions.isGeneric === null ? null : siteQuestions.isGeneric ? "Yes" : "No"}
             />
           </View>
-          {!isGerneric && (
+          {!siteQuestions.isGeneric && (
             <TextInputWithTitle
               title={
                 "Why is this job not covered by the generic risk assesment"
@@ -244,7 +218,7 @@ const handleNavigationBasedOnConditions = () => {
               placeholder={""}
               value={genericReason}
               onChangeText={(txt) => {
-                setGenericReason(txt);
+                handleInputChange("genericReason", txt);
               }}
             
             />
@@ -257,13 +231,12 @@ const handleNavigationBasedOnConditions = () => {
               options={["Yes", "No"]}
               actions={[
                 () => {
-                  setIsCarryOut(true);
+                  handleInputChange("isCarryOut", true);
                 },
                 () => {
-                  setIsCarryOut(false); //// sub mit "Job as abort"
-                },
+                  handleInputChange("isCarryOut", false);},
               ]}
-              value={isCarryOut === null ? null : isCarryOut ? "Yes" : "No"}
+              value={siteQuestions.isCarryOut === null ? null : siteQuestions.isCarryOut ? "Yes" : "No"}
             />
           </View>
           {!isCarryOut && (
@@ -272,7 +245,7 @@ const handleNavigationBasedOnConditions = () => {
               placeholder={""}
               value={carryOutReason}
               onChangeText={(txt) => {
-                setCarryOutReason(txt);
+                handleInputChange("carryOutReason", txt);
               }}
               containerStyle={styles.inputContainer}
             />
@@ -306,6 +279,7 @@ const handleNavigationBasedOnConditions = () => {
                 <Image
                   source={{ uri: byPassImage }}
                   style={styles.image}
+                  photoKey="bypassImage"
                 />
               )}
             </View>
@@ -321,13 +295,13 @@ const handleNavigationBasedOnConditions = () => {
               options={["Yes", "No"]}
               actions={[
                 () => {
-                  setIsStandard(true);
+                  handleInputChange("isStandard", true);
                 },
                 () => {
-                  setIsStandard(false);
+                  handleInputChange("isStandard", false);
                 },
               ]}
-              value={isStandard === null ? null : isStandard ? "Yes" : "No"}
+              value={siteQuestions.isStandard === null ? null : siteQuestions.isStandard ? "Yes" : "No"}
             />
           </View>
         </View>

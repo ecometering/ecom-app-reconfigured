@@ -11,7 +11,12 @@ const AppContextProvider = (props) => {
   const [jobType, setJobType] = useState(null);
 const [jobDetails, setJobDetails] = useState(null);
   const [isWarrant, setIsWarrant] = useState(false);
-  const [photos , setPhotos] = useState(null);
+  const [photos, setPhotos] = useState([]);
+
+  // Function to add a new photo detail
+  const addPhotoDetail = (newPhotoDetail) => {
+    setPhotos(prevPhotos => [...prevPhotos, newPhotoDetail]);
+  };
   const [hasStreamNumber, setHasStreamNumber] = useState(false);
   const [streamNumber, setStreamNumber] = useState(0);
   const [streamValue, setStreamValue] = useState([]);
@@ -41,6 +46,8 @@ const [jobDetails, setJobDetails] = useState(null);
     instructions: "",
     confirmContact: false,// Assuming confirmContact is a boolean, provide a default value accordingly
   });
+  const [siteQuestions, setSiteQuestions] = useState({});
+
   const [meterDetails, setMeterDetails] = useState(null);
   const [regulatorDetails, setRegulatorDetails] = useState(null);
   const [standardDetails, setStandardDetails] = useState(null);
@@ -73,6 +80,9 @@ const updateVisitCount = (screenName) => {
   const providerValue = {
     jobType,
     jobDetails,
+    siteQuestions,
+    photos,
+
     isWarrant,
     hasStreamNumber,
     jobData,
@@ -89,6 +99,11 @@ const updateVisitCount = (screenName) => {
     maintenanceDetails,
     startRemoval,
     setStartRemoval,
+    setJobType,
+    setJobDetails,
+    setSiteQuestions,
+    setPhotos,
+    addPhotoDetail,
     setJobdata,
     setMaintenanceDetails,
     setPassedRemoval,

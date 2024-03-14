@@ -97,7 +97,10 @@ console.log("job type:",jobType)
   const [manufacturers, setManufacturers] = useState([]);
   const [models, setModels] = useState([]);
   const diaphragmMeterTypes = ['1', '2', '4'];
-
+  const [loadingManufacturers, setLoadingManufacturers] = useState(false);
+  const [loadingModels, setLoadingModels] = useState(false);
+  const [error, setError] = useState(null);
+  
   useEffect(() => {
     if (type && diaphragmMeterTypes.includes(type.value)) {
       setPressureTierList([
@@ -113,47 +116,50 @@ console.log("job type:",jobType)
   }, [type, pressureTier]);
 
   useEffect(() => {
-    console.log("+++++++type changed", type)
-    if (type) {
-      fetchManufacturersForMeterType(type.value)
-        .then(data => {console.log(">>>  4  >>>fetchManufacturersForMeterType>>>", data); 
-        setManufacturers(data.map(manufacturer => ({ label: manufacturer.Manufacturer, value: manufacturer.Manufacturer })))})
-        .catch(error => console.error("error", error));
-    }
-  }, [type]);
-
+    const fetchModels = async () => {
+      if (manufacturer && type) {
+        setLoadingModels(true);
+        try {
+          const data = await fetchModelsForManufacturer(type.value, manufacturer.label);
+          setModels(data.map((model, index) => ({ label: model["Model Code (A0083)"], value: index })));
+          setError(null); // Reset error state if successful
+        } catch (error) {
+          console.error("error", error);
+          setError("Failed to load models");
+        } finally {
+          setLoadingModels(false);
+        }
+      }
+    };
+  
+    fetchModels();
+  }, [manufacturer, type]); // Ensure this runs whenever `manufacturer` or `type` changes
+  
   useEffect(() => {
-    if (manufacturer && type) {
-      fetchModelsForManufacturer(type.value, manufacturer.label)
-        .then(data => {console.log(">>>  4  >>>fetchModelsForManufacturer", data); 
-        setModels(data.map((model, index) => ({ label: model["Model Code (A0083)"], value: index })))})
-        .catch(error => console.error(error));
-    }
-  }, [manufacturer]);
-
+    const fetchModels = async () => {
+      if (manufacturer && type) {
+        setLoadingModels(true);
+        try {
+          const data = await fetchModelsForManufacturer(type.value, manufacturer.label);
+          setModels(data.map((model, index) => ({ label: model["Model Code (A0083)"], value: index })));
+          setError(null); // Reset error state if successful
+        } catch (error) {
+          console.error("error", error);
+          setError("Failed to load models");
+        } finally {
+          setLoadingModels(false);
+        }
+      }
+    };
+  
+    fetchModels();
+  }, [manufacturer, type]); // Ensure this runs whenever `manufacturer` or `type` changes
+  
 
   const saveMeterDetailsToDatabase = async () => {
     const db = await openDatabase();
 
-    const meterDetailsJson = JSON.stringify({
-      location,
-      model,
-      manufacturer,
-      uom,
-      type,
-      status,
-      measuringCapacity,
-      year,
-      reading,
-      dialNumber,
-      serialNumber,
-      pulseValue,
-      mechanism,
-      pressureTier,
-      pressure,
-      havePulseValue,
-      haveSerialNumber,
-    });
+    const meterDetailsJson = JSON.stringify({meterDetails});
 const progress = 5; 
     db.transaction(tx => {
       tx.executeSql(
@@ -207,26 +213,9 @@ const progress = 5;
       return;
     }
 
-    appContext.setMeterDetails({
-      ...meterDetails,
-      location: location,
-      model: model,
-      manufacturer: manufacturer,
-      uom: uom,
-      type: type,
-      status: status,
-      measuringCapacity: measuringCapacity,
-      year: year,
-      reading: reading,
-      dialNumber: dialNumber,
-      serialNumber: serialNumber,
-      pulseValue: pulseValue,
-      mechanism: mechanism,
-      pressureTier: pressureTier,
-      pressure: pressure,
-      havePulseValue: havePulseValue,
+    appContext.setMeterDetails(meterDetails);
    
-    });
+    
 
     let isDiaphragm = [1, 2, 4].includes(type.value);
     let isNotML = [1, 4].includes(pressureTier.value);
@@ -246,26 +235,7 @@ console.log(" navigating to", nextScreen);
   };
 
   const backPressed = () => {
-    appContext.setMeterDetails({
-      ...meterDetails,
-      location: location,
-      model: model,
-      manufacturer: manufacturer,
-      uom: uom,
-      type: type,
-      status: status,
-      measuringCapacity: measuringCapacity,
-      year: year,
-      reading: reading,
-      dialNumber: dialNumber,
-      serialNumber: serialNumber,
-      pulseValue: pulseValue,
-      mechanism: mechanism,
-      pressureTier: pressureTier,
-      pressure: pressure,
-      havePulseValue: havePulseValue,
-      haveSerialNumber: haveSerialNumber,
-    });
+appContext.setMeterDetails(meterDetails);
     navigation.goBack();
   };
 

@@ -67,7 +67,6 @@ export default function DataLoggerDetailsPage() {
     
       navigation.goBack();
   
-    // navigation.goBack();
   };
   console.log(meterDetails);
 
@@ -113,7 +112,7 @@ export default function DataLoggerDetailsPage() {
       return;
     }
    
-          navigation.navigate("DataloggerGateWay");
+          navigation.navigate("DataLoggerGateway");
         
         return;
       }
