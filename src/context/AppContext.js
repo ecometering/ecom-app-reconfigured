@@ -8,10 +8,10 @@ const AppContext = createContext({
 });
 
 const AppContextProvider = (props) => {
-
   const [jobType, setJobType] = useState(null);
+const [jobDetails, setJobDetails] = useState(null);
   const [isWarrant, setIsWarrant] = useState(false);
-
+  const [photos , setPhotos] = useState(null);
   const [hasStreamNumber, setHasStreamNumber] = useState(false);
   const [streamNumber, setStreamNumber] = useState(0);
   const [streamValue, setStreamValue] = useState([]);
@@ -22,7 +22,25 @@ const AppContextProvider = (props) => {
   const [startRemoval, setStartRemoval] = useState(false);
 
   // CHOSEN ITEM or METER
-  const [siteDetails, setSiteDetails] = useState(null);
+  const [siteDetails, setSiteDetails] = useState({
+    mprn: "",
+    companyName: "",
+    buildingName: "",
+    address1: "",
+    address2: "",
+    address3: "",
+    town: "",
+    county: "",
+    postCode: "",
+    title: "",
+    contact: "",
+    email1: "",
+    email2: "",
+    number1: "",
+    number2: "",
+    instructions: "",
+    confirmContact: false,// Assuming confirmContact is a boolean, provide a default value accordingly
+  });
   const [meterDetails, setMeterDetails] = useState(null);
   const [regulatorDetails, setRegulatorDetails] = useState(null);
   const [standardDetails, setStandardDetails] = useState(null);
@@ -54,6 +72,7 @@ const updateVisitCount = (screenName) => {
 };
   const providerValue = {
     jobType,
+    jobDetails,
     isWarrant,
     hasStreamNumber,
     jobData,
@@ -65,19 +84,15 @@ const updateVisitCount = (screenName) => {
     regulatorDetails,
     standardDetails,
     extraCounter,
-    removedSiteDetails,
     removedMeterDetails,
     passedRemoval,
-    warrantDetails,
     maintenanceDetails,
     startRemoval,
     setStartRemoval,
     setJobdata,
     setMaintenanceDetails,
-    setWarrantDetails,
     setPassedRemoval,
     setRemovedMeterDetails,
-    setRemovedSiteDetails,
     setExtraCounter,
     setStandardDetails,
     setRegulatorDetails,

@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Alert,ScrollView, StyleSheet, View } from "react-native";
 import { width, height, unitH } from "../utils/constant";
 import { PrimaryColors } from "../theme/colors";
 import { EcomPressable as Button } from "../components/ImageButton";
@@ -10,18 +10,18 @@ import { deleteItemAsync } from "expo-secure-store";
 import { AppContext } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
 import { getDatabaseJob } from "../utils/database";
+
 function HomePage() {
   const navigation = useNavigation();
   
 const {OnLogout} =useAuth();
   const appContext = useContext(AppContext)
-  console.log("appContext", appContext)
   const navigationToPage = ({ navigationName }) => {
     navigation.navigate(navigationName);
   };
   const checkJobsAndNavigate = async () => {
     try {
-      const jobs = await getDatabaseJob();
+      const jobs = await getDatabaseJob() || []; // Ensure an array is always returned
       const inProgressJobs = jobs.filter(job => job.status === "In Progress");
 
       if (inProgressJobs.length >= 6) {
@@ -31,7 +31,7 @@ const {OnLogout} =useAuth();
       }
     } catch (error) {
       console.error("Failed to check job status", error);
-      Alert.alert("Error", "Failed to fetch job data.");
+      Alert.alert("Error", "Failed to fetch job data."); // Now Alert should work
     }
   };
   return (

@@ -27,42 +27,30 @@ const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 function SiteDetailsPage() {
   const navigation = useNavigation();
   const appContext = useContext(AppContext);
-  const jobNumber = appContext.jobNumber;
-  const jobType = appContext.jobType;
+  const {jobType,siteDetails,setSiteDetails} = appContext
   const route = useRoute();
  const params = route.params;
   appContext?.setJobdata(route?.params?.jobData) 
-  console.log("SiteDetailsPage");
-  console.log("jobType", jobType);
-  const initialSiteDetails = route.params?.siteDetails || {};
+  
 
   useEffect(() => {
     // Assume route.params.jobType exists
     const routeJobType = route.params.jobType;
     if (routeJobType) {
       appContext.setJobTypes(routeJobType);
+      console.log("SiteDetailsPage");
+  console.log("jobType", jobType);
     }
   }, []);
+const [jobDetails , setJobDetails] = useState({
+  jobType:"", 
+  status: "", 
+  progress: "",
+  totalPages: "",
+  jobID : "", 
 
-  const [siteDetails, setSiteDetails] = useState({
-    mprn: "",
-    companyName: "",
-    buildingName: "",
-    address1: "",
-    address2: "",
-    address3: "",
-    town: "",
-    county: "",
-    postCode: "",
-    title: "",
-    contact: "",
-    email1: "",
-    email2: "",
-    number1: "",
-    number2: "",
-    instructions: "",
-    confirmContact: false,// Assuming confirmContact is a boolean, provide a default value accordingly
-  });
+});
+  
 
   const handleInputChange = (name, value) => {
     setSiteDetails(prevDetails => ({
@@ -70,7 +58,12 @@ function SiteDetailsPage() {
       [name]: value,
     }));
   };
-const [progress , setProgress] = useState(0);
+  const handlejobDetails = (name, value) => {
+    setJobDetails(prevDetails => ({
+      ...prevDetails,
+      [name]: value,
+    }));
+  };
  const saveSiteDetailsToDatabase = async () => {
   console.log("creating job")
   const db = await openDatabase();
@@ -85,6 +78,9 @@ const [progress , setProgress] = useState(0);
   const mprn = siteDetails.mprn;
   const postcode = siteDetails.postCode; 
   const jobStatus = 'In Progress'
+  handlejobDetails('status',jobStatus);
+  handlejobDetails('progress','1');
+  handlejobDetails('totalPages','5');
   const progress = '1';
   const startDate = getCurrentDateTime();
   // Ensure this is the correct way to access the job's ID
@@ -97,7 +93,8 @@ const [progress , setProgress] = useState(0);
       (_, result) => {
         console.log('Site details and progress updated in database. Generated ID:', result.insertId);
         // Pass the result.insertId as JobId parameter to the next navigation call
-        navigation.navigate("SitePhotoPage", { JobId: result.insertId });
+        handlejobDetails('JobID',result.insertId);
+
       },
       (_, error) => console.log('Error updating site details in database:', error)
     );
@@ -111,61 +108,61 @@ const [progress , setProgress] = useState(0);
   };
 
   const nextPressed = () => {
-    if (buildingName === "") {
+    if (siteDetails.buildingName === "") {
       EcomHelper.showInfoMessage("Please input Building Name");
       return;
     }
-    if (address1 === "") {
+    if (siteDetails.address1 === "") {
       EcomHelper.showInfoMessage("Please input Address1");
       return;
     }
-    if (town === "") {
+    if (siteDetails.town === "") {
       EcomHelper.showInfoMessage("Please input Town/City");
       return;
     }
-    if (county === "") {
+    if (siteDetails.county === "") {
       EcomHelper.showInfoMessage("Please input County");
       return;
     }
-    if (postCode === "") {
+    if (siteDetails.postCode === "") {
       EcomHelper.showInfoMessage("Please input Post Code");
       return;
     }
-    if (!ukPostCodeRegex.test(postCode)) {
+    if (!ukPostCodeRegex.test(siteDetails.postCode)) {
       EcomHelper.showInfoMessage("Not a valid uk post code");
       return;
     }
-    if (number1 && !phoneNumberRegex.test(number1)) {
+    if (siteDetails.number1 && !phoneNumberRegex.test(siteDetails.number1)) {
       EcomHelper.showInfoMessage("Not a valid phone number: phone number1");
       return;
     }
   
     // Validate phone number2 if it is not empty
-    if (number2 && !phoneNumberRegex.test(number2)) {
+    if (siteDetails.number2 && !phoneNumberRegex.test(siteDetails.number2)) {
       EcomHelper.showInfoMessage("Not a valid phone number: phone number2");
       return;
     }
   
     // Validate email1 if it is not empty
-    if (email1 && !emailRegex.test(email1)) {
+    if (siteDetails.email1 && !emailRegex.test(siteDetails.email1)) {
       EcomHelper.showInfoMessage("Not a valid email: email1");
       return;
     }
   
     // Validate email2 if it is not empty
-    if (email2 && !emailRegex.test(email2)) {
+    if (siteDetails.email2 && !emailRegex.test(siteDetails.email2)) {
       EcomHelper.showInfoMessage("Not a valid email: email2");
       return;
     }
-    if (confirmContact == null) {
+    if (siteDetails.confirmContact == null) {
       EcomHelper.showInfoMessage("Please make sure if all contact is correct");
       return;
     }
-    if (!mprn) {
+    if (!siteDetails.mprn) {
       EcomHelper.showInfoMessage("Please input MPRN");
       return;
     }
-    if (mprn?.length < 5) {
+    if (siteDetails.mprn?.length < 5) {
       EcomHelper.showInfoMessage("MPRN should be 5 ~ 15 digits");
       return;
     }
@@ -173,6 +170,9 @@ const [progress , setProgress] = useState(0);
     appContext.setSiteDetails(siteDetails);
  
     saveSiteDetailsToDatabase();
+    console.log("jobDetails",jobDetails);
+    console.log("siteDetails",siteDetails);
+    navigation.navigate("SitePhotoPage")
   
   };
 
@@ -189,7 +189,7 @@ const [progress , setProgress] = useState(0);
         hasMenuButton={false}
         totalPages={params.totalPages}
         currentPage={params.currentPage}
-        onPageChange={(pageNum) => console.log("navigated to pageL:", pageNum)}
+        onPageChange={(pageNum) => console.log("navigated to page:", pageNum)}
       />
       <KeyboardAvoidingView
         style={{flex:1}}
@@ -202,7 +202,7 @@ const [progress , setProgress] = useState(0);
             onChangeText={(txt) => {
               const filteredText = txt.replace(/[^0-9]/g, "");
               const limitedText = filteredText.slice(0, 15);
-              setMprn(limitedText);
+              handleInputChange('mprn', limitedText);
             }}
             containerStyle={[styles.inputContainer,{width: "90%" }]}
             keyboardType="numeric"
@@ -214,7 +214,7 @@ const [progress , setProgress] = useState(0);
             value={siteDetails.companyName}
             onChangeText={(txt) => {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s\-\(\)]/g, "");
-              setCompanyName(filteredText);
+              handleInputChange('companyName', filteredText);
             }}
             containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
@@ -224,7 +224,7 @@ const [progress , setProgress] = useState(0);
             value={siteDetails.buildingName}
             onChangeText={(txt) => {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s\-\(\)]/g, "");
-              setBuildingName(filteredText);
+              handleInputChange('buildingName', filteredText);
             }}
             containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
@@ -235,7 +235,7 @@ const [progress , setProgress] = useState(0);
             value={siteDetails.address1}
             onChangeText={(txt) => {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
-              setAddress1(filteredText);
+              handleInputChange('address1', filteredText);
             }}
             containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
@@ -245,7 +245,7 @@ const [progress , setProgress] = useState(0);
             value={siteDetails.address2}
             onChangeText={(txt) => {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
-              setAddress2(filteredText);
+              handleInputChange('address2', filteredText);
             }}
             containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
@@ -255,7 +255,7 @@ const [progress , setProgress] = useState(0);
             value={siteDetails.address3}
             onChangeText={(txt) => {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
-              setAddress3(filteredText);
+              handleInputChange('address3', filteredText);
             }}
             containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
@@ -265,7 +265,7 @@ const [progress , setProgress] = useState(0);
             value={siteDetails.town}
             onChangeText={(txt) => {
               const filteredText = txt.replace(/[^a-zA-Z]/g, "");
-              setTown(filteredText);
+              handleInputChange('town', filteredText);
             }}
             containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
@@ -275,7 +275,7 @@ const [progress , setProgress] = useState(0);
             value={siteDetails.county}
             onChangeText={(txt) => {
               const filteredText = txt.replace(/[^a-zA-Z ]/g, "");
-              setCounty(filteredText);
+              handleInputChange('county', filteredText);
             }}
             containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
@@ -286,7 +286,7 @@ const [progress , setProgress] = useState(0);
             onChangeText={(txt) => {
               if (txt.length <= 9 ) {
                 const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
-                setPostCode(filteredText.toUpperCase());
+                handleInputChange('postCode', filteredText.toUpperCase() );
               }
             }}
             containerStyle={[styles.inputContainer,{width: "90%" }]}
@@ -311,8 +311,7 @@ const [progress , setProgress] = useState(0);
                 ]}
                 placeholder={" Title"}
                 onChange={(e) => {
-                  console.log(e);
-                  setTitle(e);
+                  handleInputChange('title', e);
                 }}
               />
             </View>
@@ -325,7 +324,7 @@ const [progress , setProgress] = useState(0);
               value={siteDetails.contact}
               onChangeText={(txt) => {
                 const filteredText = txt.replace(/[^a-zA-Z ]/g, "");
-                setContact(filteredText);
+                handleInputChange('contact', filteredText);
               }}
 
               
@@ -351,7 +350,7 @@ const [progress , setProgress] = useState(0);
     keyboardType="numeric" // Set keyboardType to numeric
     onChangeText={(txt) => {
       const filteredText = txt.replace(/[^0-9]/g, ""); // Allow only numbers
-      setNumber1(filteredText);
+      handleInputChange('number1', filteredText);
     }}
   />
 </View>
@@ -363,7 +362,7 @@ const [progress , setProgress] = useState(0);
     keyboardType="numeric" // Set keyboardType to numeric
     onChangeText={(txt) => {
       const filteredText = txt.replace(/[^0-9]/g, ""); // Allow only numbers
-      setNumber2(filteredText);
+      handleInputChange('number2', filteredText);
     }}
   />
 </View>
@@ -381,9 +380,9 @@ const [progress , setProgress] = useState(0);
             style={{width:"100%"}}
               title={"Email Number 1"}
               value={siteDetails.email1}
+              autoCapitalize="none"
               onChangeText={(txt) => {
-                const filteredText = txt.replace(/[^a-zA-Z]/g, "");
-                setEmail1(txt);
+                handleInputChange('email1', txt.toLowerCase());
               }}
             />
             </View>
@@ -391,10 +390,10 @@ const [progress , setProgress] = useState(0);
             <TextInputWithTitle
             style={{width:"100%"}}
             title={"Email Number 2"}
+            autoCapitalize="none"
               value={siteDetails.email2}
               onChangeText={(txt) => {
-                const filteredText = txt.replace(/[^a-zA-Z]/g, "");
-                setEmail2(txt);
+                handleInputChange('email2', txt.toLowerCase());
               }}
             />
             </View>
@@ -411,7 +410,7 @@ const [progress , setProgress] = useState(0);
             value={siteDetails.instructions}
             onChangeText={(txt) => {
               const filteredText = txt.replace(/[^a-zA-Z0-9\s@.]/g, "");
-              setInstructions(filteredText);
+              handleInputChange('instructions', filteredText);
             }}
             containerStyle={[styles.inputContainer,{width: "90%" }]}
           />
@@ -422,14 +421,11 @@ const [progress , setProgress] = useState(0);
             </Text>
             <OptionalButton
   options={["Yes", "No"]}
-  onChange={(selectedOption) => {
-    setSiteDetails(prevDetails => ({
-      ...prevDetails,
-      confirmContact: selectedOption === "Yes",
-    }));
-  }}
-  value={siteDetails.confirmContact ? "Yes" : siteDetails.confirmContact === false ? "No" : ""}
-/>
+  actions={[
+    () => handleInputChange('confirmContact', true),
+    () => handleInputChange('confirmContact', false),
+  ]}
+  value={siteDetails.confirmContact === null ? null : siteDetails.confirmContact ? "Yes" : "No"}/>
           </View>
          
         </ScrollView>
