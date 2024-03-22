@@ -1,9 +1,10 @@
-import { View, Text, Button } from "react-native";
-import React, { useContext } from "react";
-import { useNavigation } from "@react-navigation/native";
-import { AppContext } from "../context/AppContext";
+import React, { useContext } from 'react';
+import { View, Text, Button, Alert, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { AppContext } from '../context/AppContext';
 import { openDatabase } from '../utils/database';
 import axios from 'axios';
+import Header from '../components/Header'; // Assuming this is your header component
 
 const SubmitSuccessPage = () => {
   const appContext = useContext(AppContext);
@@ -38,7 +39,13 @@ const SubmitSuccessPage = () => {
                 ['Completed', appContext?.jobData?.id],
                 () => {
                   console.log('Record updated successfully');
-                  navigation.navigate("Home");
+                  Alert.alert(
+                    "Upload Successful",
+                    "The job and photos have been successfully uploaded.",
+                    [
+                      { text: "OK", onPress: () => navigation.navigate("Home") }
+                    ]
+                  );
                 },
                 error => {
                   console.error('Error updating record', error);
@@ -46,25 +53,44 @@ const SubmitSuccessPage = () => {
               );
             } catch (error) {
               console.error('Error during data upload', error);
+              Alert.alert("Upload Error",error, "There was a problem uploading the job. Please try again.");
             }
           }
         },
         error => {
           console.error('Error fetching job data', error);
+          Alert.alert("Fetch Error",error, "There was a problem fetching the job data. Please try again.");
         }
       );
     });
   }
 
   return (
-    <View style={{ padding: 20 }}>
-      <Text>Submit Job</Text>
-      <Button
-        title="Yes"
-        onPress={fetchAndUploadJobData}
+    <View style={styles.container}>
+      <Header 
+        hasLeftBtn={true} 
+        leftBtnPressed={() => navigation.goBack()} 
+        hasCenterText={true} 
+        centerText="Submit Job"
       />
+      <View style={styles.content}>
+        <Text>Are you ready to submit the job?</Text>
+        <Button
+          title="Yes"
+          onPress={fetchAndUploadJobData}
+        />
+      </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  content: {
+    padding: 20,
+  },
+});
 
 export default SubmitSuccessPage;

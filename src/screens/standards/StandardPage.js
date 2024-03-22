@@ -101,7 +101,7 @@ function StandardPage() {
     if (riddorReportable === true) {
       navigation.navigate("RiddorReportPage");
     } else {
-      if (conformStandard === true) {
+      if (conformStandard === false) {
         navigation.navigate("SnClientInfoPage");
       } else {
         navigation.navigate("CompositeLabelPage");

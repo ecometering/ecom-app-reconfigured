@@ -46,7 +46,7 @@ const route = useRoute();
   
   
 
-  const [byPassImage, setByPassImage] = useState(meterDetails?.byPassImage);
+  const [byPassImage, setByPassImage] = useState(siteQuestions?.byPassImage);
 
 
   const backPressed = () => {
@@ -135,23 +135,23 @@ const handleNavigationBasedOnConditions = () => {
       switch (jobType) {
         case "Warrant":
         case "Removal":
-          navigation.navigate("removal", { jobId });
+          navigation.navigate("removal");
           console.log("Navigating to RemovalFlowNavigator");
           break;
         case "Exchange":
-          navigation.navigate("exchange", { jobId });
+          navigation.navigate("exchange");
           console.log("Navigating to ExchangeFlowNavigator");
           break;
         case "Install":
-          navigation.navigate("install", { jobId });
+          navigation.navigate("install");
           console.log("Navigating to InstallFlowNavigator");
           break;
         case "Maintenance":
-          navigation.navigate("maintenance", { jobId });
+          navigation.navigate("maintenance");
           console.log("Navigating to MaintenanceFlowNavigator");
           break;
         case "Survey":
-          navigation.navigate("survey", { jobId });
+          navigation.navigate("survey");
           console.log("Navigating to SurveyFlowNavigator");
           break;
         default:
@@ -216,7 +216,7 @@ const handleNavigationBasedOnConditions = () => {
                 "Why is this job not covered by the generic risk assesment"
               }
               placeholder={""}
-              value={genericReason}
+              value={siteQuestions.genericReason}
               onChangeText={(txt) => {
                 handleInputChange("genericReason", txt);
               }}
@@ -239,11 +239,11 @@ const handleNavigationBasedOnConditions = () => {
               value={siteQuestions.isCarryOut === null ? null : siteQuestions.isCarryOut ? "Yes" : "No"}
             />
           </View>
-          {!isCarryOut && (
+          {!siteQuestions.isCarryOut && (
             <TextInputWithTitle
               title={"Why it cant be carried out"}
               placeholder={""}
-              value={carryOutReason}
+              value={siteQuestions.carryOutReason}
               onChangeText={(txt) => {
                 handleInputChange("carryOutReason", txt);
               }}
@@ -258,26 +258,26 @@ const handleNavigationBasedOnConditions = () => {
               options={["Yes", "No"]}
               actions={[
                 () => {
-                  setIsFitted(true);
+                 handleInputChange ("isFitted", true);
                 },
                 () => {
-                  setIsFitted(false);
+                  handleInputChange ("isFitted", false);
                 },
               ]}
-              value={isFitted === null ? null : isFitted ? "Yes" : "No"}
+              value={siteQuestions.isFitted === null ? null : siteQuestions.isFitted ? "Yes" : "No"}
             />
           </View>
 
           
           
-          {isFitted && (
+          {siteQuestions.isFitted && (
             <View style={styles.imagePickerContainer}>
               <ImagePickerButton
-                onImageSelected={(uri) => setByPassImage(uri)}
+                onImageSelected={(uri) => handleInputChange ("byPassImage", uri)}
               />
-              {byPassImage && (
+              {siteQuestions.byPassImage && (
                 <Image
-                  source={{ uri: byPassImage }}
+                  source={{ uri: siteQuestions.byPassImage }}
                   style={styles.image}
                   photoKey="bypassImage"
                 />

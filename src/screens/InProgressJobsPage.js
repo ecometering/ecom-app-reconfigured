@@ -3,7 +3,6 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Dimensions, Alert
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
 import { openDatabase, getDatabaseJob } from '../utils/database'; // Importing required functions
-
 const { width } = Dimensions.get('window'); // Get the screen width
 
 const dynamicFontSize = width < 360 ? 9 : width < 600 ? 11 : 13; // Adjust font size based on screen width
@@ -28,6 +27,7 @@ const JobsTable = ({route}) => {
 
 
   const handleRowClick = (jobId) => {
+
     navigation.navigate('JobDetails', { jobId });
   };
 

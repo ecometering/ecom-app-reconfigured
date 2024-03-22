@@ -47,7 +47,7 @@ const {OnLogout} =useAuth();
         </Button>
         <Button
           onPress={() => {
-            checkJobsAndNavigate();
+            navigationToPage({ navigationName: "NewJobPage" });
           }}
           style={styles.button}
         >

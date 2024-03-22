@@ -61,7 +61,7 @@ export default function CorrectorDetailsPage() {
   const [correctedReads, setCorrectedReads] = useState(correctorDetails?.correctedReads);
 
   const backPressed = () => {
-    appContext.setCorrectorDetails(CorrectorDetails);
+    appContext.setCorrectorDetails(correctorDetails);
       navigation.goBack();
     
   };

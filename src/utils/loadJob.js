@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {  openDatabase, getDatabaseJob } from '../utils/database'; 
-import { AppContext } from "../../context/AppContext";
+import { AppContext } from "../context/AppContext";
 
 
 export const fetchJobDetails = (jobId) => {

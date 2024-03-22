@@ -25,7 +25,7 @@ export default function ExtraPhotoPage() {
   const appContext = useContext(AppContext);
 
   const standardDetails = appContext.standardDetails;
-  const [hasExtraPhoto, setHasExtraPhoto] = useState(false);
+  const [hasExtraPhoto, setHasExtraPhoto] = useState(photoNumber === 1);
   const [AddMorePhotos, setAddMorePhotos] = useState(false);
   const [selectedImage, setSelectedImage] = useState(undefined);
   const [extraComment, setExtraComment] = useState("");
@@ -40,9 +40,17 @@ export default function ExtraPhotoPage() {
   };
 
   const nextPressed = async () => {
-    if (!selectedImage || !extraComment) {
-      EcomHelper.showInfoMessage("Please complete all fields");
-      return;
+    if (hasExtraPhoto) {
+      // Check if the photo is missing
+      if (!selectedImage) {
+        EcomHelper.showInfoMessage("Please add an extra photo");
+        return;
+      }
+      // Check if the comment is missing
+      if (!extraComment) {
+        EcomHelper.showInfoMessage("Please provide comments on the photo");
+        return;
+      }
     }
 
     const newExtra = { extraPhoto: selectedImage, extraComment };
@@ -72,17 +80,21 @@ export default function ExtraPhotoPage() {
           rightBtnPressed={nextPressed}
         />
         <View style={styles.body}>
-          <Text style={styles.text}>Are any extra photos required?</Text>
-          <View style={styles.optionContainer}>
-            <OptionalButton
-              options={["Yes", "No"]}
-              actions={[
-                () => setHasExtraPhoto(true),
-                () => setHasExtraPhoto(false),
-              ]}
-              value={hasExtraPhoto ? "Yes" : "No"}
-            />
-          </View>
+          {photoNumber === 1 && (
+            <View>
+              <Text style={styles.text}>Are any extra photos required?</Text>
+              <View style={styles.optionContainer}>
+                <OptionalButton
+                  options={["Yes", "No"]}
+                  actions={[
+                    () => setHasExtraPhoto(true),
+                    () => setHasExtraPhoto(false),
+                  ]}
+                  value={hasExtraPhoto ? "Yes" : "No"}
+                />
+              </View>
+            </View>
+          )}
           {hasExtraPhoto && (
             <>
               <ImagePickerButton onImageSelected={updateSelectedImage} />

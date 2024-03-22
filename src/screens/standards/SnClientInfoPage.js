@@ -90,76 +90,14 @@ function SnClientInfoPage() {
 
     if (tableData.length === 0) {
       EcomHelper.showInfoMessage("Atleast one entry required")
+      return;
     }
 
-    // if (type == null) {
-    //   EcomHelper.showInfoMessage("Please enter type");
-    //   return;
-    // }
-    // if (location == null) {
-    //   EcomHelper.showInfoMessage("Please enter location");
-    //   return;
-    // }
-    // if (make == null) {
-    //   EcomHelper.showInfoMessage("Please enter make");
-    //   return;
-    // }
-    // if (model == null) {
-    //   EcomHelper.showInfoMessage("Please enter model");
-    //   return;
-    // }
-    // if (serialNumber == null) {
-    //   EcomHelper.showInfoMessage("Please enter serial number");
-    //   return;
-    // }
-    // if (descript == null) {
-    //   EcomHelper.showInfoMessage("Please enter description of fault");
-    //   return;
-    // }
-    // if (remedial == null) {
-    //   EcomHelper.showInfoMessage(
-    //     'Please answer "Remdeial action required to rectify the unsafe situation"'
-    //   );
-    //   return;
-    // }
-
-    // if (isDisconnectDanger == null) {
-    //   EcomHelper.showInfoMessage(
-    //     'Please answer "Immediately dangerous has been disconnected and labelled do not use"'
-    //   );
-    //   return;
-    // }
-    // if (isTurnOffDanger == null) {
-    //   EcomHelper.showInfoMessage(
-    //     'Please answer "At risk, Has been turned off and labelled danger do not use"'
-    //   );
-    //   return;
-    // }
-    // if (isNotRemove == null) {
-    //   EcomHelper.showInfoMessage(
-    //     'Please answer "At risk, However turning off does not remove the risk"'
-    //   );
-    //   return;
-    // }
+   
 
     appContext.setStandardDetails({
       ...standardDetails,
-      type: type,
-      location: location,
-      make: make,
-      model: model,
-      serialNumber: serialNumber,
-      descript: descript,
-      isEscapeGas: isEscapeGas,
-      isMeterIssue: isMeterIssue,
-      isPipeworkIssue: isPipeworkIssue,
-      isChimneyFlute: isChimneyFlute,
-      isVentilation: isVentilation,
-      isOther: isOther,
-      isDisconnectDanger: isDisconnectDanger,
-      isTurnOffDanger: isTurnOffDanger,
-      isNotRemove: isNotRemove,
-      remedial: remedial,
+
       tableData,
     });
     navigation.navigate("GasSafeWarningPage");

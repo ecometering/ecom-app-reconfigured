@@ -143,14 +143,9 @@ const MainNavigator = () => {
 						key="DSEARLabelPhoto"
 						name="DSEARLabelPhoto"
 						component={GenericPhotoPage}
-						initialParams={{ title: "DSEAR label", photoKey: "dsearLabel", nextScreen: "SettingsLabelPhoto" }}
+						initialParams={{ title: "DSEAR label", photoKey: "dsearLabel", nextScreen:  "ExtraPhotoPage"  }}
 					/>
 
-					<Stack.Screen
-						name="SettingsLabelPhoto"
-						component={GenericPhotoPage}
-						initialParams={{ title: "Settings label", photoKey: "settingsLabel", nextScreen: "ExtraPhotoPage" }} // Adjusted to navigate to the first extra photo page correctly
-					/>
 					<Stack.Screen name="ExtraPhotoPage" component={ExtraPhotoPage} initialParams={{ photoNumber: 0, photoKey: "extraPhotos_0,", title: "Extra Photos " }} />
 					{AdditionalPhotosProcess().map((screen) => (
 						<Stack.Screen key={screen.key} name={screen.name} component={screen.component} initialParams={screen.initialParams} />
