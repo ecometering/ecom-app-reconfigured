@@ -9,6 +9,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createStackNavigator } from "@react-navigation/stack";
 import Constants from 'expo-constants';
 import { AuthProvider } from './src/context/AuthContext';
+import { SQLiteProvider } from 'expo-sqlite/next';
+import { NavigationContainer } from '@react-navigation/native';
 
 
 const CheckFirstLaunch = async () => {
@@ -74,10 +76,13 @@ export const Layout = () => {
     
     <AppContextProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        {/* <NavigationContainer>
         
-        </NavigationContainer> */}
+          <React.Suspense>
+            <SQLiteProvider databaseName='options.sqlite' useSuspense>
         <MainNavigator/>
+</SQLiteProvider>
+          </React.Suspense>
+        
       </GestureHandlerRootView>
     </AppContextProvider>
    

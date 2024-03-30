@@ -35,6 +35,8 @@ function MaintenanceQuestionsPage() {
   const [signature, setSignature] = useState(maintenanceDetails?.signature);
   const [isConfirm, setIsConfirm] = useState(maintenanceDetails?.isConfirm);
 
+  
+
   console.log("MaintenanceQuestionsPaqge");
 
   const nextPressed = () => {
@@ -74,33 +76,10 @@ function MaintenanceQuestionsPage() {
       );
       return;
     }
-    appContext.setMaintenanceDetails({
-      ...maintenanceDetails,
-      isRisky: isRisky,
-      isCarryOut: isCarryOut,
-      isFitted: isFitted,
-      condition: condition,
-      oilLevel: oilLevel,
-      isClearPipes: isClearPipes,
-      notes: notes,
-      signature,
-      isConfirm: isConfirm,
-    });
+    context();
     navigation.navigate("ExistingRegulator");
   };
   const backPressed = () => {
-    appContext.setMaintenanceDetails({
-      ...maintenanceDetails,
-      isRisky: isRisky,
-      isCarryOut: isCarryOut,
-      isFitted: isFitted,
-      condition: condition,
-      oilLevel: oilLevel,
-      isClearPipes: isClearPipes,
-      notes: notes,
-      signature,
-      isConfirm: isConfirm,
-    });
     navigation.goBack();
   };
 

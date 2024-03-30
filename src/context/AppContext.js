@@ -11,12 +11,25 @@ const AppContextProvider = (props) => {
   const [jobType, setJobType] = useState(null);
 const [jobDetails, setJobDetails] = useState(null);
   const [isWarrant, setIsWarrant] = useState(false);
-  const [photos, setPhotos] = useState([]);
-
-  // Function to add a new photo detail
-  const addPhotoDetail = (newPhotoDetail) => {
-    setPhotos(prevPhotos => [...prevPhotos, newPhotoDetail]);
-  };
+    const [photos, setPhotos] = useState({});
+  
+    const savePhoto = (photoKey, photoDetails) => {
+      setPhotos(prevPhotos => ({
+        ...prevPhotos,
+        [photoKey]: photoDetails,
+      }));
+    };
+  
+    const updatePhoto = (photoKey, newDetails) => {
+      setPhotos(prevPhotos => ({
+        ...prevPhotos,
+        [photoKey]: { ...prevPhotos[photoKey], ...newDetails },
+      }));
+    };
+  
+    const loadPhoto = (photoKey) => {
+      return photos[photoKey];
+    };
   const [hasStreamNumber, setHasStreamNumber] = useState(false);
   const [streamNumber, setStreamNumber] = useState(0);
   const [streamValue, setStreamValue] = useState([]);
