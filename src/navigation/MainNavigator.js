@@ -41,6 +41,7 @@ import InstallFlowNavigator from "./installFlowNavigator";
 import MaintenanceFlowNavigator from "./maintenanceFlowNavigator";
 import RemovalFlowNavigator from "./removalFlowNavigator";
 import SurveyFlowNavigator from "./surveyFlowNavigator";
+import CorrectorDetailsPage from "../screens/jobs/CorrectorDetailsPage";
 
 const Stack = createStackNavigator();
 
@@ -115,6 +116,7 @@ const MainNavigator = () => {
 			{authState?.authenticated ?  (
 				<Stack.Group>
 					<Stack.Screen name="Home" component={HomePage} />
+					<Stack.Screen name="Corrector Details" component={CorrectorDetailsPage} />
 					<Stack.Screen name="CalendarPage" component={CalendarPage} />
 					<Stack.Screen name="NewJobPage" component={JobTypePage} />
 					<Stack.Screen name="PlannedJobPage" component={PlannedJobPage} />

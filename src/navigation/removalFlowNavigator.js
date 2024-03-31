@@ -14,6 +14,7 @@ import CorrectorGatewayScreen from "../screens/gateways/CorrectorGateWay";
 
 
 import { createStackNavigator } from "@react-navigation/stack";
+import { NavigationContainer } from "@react-navigation/native";
 
 
 const Stack = createStackNavigator();
@@ -47,9 +48,10 @@ const assetSelection = ({ meter, corrector, datalogger }) => {
     const appContext = useContext(AppContext);
     const meterType = appContext.meterDetails?.type;
 return(
+  <NavigationContainer>
     <Stack.Navigator > 
     <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being Removed',nextScreen:'AssetGateway'}} />
-    <stack.Screen name="AssetGateway" component={RemovalGatewayScreen} />
+    <Stack.Screen name="AssetGateway" component={RemovalGatewayScreen} />
     <Stack.Screen name="RemovedMeterDetails" component={MeterDetailsPage} initialParams={{title:' Removed Meter Details',nextScreen:'MeterGatway1'}} />
     <Stack.Screen name ="MeterGateway1" component={MeterGatewayScreen} initialParams={{pageflow:1}} />
     <Stack.Screen 
@@ -82,7 +84,7 @@ return(
 
     <Stack.Screen name="RemovedDataLoggerDetails" component={DataLoggerDetailsPage} initialParams={{title:'Removed AMR ',nextScreen:'StandardPage'}} />
 </Stack.Navigator>
-    
+</NavigationContainer>
     
   );};
 

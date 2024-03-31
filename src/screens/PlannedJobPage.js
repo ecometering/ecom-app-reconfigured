@@ -9,6 +9,7 @@ import { TextType } from '../theme/typography';
 import { AppContext } from '../context/AppContext';
 import { useScreenDimensions } from '../utils/constant';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 function PlannedJobPage() {
   const navigation = useNavigation();
   const [plannedJobs, setPlannedJobs] = useState([]);
@@ -20,6 +21,7 @@ function PlannedJobPage() {
     const fetchPlannedJobs = async () => {
       setIsLoading(true);
       setError(null);
+  
       try {
         const response = await axios.get('https://test.ecomdata.co.uk/api/jobs');
         const { data } = response;
@@ -30,12 +32,13 @@ function PlannedJobPage() {
           setError('No planned jobs found');
         }
       } catch (error) {
+        console.log("error", error.response.data)
         setError('Error loading data: ' + error.message);
       } finally {
         setIsLoading(false);
       }
     };
-  
+
     fetchPlannedJobs();
   }, [])
 

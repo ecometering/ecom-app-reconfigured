@@ -8,7 +8,7 @@ const generateToken = async (username, password) => {
       password,
     });
     console.log(response.data);
-    const { access:accessToken, refresh:refreshToken } = response.data;
+    const { access: accessToken, refresh: refreshToken } = response.data;
     // Store tokens in AsyncStorage or any secure storage you prefer
     await AsyncStorage.setItem('userToken', accessToken);
     console.log('Access token stored.', accessToken);
@@ -20,27 +20,27 @@ const generateToken = async (username, password) => {
   }
 };
 const refreshTokenFunc = async () => {
-    try {
-      const refreshToken = await AsyncStorage.getItem('refreshToken');
-      const response = await axios.post("https://test.ecomdata.co.uk/api/token/", {
-        refreshToken,
-      });
-  
-      if (response.data.success) {
-        const { accessToken } = response.data;
-        await AsyncStorage.setItem('accessToken', accessToken);
-        console.log('Access token refreshed.');
-      } else {
-        // If the refresh token is invalid, remove tokens and force login
-        await AsyncStorage.removeItem('accessToken');
-        await AsyncStorage.removeItem('refreshToken');
-        console.log('Refresh token invalid, please log in again.');
-        // Force logout logic here (navigate to login screen, etc.)
-      }
-    } catch (error) {
-      console.error('Error refreshing token:', error);
-    }
-  };
-  
+  try {
+    const refreshToken = await AsyncStorage.getItem('refreshToken');
+    const response = await axios.post("https://test.ecomdata.co.uk/api/token/", {
+      refreshToken,
+    });
 
-  export { generateToken, refreshTokenFunc };
+    if (response.data.success) {
+      const { accessToken } = response.data;
+      await AsyncStorage.setItem('accessToken', accessToken);
+      console.log('Access token refreshed.');
+    } else {
+      // If the refresh token is invalid, remove tokens and force login
+      await AsyncStorage.removeItem('accessToken');
+      await AsyncStorage.removeItem('refreshToken');
+      console.log('Refresh token invalid, please log in again.');
+      // Force logout logic here (navigate to login screen, etc.)
+    }
+  } catch (error) {
+    console.error('Error refreshing token:', error);
+  }
+};
+
+
+export { generateToken, refreshTokenFunc };

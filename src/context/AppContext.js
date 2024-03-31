@@ -1,35 +1,39 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 const AppContext = createContext({
   numberOfStreams: 0,
-  currentStreamIndex: 0, 
+  currentStreamIndex: 0,
   updateCurrentStreamIndex: 0,
   extraPhotoCount: 0
 });
 
+export const useAppContext = () => {
+  return useContext(AppContext);
+}
+
 const AppContextProvider = (props) => {
   const [jobType, setJobType] = useState(null);
-const [jobDetails, setJobDetails] = useState(null);
+  const [jobDetails, setJobDetails] = useState(null);
   const [isWarrant, setIsWarrant] = useState(false);
-    const [photos, setPhotos] = useState({});
-  
-    const savePhoto = (photoKey, photoDetails) => {
-      setPhotos(prevPhotos => ({
-        ...prevPhotos,
-        [photoKey]: photoDetails,
-      }));
-    };
-  
-    const updatePhoto = (photoKey, newDetails) => {
-      setPhotos(prevPhotos => ({
-        ...prevPhotos,
-        [photoKey]: { ...prevPhotos[photoKey], ...newDetails },
-      }));
-    };
-  
-    const loadPhoto = (photoKey) => {
-      return photos[photoKey];
-    };
+  const [photos, setPhotos] = useState({});
+
+  const savePhoto = (photoKey, photoDetails) => {
+    setPhotos(prevPhotos => ({
+      ...prevPhotos,
+      [photoKey]: photoDetails,
+    }));
+  };
+
+  const updatePhoto = (photoKey, newDetails) => {
+    setPhotos(prevPhotos => ({
+      ...prevPhotos,
+      [photoKey]: { ...prevPhotos[photoKey], ...newDetails },
+    }));
+  };
+
+  const loadPhoto = (photoKey) => {
+    return photos[photoKey];
+  };
   const [hasStreamNumber, setHasStreamNumber] = useState(false);
   const [streamNumber, setStreamNumber] = useState(0);
   const [streamValue, setStreamValue] = useState([]);
@@ -83,13 +87,13 @@ const [jobDetails, setJobDetails] = useState(null);
     setJobType(job);
     console.log("Job type changed", job);
   };
-const [visitCounts, setVisitCounts] = useState({});
-const updateVisitCount = (screenName) => {
-  setVisitCounts((prevCounts) => ({
+  const [visitCounts, setVisitCounts] = useState({});
+  const updateVisitCount = (screenName) => {
+    setVisitCounts((prevCounts) => ({
       ...prevCounts,
       [screenName]: (prevCounts[screenName] || 0) + 1,
-  }));
-};
+    }));
+  };
   const providerValue = {
     jobType,
     jobDetails,
@@ -116,6 +120,9 @@ const updateVisitCount = (screenName) => {
     setJobDetails,
     setSiteQuestions,
     setPhotos,
+    savePhoto,
+    // addPhotoDetail,
+    updatePhoto,
     setJobdata,
     setMaintenanceDetails,
     setPassedRemoval,
