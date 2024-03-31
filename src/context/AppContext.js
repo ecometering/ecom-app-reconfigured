@@ -116,7 +116,6 @@ const updateVisitCount = (screenName) => {
     setJobDetails,
     setSiteQuestions,
     setPhotos,
-    addPhotoDetail,
     setJobdata,
     setMaintenanceDetails,
     setPassedRemoval,
