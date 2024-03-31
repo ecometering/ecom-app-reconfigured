@@ -11,7 +11,7 @@ import {
 import { width, height, unitH } from "../../utils/constant";
 import { PrimaryColors } from "../../theme/colors";
 import { useNavigation } from "@react-navigation/native";
-import { Calendar, Agenda } from "react-native-calendars";
+import { Calendar, Agenda, WeekCalendar } from "react-native-calendars";
 import moment from "moment";
 import Text from "../../components/Text";
 import Header from "../../components/Header";
@@ -20,6 +20,7 @@ import DailyView from "../../components/calendar/DailyView";
 import { MaterialCommunityIcons } from "@expo/vector-icons"
 
 export const sampleEvents = {
+  ["2024-03-31"]: [
   ["2024-03-31"]: [
     {
       title: "Team Meeting",
@@ -37,6 +38,7 @@ export const sampleEvents = {
     },
   ],
   ["2024-03-21"]: [
+  ["2024-03-21"]: [
     {
       title: "Meeting with Client",
       startTime: "10:00 AM",
@@ -52,6 +54,7 @@ export const sampleEvents = {
       description: "Enjoy lunch with colleagues",
     },
   ],
+  ["2024-03-22"]: [
   ["2024-03-22"]: [
     {
       title: "Team Meeting",
@@ -73,6 +76,7 @@ export const sampleEvents = {
 const EventModal = ({ isVisible, onClose, onSubmit, event = {} }) => {
   const [title, setTitle] = useState(event.title || '');
   const [location, setLocation] = useState(event.title || '');
+  const [location, setLocation] = useState(event.title || '');
   const [startTime, setStartTime] = useState(event.startTime || '');
   const [endTime, setEndTime] = useState(event.endTime || '');
   const [description, setDescription] = useState(event.description || '');
@@ -84,44 +88,46 @@ const EventModal = ({ isVisible, onClose, onSubmit, event = {} }) => {
   };
 
 
+
+
   return (
     <Modal
-      animationType="slide"
-      transparent={true}
-      visible={isVisible}
-      onRequestClose={onClose}>
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <Text style={styles.modalText}>Holiday Settings</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Title"
-            value={title}
-            onChangeText={setTitle}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Description"
-            value={description}
-            onChangeText={setDescription}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Start Date (YYYY-MM-DD)"
-            value={startTime}
-            onChangeText={setStartTime}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="End Date (YYYY-MM-DD)"
-            value={endTime}
-            onChangeText={setEndTime}
-          />
-          <Button title="Submit" onPress={handleSubmit} />
-          <Button title="Close" onPress={onClose} />
-        </View>
+    animationType="slide"
+    transparent={true}
+    visible={isVisible}
+    onRequestClose={onClose}>
+    <View style={styles.centeredView}>
+      <View style={styles.modalView}>
+        <Text style={styles.modalText}>Holiday Settings</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Title"
+          value={title}
+          onChangeText={setTitle}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Description"
+          value={description}
+          onChangeText={setDescription}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Start Date (YYYY-MM-DD)"
+          value={startTime}
+          onChangeText={setStartTime}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="End Date (YYYY-MM-DD)"
+          value={endTime}
+          onChangeText={setEndTime}
+        />
+        <Button title="Submit" onPress={handleSubmit} />
+        <Button title="Close" onPress={onClose} />
       </View>
-    </Modal>
+    </View>
+  </Modal>
   );
 };
 
@@ -129,6 +135,8 @@ const fetchEvents = async () => {
   try {
     const response = await fetch('https://test.ecomdata.co.uk/api/events');
     const data = await response.json();
+    console.log("data-------->", data)
+
     console.log("data-------->", data)
 
     const formattedEvents = data.reduce((acc, curr) => {
@@ -176,6 +184,8 @@ function CalendarPage() {
   const [modalVisible, setModalVisible] = useState(false);
 
 
+
+
   useEffect(() => {
     const _schedules = {};
 
@@ -186,48 +196,48 @@ function CalendarPage() {
     setSchedules(_schedules);
   }, []);
 
-  useEffect(() => {
-    fetchEvents();
-  }, []);
+useEffect(()=>{
+  fetchEvents();
+},[]);
 
-  const handleEventSubmit = async (eventData) => {
-    try {
-      const response = await fetch('https://test.ecomdata.co.uk/api/events', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          event_name: eventData.title,
-          description: eventData.description,
-          start_date: eventData.startDate,
-          end_date: eventData.endDate,
-          event_type: 4, // Holiday
-          is_all_day: true,
-          is_public: true,
-          is_organisation: true,
-          repeat_type: 'None',
-          reminder_time: null,
-        }),
-      });
-
-      if (response.ok) {
-        // Handle success response
-        setIsModalVisible(false);
-        // Reset form fields if necessary
-        setEventName('');
-        setDescription('');
-        setStartDate('');
-        setEndDate('');
-        // Optionally refresh or update the parent component state
-      } else {
-        // Handle error response
-        alert('Failed to create event');
-      }
-    } catch (error) {
-      alert('Error submitting form: ' + error.message);
+const handleEventSubmit = async (eventData) => {
+  try {
+    const response = await fetch('https://test.ecomdata.co.uk/api/events', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        event_name: eventData.title,
+        description: eventData.description,
+        start_date: eventData.startDate,
+        end_date: eventData.endDate,
+        event_type: 4, // Holiday
+        is_all_day: true,
+        is_public: true,
+        is_organisation: true,
+        repeat_type: 'None',
+        reminder_time: null,
+      }),
+    });
+    
+    if (response.ok) {
+      // Handle success response
+      setIsModalVisible(false);
+      // Reset form fields if necessary
+      setEventName('');
+      setDescription('');
+      setStartDate('');
+      setEndDate('');
+      // Optionally refresh or update the parent component state
+    } else {
+      // Handle error response
+      alert('Failed to create event');
     }
-  };
+  } catch (error) {
+    alert('Error submitting form: ' + error.message);
+  }
+};
 
   const backPressed = () => {
     navigation.goBack();
@@ -263,7 +273,7 @@ function CalendarPage() {
         hasCenterText={true}
         hasRightBtn={viewMode === "Day"}
         rightBtnText={"Book holiday"}
-        rightBtnPressed={() => setModalVisible(true)}
+        rightBtnPressed={()=> setModalVisible(true)}
         centerText="Calendar"
         leftBtnPressed={() => navigation.goBack()}
       />
@@ -313,41 +323,41 @@ function CalendarPage() {
         {viewMode === "Week" && (
           <Agenda
             markedDates={schedules}
-            selected={selectedDate}
-            items={agendaItem}
-            onDayPress={(day) => {
-              console.log("Selected day:", day);
-              let dateString = day.dateString;
-              setSelectedDate(dateString);
-              setAgendaItem({
-                [dateString]: sampleEvents[dateString],
-              });
-            }}
-            renderItem={(item, firstItemInDay) => {
-              return (
-                <TouchableOpacity onPress={() => { }}>
-                  <View style={styles.eventContainer}>
-                    <Text style={styles.eventTitle}>{item.title}</Text>
-                    <Text
-                      style={styles.eventTime}
-                    >{`${item.startTime} - ${item.endTime}`}</Text>
-                    <Text style={styles.eventLocation}>{item.location}</Text>
-                    <Text style={styles.eventDescription}>
-                      {item.description}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              );
-            }}
-            // hideKnob={true}
-            showClosingKnob
-            renderEmptyData={() => (
-              <View style={styles.noEventDataContainer}>
-                <Text style={styles.noEventDataText}>
-                  No events for this day
-                </Text>
-              </View>
-            )}
+          selected={selectedDate}
+          items={agendaItem}
+          onDayPress={(day) => {
+            console.log("Selected day:", day);
+            let dateString = day.dateString;
+            setSelectedDate(dateString);
+            setAgendaItem({
+              [dateString]: sampleEvents[dateString],
+            });
+          }}
+          renderItem={(item, firstItemInDay) => {
+            return (
+              <TouchableOpacity onPress={() => { }}>
+                <View style={styles.eventContainer}>
+                  <Text style={styles.eventTitle}>{item.title}</Text>
+                  <Text
+                    style={styles.eventTime}
+                  >{`${item.startTime} - ${item.endTime}`}</Text>
+                  <Text style={styles.eventLocation}>{item.location}</Text>
+                  <Text style={styles.eventDescription}>
+                    {item.description}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            );
+          }}
+          // hideKnob={true}
+          showClosingKnob
+          renderEmptyData={() => (
+            <View style={styles.noEventDataContainer}>
+              <Text style={styles.noEventDataText}>
+                No events for this day
+              </Text>
+            </View>
+          )}
           />)}
 
         {viewMode === "Day" && (
@@ -363,7 +373,7 @@ function CalendarPage() {
               setSelectedDate(prevDay);
             }}
             openModal={() => setModalVisible(true)}
-            sections={!!agendaItem ? agendaItem[selectedDate] : []}
+            sections={agendaItem[selectedDate]}
           />
         )}
       </View>
@@ -378,6 +388,9 @@ function CalendarPage() {
       />
     </SafeAreaView>
   );
+}
+
+
 }
 
 
@@ -494,6 +507,12 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     textAlign: 'center',
     fontSize: width * 0.05,
+  },
+  selectedDate: {
+    marginLeft: 8,
+    fontSize: 20,
+    marginBottom: 16,
+    fontWeight: "500"
   },
   input: {
     width: '100%',
