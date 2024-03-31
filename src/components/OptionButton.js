@@ -1,11 +1,15 @@
-import React, {useState} from 'react';
-import {View, StyleSheet} from 'react-native';
-import {EcomPressable as Button} from './ImageButton';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { EcomPressable as Button } from './ImageButton';
 import Text from './Text';
-import {PrimaryColors} from '../theme/colors';
+import { PrimaryColors } from '../theme/colors';
 
-const OptionalButton = ({options, actions, style, value}) => {
+const OptionalButton = ({ options, actions, style, value }) => {
   const [selectedOption, setSelectedOption] = useState(value);
+
+  useEffect(() => {
+    setSelectedOption(value)
+  }, [value]);
 
   const handleOptionPress = (option, action) => {
     setSelectedOption(option);
@@ -13,7 +17,7 @@ const OptionalButton = ({options, actions, style, value}) => {
   };
 
   return (
-    <View style={{...styles.container}}>
+    <View style={{ ...styles.container }}>
       {options.map((option, index) => (
         <Button
           key={index}
@@ -44,7 +48,7 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     shadowColor: 'black',
     shadowOpacity: 0.5,
-    shadowOffset: {width: 2, height: 2},
+    shadowOffset: { width: 2, height: 2 },
     shadowRadius: 2,
   },
   selectedButton: {
@@ -57,7 +61,7 @@ const styles = StyleSheet.create({
     backgroundColor: PrimaryColors.Blue,
     shadowColor: 'black',
     shadowOpacity: 0.5,
-    shadowOffset: {width: 2, height: 2},
+    shadowOffset: { width: 2, height: 2 },
     shadowRadius: 2,
   },
 });

@@ -23,6 +23,7 @@ import MeterGatewayScreen from "../screens/gateways/MeterGateWay";
 import DataloggerGatewayScreen from "../screens/gateways/DataloggerGateWay";
 
 import { createStackNavigator } from "@react-navigation/stack";
+import { NavigationContainer } from "@react-navigation/native";
 
 
 const Stack = createStackNavigator();
@@ -127,10 +128,10 @@ const InstallFlowNavigator = () => {
   console.log ("loading install flow navigator with ", numberOfStreams, " streams");
 
  return(
+  <NavigationContainer>
  <Stack.Navigator> 
     <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being installed',nextScreen: 'AssetSelectGateway' }} />
     <Stack.Screen name="AssetSelectGateway" component={AssetSelectGatewayScreen} />
-    
     
     {/* meter process */}
     <Stack.Screen  name="MeterDetails" component={MeterDetailsPage}
@@ -195,7 +196,7 @@ const InstallFlowNavigator = () => {
     <Stack.Screen name="ChatterBox" component={ChatterBoxPage} />
     <Stack.Screen name="AdditionalMaterial" component={AdditionalMaterialPage} />
   </Stack.Navigator>
-
+  </NavigationContainer>
 );};
 
 export default InstallFlowNavigator;

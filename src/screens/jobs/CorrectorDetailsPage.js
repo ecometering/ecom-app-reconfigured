@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState,useEffect } from "react";
+import React, { useContext, useRef, useState,useEffect, createRef } from "react";
 import {
   Alert,
   Button,
@@ -35,6 +35,7 @@ import EcomDropDown from "../../components/DropDown";
 import { fetchManufacturersForMeterType, fetchModelsForManufacturer } from "../../utils/database";
 const alphanumericRegex = /^[a-zA-Z0-9]+$/;
 const { width, height } = Dimensions.get("window");
+
 export default function CorrectorDetailsPage() {
   const appContext = useContext(AppContext);
   const navigation = useNavigation();
@@ -60,8 +61,10 @@ export default function CorrectorDetailsPage() {
   const [uncorrectedReads, setUncorrectedReads] = useState(correctorDetails?.uncorrectedReads);
   const [correctedReads, setCorrectedReads] = useState(correctorDetails?.correctedReads);
 
+const camera = createRef(null)
+
   const backPressed = () => {
-    appContext.setCorrectorDetails(correctorDetails);
+    // appContext.setCorrectorDetails(correctorDetails);
       navigation.goBack();
     
   };

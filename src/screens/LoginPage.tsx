@@ -26,7 +26,7 @@ function LoginPage() {
   const appContext = useContext(AppContext)
 
 const login =async ()=>{
-  const result = await OnLogin!(username,password);
+  const result = await OnLogin!(username,'plmnbvcfghjkoiuyt0987');
   console.log ("file : LoginPage.tsx ~ line 47 ~ login ~ result", result)
   if (result && result.error){
 alert(result.msg)
