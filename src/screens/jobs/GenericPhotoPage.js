@@ -12,13 +12,13 @@ function GenericPhotoPage() {
   const navigation = useNavigation();
   const { params } = useRoute();
   const { title, photoKey, nextScreen } = params;
-  const { photos, updatePhotoData } = useAppContext();
+  const { photos,savePhoto  } = useAppContext();
   const existingPhoto = photos[photoKey];
   const [selectedImage, setSelectedImage] = useState(existingPhoto?.uri || null);
 
   const handlePhotoSelected = (uri) => {
     setSelectedImage(uri);
-    updatePhotoData(photoKey, { title, photoKey, uri });
+    savePhoto(photoKey, { title, photoKey, uri });
   };
 
   return (
