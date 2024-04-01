@@ -12,6 +12,7 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 function PlannedJobPage() {
   const navigation = useNavigation();
+  const {authState} = useAuth();
   const [plannedJobs, setPlannedJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);

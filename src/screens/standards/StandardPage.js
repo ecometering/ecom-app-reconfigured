@@ -77,7 +77,7 @@ function StandardPage() {
       EcomHelper.showInfoMessage("Please set inlet pressure");
       return;
     }
-   
+
     if (signature == null) {
       EcomHelper.showInfoMessage("Please enter signature");
       return;
@@ -137,7 +137,7 @@ function StandardPage() {
         style={styles.content}
         behavior={isIos ? "padding" : null}
       >
-        <ScrollView style={styles.content}>
+        <ScrollView style={styles.scrollView}>
           <View style={styles.spacer} />
           <View style={styles.body}>
             <Text>Tightness test passed</Text>
@@ -172,8 +172,8 @@ function StandardPage() {
                   conformStandard == null
                     ? null
                     : conformStandard
-                    ? "Yes"
-                    : "No"
+                      ? "Yes"
+                      : "No"
                 }
               />
             </View>
@@ -194,8 +194,8 @@ function StandardPage() {
                   riddorReportable == null
                     ? null
                     : riddorReportable
-                    ? "Yes"
-                    : "No"
+                      ? "Yes"
+                      : "No"
                 }
               />
             </View>
@@ -216,40 +216,37 @@ function StandardPage() {
               />
             </View>
             <View style={styles.spacer} />
-           
-              <TextInputWithTitle
-                title={"Inlet Pressure"}
-                width={'100%'}
-                value={pressure}
-                onChange={(item) => {
-                  setPressure(item);
-                }}
-                keyboardType='numeric'
-              />
-              
-              <View style={styles.spacer} />
-          <TextInputWithTitle
-                title={"Notes"}
-                value={conformText}
-                onChangeText={(text) => {
-                  setconformText(text);
-                }}
-                style={{
-                  ...styles.input,
-                  width:"100%",
-                  height: height * 0.2,
-                }}
-                multiline={true}
-              />
-            <View style={styles.spacer} />
-            <Text>{`I conform that all works have been carried out in 
-accordance with current industry standards and 
-health safety policies`}</Text>
-            
-          
-              
-          
 
+            <TextInputWithTitle
+              title={"Inlet Pressure"}
+              width={'100%'}
+              value={pressure}
+              onChange={(item) => {
+                setPressure(item);
+              }}
+              keyboardType='numeric'
+            />
+
+            <View style={styles.spacer} />
+            <TextInputWithTitle
+              title={"Notes"}
+              value={conformText}
+              onChangeText={(text) => {
+                setconformText(text);
+              }}
+              style={{
+                ...styles.input,
+                width: "100%",
+                height: height * 0.2,
+              }}
+              multiline={true}
+            />
+            <View style={styles.spacer} />
+            <Text>
+              I conform that all works have been carried out in
+              accordance with current industry standards and
+              health safety policies
+              </Text>
             <View style={styles.spacer} />
             <View>
               <Button
@@ -267,19 +264,18 @@ health safety policies`}</Text>
               )}
             </View>
 
-            <Modal style={{flex:1}} visible={isModal}>
-            <Button
+            <Modal style={{ flex: 1 }} visible={isModal}>
+              <Button
                 title="Close"
                 onPress={() => {
                   setIsModal(false);
                 }}
               />
-              <View style={{flex:1, backgroundColor:'red'}}>
+              <View style={{ flex: 1, backgroundColor: 'red' }}>
 
                 <SignatureScreen
-                  
                   onOK={handleOK}
-                  webStyle={ `.m-signature-pad {
+                  webStyle={`.m-signature-pad {
                     box-shadow: none; border: none;
                     margin-left: 0px;
                     margin-top: 0px;
@@ -298,8 +294,8 @@ health safety policies`}</Text>
                   scrollable={true}
                 />
               </View>
-         
-             
+
+
             </Modal>
 
           </View>
@@ -315,6 +311,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+    paddingHorizontal: 16
   },
   modalContent: {
     flex: 1,

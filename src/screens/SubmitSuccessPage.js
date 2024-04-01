@@ -5,9 +5,11 @@ import { AppContext } from '../context/AppContext';
 import { openDatabase } from '../utils/database';
 import axios from 'axios';
 import Header from '../components/Header'; // Assuming this is your header component
+import { useAuth } from '../context/AuthContext';
 
 const SubmitSuccessPage = () => {
   const appContext = useContext(AppContext);
+  const {authState} = useAuth()
   const navigation = useNavigation();
 
   async function fetchAndUploadJobData() {
@@ -15,22 +17,31 @@ const SubmitSuccessPage = () => {
     db.transaction(tx => {
       tx.executeSql(
         `SELECT * FROM Jobs WHERE id = ?`,
-        [appContext?.jobData?.id],
+        [appContext?.jobDetails?.JobID],
         async (_, { rows: { _array } }) => {
           if (_array.length > 0) {
             const jobData = { ..._array[0] };
             const photos = JSON.parse(jobData.photos); // Assuming photos is stored as JSON string
             delete jobData.photos; // Remove photos from jobData before sending
+            jobData.siteDetails = JSON.parse(jobData.siteDetails);
+            jobData.siteDetails.title = jobData.siteDetails.title.value // TODO: Get value from dropdown
+            // console.log("jobData", jobData)
+
 
             try {
               // Upload job data excluding photos with Axios
-              await axios.post('https://test.ecomdata.co.uk/api/incoming-jobs', jobData);
+              const config = {
+                headers: {
+                  Authorization: `Bearer ${authState.token}`
+                }
+              }
+              await axios.post('https://test.ecomdata.co.uk/api/incoming-jobs', jobData, config);
               console.log('Job data uploaded successfully');
 
               // Upload photos with Axios
-              for (const photo of photos) {
-                await axios.post('https://test.ecomdata.co.uk/api/photos', { photo });
-              }
+              // for (const photo of photos) {
+              //   await axios.post('https://test.ecomdata.co.uk/api/photos', { photo });
+              // }
               console.log('Photos uploaded successfully');
 
               // Update job status to 'Completed'
