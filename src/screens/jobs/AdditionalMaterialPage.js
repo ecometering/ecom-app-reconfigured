@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, { useContext, useState } from 'react';
 import {
   FlatList,
   KeyboardAvoidingView,
@@ -7,15 +7,15 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import Text, {CenteredText} from '../../components/Text';
+import Text, { CenteredText } from '../../components/Text';
 import Header from '../../components/Header';
-import {useNavigation} from '@react-navigation/native';
-import { width, unitH, ADDITIONAL_MATERIALS_ITEM_CODE_LIST} from '../../utils/constant';
-import {TextType} from '../../theme/typography';
+import { useNavigation } from '@react-navigation/native';
+import { width, unitH } from '../../utils/constant';
+import { TextType } from '../../theme/typography';
 import EcomDropDown from '../../components/DropDown';
-import {PrimaryColors, Transparents} from '../../theme/colors';
-import {EcomPressable as Button} from '../../components/ImageButton';
-import {AppContext} from '../../context/AppContext';
+import { PrimaryColors, Transparents } from '../../theme/colors';
+import { EcomPressable as Button } from '../../components/ImageButton';
+import { AppContext } from '../../context/AppContext';
 import EcomHelper from '../../utils/ecomHelper';
 import { openDatabase } from '../../utils/database';
 function AdditionalMaterialPage() {
@@ -29,7 +29,7 @@ function AdditionalMaterialPage() {
 
   const jobType = appContext.jobType;
   const title = jobType === 'Install' ? 'New Meter Details' : jobType;
-  
+
   const saveAdditionalMaterialsToDatabase = async () => {
     console.log("creating job")
     const db = await openDatabase();
@@ -38,25 +38,25 @@ function AdditionalMaterialPage() {
     const additionalMaterials = JSON.stringify(materials);
 
 
-  db.transaction((tx) => {
-    tx.executeSql(
-      `UPDATE Jobs SET additionalMaterials=?, progress=? WHERE id=?`,
-      [additionalMaterials,progress , jobId],
-      (_, result) => {
-        console.log('Site details and progress updated in database. Generated ID:', result.insertId);
-        // Pass the result.insertId as JobId parameter to the next navigation call
-        navigation.navigate("StandardPage", { JobId: jobId });
-      },
-      (_, error) => console.log('Error updating site details in database:', error)
-    );
-  });
-};
+    db.transaction((tx) => {
+      tx.executeSql(
+        `UPDATE Jobs SET additionalMaterials=?, progress=? WHERE id=?`,
+        [additionalMaterials, progress, jobId],
+        (_, result) => {
+          console.log('Site details and progress updated in database. Generated ID:', result.insertId);
+          // Pass the result.insertId as JobId parameter to the next navigation call
+          navigation.navigate("StandardPage", { JobId: jobId });
+        },
+        (_, error) => console.log('Error updating site details in database:', error)
+      );
+    });
+  };
   const nextPressed = () => {
     if (materials.length === 0) {
       EcomHelper.showInfoMessage('Please add materials');
       return;
     }
-saveAdditionalMaterialsToDatabase()
+    saveAdditionalMaterialsToDatabase()
   };
   const backPressed = () => {
     appContext.setRegulatorDetails({
@@ -75,7 +75,7 @@ saveAdditionalMaterialsToDatabase()
       EcomHelper.showInfoMessage('Please choose item code or type');
       return;
     }
-    if (quantity== null || quantity=== 0) {
+    if (quantity == null || quantity === 0) {
       EcomHelper.showInfoMessage('Please choose quantity');
       return;
     }
@@ -116,25 +116,25 @@ saveAdditionalMaterialsToDatabase()
             alignItems: 'center',
           }}>
           <CenteredText
-            containerStyle={{...styles.headerCell, width: width * 0.25}}
+            containerStyle={{ ...styles.headerCell, width: width * 0.25 }}
             type={TextType.BODY_TABLE}
             style={styles.blackTxt}>
             {element?.category.label}
           </CenteredText>
           <CenteredText
-            containerStyle={{...styles.headerCell, width: width * 0.35}}
+            containerStyle={{ ...styles.headerCell, width: width * 0.35 }}
             type={TextType.BODY_TABLE}
             style={styles.blackTxt}>
             {element?.item.label}
           </CenteredText>
           <CenteredText
-            containerStyle={{...styles.headerCell, width: width * 0.15}}
+            containerStyle={{ ...styles.headerCell, width: width * 0.15 }}
             type={TextType.BODY_TABLE}
             style={styles.blackTxt}>
             {element?.quantity.label}
           </CenteredText>
           <CenteredText
-            containerStyle={{...styles.headerCell, width: width * 0.15}}
+            containerStyle={{ ...styles.headerCell, width: width * 0.15 }}
             type={TextType.BODY_TABLE}
             style={styles.blackTxt}>
             <Button
@@ -165,17 +165,17 @@ saveAdditionalMaterialsToDatabase()
         behavior={Platform.OS === 'ios' ? 'padding' : null}>
         <View style={styles.body}>
           <View style={styles.border}>
-            <Text type={TextType.HEADER_1} style={{alignSelf: 'center'}}>
+            <Text type={TextType.HEADER_1} style={{ alignSelf: 'center' }}>
               Add material
             </Text>
-            <View style={{width: width * 0.3}}>
+            <View style={{ width: width * 0.3 }}>
               <View style={styles.spacer2} />
               <EcomDropDown
                 width={width * 0.3}
                 value={category}
                 valueList={[
-                  {_index: 1, label: 'Category 1', value: '1'},
-                  {_index: 2, label: 'Category 2', value: '2'},
+                  { _index: 1, label: 'Category 1', value: '1' },
+                  { _index: 2, label: 'Category 2', value: '2' },
                 ]}
                 placeholder={'Category'}
                 onChange={e => {
@@ -186,7 +186,7 @@ saveAdditionalMaterialsToDatabase()
             </View>
             <View style={styles.spacer} />
             <View style={styles.row}>
-              <View style={{width: width * 0.3}}>
+              <View style={{ width: width * 0.3 }}>
                 <View style={styles.spacer2} />
                 <EcomDropDown
                   width={width * 0.3}
@@ -202,7 +202,7 @@ saveAdditionalMaterialsToDatabase()
                 />
               </View>
               {/* <Text style={{marginBottom: unitH * 10}}>or</Text> */}
-              <View style={{width: width * 0.3}}>
+              <View style={{ width: width * 0.3 }}>
                 {/* <Text>Item Type</Text> */}
                 {/* <View style={styles.spacer2} />
                 <EcomDropDown
@@ -221,7 +221,7 @@ saveAdditionalMaterialsToDatabase()
               </View>
             </View>
             <View style={styles.spacer} />
-            <View style={{width: width * 0.3}}>
+            <View style={{ width: width * 0.3 }}>
               {/* <Text>Category</Text> */}
               <View style={styles.spacer2} />
               <EcomDropDown
@@ -286,25 +286,25 @@ saveAdditionalMaterialsToDatabase()
                   backgroundColor: Transparents.BlueColor2,
                 }}>
                 <CenteredText
-                  containerStyle={{...styles.headerCell, width: width * 0.25}}
+                  containerStyle={{ ...styles.headerCell, width: width * 0.25 }}
                   type={TextType.BODY_TABLE}
                   style={styles.blackTxt}>
                   {'Category'}
                 </CenteredText>
                 <CenteredText
-                  containerStyle={{...styles.headerCell, width: width * 0.35}}
+                  containerStyle={{ ...styles.headerCell, width: width * 0.35 }}
                   type={TextType.BODY_TABLE}
                   style={styles.blackTxt}>
                   {'Item'}
                 </CenteredText>
                 <CenteredText
-                  containerStyle={{...styles.headerCell, width: width * 0.15}}
+                  containerStyle={{ ...styles.headerCell, width: width * 0.15 }}
                   type={TextType.BODY_TABLE}
                   style={styles.blackTxt}>
                   {'Quantity'}
                 </CenteredText>
                 <CenteredText
-                  containerStyle={{...styles.headerCell, width: width * 0.15}}
+                  containerStyle={{ ...styles.headerCell, width: width * 0.15 }}
                   type={TextType.BODY_TABLE}
                   style={styles.blackTxt}>
                   {'delete'}
@@ -314,11 +314,11 @@ saveAdditionalMaterialsToDatabase()
                 data={materials}
                 renderItem={renderItem}
                 keyExtractor={e => e.id.toString()}
-                // horizontal={false}
+              // horizontal={false}
               />
             </View>
           ) : (
-            <View style={{alignSelf: 'center'}}>
+            <View style={{ alignSelf: 'center' }}>
               <Text>There is no materials to show.</Text>
             </View>
           )}

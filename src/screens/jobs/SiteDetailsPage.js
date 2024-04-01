@@ -1,5 +1,5 @@
-import { useNavigation,useRoute } from "@react-navigation/native";
-import React,{ useContext,useEffect,useRef,useState } from "react";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -16,9 +16,9 @@ import { TextInputWithTitle } from "../../components/TextInput";
 import { AppContext } from "../../context/AppContext";
 import { PrimaryColors } from "../../theme/colors";
 import { TextType } from "../../theme/typography";
-import { openDatabase,printRowById } from "../../utils/database";
+import { openDatabase, printRowById } from "../../utils/database";
 import EcomHelper from "../../utils/ecomHelper";
-import moment from "moment"; 
+import moment from "moment";
 const ukPostCodeRegex = /^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i;
 const phoneNumberRegex =
   /^(?:(0\d{4})\s?\d{3}\s?\d{3}|(07\d{3})\s?\d{3}\s?\d{3}|(01\d{1,2})\s?\d{3}\s?\d{3,4}|(02\d{1,2})\s?\d{3}\s?\d{4})$/;
@@ -27,11 +27,10 @@ const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 function SiteDetailsPage() {
   const navigation = useNavigation();
   const appContext = useContext(AppContext);
-  const {jobType,siteDetails,setSiteDetails} = appContext
+  const { jobType, siteDetails, setSiteDetails } = appContext
   const route = useRoute();
- const params = route.params;
-  appContext?.setJobdata(route?.params?.jobData) 
-  
+  const params = route.params;
+  appContext?.setJobdata(route?.params?.jobData)
 
   useEffect(() => {
     // Assume route.params.jobType exists
@@ -39,18 +38,17 @@ function SiteDetailsPage() {
     if (routeJobType) {
       appContext.setJobTypes(routeJobType);
       console.log("SiteDetailsPage");
-  console.log("jobType", jobType);
+      console.log("jobType", jobType);
     }
   }, []);
-const [jobDetails , setJobDetails] = useState({
-  jobType:"", 
-  status: "", 
-  progress: "",
-  totalPages: "",
-  jobID : "", 
+  const [jobDetails, setJobDetails] = useState({
+    jobType: "",
+    status: "",
+    progress: "",
+    totalPages: "",
+    jobID: "",
 
-});
-  
+  });
 
   const handleInputChange = (name, value) => {
     setSiteDetails(prevDetails => ({
@@ -63,46 +61,49 @@ const [jobDetails , setJobDetails] = useState({
       ...prevDetails,
       [name]: value,
     }));
+    appContext.setJobDetails(prevData => ({
+      ...prevData,
+      [name]: value
+    }))
   };
- const saveSiteDetailsToDatabase = async () => {
-  console.log("creating job")
-  const db = await openDatabase();
-  console.log('Db status:', db)
-  const siteDetailsJSON = JSON.stringify(siteDetails);
 
-  // Assuming SiteDetails.id is the correct identifier for your record
+  const saveSiteDetailsToDatabase = async () => {
+    console.log("creating job")
+    const db = await openDatabase();
+    console.log('Db status:', db)
+    const siteDetailsJSON = JSON.stringify(siteDetails);
 
-  const getCurrentDateTime = () => {
-    return moment().format('YYYY-MM-DD HH:mm');
+    // Assuming SiteDetails.id is the correct identifier for your record
+
+    const getCurrentDateTime = () => {
+      return moment().format('YYYY-MM-DD HH:mm');
+    };
+    const mprn = siteDetails.mprn;
+    const postcode = siteDetails.postCode;
+    const jobStatus = 'In Progress'
+    handlejobDetails('status', jobStatus);
+    handlejobDetails('progress', '1');
+    handlejobDetails('totalPages', '5');
+    const progress = '1';
+    const startDate = getCurrentDateTime();
+
+    // Ensure this is the correct way to access the job's ID
+    db.transaction((tx) => {
+      tx.executeSql(
+        `INSERT INTO Jobs (jobType,MPRN,postcode,startDate,jobStatus,progress,siteDetails) VALUES (?,?,?,?,?,?,?);`,
+        [jobType, mprn, startDate, postcode, jobStatus, progress, siteDetailsJSON],
+        (_, result) => {
+          console.log('Site details and progress updated in database. Generated ID:', result.insertId);
+          // Pass the result.insertId as JobId parameter to the next navigation call
+          handlejobDetails('JobID', result.insertId);
+
+        },
+        (_, error) => console.log('Error updating site details in database:', error)
+      );
+    });
   };
-  const mprn = siteDetails.mprn;
-  const postcode = siteDetails.postCode; 
-  const jobStatus = 'In Progress'
-  handlejobDetails('status',jobStatus);
-  handlejobDetails('progress','1');
-  handlejobDetails('totalPages','5');
-  const progress = '1';
-  const startDate = getCurrentDateTime();
-  // Ensure this is the correct way to access the job's ID
- 
-
-  db.transaction((tx) => {
-    tx.executeSql(
-      `INSERT INTO Jobs (jobType,MPRN,postcode,startDate,jobStatus,progress,siteDetails) VALUES (?,?,?,?,?,?,?);`,
-      [jobType,mprn,startDate,postcode,jobStatus,progress,siteDetailsJSON ],
-      (_, result) => {
-        console.log('Site details and progress updated in database. Generated ID:', result.insertId);
-        // Pass the result.insertId as JobId parameter to the next navigation call
-        handlejobDetails('JobID',result.insertId);
-
-      },
-      (_, error) => console.log('Error updating site details in database:', error)
-    );
-  });
-};
   const backPressed = () => {
     appContext.setSiteDetails(siteDetails);
-    
 
     navigation.goBack();
   };
@@ -136,19 +137,19 @@ const [jobDetails , setJobDetails] = useState({
       EcomHelper.showInfoMessage("Not a valid phone number: phone number1");
       return;
     }
-  
+
     // Validate phone number2 if it is not empty
     if (siteDetails.number2 && !phoneNumberRegex.test(siteDetails.number2)) {
       EcomHelper.showInfoMessage("Not a valid phone number: phone number2");
       return;
     }
-  
+
     // Validate email1 if it is not empty
     if (siteDetails.email1 && !emailRegex.test(siteDetails.email1)) {
       EcomHelper.showInfoMessage("Not a valid email: email1");
       return;
     }
-  
+
     // Validate email2 if it is not empty
     if (siteDetails.email2 && !emailRegex.test(siteDetails.email2)) {
       EcomHelper.showInfoMessage("Not a valid email: email2");
@@ -168,18 +169,17 @@ const [jobDetails , setJobDetails] = useState({
     }
 
     appContext.setSiteDetails(siteDetails);
- 
+
     saveSiteDetailsToDatabase();
-    console.log("jobDetails",jobDetails);
-    console.log("siteDetails",siteDetails);
+    console.log("jobDetails", jobDetails);
+    console.log("siteDetails", siteDetails);
     navigation.navigate("SitePhotoPage")
-  
+
   };
 
   return (
-    <SafeAreaView style={{flex:1}}>
+    <SafeAreaView style={{ flex: 1 }}>
       <Header
-        
         hasLeftBtn={true}
         hasCenterText={true}
         hasRightBtn={true}
@@ -192,10 +192,10 @@ const [jobDetails , setJobDetails] = useState({
         onPageChange={(pageNum) => console.log("navigated to page:", pageNum)}
       />
       <KeyboardAvoidingView
-        style={{flex:1}}
+        style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : null}
       >
-        <ScrollView style={{flex:1}} >
+        <ScrollView style={{ flex: 1 }} >
           <TextInputWithTitle
             title={"MPRN *"}
             value={siteDetails.mprn}
@@ -204,7 +204,7 @@ const [jobDetails , setJobDetails] = useState({
               const limitedText = filteredText.slice(0, 15);
               handleInputChange('mprn', limitedText);
             }}
-            containerStyle={[styles.inputContainer,{width: "90%" }]}
+            containerStyle={[styles.inputContainer, { width: "90%" }]}
             keyboardType="numeric"
           />
 
@@ -216,7 +216,7 @@ const [jobDetails , setJobDetails] = useState({
               const filteredText = txt.replace(/[^a-zA-Z0-9\s\-\(\)]/g, "");
               handleInputChange('companyName', filteredText);
             }}
-            containerStyle={[styles.inputContainer,{width: "90%" }]}
+            containerStyle={[styles.inputContainer, { width: "90%" }]}
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
@@ -226,7 +226,7 @@ const [jobDetails , setJobDetails] = useState({
               const filteredText = txt.replace(/[^a-zA-Z0-9\s\-\(\)]/g, "");
               handleInputChange('buildingName', filteredText);
             }}
-            containerStyle={[styles.inputContainer,{width: "90%" }]}
+            containerStyle={[styles.inputContainer, { width: "90%" }]}
           />
 
           <View style={styles.spacer} />
@@ -237,7 +237,7 @@ const [jobDetails , setJobDetails] = useState({
               const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
               handleInputChange('address1', filteredText);
             }}
-            containerStyle={[styles.inputContainer,{width: "90%" }]}
+            containerStyle={[styles.inputContainer, { width: "90%" }]}
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
@@ -247,7 +247,7 @@ const [jobDetails , setJobDetails] = useState({
               const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
               handleInputChange('address2', filteredText);
             }}
-            containerStyle={[styles.inputContainer,{width: "90%" }]}
+            containerStyle={[styles.inputContainer, { width: "90%" }]}
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
@@ -257,7 +257,7 @@ const [jobDetails , setJobDetails] = useState({
               const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
               handleInputChange('address3', filteredText);
             }}
-            containerStyle={[styles.inputContainer,{width: "90%" }]}
+            containerStyle={[styles.inputContainer, { width: "90%" }]}
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
@@ -267,7 +267,7 @@ const [jobDetails , setJobDetails] = useState({
               const filteredText = txt.replace(/[^a-zA-Z]/g, "");
               handleInputChange('town', filteredText);
             }}
-            containerStyle={[styles.inputContainer,{width: "90%" }]}
+            containerStyle={[styles.inputContainer, { width: "90%" }]}
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
@@ -277,33 +277,33 @@ const [jobDetails , setJobDetails] = useState({
               const filteredText = txt.replace(/[^a-zA-Z ]/g, "");
               handleInputChange('county', filteredText);
             }}
-            containerStyle={[styles.inputContainer,{width: "90%" }]}
+            containerStyle={[styles.inputContainer, { width: "90%" }]}
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
             title={"Post Code *"}
             value={siteDetails.postCode}
             onChangeText={(txt) => {
-              if (txt.length <= 9 ) {
+              if (txt.length <= 9) {
                 const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, "");
-                handleInputChange('postCode', filteredText.toUpperCase() );
+                handleInputChange('postCode', filteredText.toUpperCase());
               }
             }}
-            containerStyle={[styles.inputContainer,{width: "90%" }]}
+            containerStyle={[styles.inputContainer, { width: "90%" }]}
           />
 
           <View
             style={{
-             
+
               flexDirection: "row",
               justifyContent: "space-between",
               marginHorizontal: 20,
             }}
           >
-            <View style={{flex:0.5}}>
-            <EcomDropDown
+            <View style={{ flex: 0.5 }}>
+              <EcomDropDown
                 value={siteDetails.title}
-                 valueList={[
+                valueList={[
                   { _index: 1, label: "Mr", value: "Mr" },
                   { _index: 2, label: "Mrs", value: "Mrs" },
                   { _index: 3, label: "Ms", value: "Ms" },
@@ -315,96 +315,96 @@ const [jobDetails , setJobDetails] = useState({
                 }}
               />
             </View>
-          
-            
-            <View style={{flex:0.5}}>
-            <TextInputWithTitle
-            style={{width:"100%"}}
-              title={"Site Contact"}
-              value={siteDetails.contact}
-              onChangeText={(txt) => {
-                const filteredText = txt.replace(/[^a-zA-Z ]/g, "");
-                handleInputChange('contact', filteredText);
-              }}
 
-              
-            />
+
+            <View style={{ flex: 0.5 }}>
+              <TextInputWithTitle
+                style={{ width: "100%" }}
+                title={"Site Contact"}
+                value={siteDetails.contact}
+                onChangeText={(txt) => {
+                  const filteredText = txt.replace(/[^a-zA-Z ]/g, "");
+                  handleInputChange('contact', filteredText);
+                }}
+
+
+              />
             </View>
-              
-             </View>
 
-  <View style={{marginHorizontal:'5%'}}>
-  <Text type={TextType.CAPTION_2}>{"Contact Numbers"}</Text>
-  <View
-            style={{
-             
-              flexDirection: "row",
-             
-            }}
-          >
-            <View style={{flex:0.5}}>
-  <TextInputWithTitle
-    style={{width:"100%"}}
-    title={"Phone Number 1"}
-    value={siteDetails.number1}
-    keyboardType="numeric" // Set keyboardType to numeric
-    onChangeText={(txt) => {
-      const filteredText = txt.replace(/[^0-9]/g, ""); // Allow only numbers
-      handleInputChange('number1', filteredText);
-    }}
-  />
-</View>
-<View style={{flex:0.5}}>
-  <TextInputWithTitle
-    style={{width:"100%"}}
-    title={"Phone Number 2"}
-    value={siteDetails.number2}
-    keyboardType="numeric" // Set keyboardType to numeric
-    onChangeText={(txt) => {
-      const filteredText = txt.replace(/[^0-9]/g, ""); // Allow only numbers
-      handleInputChange('number2', filteredText);
-    }}
-  />
-</View>
-              
-             </View>
-             <View
-            style={{
-             
-              flexDirection: "row",
-             
-            }}
-          >
-            <View style={{flex:0.5}}>
-            <TextInputWithTitle
-            style={{width:"100%"}}
-              title={"Email Number 1"}
-              value={siteDetails.email1}
-              autoCapitalize="none"
-              onChangeText={(txt) => {
-                handleInputChange('email1', txt.toLowerCase());
+          </View>
+
+          <View style={{ marginHorizontal: '5%' }}>
+            <Text type={TextType.CAPTION_2}>{"Contact Numbers"}</Text>
+            <View
+              style={{
+
+                flexDirection: "row",
+
               }}
-            />
+            >
+              <View style={{ flex: 0.5 }}>
+                <TextInputWithTitle
+                  style={{ width: "100%" }}
+                  title={"Phone Number 1"}
+                  value={siteDetails.number1}
+                  keyboardType="numeric" // Set keyboardType to numeric
+                  onChangeText={(txt) => {
+                    const filteredText = txt.replace(/[^0-9]/g, ""); // Allow only numbers
+                    handleInputChange('number1', filteredText);
+                  }}
+                />
+              </View>
+              <View style={{ flex: 0.5 }}>
+                <TextInputWithTitle
+                  style={{ width: "100%" }}
+                  title={"Phone Number 2"}
+                  value={siteDetails.number2}
+                  keyboardType="numeric" // Set keyboardType to numeric
+                  onChangeText={(txt) => {
+                    const filteredText = txt.replace(/[^0-9]/g, ""); // Allow only numbers
+                    handleInputChange('number2', filteredText);
+                  }}
+                />
+              </View>
+
             </View>
-            <View style={{flex:0.5}}>
-            <TextInputWithTitle
-            style={{width:"100%"}}
-            title={"Email Number 2"}
-            autoCapitalize="none"
-              value={siteDetails.email2}
-              onChangeText={(txt) => {
-                handleInputChange('email2', txt.toLowerCase());
+            <View
+              style={{
+
+                flexDirection: "row",
+
               }}
-            />
+            >
+              <View style={{ flex: 0.5 }}>
+                <TextInputWithTitle
+                  style={{ width: "100%" }}
+                  title={"Email Number 1"}
+                  value={siteDetails.email1}
+                  autoCapitalize="none"
+                  onChangeText={(txt) => {
+                    handleInputChange('email1', txt.toLowerCase());
+                  }}
+                />
+              </View>
+              <View style={{ flex: 0.5 }}>
+                <TextInputWithTitle
+                  style={{ width: "100%" }}
+                  title={"Email Number 2"}
+                  autoCapitalize="none"
+                  value={siteDetails.email2}
+                  onChangeText={(txt) => {
+                    handleInputChange('email2', txt.toLowerCase());
+                  }}
+                />
+              </View>
+
             </View>
-              
-             </View>
- 
-  </View>
 
-  
+          </View>
 
-          <View style={{marginHorizontal:'5%'}} />
+
+
+          <View style={{ marginHorizontal: '5%' }} />
           <TextInputWithTitle
             title={"Contact Instructions"}
             value={siteDetails.instructions}
@@ -412,22 +412,22 @@ const [jobDetails , setJobDetails] = useState({
               const filteredText = txt.replace(/[^a-zA-Z0-9\s@.]/g, "");
               handleInputChange('instructions', filteredText);
             }}
-            containerStyle={[styles.inputContainer,{width: "90%" }]}
+            containerStyle={[styles.inputContainer, { width: "90%" }]}
           />
-     
-          <View style={{marginHorizontal:'5%', marginBottom:'10%'}}>
+
+          <View style={{ marginHorizontal: '5%', marginBottom: '10%' }}>
             <Text type={TextType.CAPTION_2}>
               {"Is all contact details correct? *"}
             </Text>
             <OptionalButton
-  options={["Yes", "No"]}
-  actions={[
-    () => handleInputChange('confirmContact', true),
-    () => handleInputChange('confirmContact', false),
-  ]}
-  value={siteDetails.confirmContact === null ? null : siteDetails.confirmContact ? "Yes" : "No"}/>
+              options={["Yes", "No"]}
+              actions={[
+                () => handleInputChange('confirmContact', true),
+                () => handleInputChange('confirmContact', false),
+              ]}
+              value={siteDetails.confirmContact === null ? null : siteDetails.confirmContact ? "Yes" : "No"} />
           </View>
-         
+
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
