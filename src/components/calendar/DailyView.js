@@ -1,18 +1,14 @@
 import React, { useState } from 'react';
 import {
-  Modal,
   StyleSheet,
   TouchableOpacity,
   View,
   SafeAreaView,
-  ScrollView,
   Dimensions,
-  Button,
-  TextInput,
+  FlatList,
 } from 'react-native';
 import Text from '../Text';
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { AgendaList, CalendarProvider } from 'react-native-calendars';
+import moment from 'moment';
 
 const { width, height } = Dimensions.get('window');
 
@@ -24,42 +20,44 @@ export default function DailyView({
   goBackToMonthView,
   sections
 }) {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [eventName, setEventName] = useState('');
-  const [description, setDescription] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-
-  const handleBackToMonthView = () => {
-    goBackToMonthView(selectedDate);
-  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      {/* Existing component code remains unchanged */}
-      <Text style={styles.selectedDate}>{selectedDate}</Text>
-     {
-      sections.map((item)=>{
-        return(
-          <TouchableOpacity onPress={() => { }}>
-          <View style={styles.eventContainer}>
-            <Text style={styles.eventTitle}>{item.title}</Text>
-            <Text
-              style={styles.eventTime}
-            >{`${item.startTime} - ${item.endTime}`}</Text>
-            <Text style={styles.eventLocation}>{item.location}</Text>
-            <Text style={styles.eventDescription}>
-              {item.description}
+      <View style={styles.dailyViewContainer}>
+        <View style={styles.dateContainer}>
+          <Text style={styles.selectedDate}>{moment(selectedDate).date()}</Text>
+          <Text style={styles.selectedDay}>{moment(selectedDate).format("ddd")}</Text>
+        </View>
+        <FlatList 
+          data={sections}
+          renderItem={({item})=>{
+            return (
+              <TouchableOpacity onPress={() => { }}>
+                <View style={styles.eventContainer}>
+                  <Text style={styles.eventTitle}>{item.title}</Text>
+                  <Text
+                    style={styles.eventTime}
+                  >{`${item.startTime} - ${item.endTime}`}</Text>
+                  <Text style={styles.eventLocation}>{item.location}</Text>
+                  <Text style={styles.eventDescription}>
+                    {item.description}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )
+          }}
+          ListEmptyComponent={()=>(
+            <View style={styles.noEventDataContainer}>
+            <Text style={styles.noEventDataText}>
+              No events for this day
             </Text>
           </View>
-        </TouchableOpacity>
-        )
-      })
-     }
+          )}
+        />
+      </View>
     </SafeAreaView>
   );
 }
-
 
 const styles = StyleSheet.create({
   dateHeader: {
@@ -89,10 +87,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: width * 0.05,
   },
   eventContainer: {
-    backgroundColor: '#F5F5F5',
-    padding: width * 0.04,
     marginBottom: height * 0.02,
     borderRadius: 5,
+    marginLeft: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 6
   },
   eventTitle: {
     fontSize: width * 0.05,
@@ -113,5 +112,33 @@ const styles = StyleSheet.create({
   noDataText: {
     fontSize: width * 0.05,
     textAlign: 'center',
+  },
+  selectedDate: {
+    fontSize: 28,
+    fontWeight: "100"
+  },
+  selectedDay: {
+    fontSize: 14,
+    fontWeight: "100"
+  },
+  dailyViewContainer : {
+    display: "flex",
+    flex: 1,
+    flexDirection: 'row',
+    padding: 8,
+    backgroundColor: '#F5F5F5',
+  },
+  dateContainer: {
+    marginTop:12
+  },
+  noEventDataContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  noEventDataText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "gray",
   },
 });
