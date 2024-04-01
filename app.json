@@ -2,7 +2,7 @@
   "expo": {
     "name": "ecomJobsApp",
     "slug": "ecom-mobile-app",
-    "version": "2.2.11",
+    "version": "2.2.12",
     "orientation": "default",
         "icon": "./assets/icons/logo167.png",
         "userInterfaceStyle": "light",

@@ -11,7 +11,7 @@ import {
 import { width, height, unitH } from "../../utils/constant";
 import { PrimaryColors } from "../../theme/colors";
 import { useNavigation } from "@react-navigation/native";
-import { Calendar, Agenda } from "react-native-calendars";
+import { Calendar, Agenda, WeekCalendar } from "react-native-calendars";
 import moment from "moment";
 import Text from "../../components/Text";
 import Header from "../../components/Header";
@@ -121,7 +121,8 @@ const EventModal = ({ isVisible, onClose, onSubmit, event = {} }) => {
           <Button title="Close" onPress={onClose} />
         </View>
       </View>
-    </Modal>
+    </View>
+  </Modal>
   );
 };
 
@@ -316,12 +317,15 @@ function CalendarPage() {
             selected={selectedDate}
             items={agendaItem}
             onDayPress={(day) => {
-              console.log("Selected day:", day);
+              setSelectedDate(day.dateString);
+
               let dateString = day.dateString;
               setSelectedDate(dateString);
               setAgendaItem({
                 [dateString]: sampleEvents[dateString],
               });
+
+              setViewMode("Day");
             }}
             renderItem={(item, firstItemInDay) => {
               return (
