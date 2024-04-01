@@ -1,20 +1,19 @@
 import React, { useContext } from "react";
-import { Alert,ScrollView, StyleSheet, View } from "react-native";
-import { width, height, unitH } from "../utils/constant";
+import { Alert, ScrollView, StyleSheet, View } from "react-native";
+import { height, unitH } from "../utils/constant";
 import { PrimaryColors } from "../theme/colors";
 import { EcomPressable as Button } from "../components/ImageButton";
 import Text from "../components/Text";
 import { useNavigation } from "@react-navigation/native";
 import { Button as RnButton } from "react-native";
-import { deleteItemAsync } from "expo-secure-store";
 import { AppContext } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
 import { getDatabaseJob } from "../utils/database";
 
 function HomePage() {
   const navigation = useNavigation();
-  
-const {OnLogout} =useAuth();
+
+  const { OnLogout } = useAuth();
   const appContext = useContext(AppContext)
   const navigationToPage = ({ navigationName }) => {
     navigation.navigate(navigationName);
@@ -68,7 +67,7 @@ const {OnLogout} =useAuth();
           }}
           style={styles.button}
         >
-          <Text style={styles.buttonTxt}> jobs in progress</Text>
+          <Text style={styles.buttonTxt}>Jobs in progress</Text>
         </Button>
         <Button
           onPress={() => {
@@ -79,14 +78,14 @@ const {OnLogout} =useAuth();
           <Text style={styles.buttonTxt}>Completed Job</Text>
         </Button>
       </View>
-      <RnButton title="Logout" onPress= {OnLogout} />
+      <RnButton title="Logout" onPress={OnLogout} />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   scrollView: {
-    flex:1,
+    flex: 1,
   },
   body: {
     flex: 1,
