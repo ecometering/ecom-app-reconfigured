@@ -26,6 +26,7 @@ function GenericPhotoPage() {
       <Header
         hasLeftBtn={true}
         leftBtnPressed={() => navigation.goBack()}
+        hasCenterText
         centerText={title}
         hasRightBtn={true}
         rightBtnPressed={() => navigation.navigate(nextScreen)}
