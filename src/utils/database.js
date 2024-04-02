@@ -165,7 +165,6 @@ const fetchManufacturersForMeterType = async (meterType) => {
 		throw new Error(`Invalid meter type: ${meterType}`);
 	}
 	const db = await openDatabase();
-
 	return new Promise((resolve, reject) => {
 		db.transaction((tx) => {
 			tx.executeSql(
@@ -173,8 +172,9 @@ const fetchManufacturersForMeterType = async (meterType) => {
 				[],
 				(_, { rows }) => {
 					console.log(">>>  3  >>>", rows);
-					db.closeAsync();
-					resolve(rows._array);
+					db.closeAsync().then(()=>{
+						resolve(rows._array);
+					})
 				},
 				(_, err) => reject(err)
 			);
