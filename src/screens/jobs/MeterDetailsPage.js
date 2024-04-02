@@ -484,10 +484,10 @@ function MeterDetailsPage() {
                   }}
                 />
               </View>
-              <View style={{ flex: 0.5 }}>
+              <View style={{ flex: 0.5, marginTop: 8, marginLeft: 8 }}>
                 <TextInputWithTitle
                   value={reading}
-                  title={"Meter Reading"}
+                  title={"Meter read"}
                   onChangeText={(txt) => {
                     //validation
                     const numericValue = txt.replace(/[^0-9]/g, "");
@@ -495,7 +495,7 @@ function MeterDetailsPage() {
                   }}
                   keyboardType="numeric"
                   maxLength={dialNumber ? parseInt(dialNumber.value) : 0}
-                  style={styles.input}
+                  style={[styles.input, {width: '100%'}]}
                 />
               </View>
            
