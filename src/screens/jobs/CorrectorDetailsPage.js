@@ -171,7 +171,7 @@ const onManufacturerChange = async (item) => {
   try {
     const modelsData = await fetchModelsForManufacturer('4', item.value); // Assuming item.value contains the manufacturer's identifier
     console.log("corrector-----------", modelsData)
-    setModels(modelsData.map((model, index) => ({ label: model["Model Code (A0083)"], value: index }))); // Update models based on the selected manufacturer
+    setModels(modelsData.map((model, index) => ({ label: model.label, value: model.value }))); // Update models based on the selected manufacturer
   } catch (error) {
     console.error("Failed to fetch models for manufacturer:", error);
   }

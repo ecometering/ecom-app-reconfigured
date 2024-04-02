@@ -128,8 +128,10 @@ function MeterDetailsPage() {
     if (manufacturer && type) {
       fetchModelsForManufacturer(type.value, manufacturer.label)
         .then(data => {
+          const res = data.map((model, index) => ({ label: model["Model Code (A0083)"], value: index }))
+          console.log("res", res)
           console.log(">>>  4  >>>fetchModelsForManufacturer", data);
-          setModels(data.map((model, index) => ({ label: model["Model Code (A0083)"], value: index })))
+          setModels(data.map((model, index) => ({ label: model.label, value: model.value })))
         })
         .catch(error => console.error(error));
     }
