@@ -121,7 +121,6 @@ const EventModal = ({ isVisible, onClose, onSubmit, event = {} }) => {
           <Button title="Close" onPress={onClose} />
         </View>
       </View>
-    </View>
   </Modal>
   );
 };

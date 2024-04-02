@@ -39,9 +39,9 @@ const SubmitSuccessPage = () => {
               console.log('Job data uploaded successfully');
 
               // Upload photos with Axios
-              // for (const photo of photos) {
-              //   await axios.post('https://test.ecomdata.co.uk/api/photos', { photo });
-              // }
+              for (const photo of photos) {
+                await axios.post('https://test.ecomdata.co.uk/api/photos', { photo });
+              }
               console.log('Photos uploaded successfully');
 
               // Update job status to 'Completed'
