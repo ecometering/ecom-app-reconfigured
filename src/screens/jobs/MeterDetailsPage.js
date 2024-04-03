@@ -128,8 +128,10 @@ function MeterDetailsPage() {
     if (manufacturer && type) {
       fetchModelsForManufacturer(type.value, manufacturer.label)
         .then(data => {
+          const res = data.map((model, index) => ({ label: model["Model Code (A0083)"], value: index }))
+          console.log("res", res)
           console.log(">>>  4  >>>fetchModelsForManufacturer", data);
-          setModels(data.map((model, index) => ({ label: model["Model Code (A0083)"], value: index })))
+          setModels(data.map((model, index) => ({ label: model.label, value: model.value })))
         })
         .catch(error => console.error(error));
     }
@@ -482,10 +484,10 @@ function MeterDetailsPage() {
                   }}
                 />
               </View>
-              <View style={{ flex: 0.5 }}>
+              <View style={{ flex: 0.5, marginTop: 8, marginLeft: 8 }}>
                 <TextInputWithTitle
                   value={reading}
-                  title={"Meter Reading"}
+                  title={"Meter read"}
                   onChangeText={(txt) => {
                     //validation
                     const numericValue = txt.replace(/[^0-9]/g, "");
@@ -493,7 +495,7 @@ function MeterDetailsPage() {
                   }}
                   keyboardType="numeric"
                   maxLength={dialNumber ? parseInt(dialNumber.value) : 0}
-                  style={styles.input}
+                  style={[styles.input, {width: '100%'}]}
                 />
               </View>
            

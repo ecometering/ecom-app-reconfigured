@@ -11,7 +11,8 @@ import {
 import { width, height, unitH } from "../../utils/constant";
 import { PrimaryColors } from "../../theme/colors";
 import { useNavigation } from "@react-navigation/native";
-import { Calendar, Agenda } from "react-native-calendars";
+import { Calendar, Agenda, WeekCalendar } from "react-native-calendars";
+import { Calendar, Agenda, WeekCalendar } from "react-native-calendars";
 import moment from "moment";
 import Text from "../../components/Text";
 import Header from "../../components/Header";
@@ -86,6 +87,38 @@ const EventModal = ({ isVisible, onClose, onSubmit, event = {} }) => {
 
   return (
     <Modal
+    animationType="slide"
+    transparent={true}
+    visible={isVisible}
+    onRequestClose={onClose}>
+    <View style={styles.centeredView}>
+      <View style={styles.modalView}>
+        <Text style={styles.modalText}>Holiday Settings</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Title"
+          value={title}
+          onChangeText={setTitle}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Description"
+          value={description}
+          onChangeText={setDescription}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Start Date (YYYY-MM-DD)"
+          value={startTime}
+          onChangeText={setStartTime}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="End Date (YYYY-MM-DD)"
+          value={endTime}
+          onChangeText={setEndTime}
+        />
+    <Modal
       animationType="slide"
       transparent={true}
       visible={isVisible}
@@ -121,7 +154,7 @@ const EventModal = ({ isVisible, onClose, onSubmit, event = {} }) => {
           <Button title="Close" onPress={onClose} />
         </View>
       </View>
-    </Modal>
+  </Modal>
   );
 };
 
@@ -316,12 +349,15 @@ function CalendarPage() {
             selected={selectedDate}
             items={agendaItem}
             onDayPress={(day) => {
-              console.log("Selected day:", day);
+              setSelectedDate(day.dateString);
+
               let dateString = day.dateString;
               setSelectedDate(dateString);
               setAgendaItem({
                 [dateString]: sampleEvents[dateString],
               });
+
+              setViewMode("Day");
             }}
             renderItem={(item, firstItemInDay) => {
               return (
@@ -349,6 +385,24 @@ function CalendarPage() {
               </View>
             )}
           />)}
+
+        {viewMode === "Day" && (
+          <DailyView
+            selectedDate={selectedDate}
+            schedules={sampleEvents[selectedDate]}
+            goNextDay={() => {
+              const nextDay = moment(selectedDate).add(1, "day").format("YYYY-MM-DD");
+              setSelectedDate(nextDay);
+            }}
+            goPrevDay={() => {
+              const prevDay = moment(selectedDate).subtract(1, "day").format("YYYY-MM-DD");
+              setSelectedDate(prevDay);
+            }}
+            openModal={() => setModalVisible(true)}
+            sections={!!agendaItem ? agendaItem[selectedDate] : []}
+          />
+        )}
+      </View>
 
         {viewMode === "Day" && (
           <DailyView
@@ -468,6 +522,40 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "gray",
   },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    // alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: '80%'
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+    fontSize: width * 0.05,
+  },
+  input: {
+    width: '100%',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: 'gray',
+    marginBottom: 20,
+  }
   centeredView: {
     flex: 1,
     justifyContent: 'center',

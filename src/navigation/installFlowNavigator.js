@@ -128,7 +128,6 @@ const InstallFlowNavigator = () => {
   console.log ("loading install flow navigator with ", numberOfStreams, " streams");
 
  return(
-  <NavigationContainer>
  <Stack.Navigator> 
     <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being installed',nextScreen: 'AssetSelectGateway' }} />
     <Stack.Screen name="AssetSelectGateway" component={AssetSelectGatewayScreen} />
@@ -196,7 +195,6 @@ const InstallFlowNavigator = () => {
     <Stack.Screen name="ChatterBox" component={ChatterBoxPage} />
     <Stack.Screen name="AdditionalMaterial" component={AdditionalMaterialPage} />
   </Stack.Navigator>
-  </NavigationContainer>
 );};
 
 export default InstallFlowNavigator;

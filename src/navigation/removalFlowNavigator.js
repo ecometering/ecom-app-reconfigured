@@ -48,7 +48,6 @@ const assetSelection = ({ meter, corrector, datalogger }) => {
     const appContext = useContext(AppContext);
     const meterType = appContext.meterDetails?.type;
 return(
-  <NavigationContainer>
     <Stack.Navigator > 
     <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being Removed',nextScreen:'AssetGateway'}} />
     <Stack.Screen name="AssetGateway" component={RemovalGatewayScreen} />
@@ -84,8 +83,6 @@ return(
 
     <Stack.Screen name="RemovedDataLoggerDetails" component={DataLoggerDetailsPage} initialParams={{title:'Removed AMR ',nextScreen:'StandardPage'}} />
 </Stack.Navigator>
-</NavigationContainer>
-    
   );};
 
   export default RemovalFlowNavigator;
