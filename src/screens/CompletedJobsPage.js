@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { SafeAreaView, View, Text, ScrollView, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
-import {  getDatabaseJob } from '../utils/database'; // Importing required functions
+import { getDatabaseJob } from '../utils/database'; // Importing required functions
 
 const { width } = Dimensions.get('window'); // Get the screen width
 
@@ -12,22 +12,22 @@ const dynamicPadding = width < 360 ? 8 : 10; // Adjust padding based on screen w
 const CompletedJobsTable = () => {
   const [jobs, setJobs] = useState([]);
   const navigation = useNavigation();
-  
+
 
   useEffect(() => {
-  
+
     fetchData();
   }, [filteredData]);
 
   const fetchData = async () => {
     const data = await getDatabaseJob(setJobs);
   };
-  
+
 
   const filteredData = jobs.filter(item => item.jobStatus === 'Completed');
 
   const handleRowClick = (jobId) => {
-    
+
   };
 
   const TableHeader = () => (
@@ -55,21 +55,29 @@ const CompletedJobsTable = () => {
   );
 
   return (
-    <ScrollView style={styles.container}>
-      <Header hasLeftBtn={true} hasCenterText={true} hasRightBtn={false} centerText={'Completed Jobs'} leftBtnPressed={() => navigation.goBack()} />
-      <TableHeader />
-      {filteredData.length > 0 ? (
-        filteredData.map((item) => <TableRow key={item.id.toString()} item={item} />)
-      ) : (
-        <Text style={styles.noJobsText}>No jobs available</Text>
-      )}
-    </ScrollView>
+    <SafeAreaView style={styles.body}>
+      <ScrollView style={styles.container}>
+        <Header hasLeftBtn={true} hasCenterText={true} hasRightBtn={false} centerText={'Completed Jobs'} leftBtnPressed={() => navigation.goBack()} />
+        <TableHeader />
+        {filteredData.length > 0 ? (
+          filteredData.map((item) => <TableRow key={item.id.toString()} item={item} />)
+        ) : (
+          <Text style={styles.noJobsText}>No jobs available</Text>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  body: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
   },
   headerRow: {
     flexDirection: 'row',
