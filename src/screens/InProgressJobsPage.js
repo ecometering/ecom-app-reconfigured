@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Dimensions, Alert } from 'react-native';
+import { SafeAreaView, View, Text, ScrollView, TouchableOpacity, StyleSheet, Dimensions, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
 import { openDatabase, getDatabaseJob } from '../utils/database'; // Importing required functions
@@ -8,19 +8,19 @@ const { width } = Dimensions.get('window'); // Get the screen width
 const dynamicFontSize = width < 360 ? 9 : width < 600 ? 11 : 13; // Adjust font size based on screen width
 const dynamicPadding = width < 360 ? 6 : 8; // Adjust padding based on screen width
 
-const JobsTable = ({route}) => {
+const JobsTable = ({ route }) => {
   const [jobs, setJobs] = useState([]);
   const navigation = useNavigation();
   useEffect(() => {
     fetchData(); // Call fetchData on component mount
   }, [route?.params]);
-  
+
 
   const fetchData = async () => {
-  
+
     await getDatabaseJob(setJobs);
 
-    
+
   };
 
   const filteredData = jobs.filter(item => item.jobStatus === 'In Progress');
@@ -32,27 +32,29 @@ const JobsTable = ({route}) => {
   };
 
   const handleDeleteJob = async (jobId) => {
-    const db = await openDatabase(); 
+    const db = await openDatabase();
     Alert.alert("Delete Job", "Are you sure you want to delete this job?", [
       { text: "Cancel" },
-      { text: "Yes", onPress: async () => {
-    
+      {
+        text: "Yes", onPress: async () => {
+
           db.transaction(tx => {
             tx.executeSql(
               'DELETE FROM Jobs WHERE id = ?',
               [jobId],
               () => {
                 console.log('Record deleted successfully');
-                fetchData(); 
+                fetchData();
               },
               error => {
                 console.error('Error deleting record', error);
               }
             );
           });
-        
-        
-      }}
+
+
+        }
+      }
     ]);
   };
 
@@ -70,13 +72,13 @@ const JobsTable = ({route}) => {
   );
 
   const TableRow = ({ item }) => (
-    <TouchableOpacity onPress={()=>navigation.navigate('SiteDetailsPage', {
-      jobData : item
+    <TouchableOpacity onPress={() => navigation.navigate('SiteDetailsPage', {
+      jobData: item
     })} style={[styles.row, { padding: dynamicPadding }]}>
       <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.id}</Text>
       <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.MPRN}</Text>
       <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.jobType}</Text>
-      
+
       <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.startDate}</Text>
       <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.postcode}</Text>
       <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.endDate}</Text>
@@ -88,21 +90,29 @@ const JobsTable = ({route}) => {
   );
 
   return (
-    <ScrollView style={styles.container}>
-      <Header hasLeftBtn={true} hasCenterText={true} hasRightBtn={false} centerText={'Jobs in progress'} leftBtnPressed={() => navigation.goBack()} />
-      <TableHeader />
-      {filteredData.length > 0 ? (
-        filteredData.map((item) => <TableRow key={item.id.toString()} item={item} />)
-      ) : (
-        <Text style={styles.noJobsText}>No jobs available</Text>
-      )}
-    </ScrollView>
+    <SafeAreaView style={styles.body}>
+      <ScrollView style={styles.container}>
+        <Header hasLeftBtn={true} hasCenterText={true} hasRightBtn={false} centerText={'Jobs in progress'} leftBtnPressed={() => navigation.goBack()} />
+        <TableHeader />
+        {filteredData.length > 0 ? (
+          filteredData.map((item) => <TableRow key={item.id.toString()} item={item} />)
+        ) : (
+          <Text style={styles.noJobsText}>No jobs available</Text>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  body: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
   },
   headerRow: {
     flexDirection: 'row',
