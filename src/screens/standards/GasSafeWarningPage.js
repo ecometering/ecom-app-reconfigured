@@ -112,7 +112,7 @@ function GasSafeWarningPage() {
       );
       return;
     }
-    if (customerSign == null) {
+    if (isCustomerAvailable && customerSign == null) {
       EcomHelper.showInfoMessage("Please check Customer Signature");
       return;
     }
@@ -192,109 +192,115 @@ function GasSafeWarningPage() {
           <View style={styles.spacer} />
           <View style={styles.spacer} />
           <View
-            style={{
-              marginHorizontal: width * 0.1,
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
-            <View
-              style={{
-                justifyContent: "space-between",
-                height: unitH * 80,
-                width: width * 0.4,
-              }}
-            >
-              <Text>{"Is the property Rented?"}</Text>
-              <View style={styles.spacer2} />
-              <View style={styles.optionContainer}>
-                <OptionalButton
-                  options={["Yes", "No"]}
-                  actions={[
-                    () => {
-                      setIsPropertyRented(true);
-                    },
-                    () => {
-                      setIsPropertyRented(false);
-                    },
-                  ]}
-                  value={
-                    isPropertyRented == null
-                      ? null
-                      : isPropertyRented
-                      ? "Yes"
-                      : "No"
-                  }
-                />
-              </View>
-            </View>
+  style={{
+    marginHorizontal: width * 0.05, // Adjusted to create a gap between the sections
+    flexDirection: "row",
+    justifyContent: "space-between",
+  }}
+>
+  <View
+    style={{
+      justifyContent: "space-between",
+      height: unitH * 80,
+      width: width * 0.35, // Adjusted width to accommodate the spacer
+    }}
+  >
+    <Text>{"Is the property Rented?"}</Text>
+    <View style={styles.spacer2} />
+    <View style={styles.optionContainer}>
+      <OptionalButton
+        options={["Yes", "No"]}
+        actions={[
+          () => {
+            setIsPropertyRented(true);
+          },
+          () => {
+            setIsPropertyRented(false);
+          },
+        ]}
+        value={
+          isPropertyRented == null
+            ? null
+            : isPropertyRented
+            ? "Yes"
+            : "No"
+        }
+      />
+    </View>
+  </View>
 
-            <View
-              style={{
-                justifyContent: "space-between",
-                height: unitH * 80,
-                width: width * 0.4,
-              }}
-            >
-              <Text>{"Was Customer available on site"}</Text>
-              <View style={styles.spacer2} />
-              <View style={styles.optionContainer}>
-                <OptionalButton
-                  options={["Yes", "No"]}
-                  actions={[
-                    () => {
-                      setIsCustomerAvailable(true);
-                    },
-                    () => {
-                      setIsCustomerAvailable(false);
-                    },
-                  ]}
-                  value={
-                    isCustomerAvailable == null
-                      ? null
-                      : isCustomerAvailable
-                      ? "Yes"
-                      : "No"
-                  }
-                />
-              </View>
-            </View>
-          </View>
-          
-          <View style={styles.spacer} />
-          <View style={styles.row}>
-            <View>
-              <Button
-                title={"Customer Signature"}
-                onPress={() => {
-                  setIsModal(true);
-                  setIsCustomerSign(true);
-                }}
-              />
-              <View style={styles.spacer2} />
-              {customerSign && (
-                <Image
-                  source={{ uri: `data:image/png;base64,${customerSign}` }}
-                  style={styles.signImage}
-                />
-              )}
-            </View>
+  {/* Spacer View for the gap */}
+  <View style={{ width: 20 }}></View>
 
-            <View>
-              <Button
-                title={"Engineer Signature"}
-                onPress={() => {
-                  setIsModal(true);
-                  setIsCustomerSign(false);
-                }}
-              />
-              <View style={styles.spacer2} />
-              <Image
-                source={{ uri: `data:image/png;base64,${engineerSign}` }}
-                style={styles.signImage}
-              />
-            </View>
-          </View>
+  <View
+    style={{
+      justifyContent: "space-between",
+      height: unitH * 80,
+      width: width * 0.35, // Adjusted width to match the first section
+    }}
+  >
+    <Text>{"Was Customer available on site"}</Text>
+    <View style={styles.spacer2} />
+    <View style={styles.optionContainer}>
+      <OptionalButton
+        options={["Yes", "No"]}
+        actions={[
+          () => {
+            setIsCustomerAvailable(true);
+          },
+          () => {
+            setIsCustomerAvailable(false);
+          },
+        ]}
+        value={
+          isCustomerAvailable == null
+            ? null
+            : isCustomerAvailable
+            ? "Yes"
+            : "No"
+        }
+      />
+    </View>
+  </View>
+</View>
+
+<View style={styles.spacer} />
+<View style={styles.row}>
+  {isCustomerAvailable && (
+    <View>
+      <Button
+        title={"Customer Signature"}
+        onPress={() => {
+          setIsModal(true);
+          setIsCustomerSign(true);
+        }}
+      />
+      <View style={styles.spacer2} />
+      {customerSign && (
+        <Image
+          source={{ uri: `data:image/png;base64,${customerSign}` }}
+          style={styles.signImage}
+        />
+      )}
+    </View>
+  )}
+
+  <View>
+    <Button
+      title={"Engineer Signature"}
+      onPress={() => {
+        setIsModal(true);
+        setIsCustomerSign(false);
+      }}
+    />
+    <View style={styles.spacer2} />
+    <Image
+      source={{ uri: `data:image/png;base64,${engineerSign}` }}
+      style={styles.signImage}
+    />
+  </View>
+</View>
+
           <Modal visible={isModal}>
             <Button
               title="Close"

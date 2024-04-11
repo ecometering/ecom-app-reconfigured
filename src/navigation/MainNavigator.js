@@ -18,6 +18,7 @@ import MaintenanceQuestionsPage from "../screens/maintenance/MaintenanceQuestion
 // calendar imports
 import CalendarPage from "../screens/calendar/CalendarPage";
 import LoginPage from "../screens/LoginPage";
+import DataLoggerDetailsPage from "../screens/jobs/DataLoggerDetailsPage";
 // maintenance pages imports
 
 //import standards inport from ../screens/standards
@@ -26,6 +27,7 @@ import GasSafeWarningPage from "../screens/standards/GasSafeWarningPage";
 import RiddorReportPage from "../screens/standards/RiddorReportPage";
 import SnClientInfoPage from "../screens/standards/SnClientInfoPage";
 import StandardPage from "../screens/standards/StandardPage";
+import MeterDetailsPage from "../screens/jobs/MeterDetailsPage";
 
 //  jobs pages imports
 
@@ -123,7 +125,9 @@ const MainNavigator = () => {
 					<Stack.Screen name="InProgressJobsPage" component={InProgressJobsPage} />
 					<Stack.Screen name="CompletedJobsPage" component={CompletedJobsPage} />
 					<Stack.Screen name="UserProfile" component={EngineerProfileScreen} />
-					<Stack.Screen name="test" component={MaintenanceQuestionsPage} />
+
+					<Stack.Screen name="test" component={MeterDetailsPage} initialParams={{title: 'New Meter Details',nextScreen: 'NewEcvToMov'
+    }} />
 					<Stack.Screen name="SiteDetailsPage" component={SiteDetailsPage} initialParams={{progress:1}} />
 					<Stack.Screen name="SitePhotoPage" component={GenericPhotoPage} initialParams={{ title: "Site Photo", photoKey: "sitePhoto", nextScreen: "SiteQuestionsPage",progress:2}} />
 					<Stack.Screen name="SiteQuestionsPage" component={SiteQuestionsPage} />

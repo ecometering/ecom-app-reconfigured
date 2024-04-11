@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Dimensions, View, Image } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, Dimensions, View, Image, Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useAppContext } from '../../context/AppContext';
 import Header from '../../components/Header';
@@ -12,13 +12,23 @@ function GenericPhotoPage() {
   const navigation = useNavigation();
   const { params } = useRoute();
   const { title, photoKey, nextScreen } = params;
-  const { photos,savePhoto  } = useAppContext();
+  const { photos, savePhoto } = useAppContext();
   const existingPhoto = photos[photoKey];
   const [selectedImage, setSelectedImage] = useState(existingPhoto?.uri || null);
 
   const handlePhotoSelected = (uri) => {
     setSelectedImage(uri);
     savePhoto(photoKey, { title, photoKey, uri });
+  };
+
+  const nextPressed = () => {
+    if (selectedImage) {
+      // If a photo has been selected, navigate to the next screen
+      navigation.navigate(nextScreen);
+    } else {
+      // If no photo has been selected, show an alert
+      Alert.alert("Select a Photo", "Please select a photo before proceeding.");
+    }
   };
 
   return (
@@ -29,7 +39,7 @@ function GenericPhotoPage() {
         hasCenterText
         centerText={title}
         hasRightBtn={true}
-        rightBtnPressed={() => navigation.navigate(nextScreen)}
+        rightBtnPressed={nextPressed} // Use nextPressed here
       />
       <ScrollView style={styles.flex}>
         <View style={styles.body}>

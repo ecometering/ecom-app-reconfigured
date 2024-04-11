@@ -109,6 +109,10 @@ const nextPressed = async () => {
       EcomHelper.showInfoMessage("Please indicate if a bypass is fitted.");
       return;
     }
+    if (siteQuestions.isFitted && !siteQuestions.byPassImage) {
+      EcomHelper.showInfoMessage("Please provide a photo of the bypass.");
+      return;
+    }
     if (siteQuestions.isStandard === null) {
       EcomHelper.showInfoMessage("Please indicate if the customer installation conforms to current standards.");
       return;

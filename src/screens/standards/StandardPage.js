@@ -243,7 +243,7 @@ function StandardPage() {
             />
             <View style={styles.spacer} />
             <Text>
-              I conform that all works have been carried out in
+              I confirm that all works have been carried out in
               accordance with current industry standards and
               health safety policies
               </Text>
@@ -265,6 +265,7 @@ function StandardPage() {
             </View>
 
             <Modal style={{ flex: 1 }} visible={isModal}>
+            <View style={styles.spacer} />
               <Button
                 title="Close"
                 onPress={() => {

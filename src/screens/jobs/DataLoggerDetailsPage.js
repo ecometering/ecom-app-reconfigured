@@ -159,16 +159,25 @@ export default function DataLoggerDetailsPage() {
                   <View style={styles.spacer2} />
                   <View style={{ ...styles.row, width: width * 0.35 }}>
                     <TextInput
-                      onChangeText={(txt) => {
-                        if (alphanumericRegex.test(txt)) setSerialNumber(txt);
-                      }}
-                      style={{
-                        ...styles.input,
-                        width: width * 0.25,
-                        alignSelf: "flex-end",
-                      }}
-                      value={serialNumber}
-                    />
+                    onChangeText={(txt) => {
+                      // Define the alphanumeric regular expression
+                      const alphanumericRegex = /^[a-z0-9]+$/i;
+
+                      // Capitalize the text
+                      const formattedText = txt.toUpperCase();
+
+                      // Check if the formatted text is alphanumeric
+                      if (alphanumericRegex.test(formattedText)) {
+                        setSerialNumber(formattedText);
+                      }
+                    }}
+                    style={{
+                      ...styles.input,
+                      width: width * 0.25,
+                      alignSelf: "flex-end",
+                    }}
+                    value={serialNumber}
+                  />
                     <Button title="📷" onPress={scanBarcode} />
                   </View>
                 </View>

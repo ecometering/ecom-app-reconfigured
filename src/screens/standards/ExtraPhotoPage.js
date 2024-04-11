@@ -79,8 +79,9 @@ export default function ExtraPhotoPage() {
           leftBtnPressed={backPressed}
           rightBtnPressed={nextPressed}
         />
+        
         <View style={styles.body}>
-          {photoNumber === 1 && (
+          {photoNumber === 0 && (
             <View>
               <Text style={styles.text}>Are any extra photos required?</Text>
               <View style={styles.optionContainer}>

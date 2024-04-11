@@ -173,16 +173,17 @@ function SnClientInfoPage() {
           <View style={styles.spacer} />
           <View style={styles.row}>
             <View>
-              <TextInputWithTitle
-                title={"Serial Number"}
-                placeholder={""}
-                value={serialNumber}
-               
-                onChangeText={(txt) => {
-                  setSerialNumber(txt);
-                }}
-                containerStyle={styles.inputContainer}
-              />
+            <TextInputWithTitle
+            title={"Serial Number"}
+            placeholder={""}
+            value={serialNumber}
+            onChangeText={(txt) => {
+              // Capitalize the text and allow only letters and numbers
+              const formattedText = txt.toUpperCase().replace(/[^A-Z0-9]/gi, '');
+              setSerialNumber(formattedText);
+            }}
+            containerStyle={styles.inputContainer}
+            />
               <View style={styles.spacer} />
 
               <View>

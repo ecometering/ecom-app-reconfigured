@@ -28,32 +28,30 @@ console.log(" type,pressure and true or false:",Type,pressureTier,isCorrector,is
   
             function navigateBasedOnJobType() {
             
-            console.log(`Navigating for jobType: ${jobType}, pageRoute: ${pageRoute}`);
+            console.log(`Navigating for jobType: ${jobType}, pageFlow: ${pageflow}`);
               switch (jobType) {
                   case "Install":
-                    console.log ("starting install job",pageRoute);
-                    if (pageRoute ===1){
-                        console.log("MeterGatewayScreen",pageRoute); 
-                        if (Type === '1' || Type === '2' || Type === '4') {
-                            navigation.replace('ExistingMeterDataBadge');
-                        } else {
-                            console.log("Navigating to ExistingMeterIndex");
-                            navigation.replace('ExistingMeterIndex');
+                    console.log ("starting install job",pageflow);
+                    if (pageflow ===1){
+                        console.log("MeterGatewayScreen",pageflow); 
+                        if (!['1', '2', '4'].includes(Type)) {
+                          navigation.replace('MeterDataBadge');
+                      } else {
+                            console.log("Navigating to MeterIndex");
+                            navigation.replace('MeterIndex');
                         }
 
                     }
-                    if (pageRoute ===2){
+                    if (pageflow ===2){
                         if (isCorrector===true){
                             navigation.replace('CorrectorDetails');
                         }else if (isAmr) {
                             navigation.replace('DataLoggerDetails');
-                          }else if (isMeter)
-                          {
-                            if ((Type === '1' || Type === '2' || Type === '4') && pressureTier === 'MP' || (Type !== '1' && Type !== '2' && Type !== '4')) {
+                          }else if ((Type === '1' || Type === '2' || Type === '4') && pressureTier === 'MP' || (Type !== '1' && Type !== '2' && Type !== '4')) {
                               navigation.replace('StreamsSetSealDetails');
                           }
                       
-                        }else {
+                        else {
                           navigation.replace('StandardPage');
                         }
 
