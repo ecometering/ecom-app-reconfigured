@@ -77,14 +77,6 @@ function HomePage() {
         >
           <Text style={styles.buttonTxt}>Completed Job</Text>
         </Button>
-        <Button
-          onPress={() => {
-            navigationToPage({ navigationName: "test" });
-          }}
-          style={styles.button}
-        >
-          <Text style={styles.buttonTxt}>test</Text>
-        </Button>
       </View>
       <RnButton title="Logout" onPress={OnLogout} />
     </ScrollView>
