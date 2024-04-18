@@ -17,7 +17,7 @@ const AppContextProvider = (props) => {
   const [isWarrant, setIsWarrant] = useState(false);
   const [photos, setPhotos] = useState({});
 
-  const savePhoto = (photoKey, photoDetails) => {
+  const savePhoto = async(photoKey, photoDetails) => {
     setPhotos(prevPhotos => ({
       ...prevPhotos,
       [photoKey]: photoDetails,
