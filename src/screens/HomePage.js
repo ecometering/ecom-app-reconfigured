@@ -83,7 +83,7 @@ function HomePage() {
           }}
           style={styles.button}
         >
-          <Text style={styles.buttonTxt}>Test</Text>
+          <Text style={styles.buttonTxt}>test</Text>
         </Button>
       </View>
       <RnButton title="Logout" onPress={OnLogout} />

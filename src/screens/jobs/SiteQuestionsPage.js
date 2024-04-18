@@ -28,13 +28,13 @@ const route = useRoute();
   console.log("Job Type:", jobType);
 
   const [siteQuestions, setSiteQuestions] = useState({
-    isSafe: "",
-    isGeneric: "",
-    genericReason: "",
-    isCarryOut: "",
-    carryOutReason: "", 
-    isFitted: "",
-    isStandard: "",
+    isSafe: false,
+    isGeneric: false,
+    genericReason: false,
+    isCarryOut: false,
+    carryOutReason: false, 
+    isFitted: false,
+    isStandard: false,
   });
   const handleInputChange = (name, value) => {
     setSiteQuestions(prevDetails => ({

@@ -102,7 +102,7 @@ const SurveyFlowNavigator = () => {
     <Stack.Screen name="AssetSelectGateway" component={AssetSelectGatewayScreen} />
     {/* meter process */}
     <Stack.Screen name="ExistingMeterDetails" component={MeterDetailsPage}
-    initialParams={{title: 'Existing Meter Details',nextScreen: ExistingEcvToMov
+    initialParams={{title: 'Existing Meter Details',nextScreen: 'ExistingEcvToMov'
     }}  />  
     <Stack.Screen 
         key = "ExistingEcvToMov"

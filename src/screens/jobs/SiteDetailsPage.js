@@ -27,7 +27,7 @@ const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 function SiteDetailsPage() {
   const navigation = useNavigation();
   const appContext = useContext(AppContext);
-  const { jobType, siteDetails, setSiteDetails } = appContext
+  const { jobType, siteDetails, setSiteDetails,setJobStarted } = appContext
   const route = useRoute();
   const params = route.params;
   appContext?.setJobdata(route?.params?.jobData)
@@ -104,7 +104,9 @@ function SiteDetailsPage() {
   };
   const backPressed = () => {
     appContext.setSiteDetails(siteDetails);
-
+     if (siteDetails !== null){
+      setJobStarted (true)
+     }
     navigation.goBack();
   };
 
@@ -167,6 +169,11 @@ function SiteDetailsPage() {
       EcomHelper.showInfoMessage("MPRN should be 5 ~ 15 digits");
       return;
     }
+    if (siteDetails.confirmWarrant == null && jobType === 'Warrant') {
+      EcomHelper.showInfoMessage(
+        "Please confirm if the warrant went ahead");
+      return;
+    }
 
     appContext.setSiteDetails(siteDetails);
 
@@ -213,7 +220,7 @@ function SiteDetailsPage() {
             title={"Company name"}
             value={siteDetails.companyName}
             onChangeText={(txt) => {
-              const filteredText = txt.replace(/[^a-zA-Z0-9\s\-\(\)]/g, "");
+              const filteredText = txt.replace(/[^a-zA-Z0-9\s\-()&_'/]/g, "");
               handleInputChange('companyName', filteredText);
             }}
             containerStyle={[styles.inputContainer, { width: "90%" }]}
@@ -415,7 +422,7 @@ function SiteDetailsPage() {
             containerStyle={[styles.inputContainer, { width: "90%" }]}
           />
 
-          <View style={{ marginHorizontal: '5%', marginBottom: '10%' }}>
+          <View style={{ marginHorizontal: '5%', marginBottom: '5%' }}>
             <Text type={TextType.CAPTION_2}>
               {"Is all contact details correct? *"}
             </Text>
@@ -427,7 +434,21 @@ function SiteDetailsPage() {
               ]}
               value={siteDetails.confirmContact === null ? null : siteDetails.confirmContact ? "Yes" : "No"} />
           </View>
-
+        {
+          jobType === 'Warrant' &&
+          <View style={{ marginHorizontal: '5%', marginBottom: '5%' }}>
+            <Text type={TextType.CAPTION_2}>
+              {"Did the warrant go ahead? *"}
+            </Text>
+            <OptionalButton
+              options={["Yes", "No"]}
+              actions={[
+                () => handleInputChange('confirmWarrant', true),
+                () => handleInputChange('confirmWarrant', false),
+              ]}
+              value={siteDetails.confirmWarrant === null ? null : siteDetails.confirmWarrant ? "Yes" : "No"} />
+          </View>
+        }
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

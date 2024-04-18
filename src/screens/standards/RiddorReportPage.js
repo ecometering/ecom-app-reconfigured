@@ -72,7 +72,7 @@ export default function RiddorReportPage() {
       riddorRef,
     });
 
-    if (confirmStandard === true) {
+    if (standardDetails.conformStandard === false) {
       navigation.navigate("SnClientInfoPage");
     } else {
       navigation.navigate("CompositeLabelPhoto");

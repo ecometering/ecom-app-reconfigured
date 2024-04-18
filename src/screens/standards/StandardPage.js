@@ -22,6 +22,7 @@ import { PrimaryColors } from "../../theme/colors";
 import SignatureScreen from "react-native-signature-canvas";
 
 const { width, height } = Dimensions.get("window");
+
 function StandardPage() {
   const navigation = useNavigation();
   const appContext = useContext(AppContext);
@@ -31,7 +32,7 @@ function StandardPage() {
   const title = "Standard Details";
 
   const [testPassed, setTestPassed] = useState(standardDetails?.testPassed);
-  const [conformStandard, setconformStandard] = useState(
+  const [conformStandard, setConformStandard] = useState(
     standardDetails?.conformStandard
   );
   const [riddorReportable, setRiddorReportable] = useState(
@@ -41,7 +42,7 @@ function StandardPage() {
   );
   const [useOutlet, setUseOutlet] = useState(standardDetails?.useOutlet);
   const [pressure, setPressure] = useState(standardDetails?.pressure);
-  const [conformText, setconformText] = useState(standardDetails?.conformText);
+  const [conformText, setConformText] = useState(standardDetails?.conformText);
   const [signature, setSignature] = useState(standardDetails?.signature);
   const [isModal, setIsModal] = useState(false);
 
@@ -77,7 +78,6 @@ function StandardPage() {
       EcomHelper.showInfoMessage("Please set inlet pressure");
       return;
     }
-
     if (signature == null) {
       EcomHelper.showInfoMessage("Please enter signature");
       return;
@@ -104,10 +104,11 @@ function StandardPage() {
       if (conformStandard === false) {
         navigation.navigate("SnClientInfoPage");
       } else {
-        navigation.navigate("CompositeLabelPage");
+        navigation.navigate("CompositeLabelPhoto");
       }
     }
   };
+
   const backPressed = () => {
     appContext.setStandardDetails({
       ...standardDetails,
@@ -156,16 +157,16 @@ function StandardPage() {
               />
             </View>
             <View style={styles.spacer} />
-            <Text>Does the network service /ECV conform to standards</Text>
+            <Text>Does the network service / ECV conform to standards</Text>
             <View style={styles.optionContainer}>
               <OptionalButton
                 options={["Yes", "No"]}
                 actions={[
                   () => {
-                    setconformStandard(true);
+                    setConformStandard(true);
                   },
                   () => {
-                    setconformStandard(false);
+                    setConformStandard(false);
                   },
                 ]}
                 value={
@@ -200,7 +201,7 @@ function StandardPage() {
               />
             </View>
             <View style={styles.spacer} />
-            <Text>Outlet kit be used</Text>
+            <Text>Outlet kit used</Text>
             <View style={styles.optionContainer}>
               <OptionalButton
                 options={["Yes", "No"]}
@@ -232,7 +233,7 @@ function StandardPage() {
               title={"Notes"}
               value={conformText}
               onChangeText={(text) => {
-                setconformText(text);
+                setConformText(text);
               }}
               style={{
                 ...styles.input,
@@ -246,7 +247,7 @@ function StandardPage() {
               I confirm that all works have been carried out in
               accordance with current industry standards and
               health safety policies
-              </Text>
+            </Text>
             <View style={styles.spacer} />
             <View>
               <Button
@@ -264,39 +265,44 @@ function StandardPage() {
               )}
             </View>
 
-            <Modal style={{ flex: 1 }} visible={isModal}>
-            <View style={styles.spacer} />
-              <Button
-                title="Close"
-                onPress={() => {
-                  setIsModal(false);
-                }}
-              />
-              <View style={{ flex: 1, backgroundColor: 'red' }}>
-
-                <SignatureScreen
-                  onOK={handleOK}
-                  webStyle={`.m-signature-pad {
-                    box-shadow: none; border: none;
-                    margin-left: 0px;
-                    margin-top: 0px;
-                  } 
-                   .m-signature-pad--body
-                    canvas {
-                      background-color: #E5E5F1;
-                    }
-                  .m-signature-pad--body 
-                  .m-signature-pad--footer {display: none; margin: 0px;}
-                  body,html {
-                     width: 100%; 
-                     height: 68%;
-                  }`}
-                  backgroundColor={PrimaryColors.Sand}
-                  scrollable={true}
-                />
-              </View>
-
-
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={isModal}
+              onRequestClose={() => setIsModal(false)}
+              presentationStyle="overFullScreen"
+            >
+              <SafeAreaView style={{ flex: 1 }}>
+                <View style={{ flex: 1, justifyContent: 'space-between' }}>
+                  <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                    <SignatureScreen
+                      onOK={handleOK}
+                      webStyle={`.m-signature-pad {
+                        box-shadow: none; border: none;
+                        margin-left: 0px;
+                        margin-top: 0px;
+                      } 
+                      .m-signature-pad--body canvas {
+                        background-color: #E5E5F1;
+                      }
+                      .m-signature-pad--body .m-signature-pad--footer {
+                        display: none; margin: 0px;
+                      }
+                      body,html {
+                        width: 100%; 
+                        height: 100%;
+                      }`}
+                      backgroundColor={PrimaryColors.Sand}
+                      scrollable={true}
+                    />
+                  </ScrollView>
+                  <Button
+                    title="Close"
+                    onPress={() => setIsModal(false)}
+                    color="red"
+                  />
+                </View>
+              </SafeAreaView>
             </Modal>
 
           </View>

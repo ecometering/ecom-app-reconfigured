@@ -14,6 +14,7 @@ export const useAppContext = () => {
 const AppContextProvider = (props) => {
   const [jobType, setJobType] = useState(null);
   const [jobDetails, setJobDetails] = useState(null);
+  const[jobStarted,setJobStarted] = useState(false);
   const [isWarrant, setIsWarrant] = useState(false);
   const [photos, setPhotos] = useState({});
 
@@ -61,9 +62,12 @@ const AppContextProvider = (props) => {
     number1: "",
     number2: "",
     instructions: "",
-    confirmContact: false,// Assuming confirmContact is a boolean, provide a default value accordingly
+    confirmContact: false,
+    confirmWarrant:false, // Assuming confirmContact is a boolean, provide a default value accordingly
   });
-  const [siteQuestions, setSiteQuestions] = useState({});
+  const [siteQuestions, setSiteQuestions] = useState({
+    
+  });
 
   const [meterDetails, setMeterDetails] = useState(null);
   const [regulatorDetails, setRegulatorDetails] = useState(null);
@@ -121,6 +125,7 @@ const AppContextProvider = (props) => {
     setSiteQuestions,
     setPhotos,
     savePhoto,
+    jobStarted,
     // addPhotoDetail,
     updatePhoto,
     setJobdata,
@@ -138,6 +143,7 @@ const AppContextProvider = (props) => {
     setStreamNumber,
     setIsWarrant,
     setJobTypes,
+    setJobStarted,
     blobs,
     setBlobs,
     userLogged,

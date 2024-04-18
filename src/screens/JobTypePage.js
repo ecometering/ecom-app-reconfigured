@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
+import React, { useContext, useState } from "react";
+import { SafeAreaView, ScrollView, StyleSheet, View, Modal, TouchableOpacity, Text } from "react-native";
 import { height, unitH } from "../utils/constant";
 import { PrimaryColors } from "../theme/colors";
 import { EcomPressable as Button } from "../components/ImageButton";
@@ -7,34 +7,36 @@ import Text from "../components/Text";
 import { useNavigation } from "@react-navigation/native";
 import { AppContext } from "../context/AppContext";
 import Header from "../components/Header";
-import { addOrUpdateJobData, fetchJobDataById,createJob } from '../utils/database';
+import { addOrUpdateJobData } from '../utils/database';
 
 function JobTypePage() {
   const navigation = useNavigation();
-  const appContext = useContext(AppContext);
+  const { jobStarted, clearContext } = useContext(AppContext);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedJobType, setSelectedJobType] = useState('');
 
-  
   const setJobTypeAndNavigate = async (jobType) => {
+    if (jobStarted) {
+      // Show modal if a job is already started
+      setSelectedJobType(jobType);
+      setModalVisible(true);
+    } else {
+      await proceedWithJobType(jobType);
+    }
+  };
+
+  const proceedWithJobType = async (jobType) => {
     console.log(`Setting job type to: ${jobType} and navigating.`);
-    
     try {
-       const jobId = `JOB-${Date.now()}`;
-        // await addOrUpdateJobData(jobId, { jobId: jobId });
+      const jobId = `JOB-${Date.now()}`;
       const jobData = {
         jobType: jobType,
         startDate: new Date().toISOString(),
         jobStatus: "in progress",
-        progress: 0, // Assuming progress starts at 0
+        progress: 0,
       };
-       
-      // Directly save job data to the Jobs table without checking for table existence
-      // as we assume table creation is handled at app initialization level
-      // await addOrUpdateJobData(jobId, jobData); // jobNumber is assumed to be unique identifier
-      // const updatedJob = await fetchJobDataById(jobId);
-      // console.log(`Updated job entry:`, updatedJob);
       console.log(`Job type ${jobType} saved successfully.`);
-      navigation.navigate("SiteDetailsPage",{'totalPages':9,'currentPage':1,'jobId':jobId,'jobType':jobType});
-
+      navigation.navigate("SiteDetailsPage", {'totalPages': 9, 'currentPage': 1, 'jobId': jobId, 'jobType': jobType});
     } catch (error) {
       console.error("Error setting job type and navigating:", error);
     }
@@ -45,7 +47,7 @@ function JobTypePage() {
       <Header
         hasLeftBtn={true}
         leftBtnPressed={() => navigation.goBack()}
-        centerText=""
+        centerText="Job Type Selection"
       />
       <ScrollView style={styles.flex}>
         <View style={styles.body}>
@@ -62,6 +64,36 @@ function JobTypePage() {
           ))}
         </View>
       </ScrollView>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>A job is currently active. Would you like to discard it?</Text>
+            <View style={styles.buttonRow}>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={() => {
+                  clearContext(); // Clear the context using the method defined in AppContext
+                  setModalVisible(false);
+                  proceedWithJobType(selectedJobType);
+                }}
+              >
+                <Text style={styles.modalButtonText}>Yes</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.modalButtonText}>No</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -95,6 +127,48 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 20,
     fontWeight: "800",
+  },
+  // Additional styles for modal
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center"
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  modalButton: {
+    backgroundColor: PrimaryColors.Blue,
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginHorizontal: 10,
+  },
+  modalButtonText: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
   },
 });
 

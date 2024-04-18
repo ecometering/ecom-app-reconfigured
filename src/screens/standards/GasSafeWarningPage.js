@@ -31,8 +31,6 @@ function GasSafeWarningPage() {
   const [certificateReference, setCertificateReference] = useState(
     standardDetails?.certificateReference
   );
-  const [engineerId, setEngineerId] = useState(standardDetails?.engineerId);
-  const [jobNumber, setJobNumber] = useState(standardDetails?.jobNumber);
   const [emergencyService, setEmergencyService] = useState(
     standardDetails?.emergencyService
   );
@@ -159,26 +157,7 @@ function GasSafeWarningPage() {
             value={certificateReference}
             containerStyle={styles.inputContainer}
           />
-          <View style={styles.spacer} />
-          <TextInputWithTitle
-            title={"Engineers ID"}
-            placeholder={""}
-            value={engineerId}
-            onChangeText={(txt) => {
-              setEngineerId(txt);
-            }}
-            containerStyle={styles.inputContainer}
-          />
-          <View style={styles.spacer} />
-          <TextInputWithTitle
-            title={"Job Number"}
-            placeholder={""}
-            value={jobNumber}
-            onChangeText={(txt) => {
-              setJobNumber(txt);
-            }}
-            containerStyle={styles.inputContainer}
-          />
+          
           <View style={styles.spacer} />
           <TextInputWithTitle
             title={"Details of gas EmergencyService Provider REF"}
@@ -301,39 +280,27 @@ function GasSafeWarningPage() {
   </View>
 </View>
 
-          <Modal visible={isModal}>
-            <Button
-              title="Close"
-              onPress={() => {
-                setIsModal(false);
-              }}
-            />
-            <View
-              style={{
-               flex:1
-              }}
-            >
-              <SignatureScreen
-                onOK={handleOK}
-                webStyle={ `.m-signature-pad {
-                  box-shadow: none; border: none;
-                  margin-left: 0px;
-                  margin-top: 0px;
-                } 
-                 .m-signature-pad--body
-                  canvas {
-                    background-color: #E5E5F1;
-                  }
-                .m-signature-pad--body 
-                .m-signature-pad--footer {display: none; margin: 0px;}
-                body,html {
-                   width: 100%; 
-                   height: 68%;
-                }`}
-                backgroundColor={PrimaryColors.Sand}
-                scrollable={true}
-              />
-            </View>
+<Modal
+            animationType="slide"
+            transparent={true}
+            visible={isModal}
+            onRequestClose={() => setIsModal(false)}
+            presentationStyle="overFullScreen"
+          >
+            <SafeAreaView style={{ flex: 1 }}>
+              <View style={{ flex: 1, justifyContent: 'space-between' }}>
+                <SignatureScreen
+                  onOK={handleOK}
+                  webStyle={`.m-signature-pad { box-shadow: none; border: none; margin-left: 0px; margin-top: 0px; }
+                            .m-signature-pad--body canvas { background-color: #E5E5F1; }
+                            .m-signature-pad--body .m-signature-pad--footer { display: none; margin: 0px; }
+                            body, html { width: 100%; height: 100%; }`}
+                  backgroundColor={PrimaryColors.Sand}
+                  scrollable={true}
+                />
+                <Button title="Close" onPress={() => setIsModal(false)} />
+              </View>
+            </SafeAreaView>
           </Modal>
         </ScrollView>
       </KeyboardAvoidingView>

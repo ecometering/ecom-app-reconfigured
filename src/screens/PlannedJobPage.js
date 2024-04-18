@@ -1,51 +1,57 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FlatList, SafeAreaView, StyleSheet, View, Text as RNText } from 'react-native';
 import { PrimaryColors, Transparents } from '../theme/colors';
 import { EcomPressable as Button } from '../components/ImageButton';
 import Header from '../components/Header';
-import Text, { CenteredText } from '../components/Text';
 import { useNavigation } from '@react-navigation/native';
-import { TextType } from '../theme/typography';
-import { AppContext } from '../context/AppContext';
-import { useScreenDimensions } from '../utils/constant';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+
 function PlannedJobPage() {
   const navigation = useNavigation();
-  const {authState} = useAuth();
+  const { authState } = useAuth();
   const [plannedJobs, setPlannedJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { width } = useScreenDimensions();
 
   useEffect(() => {
     const fetchPlannedJobs = async () => {
       setIsLoading(true);
       setError(null);
   
+      console.log("Using token for API request:", authState.token); // Debug: Check what token is being used
+  
+      if (!authState.token) {
+        setError("Authentication token is not available.");
+        setIsLoading(false);
+        return;
+      }
+
       try {
-        const response = await axios.get('https://test.ecomdata.co.uk/api/jobs');
+        const response = await axios.get('https://test.ecomdata.co.uk/api/jobs', {
+          headers: {
+            Authorization: `Bearer ${authState.token}` // Ensure token is applied correctly
+          }
+        });
         const { data } = response;
         if (data && data.length > 0) {
-          await saveJobsToDatabase(data);
           setPlannedJobs(data);
         } else {
           setError('No planned jobs found');
         }
       } catch (error) {
-        console.log("error", error.response.data)
-        setError('Error loading data: ' + error.message);
+        console.log("Error fetching jobs:", error.response ? error.response.data : error.message);
+        setError(`Error loading data: ${error.response ? error.response.data : error.message}`);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchPlannedJobs();
-  }, [])
+  }, [authState.token]);
 
   const renderItem = ({ item, index }) => {
     const handleItemClick = () => {
-      // Updated to navigate directly to SiteDetailsPage and pass jobType as parameter
       navigation.navigate('SiteDetailsPage', { jobType: item.JobType });
     };
     const rowColor = index % 2 === 0 ? Transparents.SandColor2 : Transparents.Clear;
@@ -59,7 +65,6 @@ function PlannedJobPage() {
     );
   };
 
-  // Dynamic empty component to show loading, error, no data message, and data in order
   const renderEmptyComponent = () => {
     if (isLoading) {
       return <View style={styles.center}><RNText>Loading...</RNText></View>;
@@ -84,39 +89,25 @@ function PlannedJobPage() {
     </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
-  flex: { flex: 1 },
   body: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
   },
-  spacer: {
-    height: 20,
-  },
-  divider: {
-    width: '100%',
-    height: 1,
-    backgroundColor: 'black',
-  },
-  blackTxt: { color: 'black' },
   row: {
     flexDirection: 'row',
-  },
-  headerCell: {
-    textAlign: 'center',
-    borderWidth: 1,
-    borderColor: PrimaryColors.Black,
-    minHeight: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   center: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  spacer: {
+    height: 20,
+  }
 });
 
 export default PlannedJobPage;

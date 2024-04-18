@@ -144,7 +144,7 @@ const ExchangeFlowNavigator = () => {
   <Stack.Screen name = "EcvPhoto" component = {GenericPhotoPage} initialParams={{title: 'Ecv Photo',photoKey: 'EcvPhoto',nextScreen:'ExistingCorrectorGatewaySreen'}} />
   <Stack.Screen name ="ExistingMeterGatewayScreen2" component={MeterGatewayScreen} initialParams={{pageRoute:1,pageflow:2}}/>
   <Stack.Screen name="ExistingCorrectorDetails" component={CorrectorDetailsPage} initialParams={{title: 'Existing Corrector Details',nextScreen:()=>nextAfterCorrectorRemoval({ meter, corrector, datalogger })}} />
-  <Stack.screen name="ExistingCorrectorGatewaySreen" component={CorrectorGateway} initialParams={{pageRoute:1}} />
+  <Stack.Screen name="ExistingCorrectorGatewaySreen" component={CorrectorGateway} initialParams={{pageRoute:1}} />
   <Stack.Screen name="ExistingDataLoggerDetails" component={DataLoggerDetailsPage} initialParams={{title: 'Existing DataLogger Details',nextScreen:'AssetSelectGatewayScreenFinal'}} />
   <Stack.Screen name="AssetSelectGatewayScreenFinal" component={AssetSelectGatewayScreen} initialParams={{pageRoute:2}} />
   
@@ -156,7 +156,7 @@ const ExchangeFlowNavigator = () => {
   <Stack.Screen name="InstalledMeterPhoto" component={GenericPhotoPage} initialParams={{title: 'Installed Meter Photo',photoKey: 'InstalledMeterPhoto',nextScreen:'MeterGatewayScreen2'}} />
   <Stack.Screen name="MeterGatewayScreen2" component={MeterGatewayScreen} initialParams={{pageRoute:2,pageflow:2}}/>
   <Stack.Screen name="InstalledCorrectorDetails" component={CorrectorDetailsPage} initialParams={{title: 'Installed Corrector Details',nextScreen:'CorrectorGatewayScreen'}} />
-  <Stack.screen name="CorrectorGatewaySreen" component={CorrectorGateway} initialParams={{pageRoute:2}} />
+  <Stack.Screen name="CorrectorGatewaySreen" component={CorrectorGateway} initialParams={{pageRoute:2}} />
 
   <Stack.Screen name="InstalledDataLoggerDetails" component={DataLoggerDetailsPage} initialParams={{title: 'Installed DataLogger Details',nextScreen:'DataLoggerGatewayScreen'}} />
   <Stack.Screen name="DataLoggerGatewayScreen" component={DataLoggerGatewayScreen}  />

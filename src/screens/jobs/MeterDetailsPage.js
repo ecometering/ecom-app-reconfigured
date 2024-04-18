@@ -112,17 +112,21 @@ function MeterDetailsPage() {
     }
   }, [type, pressureTier]);
 
-  useEffect(() => {
-    console.log("+++++++type changed", type)
-    if (type) {
-      fetchManufacturersForMeterType(type.value)
-        .then(data => {
-          console.log(">>>  4  >>>fetchManufacturersForMeterType>>>", data);
-          setManufacturers(data.map(manufacturer => ({ label: manufacturer.Manufacturer, value: manufacturer.Manufacturer })))
-        })
-        .catch(error => console.error("error", error));
-    }
-  }, [type]);
+useEffect(() => {
+  console.log("+++++++type changed", type)
+  if (type) {
+    fetchManufacturersForMeterType(type.value)
+      .then(data => {
+        console.log(">>>  4  >>>fetchManufacturersForMeterType>>>", data);
+        const sortedData = data.sort((a, b) => a.Manufacturer.localeCompare(b.Manufacturer)); // Sorting alphabetically
+        setManufacturers(sortedData.map(manufacturer => ({
+          label: manufacturer.Manufacturer,
+          value: manufacturer.Manufacturer
+        })));
+      })
+      .catch(error => console.error("error", error));
+  }
+}, [type]);
 
   useEffect(() => {
     if (manufacturer && type) {
@@ -327,7 +331,7 @@ function MeterDetailsPage() {
                     { label: 'D-DIAPHRAGM OF UNKOWN MATERIAL', value: "1" },
                     { label: 'L-LEATHER DIAPHRAGM', value: "2" },
                     { label: 'R-ROTARY', value: "3" },
-                    { label: 'S-SYNTHETIC DIAPHRAGM', value: "4" },
+                    { label: 'S-SYNTHETIC DIAPHRAGM', value: "1" },
                     { label: 'T-TURBINE', value: "5" },
                     { label: 'U-ULTRASONIC', value: "6" }
                   ]}

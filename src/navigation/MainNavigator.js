@@ -126,7 +126,7 @@ const MainNavigator = () => {
 					<Stack.Screen name="CompletedJobsPage" component={CompletedJobsPage} />
 					<Stack.Screen name="UserProfile" component={EngineerProfileScreen} />
 
-					<Stack.Screen name="test" component={MeterDetailsPage} initialParams={{title: 'New Meter Details',nextScreen: 'NewEcvToMov'
+					<Stack.Screen name="test" component={CorrectorDetailsPage} initialParams={{title: 'New Meter Details',nextScreen: 'NewEcvToMov'
     }} />
 					<Stack.Screen name="SiteDetailsPage" component={SiteDetailsPage} initialParams={{progress:1}} />
 					<Stack.Screen name="SitePhotoPage" component={GenericPhotoPage} initialParams={{ title: "Site Photo", photoKey: "sitePhoto", nextScreen: "SiteQuestionsPage",progress:2}} />
