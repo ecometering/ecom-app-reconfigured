@@ -75,7 +75,7 @@ function GasSafeWarningPage() {
       isPropertyRented: isPropertyRented,
       isCustomerAvailable: isCustomerAvailable,
       engineerSign: engineerSign,
-      customerSign: customerSign,
+      customerSign: customerSign || null,
     });
     navigation.goBack();
   };

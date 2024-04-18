@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }: any) => {
       });
 
       console.log('file : AuthContext.tsx ~ line 31 ~ login ~ result', result);
-      setAuthState({ token: result.data.refresh, authenticated: true });
+      setAuthState({ token: result.data.access, authenticated: true });
       console.log(
         'file : AuthContext.tsx ~ line 34 ~ login ~ authState',
         authState
@@ -53,10 +53,10 @@ export const AuthProvider = ({ children }: any) => {
 
       axios.defaults.headers.common[
         'Authorization'
-      ] = `Bearer ${result.data.refresh}`;
+      ] = `Bearer ${result.data.access}`;
 
       
-      await SecureStore.setItemAsync(TOKEN_KEY, result.data.refresh);
+      await SecureStore.setItemAsync(TOKEN_KEY, result.data.access);
       return result;
     } catch (e) {
       console.error('Login failed:', e); // Log high-level error

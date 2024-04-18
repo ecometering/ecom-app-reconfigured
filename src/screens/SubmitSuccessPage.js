@@ -1,153 +1,223 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Image, ScrollView, Alert } from 'react-native';
+import React, { useContext, useState, useEffect } from 'react';
+import { View, Text, Button, Alert, StyleSheet, ActivityIndicator } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { AppContext } from '../context/AppContext';
+import { openDatabase } from '../utils/database';
 import axios from 'axios';
-import * as ImagePicker from 'expo-image-picker';
+import Header from '../components/Header'; // Assuming this is your header component
+import { useAuth } from '../context/AuthContext';
 
-const API_TOKEN ='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzEzMzU3ODc1LCJpYXQiOjE3MTMzNTQyNzUsImp0aSI6ImYzMTk0MmIxZGI3ZDQxMGE4NjU1YzVlYzc1MGQyNmI1IiwidXNlcl9pZCI6MX0.uLgB6RO6ObVoQ2XUqk8rWWlGZ4EY8yT1MuQJxYts0_I'
-const API_ENDPOINT = 'https://test.ecomdata.co.uk/api/upload-photos/';
+const SubmitSuccessPage = () => {
+  const appContext = useContext(AppContext);
+  const { authState } = useAuth()
+  const navigation = useNavigation();
+  const [isLoading, setisLoading] = useState(false)
 
-const App = () => {
-  const [photoType, setPhotoType] = useState('SitePhoto');
-  const [jobId, setJobId] = useState('');
-  const [description, setDescription] = useState('');
-  const [photo, setPhoto] = useState(null);
-
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setPhoto(result.assets[0]?.uri);
-    }
-  };
-
-  const handleSubmit = async () => {
-    if(!photo){
-      Alert.alert("NO PHOTOT")
-      return
-    }
-    const formData = new FormData();
-    formData.append('photo_type', photoType);
-    formData.append('job_id', jobId);
-    formData.append('description', description);
-    formData.append('photo', {
-      uri: photo,
-      type: 'image/jpeg', // or the correct type based on your photo URI
-      name: 'photo.jpg'
-    });
+  useEffect(() => {
+    setisLoading(false)
+  }, [])
 
 
-    console.log('====================================');
-    console.log(photo);
-    console.log('====================================');
-    try {
-      const response = await axios.post(API_ENDPOINT, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${API_TOKEN}`
-        }
-      });
-      Alert.alert('Success', 'Photo uploaded successfully!');
-      console.log('Success:', response.data);
-    } catch (error) {
-      Alert.alert('Error', `Failed to upload photo. ${error}`);
-      console.error('Error uploading image:', error);
-    }
-  };
+  async function fetchAndUploadJobData() {
+    setisLoading(true)
+    const db = await openDatabase();
+    db.transaction(tx => {
+      tx.executeSql(
+        `SELECT * FROM Jobs WHERE id = ?`,
+        [appContext?.jobDetails?.JobID],
+        async (_, { rows: { _array } }) => {
+          if (_array.length > 0) {
+            const jobData = { ..._array[0] };
+            // const photos = JSON.parse(jobData.photos); // Assuming photos is stored as JSON string
+            const photos = appContext.photos
+            // delete jobData.photos; // Remove photos from jobData before sending
+            jobData.siteDetails = JSON.parse(jobData.siteDetails);
+            jobData.siteDetails.title = jobData.siteDetails.title.value // TODO: Get value from dropdown
+            // console.log("jobData", jobData)
+            console.log(`Bearer ${authState.token}`);
 
-  const handleSubmit_ = async () => {
-    if(!photo){
-      Alert.alert("NO PHOTOT")
-      return
-    }
-    const formData = new FormData();
-    formData.append('photo_type', photoType);
-    formData.append('userId', 'user123');
-    formData.append('job_id', jobId);
-    formData.append('description', description);
-    formData.append('photo', {
-      uri: photo,
-      type: 'image/jpeg', // or the correct type based on your photo URI
-      name: 'photo.png'
-    });
-  
-    console.log('==================photo==================');
-    console.log(photo);
-    console.log('===================photo=================');
-  
-    try {
-      const response = await fetch(API_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'multipart/form-data',
+            console.log(JSON.stringify(null, null, 2));
+
+
+
+            try {
+              // Upload job data excluding photos with Axios
+              const config = {
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${authState.token}`
+                }
+              }
+
+              const body = {
+                data: {
+                  ...jobData,
+                  standardDetails: appContext.standardDetails,
+                },
+                engineer_id: appContext.standardDetails.engineerId
+              }
+              const response = await axios.post('https://test.ecomdata.co.uk/api/incoming-jobs/', body, config);
+
+
+              console.log('Job data uploaded successfully ==>>', response?.data?.job_id, response?.status);
+
+              if (response?.status == 201) {
+                // // Upload photos with Axios
+                for (const key in photos) {
+                  if (photos.hasOwnProperty(key)) {
+
+                    const image = photos[key];
+                    if (!image.uri) {
+                      Alert.alert("NO PHOTOT")
+                      continue
+                    }
+                    const result = await uploadResource(image, response?.data?.job_id)
+                    console.log(result);
+
+                  }
+                }
+
+                console.log('Photos uploaded successfully');
+                setisLoading(false)
+                // Update job status to 'Completed'
+                tx.executeSql(
+                  'UPDATE Jobs SET jobStatus = ? WHERE id = ?',
+                  ['Completed', appContext?.jobData?.id],
+                  () => {
+                    console.log('Record updated successfully');
+                    Alert.alert(
+                      "Upload Successful",
+                      "The job and photos have been successfully uploaded.",
+                      [
+                        { text: "OK", onPress: () => navigation.navigate("Home") }
+                      ]
+                    );
+                  },
+                  error => {
+                    console.error('Error updating record', error);
+                  }
+                );
+              } else {
+                Alert.alert('Error', `Error during data upload. ${error}`);
+
+                setisLoading(false)
+              }
+
+            } catch (error) {
+              setisLoading(false)
+              console.log('Error during data upload', error);
+              Alert.alert("Upload Error", error, "There was a problem uploading the job. Please try again.");
+            }
+          }
         },
-        body: formData
-      });
-  
-      const responseData = await response.json();
-  
-      if (response.ok) {
-        Alert.alert('Success', 'Photo uploaded successfully!');
-        console.log('Success:', responseData);
-      } else {
-        Alert.alert('Error', `Failed to upload photo. ${responseData.message || 'Unknown error'}`);
-        console.error('Error uploading image:', responseData);
+        error => {
+          setisLoading(false)
+          console.log('Error fetching job data', error);
+          Alert.alert("Fetch Error", error, "There was a problem fetching the job data. Please try again.");
+        }
+      );
+    });
+  }
+
+  const uploadResource = async (image, job_id) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const formData = new FormData();
+        formData.append('photo_type', 'SitePhoto');
+        formData.append('userId', 'user123');
+        formData.append('job_id', job_id);
+        formData.append('description', image.title);
+        formData.append('photo', {
+          uri: image.uri,
+          type: 'image/jpeg', // or the correct type based on your photo URI
+          name: `${image.photoKey}.png`
+        });
+
+        const authToken = `Bearer ${authState.token}`;
+        const response = await fetch('https://test.ecomdata.co.uk/api/upload-photos/', {
+          method: 'POST',
+          headers: {
+            'Authorization': authToken
+          },
+          body: formData
+        });
+
+        const responseData = await response.json();
+
+        if (response.ok) {
+          resolve(true);
+        } else {
+          Alert.alert('Error', `Failed to upload photo. ${responseData?.detail || 'Unknown error'}`);
+          console.error('Error uploading image:', responseData);
+          resolve(false);
+        }
+
+      } catch (error) {
+        Alert.alert('Error', `Failed to upload photo. ${error}`);
+        console.error('Error uploading image:', error);
+        resolve(false);
       }
-  
-    } catch (error) {
-      Alert.alert('Error', `Failed to upload photo. ${error.message || 'Unknown error'}`);
-      console.error('Error uploading image:', error);
-    }
+    });
   };
+
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.label}>Photo Type:</Text>
-      <TextInput
-        style={styles.input}
-        onChangeText={setPhotoType}
-        value={photoType}
+    <View style={styles.container}>
+      <Header
+        hasLeftBtn={true}
+        leftBtnPressed={() => navigation.goBack()}
+        hasCenterText={true}
+        centerText="Submit Job"
       />
-      <Text style={styles.label}>Job ID:</Text>
-      <TextInput
-        style={styles.input}
-        onChangeText={setJobId}
-        value={jobId}
-        keyboardType="numeric"
-      />
-      <Text style={styles.label}>Description:</Text>
-      <TextInput
-        style={styles.input}
-        onChangeText={setDescription}
-        value={description}
-        multiline
-      />
-      <Button title="Pick an image from camera roll" onPress={pickImage} />
-      {photo && <Image source={{ uri: photo }} style={{ width: 200, height: 200 }} />}
-      <Button title="Upload Photo" onPress={handleSubmit} />
-    </ScrollView>
+      <View style={styles.content}>
+        <Text>Are you ready to submit the job?</Text>
+        {
+          isLoading ?
+            <ActivityIndicator />
+            :
+            <Button
+              title="Yes"
+              onPress={fetchAndUploadJobData}
+            />
+        }
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  content: {
     padding: 20,
-    alignItems: 'center'
   },
-  label: {
-    fontSize: 16,
-    marginVertical: 8
-  },
-  input: {
-    width: '100%',
-    borderWidth: 1,
-    padding: 10,
-    marginBottom: 10
-  }
 });
 
-export default App;
+export default SubmitSuccessPage;
+
+
+
+const styles1 = StyleSheet.create({
+  body: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: '#fff',
+  },
+  text: {
+    fontSize: 16,
+    color: '#333',
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  image: {
+    width: 300,
+    height: 300,
+    resizeMode: 'contain',
+    marginTop: 20,
+    borderRadius: 10,
+  },
+});
+
