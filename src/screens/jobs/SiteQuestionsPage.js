@@ -101,7 +101,7 @@ const nextPressed = async () => {
       EcomHelper.showInfoMessage("Please indicate if the job can be carried out.");
       return;
     }
-    if (siteQuestions.carryOutReasonisCarryOut === false && (!siteQuestions.carryOutReason || siteQuestions.carryOutReason.trim().length === 0)) {
+    if (siteQuestions.isCarryOut === false && (!siteQuestions.carryOutReason || siteQuestions.carryOutReason.trim().length === 0)) {
       EcomHelper.showInfoMessage("Please indicate why the job can't be carried out.");
       return;
     }  

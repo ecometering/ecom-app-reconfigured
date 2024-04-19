@@ -98,7 +98,52 @@ const AppContextProvider = (props) => {
       [screenName]: (prevCounts[screenName] || 0) + 1,
     }));
   };
+
+  const resetContext = () => {
+    setJobType(null);
+    setJobDetails(null);
+    setJobStarted(false);
+    setIsWarrant(false);
+    setPhotos({});
+    setHasStreamNumber(false);
+    setStreamNumber(0);
+    setStreamValue([]);
+    setStreamCounter(0);
+    setExtraCounter(0);
+    setPassedRemoval(false);
+    setStartRemoval(false);
+    setSiteDetails({
+      mprn: "",
+      companyName: "",
+      buildingName: "",
+      address1: "",
+      address2: "",
+      address3: "",
+      town: "",
+      county: "",
+      postCode: "",
+      title: "",
+      contact: "",
+      email1: "",
+      email2: "",
+      number1: "",
+      number2: "",
+      instructions: "",
+      confirmContact: false,
+      confirmWarrant: false,
+    });
+    setSiteQuestions({});
+    setMeterDetails(null);
+    setRegulatorDetails(null);
+    setStandardDetails(null);
+    setRemovedMeterDetails(null);
+    setMaintenanceDetails(null);
+    setJobdata(null);
+    setVisitCounts({});
+  };
+
   const providerValue = {
+    resetContext,
     jobType,
     jobDetails,
     siteQuestions,

@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { SafeAreaView, ScrollView, StyleSheet, View, Modal, TouchableOpacity, Text } from "react-native";
+import { SafeAreaView, ScrollView, StyleSheet, View, Modal, TouchableOpacity } from "react-native";
 import { height, unitH } from "../utils/constant";
 import { PrimaryColors } from "../theme/colors";
 import { EcomPressable as Button } from "../components/ImageButton";
@@ -11,7 +11,8 @@ import { addOrUpdateJobData } from '../utils/database';
 
 function JobTypePage() {
   const navigation = useNavigation();
-  const { jobStarted, clearContext } = useContext(AppContext);
+  const { jobStarted, resetContext } = useContext(AppContext);
+  
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedJobType, setSelectedJobType] = useState('');
 
@@ -77,7 +78,7 @@ function JobTypePage() {
               <TouchableOpacity
                 style={styles.modalButton}
                 onPress={() => {
-                  clearContext(); // Clear the context using the method defined in AppContext
+                  resetContext(); // Clear the context using the method defined in AppContext
                   setModalVisible(false);
                   proceedWithJobType(selectedJobType);
                 }}
@@ -86,7 +87,10 @@ function JobTypePage() {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.modalButton}
-                onPress={() => setModalVisible(false)}
+                onPress={() => {
+                  setModalVisible(false);
+                  proceedWithJobType(selectedJobType);}}
+                
               >
                 <Text style={styles.modalButtonText}>No</Text>
               </TouchableOpacity>
