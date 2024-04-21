@@ -19,6 +19,7 @@ import MaintenanceQuestionsPage from "../screens/maintenance/MaintenanceQuestion
 import CalendarPage from "../screens/calendar/CalendarPage";
 import LoginPage from "../screens/LoginPage";
 import DataLoggerDetailsPage from "../screens/jobs/DataLoggerDetailsPage";
+import Test from "../screens/test";
 // maintenance pages imports
 
 //import standards inport from ../screens/standards
@@ -126,7 +127,7 @@ const MainNavigator = () => {
 					<Stack.Screen name="CompletedJobsPage" component={CompletedJobsPage} />
 					<Stack.Screen name="UserProfile" component={EngineerProfileScreen} />
 
-					<Stack.Screen name="test" component={CorrectorDetailsPage} initialParams={{title: 'New Meter Details',nextScreen: 'NewEcvToMov'
+					<Stack.Screen name="test" component={MeterDetailsPage} initialParams={{title: 'New Meter Details',nextScreen: 'NewEcvToMov'
     }} />
 					<Stack.Screen name="SiteDetailsPage" component={SiteDetailsPage} initialParams={{progress:1}} />
 					<Stack.Screen name="SitePhotoPage" component={GenericPhotoPage} initialParams={{ title: "Site Photo", photoKey: "sitePhoto", nextScreen: "SiteQuestionsPage",progress:2}} />

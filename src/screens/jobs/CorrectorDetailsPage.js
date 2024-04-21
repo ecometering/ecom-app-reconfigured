@@ -13,13 +13,7 @@ import {
 } from "react-native";
 import Header from "../../components/Header";
 import { useNavigation } from "@react-navigation/native";
-import {
-  METER_MANUFACTURER_LIST,
-  METER_MODEL_LIST,
-
-  CORRECTOR_METER_MANUFACTURER_LIST,
-  CORRECTOR_METER_MODEL_LIST
-} from "../../utils/constant";
+import {tablename} from "../../utils/constant";
 import Text from "../../components/Text";
 import TextInput,{ TextInputWithTitle, InputRowWithTitle } from "../../components/TextInput";
 import OptionalButton from "../../components/OptionButton";
@@ -32,11 +26,13 @@ import { openDatabase,fetchPhotosJSON,appendPhotoDetail } from "../../utils/data
 import ImagePickerButton from "../../components/ImagePickerButton";
 import * as ExpoImagePicker from "expo-image-picker";
 import EcomDropDown from "../../components/DropDown";
-import { fetchManufacturersForMeterType, fetchModelsForManufacturer } from "../../utils/database";
+import { useSQLiteContext } from 'expo-sqlite/next';
+
 const alphanumericRegex = /^[a-zA-Z0-9]+$/;
 const { width, height } = Dimensions.get("window");
 
 export default function CorrectorDetailsPage() {
+  const db = useSQLiteContext();
   const appContext = useContext(AppContext);
   const navigation = useNavigation();
   const jobType = appContext.jobType;
@@ -49,11 +45,13 @@ export default function CorrectorDetailsPage() {
     correctorDetails?.isMountingBracket
   );
 
-  const [manufacturer, setManufacturer] = useState(
+  const [selectedCorrectorManufacturer, setSelectedCorrectorManufacturer] = useState(
     correctorDetails?.manufacturer
   );
-  const [model, setModel] = useState(correctorDetails?.model);
-  
+  const [selectedCorrectorModelCode, setSelectedCorrectorModelCode] = useState(correctorDetails?.model);
+  const [correctorManufacturers, setCorrectorManufacturers] = useState([]);
+  const [correctorModelCodes, setCorrectorModelCodes] = useState([]);
+
   const [correctorImage, setcorrectorImage] = useState(
     correctorDetails?.loggerImage
   );
@@ -62,7 +60,30 @@ export default function CorrectorDetailsPage() {
   const [correctedReads, setCorrectedReads] = useState(correctorDetails?.correctedReads);
 
 const camera = createRef(null)
-
+async function getCorrectorManufacturers() {
+  try {
+      const query = `SELECT DISTINCT Manufacturer FROM ${tablename[9]}`;
+      const result = await db.getAllAsync(query);
+      setCorrectorManufacturers(result.map(manu => ({
+          label: manu.Manufacturer,
+          value: manu.Manufacturer
+      })).sort((a, b) => a.label.localeCompare(b.label)));
+  } catch (err) {
+      console.error('SQL Error: ', err);
+  }
+}
+async function getCorrectorModelCodes() {
+  try {
+      const query = `SELECT DISTINCT "ModelCode" FROM ${tablename[9]} WHERE Manufacturer = '${selectedCorrectorManufacturer}'`;
+      const result = await db.getAllAsync(query);
+      setCorrectorModelCodes(result.map(model => ({
+          label: model["ModelCode"],
+          value: model["ModelCode"]
+      })).sort((a, b) => a.label.localeCompare(b.label)));
+  } catch (err) {
+      console.error('SQL Error: ', err);
+  }
+}
   const backPressed = () => {
     // appContext.setCorrectorDetails(correctorDetails);
       navigation.goBack();
@@ -159,12 +180,14 @@ const updateCorrectorDetails = async() => {
   const [models, setModels] = useState([]);
 
   useEffect(() => {
-    fetchManufacturersForMeterType('4').then(data => {
-      console.log("---------------1-----------------corrector details", data)
-      setManufacturers(data.map(manufacturer => ({ label: manufacturer.Manufacturer, value: manufacturer.Manufacturer }))); // Assuming data is in the correct format
-    }).catch(error => console.error(error));
+    getCorrectorManufacturers();
   }, []);
 
+  useEffect(() => {
+    if (selectedCorrectorManufacturer) {
+        getCorrectorModelCodes();
+    }
+}, [selectedCorrectorManufacturer]);
 const onManufacturerChange = async (item) => {
   setManufacturer(item);
   console.log("---------item", item)
@@ -268,25 +291,20 @@ const onManufacturerChange = async (item) => {
                 <View style={{ width: width * 0.45 }}>
                   <EcomDropDown
                     width={width * 0.35}
-                    value={manufacturer}
-                    valueList={manufacturers}
-                    placeholder={"Corrector Manufacturer"}
-                    onChange={(item) => {
-                      console.log("------",item);
-                      onManufacturerChange(item)
-                    }}
+                    value={selectedCorrectorManufacturer}
+                    valueList={correctorManufacturers}
+                    placeholder="Select a Manufacturer"
+                    onChange={(item) => setSelectedCorrectorManufacturer(item.value)}
+                    
                   />
                 </View>
 
                 <EcomDropDown
                   width={width * 0.35}
-                  value={model}
-                  valueList={models}
-                  placeholder={"Corrector model"}
-                  onChange={(item) => {
-                    console.log(item);
-                    setModel(item);
-                  }}
+                  value={selectedCorrectorModelCode}
+                valueList={correctorModelCodes}
+                placeholder="Select Model Code"
+                onChange={(item) => setSelectedCorrectorModelCode(item.value)}
                 />
               </View>
               <View style={styles.spacer} />

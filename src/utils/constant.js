@@ -177,6 +177,36 @@ export const MPRN_STATUS = [
   {label: 'Requestor Cancels', value: 5},
 ];
 
+export const tablename = {
+  1: "diaphrgam",
+  2: "materials",
+  3: "rotary",
+  4: "TinDiaphrgam",
+  5: "turbine",
+  6: "ultrasonic",
+  7: "Jobs",
+  8: "Events",
+  9: "correctors"
+};
+export const meterType = [
+  { value: '1', displayName: 'D-DIAPHRAGM OF UNKNOWN MATERIAL' },
+  { value: '2', displayName: 'L-LEATHER DIAPHRAGM' },
+  { value: '3', displayName: 'R-ROTARY' },
+  { value: '4', displayName: 'T-TIN CASE DIAPHRAGM' },
+  { value: '5', displayName: 'U-ULTRASONIC' },
+  { value: '6', displayName: 'T-TURBINE' },
+  { value: '7', displayName: 'Unknown' }
+];
+
+export const tableNames = {
+  '1': tablename[1],
+  '2': tablename[4],
+  '3': tablename[3],
+  '4': tablename[4],
+  '5': tablename[6],
+  '6': tablename[5],
+  '7': null  // 'Unknown' has no associated table
+};
 /**
  * This UI Design is based on 1366 x 1024 Screen(iPad Pro 12.9).
  */

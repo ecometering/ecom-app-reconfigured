@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Asset } from "expo-asset";
 import * as FileSystem from "expo-file-system";
 import * as SQLite from 'expo-sqlite/next';
+import { useSQLiteContext } from 'expo-sqlite/next';
+import { tablename } from "./constant"; 
 // Load the database from assets
+const db = useSQLiteContext();
 const loadDatabase = async () => {
     const dbName = "options.sqlite";
     const dbAssets = require("../../assets/options.sqlite");
@@ -18,37 +21,12 @@ const loadDatabase = async () => {
 };
 
 // A component that uses the SQLite database
-async function  db() {await SQLite.openDatabaseAsync("options.sqlite");};
+async function  database() {await SQLite.openDatabaseAsync("options.sqlite");};
 
 
 
 
-async function setup() {  await db.execAsync(`
-PRAGMA journal_mode = WAL;
-CREATE TABLE IF NOT EXISTS Jobs (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    jobId TEXT,
-    jobType TEXT NOT NULL,
-    MPRN TEXT,
-    postcode TEXT,
-    startDate DATE,
-    endDate DATE,
-    jobStatus TEXT,
-    progress INT,
-    siteDetails TEXT,
-    siteQuestions TEXT,
-    maintenanceQuestions TEXT,
-    meterDetails TEXT,
-    correctorDetails TEXT,
-    dataloggerDetails TEXT,
-    streams TEXT, 
-    regulator TEXT,
-    additionalMaterials TEXT,
-    chatterboxDetails TEXT, 
-    standards TEXT, 
-    rebook TEXT,
-    photos TEXT
-  );`);}
 
 
-export { loadDatabase, db, setup };
+
+export { loadDatabase, db, database };

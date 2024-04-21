@@ -301,40 +301,27 @@ function GasSafeWarningPage() {
   </View>
 </View>
 
-          <Modal visible={isModal}>
-            <Button
-              title="Close"
-              onPress={() => {
-                setIsModal(false);
-              }}
-            />
-            <View
-              style={{
-               flex:1
-              }}
-            >
-              <SignatureScreen
-                onOK={handleOK}
-                webStyle={ `.m-signature-pad {
-                  box-shadow: none; border: none;
-                  margin-left: 0px;
-                  margin-top: 0px;
-                } 
-                 .m-signature-pad--body
-                  canvas {
-                    background-color: #E5E5F1;
-                  }
-                .m-signature-pad--body 
-                .m-signature-pad--footer {display: none; margin: 0px;}
-                body,html {
-                   width: 100%; 
-                   height: 68%;
-                }`}
-                backgroundColor={PrimaryColors.Sand}
-                scrollable={true}
-              />
-            </View>
-          </Modal>
+<Modal
+    style={styles.modalContent}
+    visible={isModal}
+  >
+    <View style={styles.modalInnerContainer}>
+      <Button
+        title="Close"
+        onPress={() => {
+          setIsModal(false);
+        }}
+      />
+      <View style={styles.signatureContainer}>
+        <SignatureScreen
+          onOK={handleOK}
+          webStyle={`.m-signature-pad {...}`}
+          backgroundColor={PrimaryColors.Sand}
+          scrollable={true}
+        />
+      </View>
+    </View>
+  </Modal>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -371,10 +358,25 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     marginVertical: 15,
   },
-  modalView: {
+  modalContent: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center', // Centers the modal content vertically
+    alignItems: 'center', // Centers the modal content horizontally
+  },
+  modalInnerContainer: {
+    
+    paddingTop: '10%',
+    width: '100%', // Adjust the width as necessary
+    height: '80%', // Adjust the height as necessary
+    backgroundColor: 'white', // Optional: changes background color
+    borderRadius: 10, // Optional: adds border radius for rounded corners
+    overflow: 'hidden', // Ensures no inner content spills out
+  },
+  signatureContainer: {
+    flex: 1,
+    backgroundColor: 'red',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

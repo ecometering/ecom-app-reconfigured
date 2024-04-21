@@ -20,7 +20,10 @@ import {
   METER_POINT_STATUS_CHOICES,
   UNIT_OF_MEASURE_CHOICES,
   METER_TYPE_CHOICES,
-  MECHANISM_TYPE_CHOICES
+  MECHANISM_TYPE_CHOICES, 
+  meterType,
+  tableNames,
+  tablename
 
 
 } from "../../utils/constant";
@@ -35,10 +38,12 @@ import { AppContext } from "../../context/AppContext";
 import EcomHelper from "../../utils/ecomHelper";
 import BarcodeScanner from "../../components/BarcodeScanner";
 import { fetchManufacturersForMeterType, fetchModelsForManufacturer, openDatabase } from '../../utils/database';
+import { useSQLiteContext } from 'expo-sqlite/next';
 
 const alphanumericRegex = /^[a-zA-Z0-9]*$/;
 const { width, height } = Dimensions.get('window');
 function MeterDetailsPage() {
+  const db = useSQLiteContext(); 
   const navigation = useNavigation();
   const route = useRoute();
   const { title, nextScreen, jobId } = route.params;
@@ -50,14 +55,14 @@ function MeterDetailsPage() {
   console.log("MeterDetailsPage");
   const isIos = Platform.OS === 'ios';
   const [location, setLocation] = useState(meterDetails?.location);
-  const [model, setModel] = useState(meterDetails?.model);
-  const [manufacturer, setManufacturer] = useState(meterDetails?.manufacturer);
+  const [selectedMeterModelCode, setSelectedMeterModelCode] = useState(meterDetails?.model);
+  const [selectedMeterManufacturer, setSelectedMeterManufacturer] = useState(meterDetails?.manufacturer);
   const [uom, setUom] = useState(
     meterDetails?.uom == null
       ? { _index: 1, label: "Standard Cubic Meters per hour", value: 2 }
       : meterDetails?.uom
   );
-  const [type, setType] = useState(meterDetails?.type);
+  const [selectedMeterType, setSelectedMeterType] = useState(meterDetails?.type);
   const [status, setStatus] = useState(
     meterDetails?.status == null
       ? { _index: 2, data: "Live", label: "LI", value: 3 }
@@ -75,6 +80,9 @@ function MeterDetailsPage() {
       ? { _index: 0, label: "1", value: 1 }
       : meterDetails?.pulseValue
   );
+  const [meterManufacturers, setMeterManufacturers] = useState([]);
+  const [meterModelCodes, setMeterModelCodes] = useState([]);
+  const [meterTypes,SetMeterTypes] = useState([]);
 
   const [mechanism, setMechanism] = useState(
     meterDetails?.mechanism == null
@@ -94,12 +102,10 @@ function MeterDetailsPage() {
   );
 
   const [isModal, setIsModal] = useState(false);
-  const [manufacturers, setManufacturers] = useState([]);
-  const [models, setModels] = useState([]);
   const diaphragmMeterTypes = ['1', '2', '4'];
 
   useEffect(() => {
-    if (type && diaphragmMeterTypes.includes(type.value)) {
+    if (selectedMeterType && diaphragmMeterTypes.includes(selectedMeterType.value)) {
       setPressureTierList([
         { label: "LP", value: "LP" },
         { label: "MP", value: "MP" }
@@ -110,37 +116,123 @@ function MeterDetailsPage() {
     } else {
       setPressureTierList(METER_PRESSURE_TIER_CHOICES);
     }
-  }, [type, pressureTier]);
-
+  }, [selectedMeterType, pressureTier]);
 useEffect(() => {
-  console.log("+++++++type changed", type)
-  if (type) {
-    fetchManufacturersForMeterType(type.value)
-      .then(data => {
-        console.log(">>>  4  >>>fetchManufacturersForMeterType>>>", data);
-        const sortedData = data.sort((a, b) => a.Manufacturer.localeCompare(b.Manufacturer)); // Sorting alphabetically
-        setManufacturers(sortedData.map(manufacturer => ({
-          label: manufacturer.Manufacturer,
-          value: manufacturer.Manufacturer
-        })));
-      })
-      .catch(error => console.error("error", error));
-  }
-}, [type]);
-
+  getMeterTypes();
+}, []);
   useEffect(() => {
-    if (manufacturer && type) {
-      fetchModelsForManufacturer(type.value, manufacturer.label)
-        .then(data => {
-          const res = data.map((model, index) => ({ label: model["Model Code (A0083)"], value: index }))
-          console.log("res", res)
-          console.log(">>>  4  >>>fetchModelsForManufacturer", data);
-          setModels(data.map((model, index) => ({ label: model.label, value: model.value })))
-        })
-        .catch(error => console.error(error));
+    if (selectedMeterType) {
+        getMeterManufacturers();
     }
-  }, [manufacturer]);
+}, [selectedMeterType]);
+useEffect (() => { 
+    getMeterModelCodes(); 
+}  , [selectedMeterManufacturer]);
+useEffect(() => {
+    if (selectedMeterManufacturer && selectedMeterModelCode) {
+        getMeterDetails();
+    }
+}, [selectedMeterManufacturer, selectedMeterModelCode]);
 
+async function getMeterTypes() {
+  try {
+      const result = meterType
+      SetMeterTypes(result.map(type => ({
+      label: type.displayName,
+      value: type.value
+      })).sort((a, b) => a.label.localeCompare(b.label)));
+      console.log('meter Types:',result); 
+  } 
+  catch (err) {
+      console.error( err);    
+  }
+}
+async function getMeterManufacturers() {
+  if (selectedMeterType && tableNames[selectedMeterType]) {
+      try {
+          const query = `SELECT DISTINCT Manufacturer FROM ${tableNames[selectedMeterType]}`;
+          const result = await db.getAllAsync(query);
+          setMeterManufacturers(result.map(manu => ({
+              label: manu.Manufacturer,
+              value: manu.Manufacturer
+          })).sort((a, b) => a.label.localeCompare(b.label)));
+      } catch (err) {
+          console.error('SQL Error: ', err);
+      }
+  }
+}
+
+async function getMeterModelCodes() {
+  if (selectedMeterType && tableNames[selectedMeterType]) {
+      try {
+          const query = `SELECT DISTINCT "ModelCode" FROM ${tableNames[selectedMeterType]} WHERE Manufacturer = '${selectedMeterManufacturer}'`;
+          const result = await db.getAllAsync(query);
+          console.log ('Meter Model Codes:',result);
+          setMeterModelCodes(result.map(model => ({
+              label: model["ModelCode"],
+              value: model["ModelCode"]
+          })).sort((a, b) => a.label.localeCompare(b.label)));
+      } catch (err) {
+          console.error('SQL Error: ', err);
+      }
+  }
+}
+async function getMeterDetails() {
+  if (selectedMeterType && tableNames[selectedMeterType]) {
+    try {
+      const tableName = tableNames[selectedMeterType];
+      const query = `SELECT MeasuringCapacity, NumberOfDials, PulseValue, UnitsOfMeasure, MeterMechanism, PaymentMethod FROM ${tableName} WHERE Manufacturer = ? AND ModelCode = ?`;
+      const params = [selectedMeterManufacturer, selectedMeterModelCode];
+      const result = await db.getAllAsync(query, params);
+
+      if (result.length > 0) {
+        const details = result[0];
+        appContext.setMeterDetails(prevDetails => ({
+          ...prevDetails,
+          measuringCapacity: details.MeasuringCapacity || prevDetails.measuringCapacity,
+          numberOfDials: details.NumberOfDials || prevDetails.numberOfDials,
+          pulseValue: details.PulseValue !== 0 
+                       ? { ...prevDetails.pulseValue, value: details.PulseValue }
+                       : prevDetails?.pulseValue,
+          unitsOfMeasure: details.UnitsOfMeasure || prevDetails.unitsOfMeasure,
+          meterMechanism: details.MeterMechanism || prevDetails.meterMechanism,
+          paymentMethod: details.PaymentMethod || prevDetails.paymentMethod,
+        }));
+
+        setHavePulseValue(details.PulseValue !== 0);
+        console.log('Meter details:', details);
+        console.log('Meter details:', meterDetails);
+      } else {
+        console.log('No meter details found for the selected type, manufacturer, and model code.');
+        setMeterDetails(prevDetails => ({
+          ...prevDetails,
+          measuringCapacity: null,
+          numberOfDials: null,
+          pulseValue: null,
+          unitsOfMeasure: null,
+          meterMechanism: null,
+          paymentMethod: null,
+        }));
+      }
+    } catch (err) {
+      console.error('SQL Error: ', err);
+    }
+  }
+}
+
+
+const handleMeterTypeChange = (item) => {
+  const value = item.value;
+  setSelectedMeterType(value);
+  setSelectedMeterManufacturer('');
+  setSelectedMeterModelCode('');
+  if (value !== '7') {
+      getMeterManufacturers();
+  } else {
+      setMeterManufacturers([]);
+      setMeterModelCodes([]);
+  }
+};
 
   const saveMeterDetailsToDatabase = async () => {
     const db = await openDatabase();
@@ -326,31 +418,24 @@ useEffect(() => {
               <View style={{ flex: 0.5 }}>
                 <EcomDropDown
                   width={width * 0.5}
-                  value={type}
-                  valueList={[
-                    { label: 'D-DIAPHRAGM OF UNKOWN MATERIAL', value: "1" },
-                    { label: 'L-LEATHER DIAPHRAGM', value: "2" },
-                    { label: 'R-ROTARY', value: "3" },
-                    { label: 'S-SYNTHETIC DIAPHRAGM', value: "1" },
-                    { label: 'T-TURBINE', value: "5" },
-                    { label: 'U-ULTRASONIC', value: "6" }
-                  ]}
-                  placeholder={"Meter type"}
+                  value={selectedMeterType}
+                  valueList={meterTypes}
+                  placeholder="Select a Meter Type"
                   onChange={(item) => {
-                    console.log("==============item", item);
-                    setType(item);
+                    setSelectedMeterType(item.value);
+                   
                     let isDiaphragm = [1, 2, 4].includes(item.value);
                     let isML = [3, 2].includes(pressureTier?.value);
                     if (isDiaphragm) {
                       setPressureTierList([
                         { label: "LP", data: "LP", value: 3 },
                         { label: "MP", data: "MP", value: 2 },
-                      ]);
+                      ])
                     } else {
-                      setPressureTierList(METER_PRESSURE_TIER_CHOICES);
+                      setPressureTierList(METER_PRESSURE_TIER_CHOICES)
                     }
                     if (!isDiaphragm && isML) {
-                      setPressureTier(null);
+                      setPressureTier(null)
                     }
                   }}
                 />
@@ -359,15 +444,11 @@ useEffect(() => {
               <View style={{ flex: 0.5 }}>
                 <EcomDropDown
                   width={width * 1}
-                  value={manufacturer}
-                  valueList={manufacturers} // Dynamically populated from SQLite database
-                  placeholder={"Meter Manufacturer"}
-                  onChange={(item) => {
-                    console.log(item);
-                    setManufacturer(item);
-                    // Reset models when manufacturer changes
-                    setModels([]);
-                  }}
+                  value={selectedMeterManufacturer}
+                        valueList={meterManufacturers}
+                        placeholder="Select a Manufacturer"
+                        onChange={(item) => setSelectedMeterManufacturer(item.value)}
+                  
                 />
               </View>
             </View>
@@ -388,13 +469,11 @@ useEffect(() => {
               <View style={{ flex: 0.5 }}>
                 <EcomDropDown
                   width={width * 0.5}
-                  value={model}
-                  valueList={models} // Dynamically populated based on the selected manufacturer
-                  placeholder={"Meter Model"}
-                  onChange={(item) => {
-                    console.log(item);
-                    setModel(item);
-                  }}
+                  value={selectedMeterModelCode}
+                        valueList={meterModelCodes}
+                        placeholder="Select Model Code"
+                        onChange={(item) => setSelectedMeterModelCode(item.value)}
+                                       
                 />
               </View>
             </View>
