@@ -13,7 +13,6 @@ import JobTypePage from "../screens/JobTypePage";
 import PlannedJobPage from "../screens/PlannedJobPage";
 import SubmitSuccessPage from "../screens/SubmitSuccessPage";
 import RebookPage from "../screens/jobs/rebook";
-import EngineerProfileScreen from "../screens/UserProfile";
 import MaintenanceQuestionsPage from "../screens/maintenance/MaintenanceQuestionsPage";
 // calendar imports
 import CalendarPage from "../screens/calendar/CalendarPage";
@@ -125,9 +124,8 @@ const MainNavigator = () => {
 					<Stack.Screen name="PlannedJobPage" component={PlannedJobPage} />
 					<Stack.Screen name="InProgressJobsPage" component={InProgressJobsPage} />
 					<Stack.Screen name="CompletedJobsPage" component={CompletedJobsPage} />
-					<Stack.Screen name="UserProfile" component={EngineerProfileScreen} />
 
-					<Stack.Screen name="test" component={MeterDetailsPage} initialParams={{title: 'New Meter Details',nextScreen: 'NewEcvToMov'
+					<Stack.Screen name="test" component={Test} initialParams={{title: 'New Meter Details',nextScreen: 'NewEcvToMov'
     }} />
 					<Stack.Screen name="SiteDetailsPage" component={SiteDetailsPage} initialParams={{progress:1}} />
 					<Stack.Screen name="SitePhotoPage" component={GenericPhotoPage} initialParams={{ title: "Site Photo", photoKey: "sitePhoto", nextScreen: "SiteQuestionsPage",progress:2}} />

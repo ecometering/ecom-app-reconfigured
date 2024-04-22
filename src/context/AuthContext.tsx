@@ -3,12 +3,13 @@ import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
 interface AuthProps {
-  authState?: { token: string | null; authenticated: boolean | null };
+  authState?: { token: string | null; refreshToken:string | null;  authenticated: boolean | null };
   OnLogin?: (username: string, password: string) => Promise<any>;
   OnLogout?: () => Promise<any>;
 }
 
 const TOKEN_KEY = 'token';
+const REFRESH_TOKEN_KEY = 'refresh_token';
 export const API_URL = 'https://test.ecomdata.co.uk/api';
 const AuthContext = createContext<AuthProps>({});
 
@@ -19,19 +20,23 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: any) => {
   const [authState, setAuthState] = useState<{
     token: string | null;
+    refreshToken: string | null;
     authenticated: boolean | null;
   }>({
     token: null,
     authenticated: null,
+    refreshToken: null,
   });
   useEffect(() => {
     const loadToken = async () => {
       const token = await SecureStore.getItemAsync(TOKEN_KEY);
+      const refreshToken = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
       console.log('stored token', token);
+      console.log('stored refreshToken', refreshToken);
 
       if (token) {
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        setAuthState({ token: token, authenticated: true });
+        setAuthState({ token: token,refreshToken: refreshToken ,authenticated: true });
       }
     };
     loadToken();
@@ -45,7 +50,7 @@ export const AuthProvider = ({ children }: any) => {
       });
 
       console.log('file : AuthContext.tsx ~ line 31 ~ login ~ result', result);
-      setAuthState({ token: result.data.access, authenticated: true });
+      setAuthState({ token: result.data.access,refreshToken:result.data.refresh, authenticated: true });
       console.log(
         'file : AuthContext.tsx ~ line 34 ~ login ~ authState',
         authState
@@ -92,7 +97,7 @@ export const AuthProvider = ({ children }: any) => {
       'file : AuthContext.tsx ~ line 50 ~ logout ~ token removed',
       authState.token
     );
-    setAuthState({ token: null, authenticated: false });
+    setAuthState({ token: null,refreshToken:null, authenticated: false });
     console.log(
       'file : AuthContext.tsx ~ line 52 ~ logout ~ authState',
       authState

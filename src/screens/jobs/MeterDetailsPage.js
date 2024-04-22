@@ -27,7 +27,6 @@ import {
 
 
 } from "../../utils/constant";
-import { getDatabaseTables, } from "../../utils/database";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Header from "../../components/Header";
 import Text from "../../components/Text";
@@ -37,7 +36,6 @@ import TextInput, { TextInputWithTitle } from "../../components/TextInput";
 import { AppContext } from "../../context/AppContext";
 import EcomHelper from "../../utils/ecomHelper";
 import BarcodeScanner from "../../components/BarcodeScanner";
-import { fetchManufacturersForMeterType, fetchModelsForManufacturer, openDatabase } from '../../utils/database';
 import { useSQLiteContext } from 'expo-sqlite/next';
 
 const alphanumericRegex = /^[a-zA-Z0-9]*$/;
@@ -239,10 +237,10 @@ const handleMeterTypeChange = (item) => {
 
     const meterDetailsJson = JSON.stringify({
       location,
-      model,
-      manufacturer,
+      model:selectedMeterModelCode,
+      manufacturer:selectedMeterManufacturer,
       uom,
-      type,
+      type:selectedMeterType,
       status,
       measuringCapacity,
       year,
@@ -276,11 +274,11 @@ const handleMeterTypeChange = (item) => {
       EcomHelper.showInfoMessage("Please Choose 'Meter Location'");
       return;
     }
-    if (model == null) {
+    if (selectedMeterModelCode == null) {
       EcomHelper.showInfoMessage("Please Choose 'Meter Model'");
       return;
     }
-    if (manufacturer == null) {
+    if (selectedMeterManufacturer == null) {
       EcomHelper.showInfoMessage("Please Choose 'Meter Manufacturer'");
       return;
     }
@@ -288,7 +286,7 @@ const handleMeterTypeChange = (item) => {
       EcomHelper.showInfoMessage("Please Choose 'UOM'");
       return;
     }
-    if (type == null) {
+    if (selectedMeterType == null) {
       EcomHelper.showInfoMessage("Please Choose 'Meter Type'");
       return;
     }
@@ -312,10 +310,10 @@ const handleMeterTypeChange = (item) => {
     appContext.setMeterDetails({
       ...meterDetails,
       location: location,
-      model: model,
-      manufacturer: manufacturer,
+      model: selectedMeterModelCode,
+      manufacturer: selectedMeterManufacturer,
       uom: uom,
-      type: type,
+      type: selectedMeterType,
       status: status,
       measuringCapacity: measuringCapacity,
       year: year,
@@ -351,10 +349,10 @@ const handleMeterTypeChange = (item) => {
     appContext.setMeterDetails({
       ...meterDetails,
       location: location,
-      model: model,
-      manufacturer: manufacturer,
+      model: selectedMeterModelCode,
+      manufacturer: selectedMeterManufacturer,
       uom: uom,
-      type: type,
+      type: selectedMeterType,
       status: status,
       measuringCapacity: measuringCapacity,
       year: year,

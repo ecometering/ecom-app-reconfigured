@@ -265,26 +265,30 @@ function StandardPage() {
             </View>
 
             <Modal
-    style={styles.modalContent}
-    visible={isModal}
-  >
-    <View style={styles.modalInnerContainer}>
-      <Button
-        title="Close"
-        onPress={() => {
-          setIsModal(false);
+        animationType="slide"
+        transparent={true}
+        visible={isModal}
+        onRequestClose={() => {
+          setIsModal(!isModal);
         }}
-      />
-      <View style={styles.signatureContainer}>
-        <SignatureScreen
-          onOK={handleOK}
-          webStyle={`.m-signature-pad {...}`}
-          backgroundColor={PrimaryColors.Sand}
-          scrollable={true}
-        />
-      </View>
-    </View>
-  </Modal>
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalInnerContainer, { width: width * 0.8, height: height * 0.6 }]}>
+            <Button
+              title="Close"
+              onPress={() => {
+                setIsModal(false);
+              }}
+            />
+            <SignatureScreen
+              onOK={handleOK}
+              webStyle={`.m-signature-pad { ... }`}
+              backgroundColor={PrimaryColors.Sand}
+              scrollable={true}
+            />
+          </View>
+        </View>
+      </Modal>
 
           </View>
         </ScrollView>
@@ -301,23 +305,28 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16
   },
-  modalContent: {
+  modalOverlay: {
     flex: 1,
     justifyContent: 'center', // Centers the modal content vertically
     alignItems: 'center', // Centers the modal content horizontally
+    backgroundColor: 'rgba(0,0,0,0.5)', // Semi-transparent background
   },
   modalInnerContainer: {
-    
-    paddingTop: '10%',
-    width: '100%', // Adjust the width as necessary
-    height: '80%', // Adjust the height as necessary
-    backgroundColor: 'white', // Optional: changes background color
-    borderRadius: 10, // Optional: adds border radius for rounded corners
-    overflow: 'hidden', // Ensures no inner content spills out
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5
   },
   signatureContainer: {
     flex: 1,
-    backgroundColor: 'red',
     justifyContent: 'center',
     alignItems: 'center',
   },

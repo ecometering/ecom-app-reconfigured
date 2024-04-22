@@ -4,116 +4,102 @@ import { useNavigation } from '@react-navigation/native';
 import { AppContext } from '../context/AppContext';
 import { openDatabase } from '../utils/database';
 import axios from 'axios';
-import Header from '../components/Header'; // Assuming this is your header component
+import Header from '../components/Header';
 import { useAuth } from '../context/AuthContext';
 
 const SubmitSuccessPage = () => {
   const appContext = useContext(AppContext);
-  const { authState } = useAuth()
+  const { authState } = useAuth();
   const navigation = useNavigation();
-  const [isLoading, setisLoading] = useState(false)
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
-    setisLoading(false)
-  }, [])
-
+    setLoading(false);
+    console.log("Initial load complete, loading state set to false.");
+  }, []);
 
   async function fetchAndUploadJobData() {
-    setisLoading(true)
+    setLoading(true);
+    console.log("Job data upload initiated.");
     const db = await openDatabase();
+    console.log("Database opened.");
     db.transaction(tx => {
+      console.log("Database transaction started.");
       tx.executeSql(
-        `SELECT * FROM Jobs WHERE id = ?`,
+        "SELECT * FROM Jobs WHERE id = ?",
         [appContext?.jobDetails?.JobID],
         async (_, { rows: { _array } }) => {
+          console.log("SQL query executed.");
           if (_array.length > 0) {
             const jobData = { ..._array[0] };
-            // const photos = JSON.parse(jobData.photos); // Assuming photos is stored as JSON string
-            const photos = appContext.photos
-            // delete jobData.photos; // Remove photos from jobData before sending
             jobData.siteDetails = JSON.parse(jobData.siteDetails);
-            jobData.siteDetails.title = jobData.siteDetails.title.value // TODO: Get value from dropdown
-            // console.log("jobData", jobData)
-            console.log(`Bearer ${authState.token}`);
-
-            console.log(JSON.stringify(null, null, 2));
-
-
+            console.log("Job data prepared for upload:", jobData);
+            console.log(`Authentication token: ${authState.token}`);
 
             try {
-              // Upload job data excluding photos with Axios
               const config = {
                 headers: {
                   'Content-Type': 'application/json',
                   Authorization: `Bearer ${authState.token}`
                 }
-              }
-
+              };
               const body = {
                 data: {
                   ...jobData,
                   standardDetails: appContext.standardDetails,
                 },
                 engineer_id: appContext.standardDetails.engineerId
-              }
+              };
               const response = await axios.post('https://test.ecomdata.co.uk/api/incoming-jobs/', body, config);
+              console.log('Job data upload response:', response);
 
-
-              console.log('Job data uploaded successfully ==>>', response?.data?.job_id, response?.status);
-
-              if (response?.status == 201) {
-                // // Upload photos with Axios
-                for (const key in photos) {
-                  if (photos.hasOwnProperty(key)) {
-
-                    const image = photos[key];
+              if (response?.status === 201) {
+                console.log("Job data uploaded successfully, starting photo upload.");
+                for (const key in appContext.photos) {
+                  if (appContext.photos.hasOwnProperty(key)) {
+                    const image = appContext.photos[key];
                     if (!image.uri) {
-                      Alert.alert("NO PHOTOT")
-                      continue
+                      Alert.alert("No Photo Found");
+                      continue;
                     }
-                    const result = await uploadResource(image, response?.data?.job_id)
-                    console.log(result);
-
+                    const result = await uploadResource(image, response?.data?.job_id);
+                    console.log('Photo upload result:', result);
                   }
                 }
-
-                console.log('Photos uploaded successfully');
-                setisLoading(false)
-                // Update job status to 'Completed'
+                console.log("All photos uploaded successfully.");
+                setLoading(false);
                 tx.executeSql(
                   'UPDATE Jobs SET jobStatus = ? WHERE id = ?',
-                  ['Completed', appContext?.jobData?.id],
+                  ['Completed', appContext?.jobDetails?.JobID],
                   () => {
-                    console.log('Record updated successfully');
+                    console.log('Job status updated to "Completed" in database.');
                     Alert.alert(
                       "Upload Successful",
                       "The job and photos have been successfully uploaded.",
-                      [
-                        { text: "OK", onPress: () => navigation.navigate("Home") }
-                      ]
+                      [{ text: "OK", onPress: () => navigation.navigate("Home") }]
                     );
                   },
                   error => {
-                    console.error('Error updating record', error);
+                    console.error('Error updating job status:', error);
                   }
                 );
               } else {
-                Alert.alert('Error', `Error during data upload. ${error}`);
-
-                setisLoading(false)
+                Alert.alert('Upload Error', `Error during data upload. Status: ${response?.status}`);
+                setLoading(false);
               }
-
             } catch (error) {
-              setisLoading(false)
-              console.log('Error during data upload', error);
-              Alert.alert("Upload Error", error, "There was a problem uploading the job. Please try again.");
+              setLoading(false);
+              console.error('Error during network upload:', error);
+              Alert.alert("Upload Error", "There was a problem uploading the job. Please try again.");
             }
+          } else {
+            console.log("No job data found for the given ID.");
           }
         },
         error => {
-          setisLoading(false)
-          console.log('Error fetching job data', error);
-          Alert.alert("Fetch Error", error, "There was a problem fetching the job data. Please try again.");
+          setLoading(false);
+          console.error('Error executing SQL query:', error);
+          Alert.alert("Fetch Error", "There was a problem fetching the job data. Please try again.");
         }
       );
     });
@@ -129,7 +115,7 @@ const SubmitSuccessPage = () => {
         formData.append('description', image.title);
         formData.append('photo', {
           uri: image.uri,
-          type: 'image/jpeg', // or the correct type based on your photo URI
+          type: 'image/jpeg',
           name: `${image.photoKey}.png`
         });
 
@@ -143,23 +129,22 @@ const SubmitSuccessPage = () => {
         });
 
         const responseData = await response.json();
+        console.log('Photo upload response:', responseData);
 
         if (response.ok) {
           resolve(true);
         } else {
-          Alert.alert('Error', `Failed to upload photo. ${responseData?.detail || 'Unknown error'}`);
+          Alert.alert('Photo Upload Error', `Failed to upload photo. ${responseData?.detail || 'Unknown error'}`);
           console.error('Error uploading image:', responseData);
           resolve(false);
         }
-
       } catch (error) {
-        Alert.alert('Error', `Failed to upload photo. ${error}`);
+        Alert.alert('Photo Upload Error', `Failed to upload photo. ${error}`);
         console.error('Error uploading image:', error);
         resolve(false);
       }
     });
   };
-
 
   return (
     <View style={styles.container}>
@@ -170,21 +155,13 @@ const SubmitSuccessPage = () => {
         centerText="Submit Job"
       />
       <View style={styles.content}>
-        <Text>Are you ready to submit the job?</Text>
-        {
-          isLoading ?
-            <ActivityIndicator />
-            :
-            <Button
-              title="Yes"
-              onPress={fetchAndUploadJobData}
-            />
-        }
+        <Text> Submit the job</Text>
+        {isLoading ? <ActivityIndicator /> : <Button title="Send" onPress={fetchAndUploadJobData} />}
       </View>
     </View>
-  );
-};
-
+  );                                                                                        
+};                                  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -195,29 +172,3 @@ const styles = StyleSheet.create({
 });
 
 export default SubmitSuccessPage;
-
-
-
-const styles1 = StyleSheet.create({
-  body: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#fff',
-  },
-  text: {
-    fontSize: 16,
-    color: '#333',
-    marginTop: 20,
-    marginBottom: 10,
-  },
-  image: {
-    width: 300,
-    height: 300,
-    resizeMode: 'contain',
-    marginTop: 20,
-    borderRadius: 10,
-  },
-});
-

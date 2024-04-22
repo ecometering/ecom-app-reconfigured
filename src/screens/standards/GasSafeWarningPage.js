@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import {
+  Dimensions,
   Button,
   Image,
   KeyboardAvoidingView,
@@ -11,7 +12,6 @@ import {
   View,
   Modal,
 } from "react-native";
-import { unitH, width } from "../../utils/constant";
 import Header from "../../components/Header";
 import { useNavigation } from "@react-navigation/native";
 import { TextInputWithTitle } from "../../components/TextInput";
@@ -20,7 +20,7 @@ import SignatureScreen from "react-native-signature-canvas";
 import { PrimaryColors } from "../../theme/colors";
 import EcomHelper from "../../utils/ecomHelper";
 import { AppContext } from "../../context/AppContext";
-
+const { width, height } = Dimensions.get("window");
 function GasSafeWarningPage() {
   const navigation = useNavigation();
   const appContext = useContext(AppContext);
@@ -201,7 +201,7 @@ function GasSafeWarningPage() {
   <View
     style={{
       justifyContent: "space-between",
-      height: unitH * 80,
+      height: height * 0.1,
       width: width * 0.35, // Adjusted width to accommodate the spacer
     }}
   >
@@ -235,7 +235,7 @@ function GasSafeWarningPage() {
   <View
     style={{
       justifyContent: "space-between",
-      height: unitH * 80,
+      height: height*0.1,
       width: width * 0.35, // Adjusted width to match the first section
     }}
   >
@@ -302,26 +302,30 @@ function GasSafeWarningPage() {
 </View>
 
 <Modal
-    style={styles.modalContent}
-    visible={isModal}
-  >
-    <View style={styles.modalInnerContainer}>
-      <Button
-        title="Close"
-        onPress={() => {
-          setIsModal(false);
+        animationType="slide"
+        transparent={true}
+        visible={isModal}
+        onRequestClose={() => {
+          setIsModal(!isModal);
         }}
-      />
-      <View style={styles.signatureContainer}>
-        <SignatureScreen
-          onOK={handleOK}
-          webStyle={`.m-signature-pad {...}`}
-          backgroundColor={PrimaryColors.Sand}
-          scrollable={true}
-        />
-      </View>
-    </View>
-  </Modal>
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalInnerContainer, { width: width * 0.8, height: height * 0.6 }]}>
+            <Button
+              title="Close"
+              onPress={() => {
+                setIsModal(false);
+              }}
+            />
+            <SignatureScreen
+              onOK={handleOK}
+              webStyle={`.m-signature-pad { ... }`}
+              backgroundColor={PrimaryColors.Sand}
+              scrollable={true}
+            />
+          </View>
+        </View>
+      </Modal>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -348,36 +352,34 @@ const styles = StyleSheet.create({
   optionTitle: {
     fontSize: 16,
   },
-  signatureSection: {
-    alignItems: "center",
-    marginVertical: 20,
+  inputContainer: {
+    marginBottom: 20,
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+  },
+  modalInnerContainer: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    overflow: 'hidden',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5
   },
   signImage: {
     width: width * 0.8,
     height: 150,
-    resizeMode: "contain",
-    marginVertical: 15,
-  },
-  modalContent: {
-    flex: 1,
-    justifyContent: 'center', // Centers the modal content vertically
-    alignItems: 'center', // Centers the modal content horizontally
-  },
-  modalInnerContainer: {
-    
-    paddingTop: '10%',
-    width: '100%', // Adjust the width as necessary
-    height: '80%', // Adjust the height as necessary
-    backgroundColor: 'white', // Optional: changes background color
-    borderRadius: 10, // Optional: adds border radius for rounded corners
-    overflow: 'hidden', // Ensures no inner content spills out
-  },
-  signatureContainer: {
-    flex: 1,
-    backgroundColor: 'red',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+    resizeMode: 'contain',
+    alignSelf: 'center',
+    marginVertical: 15
+  }
 });
 
 export default GasSafeWarningPage;
