@@ -67,15 +67,7 @@ export const MECHANISM_TYPE_CHOICES = [
   {label: 'Unknown', value: 10},
 ];
 
-export const METER_TYPE_CHOICES = [
-  {label: 'D-DIAPHRAGM OF UNKOWN MATERIAL', value: 1},
-  {label: 'L-LEATHER DIAPHRAGM', value: 2},
-  {label: 'R-ROTARY', value: 3},
-  {label: 'S-SYNTHETIC DIAPHRAGM', value: 4},
-  {label: 'T-TURBINE', value: 5},
-  {label: 'U-ULTRASONIC', value: 6},
-  {label: 'Unknown', value: 7},
-];
+
 
 export const METER_PRESSURE_TIER_CHOICES = [
   {label: 'LP', data: 'LP', value: 3},
@@ -147,20 +139,8 @@ export const METER_POINT_LOCATION_CHOICES = [
   {value: 99, label: 'Outside'},
 ];
 
-export const GasSupplier = [
-  {label: '(The) Nuclear Decommissioning Authority (MXE)', value: 1},
-  {label: 'AXPO UK Ltd (EUK)', value: 2},
-  {label: 'Addito Supply Ltd (OBR)', value: 3},
-  {label: 'Affect Energy Ltd (AFG)', value: 4},
-];
 
-export const MAM = [
-  {label: '(The) Nuclear Decommissioning Authority (MXE)', value: 1},
-  {label: 'AES Smart Metering Ltd (ASM)', value: 2},
-  {label: 'AOT Energy Switzerland AG (AOT)', value: 3},
-  {label: 'ATEL Aare Tessin Fur Elektritat (ATA)', value: 4},
-  {label: 'AXPO UK Ltd (EUK)', value: 5},
-];
+
 
 export const ReasonCode = [
   {label: 'CA', value: 1},
@@ -188,14 +168,14 @@ export const tablename = {
   8: "Events",
   9: "correctors"
 };
-export const meterType = [
-  { value: '1', displayName: 'D-DIAPHRAGM OF UNKNOWN MATERIAL' },
-  { value: '2', displayName: 'L-LEATHER DIAPHRAGM' },
-  { value: '3', displayName: 'R-ROTARY' },
-  { value: '4', displayName: 'T-TIN CASE DIAPHRAGM' },
-  { value: '5', displayName: 'U-ULTRASONIC' },
-  { value: '6', displayName: 'T-TURBINE' },
-  { value: '7', displayName: 'Unknown' }
+export const METER_TYPE_CHOICES = [
+  { value: '1', label: 'D-DIAPHRAGM OF UNKNOWN MATERIAL' },
+  { value: '2', label: 'L-LEATHER DIAPHRAGM' },
+  { value: '3', label: 'R-ROTARY' },
+  { value: '4', label: 'T-TIN CASE DIAPHRAGM' },
+  { value: '5', label: 'U-ULTRASONIC' },
+  { value: '6', label: 'T-TURBINE' },
+  { value: '7', label: 'Unknown' }
 ];
 
 export const tableNames = {

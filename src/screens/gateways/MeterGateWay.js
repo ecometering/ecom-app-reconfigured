@@ -14,7 +14,7 @@ const  MeterGatewayScreen= () => {
     console.log("job type:",jobType);
     const [isCorrector,SetIsCorrector] = useState(meterDetails?.isCorrector );
     const [isAmr,SetIsAmr] = useState(meterDetails?.isAmr );
-    const [Type, setType] = useState(meterDetails?.type.value);
+    const [Type, setType] = useState(meterDetails?.meterType.value);
     const [pressureTier, setPressureTier] = useState(meterDetails?.pressureTier.label);
     const diaphragmMeterTypes = ['1', '2', '4'];
 console.log(" type,pressure and true or false:",Type,pressureTier,isCorrector,isAmr);
@@ -73,30 +73,60 @@ console.log(" type,pressure and true or false:",Type,pressureTier,isCorrector,is
                       // Add specific logic for Maintenance job type
                       break;
                   case "Removal":
-                    console.log("MeterGatewayScreen begining removal job",pageRoute);
-                    if (pageRoute ===1){
-                        console.log("MeterGatewayScreen",pageRoute); 
-                        if (Type === '1' || Type === '2' || Type === '4') {
-                            navigation.replace('RemovedMeterDataBadge');
-                        } else {
+                    console.log ("starting install job",pageflow);
+                    if (pageflow ===1){
+                        console.log("MeterGatewayScreen",pageflow); 
+                        if (!['1', '2', '4'].includes(Type)) {
+                          navigation.replace('RemovedMeterDataBadge');
+                      } else {
+                            console.log("Navigating to MeterIndex");
                             navigation.replace('RemovedMeterIndex');
                         }
 
                     }
-                    else {
-                        console.log("MeterGatewayScreen",pageRoute);
+                    if (pageflow ===2){
                         if (isCorrector===true){
-                            navigation.replace('CorrectorDetails');
-                        } else if (isAmr===true){
-                            navigation.replace('DataLoggerDetails');
-                        }else{
-                            navigate.replace('StandardPage')
+                            navigation.replace('RemovedCorrectorDetails');
+                        }else if (isAmr) {
+                            navigation.replace('RemovedDataLoggerDetails');
+                          }
+                      
+                        else {
+                          navigation.replace('StandardPage');
+                        }
+
                     }
-                };
+
+                    
+                  
+                      
                     break;
                   case "Survey":
-                   
-                    
+                   console.log ("starting survey job",pageflow);
+                   if (pageflow ===1){
+                    console.log("MeterGatewayScreen",pageflow); 
+                    if (!['1', '2', '4'].includes(Type)) {
+                      navigation.replace('ExistingMeterDataBadge');
+                  } else {
+                        console.log("Navigating to MeterIndex");
+                        navigation.replace('ExistingMeterIndex');
+                    }
+
+                }
+                if (pageflow ===2){
+                    if (isCorrector===true){
+                        navigation.replace('ExistingCorrectorDetails');
+                    }else if (isAmr) {
+                        navigation.replace('ExistingDataLoggerDetails');
+                      }else if ((Type === '1' || Type === '2' || Type === '4') && pressureTier === 'MP' || (Type !== '1' && Type !== '2' && Type !== '4')) {
+                          navigation.replace('StreamsSetSealDetails');
+                      }
+                  
+                    else {
+                      navigation.replace('StandardPage');
+                    }
+
+                }
                       // Add specific logic for Survey job type
                       break;
                   case "Warant":

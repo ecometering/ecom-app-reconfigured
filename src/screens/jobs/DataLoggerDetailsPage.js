@@ -12,7 +12,7 @@ import {
   Dimensions
 } from "react-native";
 import Header from "../../components/Header";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation,useRoute } from "@react-navigation/native";
 import Text from "../../components/Text";
 import TextInput from "../../components/TextInput";
 import OptionalButton from "../../components/OptionButton";
@@ -22,97 +22,101 @@ import EcomHelper from "../../utils/ecomHelper";
 import BarcodeScanner from "../../components/BarcodeScanner";
 import { PrimaryColors } from "../../theme/colors";
 import ImagePickerButton from "../../components/ImagePickerButton";
-
+import { useSQLiteContext } from 'expo-sqlite/next';
 
 const alphanumericRegex = /^[a-zA-Z0-9]+$/;
 const { width, height } = Dimensions.get("window");
 export default function DataLoggerDetailsPage() {
-
-  const appContext = useContext(AppContext);
+  const db = useSQLiteContext();
   const navigation = useNavigation();
-  const jobType = appContext.jobType;
-  const title = jobType === "Install" ? "New Meter Details" : jobType;
-  const meterDetails = appContext.meterDetails;
-  const removedMeterDetails = appContext.removedMeterDetails;
-  const camera = useRef(null);
+  const route = useRoute();
+  const { title, nextScreen, photoKey } = route.params;
+  const existingPhoto = photos && photoKey ? photos[photoKey] : null;
+  const [selectedImage, setSelectedImage] = useState(existingPhoto?.uri || null);
 
-  const isPassedRemoval = appContext.passedRemoval;
-  const isStartRemoval = appContext.startRemoval;
-  console.log(">>> Passed Removal >>>", isPassedRemoval);
-  console.log(">>> Start Removal >>>", isStartRemoval);
+  const { jobType, dataLoggerDetails, setDataLoggerDetails, jobID,photos,savePhoto } = useContext(AppContext);
+  const handleInputChange = (name, value) => {
+    setDataLoggerDetails(prevDetails => ({
+      ...prevDetails,
+      [name]: value,
+    }));
+
+    console.log('value updated:', name);
+    console.log('value updated:', value);
+    console.log('Corrector Details:', dataLoggerDetails);
+  };
+
+  const handlePhotoSelected = (uri) => {
+    setSelectedImage(uri);
+    savePhoto(photoKey, { title, photoKey, uri });
+    console.log('Photo saved:', { title, photoKey, uri });
+  };
+  const camera = useRef(null);
+  const saveToDatabase = async () => {
+    const photosJson = JSON.stringify(photos);
+    const dataloggerJson = JSON.stringify(dataLoggerDetails);
+    try {
+      await db.runAsync(
+        'UPDATE Jobs SET photos = ?, dataloggerDetails = ? WHERE id = ?',
+        [photosJson, dataloggerJson, jobID],
+      )
+        .then((result) => {
+          console.log('photos saved to database:', result);
+        });
+    } catch (error) {
+      console.log('Error saving photos to database:', error);
+    }
+  };
   console.log("DataLoggerDetailsPage");
 
-  const regulatorDetails = appContext.regulatorDetails;
-  const [serialNumber, setSerialNumber] = useState(
-    regulatorDetails?.loggerSerialNumber
-  );
-  const [isMountingBracket, setIsMountingBracket] = useState(
-    regulatorDetails?.isMountingBracket
-  );
-  const [isAdapter, setIsAdapter] = useState(regulatorDetails?.isAdapter);
-  const [isPulseSplitter, setIsPulseSplitter] = useState(
-    regulatorDetails?.isPulseSplitter
-  );
-  const [manufacturer, setManufacturer] = useState(
-    regulatorDetails?.manufacturer
-  );
-  const [model, setModel] = useState(regulatorDetails?.model);
-  const [loggerOwner, setLoggerOwner] = useState(regulatorDetails?.loggerOwner);
-  const [dataloggerImage, setdataloggerImage] = useState(
-    regulatorDetails?.loggerImage
-  );
+
+
+  
   const [isModal, setIsModal] = useState(false);
 
   const backPressed = () => {
-    
+    saveToDatabase();
       navigation.goBack();
   
   };
-  console.log(meterDetails);
+  console.log(dataLoggerDetails);
 
   const nextPressed = async () => {
-    if (!dataloggerImage) {
+    if (!photos.InstalledAMR) {
       EcomHelper.showInfoMessage("Please choose image");
       return;
     }
-    try {
-      const response = await fetch(dataloggerImage);
-      const blob = await response.blob();
-      appContext.setBlobs(prev => [ ...prev, blob ])
-    }
-    catch(err) {
-      console.log(err);
-    }
-    if (!serialNumber || serialNumber === "") {
+    
+    if (!dataLoggerDetails.serialNumber || dataLoggerDetails.serialNumber === "") {
       EcomHelper.showInfoMessage("Please enter serial number");
       return;
     }
-    if (isMountingBracket == null) {
+    if (dataLoggerDetails.isMountingBracket == null) {
       EcomHelper.showInfoMessage("Please answer if mounting bracket was used");
       return;
     }
-    if (isAdapter == null) {
+    if (dataLoggerDetails.isAdapter == null) {
       EcomHelper.showInfoMessage("Please answer if adapter was used");
       return;
     }
-    if (isPulseSplitter == null) {
+    if (dataLoggerDetails.isPulseSplitter == null) {
       EcomHelper.showInfoMessage("Please answer if pulse splitter was used");
       return;
     }
-    if (manufacturer == null) {
+    if (dataLoggerDetails.manufacturer == null) {
       EcomHelper.showInfoMessage("Please choose manufacturer");
       return;
     }
-    if (model == null) {
+    if (dataLoggerDetails.model == null) {
       EcomHelper.showInfoMessage("Please choose model");
       return;
     }
-    if (loggerOwner == null) {
+    if (dataLoggerDetails.loggerOwner == null) {
       EcomHelper.showInfoMessage("Please choose Logger owner");
       return;
     }
-   
-          navigation.navigate("DataLoggerGateway");
+    saveToDatabase();
+          navigation.navigate(nextScreen);
         
         return;
       }
@@ -124,7 +128,9 @@ export default function DataLoggerDetailsPage() {
 
   const readSerialNumber = (codes) => {
     setIsModal(false);
-    setSerialNumber(codes.data);
+    if (codes && codes.data) {
+      handleInputChange("serialNumber", codes.data.toString());
+    }
   };
 
   return (
@@ -168,7 +174,7 @@ export default function DataLoggerDetailsPage() {
 
                       // Check if the formatted text is alphanumeric
                       if (alphanumericRegex.test(formattedText)) {
-                        setSerialNumber(formattedText);
+                        handleInputChange("serialNumber", formattedText);
                       }
                     }}
                     style={{
@@ -176,7 +182,7 @@ export default function DataLoggerDetailsPage() {
                       width: width * 0.25,
                       alignSelf: "flex-end",
                     }}
-                    value={serialNumber}
+                    value={dataLoggerDetails.serialNumber}
                   />
                     <Button title="📷" onPress={scanBarcode} />
                   </View>
@@ -188,16 +194,16 @@ export default function DataLoggerDetailsPage() {
                       options={["Yes", "No"]}
                       actions={[
                         () => {
-                          setIsMountingBracket(true);
+                          handleInputChange("isMountingBracket", true);
                         },
                         () => {
-                          setIsMountingBracket(false);
+                         handleInputChange("isMountingBracket", false);
                         },
                       ]}
                       value={
-                        isMountingBracket == null
+                        dataLoggerDetails.isMountingBracket == null
                           ? null
-                          : isMountingBracket
+                          : dataLoggerDetails.isMountingBracket
                           ? "Yes"
                           : "No"
                       }
@@ -207,25 +213,25 @@ export default function DataLoggerDetailsPage() {
               </View>
               <View style={styles.spacer} />
               <View style={{ ...styles.row, justifyContent: "flex-start" }}>
-                <View style={{ width: width * 0.45 }}>
-                  <Text>{"Adaptor used"}</Text>
-                  <View style={styles.optionContainer}>
-                    <OptionalButton
-                      options={["Yes", "No"]}
-                      actions={[
-                        () => {
-                          setIsAdapter(true);
-                        },
-                        () => {
-                          setIsAdapter(false);
-                        },
-                      ]}
-                      value={
-                        isAdapter == null ? null : isAdapter ? "Yes" : "No"
-                      }
-                    />
-                  </View>
-                </View>
+              <View style={{ width: width * 0.45 }}>
+              <Text>{"Adaptor used"}</Text>
+              <View style={styles.optionContainer}>
+                <OptionalButton
+                  options={["Yes", "No"]}
+                  actions={[
+                    () => {
+                      handleInputChange("isAdapter", true);
+                    },
+                    () => {
+                      handleInputChange("isAdapter", false);
+                    },
+                  ]}
+                  value={
+                    dataLoggerDetails.isAdapter === null ? null : dataLoggerDetails.isAdapter ? "Yes" : "No"
+                  }
+                />
+              </View>
+            </View>
                 <View>
                   <Text>{"Pulse splitter Used"}</Text>
                   <View style={styles.optionContainer}>
@@ -233,16 +239,16 @@ export default function DataLoggerDetailsPage() {
                       options={["Yes", "No"]}
                       actions={[
                         () => {
-                          setIsPulseSplitter(true);
+                          handleInputChange("isPulseSplitter", true);
                         },
                         () => {
-                          setIsPulseSplitter(false);
+                          handleInputChange("isPulseSplitter", false);
                         },
                       ]}
                       value={
-                        isPulseSplitter == null
+                        dataLoggerDetails.isPulseSplitter == null
                           ? null
-                          : isPulseSplitter
+                          : dataLoggerDetails.isPulseSplitter
                           ? "Yes"
                           : "No"
                       }
@@ -260,14 +266,14 @@ export default function DataLoggerDetailsPage() {
                   <View style={{ ...styles.row, width: width * 0.35 }}>
                     <TextInput
                       onChangeText={(txt) => {
-                        setManufacturer(txt);
+                        handleInputChange("manufacturer", txt);
                       }}
                       style={{
                         ...styles.input,
                         width: width * 0.25,
                         alignSelf: "flex-end",
                       }}
-                      value={manufacturer}
+                      value={dataLoggerDetails.manufacturer}
                     />
                   </View>
                 </View>
@@ -278,14 +284,14 @@ export default function DataLoggerDetailsPage() {
                   <View style={{ ...styles.row, width: width * 0.35 }}>
                     <TextInput
                       onChangeText={(txt) => {
-                        setModel(txt);
+                        handleInputChange("model", txt);
                       }}
                       style={{
                         ...styles.input,
                         width: width * 0.25,
                         alignSelf: "flex-end",
                       }}
-                      value={model}
+                      value={dataLoggerDetails.model}
                     />
                   </View>
                 </View>
@@ -298,33 +304,36 @@ export default function DataLoggerDetailsPage() {
                 <View style={{ ...styles.row, width: width * 0.35 }}>
                   <TextInput
                     onChangeText={(txt) => {
-                      setLoggerOwner(txt);
+                      handleInputChange("loggerOwner", txt);
                     }}
                     style={{
                       ...styles.input,
                       width: width * 0.25,
                       alignSelf: "flex-end",
                     }}
-                    value={loggerOwner}
+                    value={dataLoggerDetails.loggerOwner}
                   />
                 </View>
               </View>
             </View>
             <View style={styles.spacer} />
-            <Text type={TextType.BODY_1}>Picture</Text>
-            {dataloggerImage && (
-              <Image
-                source={{ uri: dataloggerImage }}
-                style={styles.image}
-                resizeMode="contain"
-              />
-            )}
-            <View style={styles.row}>
-            <ImagePickerButton
-              onImageSelected={(uri) => setdataloggerImage(uri)}
-            />
+            <View style={styles.imagePickerContainer}>
+              
+             
+          
+              <View style={styles.body}>
+          <Text type="caption" style={styles.text}>AMR photo</Text>
+          <ImagePickerButton
+            onImageSelected={handlePhotoSelected}
+            currentImage={selectedImage}
+          />
+          {selectedImage && (
+            <Image source={{ uri: selectedImage }} style={styles.image} />
+          )}
+        </View>
             </View>
-          </View>
+            </View>
+         
           {isModal && <BarcodeScanner
             setIsModal={setIsModal}
             cameraRef={camera}

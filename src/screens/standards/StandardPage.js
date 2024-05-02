@@ -26,8 +26,7 @@ function StandardPage() {
   const navigation = useNavigation();
   const appContext = useContext(AppContext);
   const jobType = appContext.jobType;
-  const standardDetails = appContext.standardDetails;
-  const meterDetails = appContext.meterDetails;
+const{standardDetails,meterDetails}=appContext; 
   const title = "Standard Details";
 
   const [testPassed, setTestPassed] = useState(standardDetails?.testPassed);
@@ -55,24 +54,14 @@ function StandardPage() {
   };
 
   const nextPressed = () => {
-    if (testPassed == null) {
-      EcomHelper.showInfoMessage("Please answer if tightness test passed");
-      return;
-    }
+    
     if (conformStandard == null) {
       EcomHelper.showInfoMessage(
         "Please answer if the network service/ECV conform to standards"
       );
       return;
     }
-    if (riddorReportable == null) {
-      EcomHelper.showInfoMessage("Please answer if RIDDOR reportable");
-      return;
-    }
-    if (useOutlet == null) {
-      EcomHelper.showInfoMessage("Please answer if Outlet kit is used");
-      return;
-    }
+    
     if (pressure == null) {
       EcomHelper.showInfoMessage("Please set inlet pressure");
       return;
@@ -82,7 +71,21 @@ function StandardPage() {
       EcomHelper.showInfoMessage("Please enter signature");
       return;
     }
-
+    if (riddorReportable == null) {
+      EcomHelper.showInfoMessage("Please answer if RIDDOR reportable");
+      return;
+    }
+    if (meterDetails.isMeter ) {
+      if (testPassed == null) {
+      EcomHelper.showInfoMessage("Please answer if tightness test passed");
+      return;
+    }
+    
+    if (useOutlet == null) {
+      EcomHelper.showInfoMessage("Please answer if Outlet kit is used");
+      return;
+    }
+  }
     appContext.setStandardDetails({
       ...standardDetails,
       testPassed: testPassed,
@@ -140,21 +143,7 @@ function StandardPage() {
         <ScrollView style={styles.scrollView}>
           <View style={styles.spacer} />
           <View style={styles.body}>
-            <Text>Tightness test passed</Text>
-            <View style={styles.optionContainer}>
-              <OptionalButton
-                options={["Yes", "No"]}
-                actions={[
-                  () => {
-                    setTestPassed(true);
-                  },
-                  () => {
-                    setTestPassed(false);
-                  },
-                ]}
-                value={testPassed == null ? null : testPassed ? "Yes" : "No"}
-              />
-            </View>
+            
             <View style={styles.spacer} />
             <Text>Does the network service /ECV conform to standards</Text>
             <View style={styles.optionContainer}>
@@ -200,23 +189,38 @@ function StandardPage() {
               />
             </View>
             <View style={styles.spacer} />
-            <Text>Outlet kit be used</Text>
-            <View style={styles.optionContainer}>
-              <OptionalButton
-                options={["Yes", "No"]}
-                actions={[
-                  () => {
-                    setUseOutlet(true);
-                  },
-                  () => {
-                    setUseOutlet(false);
-                  },
-                ]}
-                value={useOutlet == null ? null : useOutlet ? "Yes" : "No"}
-              />
-            </View>
-            <View style={styles.spacer} />
+            <View style={styles.container}>
+      {meterDetails.isMeter && (
+        <>
+          <Text>Outlet kit be used</Text>
+          <View style={styles.optionContainer}>
+            <OptionalButton
+              options={["Yes", "No"]}
+              actions={[
+                () => setUseOutlet(true),
+                () => setUseOutlet(false)
+              ]}
+              value={useOutlet == null ? null : useOutlet ? "Yes" : "No"}
+            />
+          </View>
+          <View style={styles.spacer} />
+          <Text>Tightness test passed</Text>
+          <View style={styles.optionContainer}>
+            <OptionalButton
+              options={["Yes", "No"]}
+              actions={[
+                () => setTestPassed(true),
+                () => setTestPassed(false)
+              ]}
+              value={testPassed == null ? null : testPassed ? "Yes" : "No"}
+            />
+          </View>
+        </>
+      )}
+    </View>
 
+
+            <View style={styles.spacer} />
             <TextInputWithTitle
               title={"Inlet Pressure"}
               width={'100%'}

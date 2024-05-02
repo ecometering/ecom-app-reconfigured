@@ -1,7 +1,6 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import {
   Alert,
-  Button,
   Image,
   SafeAreaView,
   ScrollView,
@@ -12,82 +11,62 @@ import {
 import Text from "../../components/Text";
 import { TextInputWithTitle } from "../../components/TextInput";
 import Header from "../../components/Header";
-import { useNavigation,useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import OptionalButton from "../../components/OptionButton";
-import { AppContext } from "../../context/AppContext";
+import { useAppContext } from "../../context/AppContext";
 import EcomHelper from "../../utils/ecomHelper";
-import * as ExpoImagePicker from "expo-image-picker";
 import ImagePickerButton from "../../components/ImagePickerButton";
+
 const { width, height } = Dimensions.get('window');
-import { openDatabase,appendPhotoDetail,fetchPhotosJSON } from "../../utils/database";
+
 function SiteQuestionsPage() {
   const navigation = useNavigation();
-const route = useRoute();
-  const appContext = useContext(AppContext);
-  const{jobDetails,jobType,photos} = appContext;
-  console.log("Job Type:", jobType);
+  const route = useRoute();
+  const { jobType,jobID, setSiteQuestions, siteQuestions, photos, savePhoto } = useAppContext();
+  const { params } = useRoute();
+  const { title,photoKey } = params;
+  const existingPhoto = photos[photoKey];
+  const [selectedImage, setSelectedImage] = useState(existingPhoto?.uri || null);
 
-  const [siteQuestions, setSiteQuestions] = useState({
-    isSafe: false,
-    isGeneric: false,
-    genericReason: false,
-    isCarryOut: false,
-    carryOutReason: false, 
-    isFitted: false,
-    isStandard: false,
-  });
+const saveToDatabase = async () => {
+  const photosJson = JSON.stringify(photos);
+  const questionJson = JSON.stringify(siteQuestions);
+  try {
+    await db.runAsync(
+  'UPDATE Jobs SET photos = ?, siteQuestions = ? WHERE id = ?',
+      [photosJson,questionJson, jobID],)
+    .then((result) => {
+      console.log('photos saved to database:', result);
+    });
+  } catch (error) {
+    console.log('Error saving photos to database:', error);
+  }
+};
+
+
   const handleInputChange = (name, value) => {
     setSiteQuestions(prevDetails => ({
       ...prevDetails,
       [name]: value,
+      
     }));
+  console.log("SiteQuestionsPage handleInputChange invoked.",siteQuestions)
+    
   };
-
-  
-  
-
-  const [byPassImage, setByPassImage] = useState(siteQuestions?.byPassImage);
-
-
+  const handlePhotoSelected = (uri) => {
+    setSelectedImage(uri);
+    savePhoto(photoKey, { title, photoKey, uri });
+    console.log('Photo saved:', { title, photoKey, uri });
+    console.log('photos:',photos);
+  };
   const backPressed = () => {
-    appContext.setSiteQuestions(siteQuestions);
+    saveToDatabase();
     navigation.goBack();
   };
 
-const updateSiteQuestions = async () => {
-  const db = await openDatabase();
-  const photosJSON = await fetchPhotosJSON(db, jobId);
-  const photoDetails = {
-    title: "Bypass Image", // Example title, adjust as needed
-    uri: byPassImage,
-    photoKey: "bypassImage" // Example photoKey, adjust as needed
-  };
-
-  // JSONify the photoDetails object
-  const photoDetailsJSON = JSON.stringify(photoDetails);
- const updatedPhotosJSON = appendPhotoDetail(photosJSON, photoDetailsJSON);
-
- const siteQuestionsJSON = JSON.stringify(siteQuestions);
-
-db.transaction(tx => {
-  tx.executeSql(
-    'UPDATE Jobs SET siteQuestions = ?, photos = ? WHERE id = ?',
-    [siteQuestionsJSON, updatedPhotosJSON, jobId],
-    (_, result) => {
-      console.log('Site questions and photos updated successfully');
-      handleNavigationBasedOnConditions();
-    },
-    (_, error) => {
-      console.log('Error updating site questions and photos in database:', error);
-    }
-  );
-
-  });
-};
-
-const nextPressed = async () => {
+  const nextPressed = () => {
     console.log("nextPressed invoked.");
-  
+
     // Individual validation checks with specific messages
     if (siteQuestions.isSafe === null) {
       EcomHelper.showInfoMessage("Please indicate if the meter location is safe.");
@@ -104,12 +83,12 @@ const nextPressed = async () => {
     if (siteQuestions.isCarryOut === false && (!siteQuestions.carryOutReason || siteQuestions.carryOutReason.trim().length === 0)) {
       EcomHelper.showInfoMessage("Please indicate why the job can't be carried out.");
       return;
-    }  
+    }
     if (siteQuestions.isFitted === null) {
       EcomHelper.showInfoMessage("Please indicate if a bypass is fitted.");
       return;
     }
-    if (siteQuestions.isFitted && !siteQuestions.byPassImage) {
+    if (siteQuestions.isFitted && !photos.bypassPhoto) {
       EcomHelper.showInfoMessage("Please provide a photo of the bypass.");
       return;
     }
@@ -117,17 +96,12 @@ const nextPressed = async () => {
       EcomHelper.showInfoMessage("Please indicate if the customer installation conforms to current standards.");
       return;
     }
-    // Add additional checks here as needed
-  
-    // If all checks pass, update meter details in context
-    appContext.setSiteQuestions(siteQuestions);
-    console.log("Site questions updated in context:", appContext);
-  
+    saveToDatabase();
     // Continue with conditional navigation based on jobType and conditions
     handleNavigationBasedOnConditions();
-};
+  };
 
-const handleNavigationBasedOnConditions = () => {
+  const handleNavigationBasedOnConditions = () => {
     if (!siteQuestions.isSafe || !siteQuestions.isStandard) {
       navigation.navigate("StandardPage", { fromPage: "SiteQuestionsPage" });
       console.log("Navigating to StandardPage");
@@ -136,43 +110,17 @@ const handleNavigationBasedOnConditions = () => {
       console.log("Navigating to RebookPage");
     } else {
       // Continue with conditional navigation based on jobType
-      switch (jobType) {
-        case "Warrant":
-        case "Removal":
-          navigation.navigate("removal");
-          console.log("Navigating to RemovalFlowNavigator");
-          break;
-        case "Exchange":
-          navigation.navigate("exchange");
-          console.log("Navigating to ExchangeFlowNavigator");
-          break;
-        case "Install":
-          navigation.navigate("install");
-          console.log("Navigating to InstallFlowNavigator");
-          break;
-        case "Maintenance":
-          navigation.navigate("maintenance");
-          console.log("Navigating to MaintenanceFlowNavigator");
-          break;
-        case "Survey":
-          navigation.navigate("survey");
-          console.log("Navigating to SurveyFlowNavigator");
-          break;
-        default:
-          console.log(`Unknown job type: ${jobType}`);
-          // Fallback navigation or error handling
-          break;
-      }
+      navigation.navigate("JobTypeNavigator");
     }
-};
-  
+  };
+
   return (
     <SafeAreaView style={styles.content}>
       <Header
         hasLeftBtn={true}
         hasCenterText={true}
         hasRightBtn={true}
-        centerText={""}
+        centerText={title}
         leftBtnPressed={backPressed}
         rightBtnPressed={nextPressed}
       />
@@ -224,7 +172,6 @@ const handleNavigationBasedOnConditions = () => {
               onChangeText={(txt) => {
                 handleInputChange("genericReason", txt);
               }}
-            
             />
           )}
           <View style={styles.spacer} />
@@ -238,7 +185,8 @@ const handleNavigationBasedOnConditions = () => {
                   handleInputChange("isCarryOut", true);
                 },
                 () => {
-                  handleInputChange("isCarryOut", false);},
+                  handleInputChange("isCarryOut", false);
+                },
               ]}
               value={siteQuestions.isCarryOut === null ? null : siteQuestions.isCarryOut ? "Yes" : "No"}
             />
@@ -262,32 +210,35 @@ const handleNavigationBasedOnConditions = () => {
               options={["Yes", "No"]}
               actions={[
                 () => {
-                 handleInputChange ("isFitted", true);
+                  handleInputChange("isFitted", true);
                 },
                 () => {
-                  handleInputChange ("isFitted", false);
+                  handleInputChange("isFitted", false);
                 },
               ]}
               value={siteQuestions.isFitted === null ? null : siteQuestions.isFitted ? "Yes" : "No"}
             />
           </View>
 
-          
-          
           {siteQuestions.isFitted && (
             <View style={styles.imagePickerContainer}>
-              <ImagePickerButton
-                onImageSelected={(uri) => handleInputChange ("byPassImage", uri)}
-              />
-              {siteQuestions.byPassImage && (
-                <Image
-                  source={{ uri: siteQuestions.byPassImage }}
-                  style={styles.image}
-                  photoKey="bypassImage"
-                />
-              )}
+              
+             
+          
+              <View style={styles.body}>
+          <Text type="caption" style={styles.text}>Bypass</Text>
+          <ImagePickerButton
+            onImageSelected={handlePhotoSelected}
+            currentImage={selectedImage}
+          />
+          {selectedImage && (
+            <Image source={{ uri: selectedImage }} style={styles.image} />
+          )}
+        </View>
             </View>
           )}
+            
+          
           <View style={styles.spacer} />
           <View style={styles.spacer} />
           <Text>
@@ -322,19 +273,19 @@ const styles = StyleSheet.create({
     marginHorizontal: width * 0.1,
   },
   optionContainer: {
-    width: width * 0.25, // Example adjustment, assuming you want the container to be 25% of screen width
-    marginVertical: height * 0.01, // Adjusted based on screen height
+    width: width * 0.25,
+    marginVertical: height * 0.01,
     alignSelf: "flex-start",
   },
   spacer: {
-    height: height * 0.01, // Adjusted based on screen height
+    height: height * 0.01,
   },
   inputContainer: {
     flex: 1,
   },
   image: {
-    width: width * 0.5, // Adjusted to be half of screen width
-    height: height * 0.25, // Example adjustment, assuming you want the image to be 25% of screen height
+    width: width * 0.5,
+    height: height * 0.25,
     alignSelf: "center",
   },
 });

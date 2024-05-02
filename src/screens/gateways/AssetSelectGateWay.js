@@ -6,8 +6,8 @@ const AssetSelectGatewayScreen = () => {
     const navigation = useNavigation();
     const { jobType, meterDetails } = useContext(AppContext);
     const route = useRoute();
-    const {  pageflow } = route.params;
-    console.log("Asset select pageflow",pageflow);
+    const {  pageFlow } = route.params;
+    console.log("Asset select pageFlow",pageFlow);
     // Log for debugging purposes
     console.log("Unified gateway screen", meterDetails);
 
@@ -52,7 +52,7 @@ const AssetSelectGatewayScreen = () => {
                 }
                 break;
             case 'Exchange':
-                if (pageflow === 1) {
+                if (pageFlow === 1) {
                     // Page flow 1 navigation logic
                     if (meterDetails?.isMeter) {
                         navigation.replace('ExistingMeterDetails'); // Adjust screen names as needed for page flow 1
@@ -61,7 +61,7 @@ const AssetSelectGatewayScreen = () => {
                     } else if (meterDetails?.isAmr) {
                         navigation.replace('ExistingDataLoggerDetails');
                     }
-                } else if (pageflow === 2) {
+                } else if (pageFlow === 2) {
                     // Page flow 2 navigation logic
                     // Assuming different screens or logic for page flow 2
                     if (meterDetails?.isMeter) {

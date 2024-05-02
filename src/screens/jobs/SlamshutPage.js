@@ -1,10 +1,9 @@
-
-import useState from 'react';
-import { View, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
-import TextInputWithTitle, { InputRowWithTitle } from '../../components/TextInput'; // Adjust path as needed
-import EcomDropDown from '../../components/DropDown'
+import React, { useState } from 'react';
+import { View, SafeAreaView, ScrollView, StyleSheet, Image } from 'react-native';
+import TextInputWithTitle, { InputRowWithTitle } from '../../components/TextInput';
+import EcomDropDown from '../../components/DropDown';
 import ImagePickerButton from '../../components/ImagePickerButton';
-import { PrimaryColors } from '../../theme/colors'; // Adjust path as needed
+import { PrimaryColors } from '../../theme/colors';
 import Header from "../../components/Header";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
@@ -13,14 +12,17 @@ const SlamshutPage = () => {
   const [serialNumber, setSerialNumber] = useState('');
   const [size, setSize] = useState('');
   const [imageUri, setImageUri] = useState('');
+
   const navigation = useNavigation();
   const route = useRoute();
-  // Dummy sizes for the dropdown
+  const { title, nextScreen } = route.params;
+
   const sizeOptions = [
     { label: 'Small', value: 'small' },
     { label: 'Medium', value: 'medium' },
     { label: 'Large', value: 'large' },
   ];
+
   const backPressed = () => {
     console.log("Back button pressed");
     navigation.goBack();
@@ -31,10 +33,11 @@ const SlamshutPage = () => {
     console.log("Navigating to next screen:", nextScreen);
     navigation.navigate(nextScreen);
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-      <Header
+        <Header
           hasLeftBtn={true}
           hasCenterText={true}
           hasRightBtn={true}
@@ -42,7 +45,7 @@ const SlamshutPage = () => {
           leftBtnPressed={backPressed}
           rightBtnPressed={nextPressed}
         />
-       
+
         <View style={styles.card}>
           <TextInputWithTitle
             title="Manufacturer"
@@ -50,12 +53,14 @@ const SlamshutPage = () => {
             onChangeText={setManufacturer}
             placeholder="Enter manufacturer"
           />
+
           <TextInputWithTitle
             title="Serial Number"
             value={serialNumber}
             onChangeText={setSerialNumber}
             placeholder="Enter serial number"
           />
+
           <EcomDropDown
             value={size}
             valueList={sizeOptions}
@@ -63,10 +68,18 @@ const SlamshutPage = () => {
             onChange={(selectedItem) => setSize(selectedItem.value)}
           />
         </View>
+
         <ImagePickerButton
           onImageSelected={setImageUri}
         />
-        {/* Additional content can be added here */}
+
+        {imageUri && (
+          <Image
+            source={{ uri: imageUri }}
+            style={styles.image}
+            resizeMode="contain"
+          />
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -88,7 +101,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.23,
     shadowRadius: 2.62,
     elevation: 4,
-    marginBottom: 20, // Space between card and ImagePickerButton
+    marginBottom: 20,
+  },
+  image: {
+    height: 200,
+    marginTop: 16,
   },
 });
 

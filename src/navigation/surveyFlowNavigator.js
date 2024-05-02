@@ -7,7 +7,7 @@ import RegulatorPage from "../screens/jobs/RegulatorPage";
 import ChatterBoxPage from "../screens/jobs/ChatterBoxPage";
 import AdditionalMaterialPage from "../screens/jobs/AdditionalMaterialPage";
 import AssetTypeSelectionPage from "../screens/jobs/AssetTypeSelectionPage";
-
+import EcvPage from "../screens/survey/EcvPage";
 import SlamshutPage from "../screens/jobs/SlamshutPage";
 import WaferCheckPage from "../screens/jobs/WaferCheckPage";
 import ReliefRegulatorPage from "../screens/jobs/ReliefRegulatorPage";
@@ -91,6 +91,49 @@ const nextAfterDataLogger = ({ meter, meterType, meterPressure }) => {
 
 //   return nextScreen;
 // };
+const generateScreenInstancesForStreams = (numberOfStreams) => {
+  let screens = [];
+  for (let i = 0; i < numberOfStreams; i++) {
+    // Dynamically generate screen names with stream index
+    const streamScreens = [
+      { name: `FilterPage-${i}`, component: FilterPage, title: `Filter ${i + 1}` },
+      { name: `SlamshutPage-${i}`, component: SlamshutPage, title: `Slamshut ${i + 1}` },
+      { name: `SealedSlamShutPhotoPage-${i}`, component: GenericPhotoPage, title: `Sealed Slam Shut Photo ${i + 1}`, photoKey: `sealedSlamShutPhoto-${i}` },
+      { name: `ActiveRegulatorPage-${i}`, component: ActiveRegulatorPage, title: `Active Regulator ${i + 1}` },
+      { name: `ReliefRegulatorPage-${i}`, component: ReliefRegulatorPage, title: `Relief Regulator ${i + 1}` },
+      { name: `WaferCheckPage-${i}`, component: WaferCheckPage, title: `Wafer Check ${i + 1}` },
+    ];
+    screens = screens.concat(streamScreens);
+  }
+  return screens;
+};
+
+const getNextScreen = (currentScreenName, numberOfStreams) => {
+  // Extract stream index and screen part from the current screen name
+  const match = currentScreenName.match(/(\D+)-(\d+)/);
+  if (!match) return 'RegulatorPage'; // Fallback to RegulatorPage
+
+  const [, screenPart, index] = match;
+  const streamIndex = parseInt(index, 10);
+  const screenOrder = [
+    'FilterPage',
+    'SlamshutPage',
+    'SealedSlamShutPhotoPage',
+    'ActiveRegulatorPage',
+    'ReliefRegulatorPage',
+    'WaferCheckPage',
+  ];
+  const currentScreenIndex = screenOrder.indexOf(screenPart);
+  const nextScreenIndex = currentScreenIndex + 1;
+
+  // Check if it's the last screen of the current stream
+  if (nextScreenIndex >= screenOrder.length) {
+    // If it's the last stream, navigate to RegulatorPage; otherwise, start the next stream
+    return streamIndex + 1 < numberOfStreams ? `${screenOrder[0]}-${streamIndex + 1}` : 'RegulatorPage';
+  } else {
+    return `${screenOrder[nextScreenIndex]}-${streamIndex}`;
+  }
+};
 const SurveyFlowNavigator = () => {
   const { numberOfStreams = 0, meterDetails = {}} = useContext(AppContext);
   const meterType = meterDetails?.type;
@@ -108,7 +151,7 @@ const SurveyFlowNavigator = () => {
         key = "ExistingEcvToMov"
         name="ExistingEcvToMov"
         component ={GenericPhotoPage} 
-        initialParams={{title: 'New ECV to MOV',
+        initialParams={{title: 'Existing ECV to MOV',
          photoKey: 'ExistingEcvToMov',nextScreen:'MeterGatewayScreen1'}}
     />
     <Stack.Screen name ="MeterGatewayScreen1" component={MeterGatewayScreen} initialParams={{pageflow:1}} />
@@ -144,27 +187,28 @@ const SurveyFlowNavigator = () => {
     <Stack.Screen name="ExistingDataLoggerDetails" component={DataLoggerDetailsPage} initialParams={{title:'Existing AMR installed',nextScreen:'DataLoggerGateway'}}/>
     <Stack.Screen name="DataLoggerGateway" component={DataloggerGatewayScreen} />
     {/* set and seal details  */}
-    <Stack.Screen
-        name="StreamsSetSealDetails"
-        component={StreamsSetSealDetailsPage}
-        initialParams={{ nextScreen: `FilterPage-0` }}
+    <Stack.Screen name="StreamsSetSealDetails" component={StreamsSetSealDetailsPage} initialParams={{title:'Existing Streams'}} />
+    {generateScreenInstancesForStreams(numberOfStreams).map((screen, index) => (
+      <Stack.Screen
+        key={screen.name}
+        name={screen.name}
+        component={screen.component}
+        options={{ title: screen.title }}
+        initialParams={{
+          nextScreen: () => getNextScreen(screen.name, numberOfStreams),
+          photoKey: screen.photoKey // Pass the photoKey as an initial param
+        }}
       />
-
-      {generateStreamScreens().map((screen, index) => (
-        <Stack.Screen
-          key={screen.name}
-          name={screen.name}
-          component={screen.component}
-          options={{ title: screen.title }}
-          initialParams={{
-            nextScreen: index % 5 === 4 ? (index / 5 + 1 < numberOfStreams ? `FilterPage-${Math.floor(index / 5) + 1}` : 'ExistingRegulator') : undefined,
-          }}
-        />
-      ))}
+    ))}
     {/* regulator process */}
     <Stack.Screen name="ExistingRegulator" component={RegulatorPage} />
     <Stack.Screen name="ExistingChatterBox" component={ChatterBoxPage} />
     <Stack.Screen name="AdditionalMaterial" component={AdditionalMaterialPage} />
+    <Stack.Screen
+              name="EcvPage"
+              component={EcvPage}
+              initialParams={{ title: 'ECV details', nextScreen: 'vents' }}
+            />
   </Stack.Navigator>
 
 );};

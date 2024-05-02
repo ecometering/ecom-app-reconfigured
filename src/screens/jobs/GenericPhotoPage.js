@@ -5,24 +5,44 @@ import { useAppContext } from '../../context/AppContext';
 import Header from '../../components/Header';
 import Text from '../../components/Text';
 import ImagePickerButton from '../../components/ImagePickerButton';
-
+import { useSQLiteContext } from 'expo-sqlite/next';
 const { width, height } = Dimensions.get('window');
 
 function GenericPhotoPage() {
+  db=useSQLiteContext();
   const navigation = useNavigation();
   const { params } = useRoute();
   const { title, photoKey, nextScreen } = params;
-  const { photos, savePhoto } = useAppContext();
+  const { photos, savePhoto,jobID } = useAppContext();
   const existingPhoto = photos[photoKey];
   const [selectedImage, setSelectedImage] = useState(existingPhoto?.uri || null);
 
   const handlePhotoSelected = (uri) => {
     setSelectedImage(uri);
     savePhoto(photoKey, { title, photoKey, uri });
+    console.log('Photo saved:', { title, photoKey, uri });
+    console.log('photos:',photos);
   };
+const savePhotoToDatabase = async () => {
+  const photosJson = JSON.stringify(photos); 
+  try {
+    await db.runAsync(
+      'UPDATE Jobs SET photos = ? WHERE id = ?',
+      [photosJson, jobID],
+    )
+    .then((result) => {
+      console.log('photos saved to database:', result);
+ 
 
+    });
+
+  } catch (error) {
+    console.log('Error saving photos to database:', error);
+  }
+};
   const nextPressed = () => {
     if (selectedImage) {
+      savePhotoToDatabase();
       // If a photo has been selected, navigate to the next screen
       navigation.navigate(nextScreen);
     } else {
@@ -30,12 +50,15 @@ function GenericPhotoPage() {
       Alert.alert("Select a Photo", "Please select a photo before proceeding.");
     }
   };
-
+const backPressed = () => {
+  savePhotoToDatabase();
+  navigation.goBack();
+};
   return (
     <SafeAreaView style={styles.container}>
       <Header
         hasLeftBtn={true}
-        leftBtnPressed={() => navigation.goBack()}
+        leftBtnPressed={backPressed}
         hasCenterText
         centerText={title}
         hasRightBtn={true}

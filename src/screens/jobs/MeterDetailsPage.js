@@ -1,4 +1,4 @@
-import { useContext, useRef, useState, useEffect } from "react";
+import { useContext, useRef, useState, useEffect, useCallback } from "react";
 import {
   Button,
   KeyboardAvoidingView,
@@ -10,9 +10,6 @@ import {
   Platform
 } from "react-native";
 import {
-
-
-
   NUMBER_OF_DIALS,
   PULSE_VALUE,
   METER_POINT_LOCATION_CHOICES,
@@ -24,8 +21,6 @@ import {
   meterType,
   tableNames,
   tablename
-
-
 } from "../../utils/constant";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Header from "../../components/Header";
@@ -40,332 +35,238 @@ import { useSQLiteContext } from 'expo-sqlite/next';
 
 const alphanumericRegex = /^[a-zA-Z0-9]*$/;
 const { width, height } = Dimensions.get('window');
+
 function MeterDetailsPage() {
   const db = useSQLiteContext(); 
   const navigation = useNavigation();
   const route = useRoute();
-  const { title, nextScreen, jobId } = route.params;
-  const appContext = useContext(AppContext);
+  const { title, nextScreen } = route.params;
   const camera = useRef(null);
-  const jobType = appContext.jobType;
-  const meterDetails = appContext.meterDetails;
-  console.log("job type:", jobType)
+
+  const saveToDatabase = async () => {
+    const meterDetailsJson = JSON.stringify(meterDetails);
+    try {
+      await db.runAsync(
+        'UPDATE Jobs SET meterDetails = ? WHERE id = ?',
+        [meterDetailsJson, jobID],
+      )
+      .then((result) => {
+        console.log('meterDetails saved to database:', result);
+      });
+    } catch (error) {
+      console.log('Error saving meterDetails to database:', error);
+    }
+  };
+  
+  const { jobType, meterDetails, setMeterDetails, jobID } = useContext(AppContext);
+  console.log("job type:", jobType);
   console.log("MeterDetailsPage");
   const isIos = Platform.OS === 'ios';
-  const [location, setLocation] = useState(meterDetails?.location);
-  const [selectedMeterModelCode, setSelectedMeterModelCode] = useState(meterDetails?.model);
-  const [selectedMeterManufacturer, setSelectedMeterManufacturer] = useState(meterDetails?.manufacturer);
-  const [uom, setUom] = useState(
-    meterDetails?.uom == null
-      ? { _index: 1, label: "Standard Cubic Meters per hour", value: 2 }
-      : meterDetails?.uom
-  );
-  const [selectedMeterType, setSelectedMeterType] = useState(meterDetails?.type);
-  const [status, setStatus] = useState(
-    meterDetails?.status == null
-      ? { _index: 2, data: "Live", label: "LI", value: 3 }
-      : meterDetails?.status
-  );
-  const [measuringCapacity, setMeasuringCapacity] = useState(
-    meterDetails?.measuringCapacity
-  );
-  const [year, setYear] = useState(meterDetails?.year);
-  const [reading, setReading] = useState(meterDetails?.reading);
-  const [dialNumber, setDialNumber] = useState(meterDetails?.dialNumber);
-  const [serialNumber, setSerialNumber] = useState(meterDetails?.serialNumber);
-  const [pulseValue, setPulseValue] = useState(
-    meterDetails?.pulseValue === null
-      ? { _index: 0, label: "1", value: 1 }
-      : meterDetails?.pulseValue
-  );
+  
+  const handleInputChange = (name, value) => {
+    setMeterDetails(prevDetails => ({
+      ...prevDetails,
+      [name]: value,
+    }));
+    
+    console.log('value updated:', name);
+    console.log('value updated:', value);
+    console.log('Meter Details:', meterDetails);
+  };
+
+  const handleMultipleInputChanges = updates => {
+    setMeterDetails(prevDetails => ({
+      ...prevDetails,
+      ...updates
+    }));
+  };
+
+  const [pressureTierList, setPressureTierList] = useState(METER_PRESSURE_TIER_CHOICES);
   const [meterManufacturers, setMeterManufacturers] = useState([]);
   const [meterModelCodes, setMeterModelCodes] = useState([]);
-  const [meterTypes,SetMeterTypes] = useState([]);
-
-  const [mechanism, setMechanism] = useState(
-    meterDetails?.mechanism == null
-      ? { _index: 0, label: "Credit", value: 1 }
-      : meterDetails?.mechanism
-  );
-  const [pressureTier, setPressureTier] = useState(meterDetails?.pressureTier);
-  const [pressureTierList, setPressureTierList] = useState(
-    METER_PRESSURE_TIER_CHOICES
-  );
-  const [pressure, setPressure] = useState(meterDetails?.pressure);
-  const [havePulseValue, setHavePulseValue] = useState(
-    meterDetails?.havePulseValue
-  );
-  const [haveSerialNumber, setHaveSerialNumber] = useState(
-    meterDetails?.haveSerialNumber
-  );
-
+  const [meterTypes, setMeterTypes] = useState([]);
   const [isModal, setIsModal] = useState(false);
   const diaphragmMeterTypes = ['1', '2', '4'];
 
+  // useEffect(() => {
+  //   if (meterDetails?.meterType && diaphragmMeterTypes.includes(meterDetails.meterType.value)) {
+  //     setPressureTierList([
+  //       { label: "LP", value: "LP" },
+  //       { label: "MP", value: "MP" }
+  //     ]);
+  //     if (!['LP', 'MP'].includes(meterDetails.pressureTier?.value)) {
+  //       handleInputChange('pressureTier', null);
+  //     }
+  //   } else {
+  //     setPressureTierList(METER_PRESSURE_TIER_CHOICES);
+  //   }
+  // }, [meterDetails?.meterType]);
   useEffect(() => {
-    if (selectedMeterType && diaphragmMeterTypes.includes(selectedMeterType.value)) {
-      setPressureTierList([
-        { label: "LP", value: "LP" },
-        { label: "MP", value: "MP" }
-      ]);
-      if (!['LP', 'MP'].includes(pressureTier?.value)) {
-        setPressureTier(null);
+    if (!meterDetails.uom) {
+      handleInputChange('uom', { _index: 1, label: "Standard Cubic Meters per hour", value: 2 });
+    }
+    if (!meterDetails.pulseValue) {
+      handleInputChange('pulseValue', { _index: 0, label: "1", value: 1 });
+    }
+    if (!meterDetails.status) {
+      handleInputChange('status', { _index: 2, data: "LI", label: "Live", value: 3 });
+    }
+    if (!meterDetails.mechanism) {
+      handleInputChange('mechanism', { _index: 0, label: "Credit", value: 1 });
+    }
+  }, []);
+  const getMeterTypes = useCallback(async () => {
+    try {
+      const result = METER_TYPE_CHOICES;
+      setMeterTypes(result.map(type => ({
+        label: type.label,
+        value: type.value
+      })).sort((a, b) => a.label.localeCompare(b.label)));
+      console.log('meter Types:', result); 
+    } catch (err) {
+      console.error(err);    
+    }
+  }, []);
+
+  const getMeterModelCodes = useCallback(async () => {
+    console.log("getMeterModelCodes called");
+    const tableName = meterDetails?.meterType ? tableNames[meterDetails.meterType.value] : null;
+    if (tableName) {
+      try {
+        const query = `SELECT DISTINCT ModelCode FROM ${tableName} WHERE Manufacturer = ?`;
+        const params = [meterDetails.manufacturer?.value || '']; // Use meterDetails.manufacturer?.value
+        console.log("Executing query:", query, "with params:", params);
+        const result = await db.getAllAsync(query, params);
+        console.log("Query result:", result);
+        setMeterModelCodes(
+          result.map(model => ({
+            label: model.ModelCode,
+            value: model.ModelCode
+          })).sort((a, b) => a.label.localeCompare(b.label))
+        );
+        console.log("Model codes set:", meterModelCodes);
+      } catch (err) {
+        console.error('SQL Error: ', err);
       }
     } else {
-      setPressureTierList(METER_PRESSURE_TIER_CHOICES);
+      console.log("meterDetails.meterType is false, not fetching model codes");
     }
-  }, [selectedMeterType, pressureTier]);
-useEffect(() => {
-  getMeterTypes();
-}, []);
+  }, [meterDetails?.meterType, meterDetails?.manufacturer]);
+
+  const getMeterManufacturers = useCallback(async () => {
+    console.log("getMeterManufacturers called");
+    const meterType = meterDetails?.meterType?.value; // Access meterType safely
+    const tableName = meterType && tableNames[meterType]; // Check if meterType exists before accessing tableNames
+    if (tableName) {
+      try {
+        const query = `SELECT DISTINCT Manufacturer FROM ${tableName}`;
+        console.log("Executing query:", query);
+        const result = await db.getAllAsync(query);
+        console.log("Query result:", result);
+        setMeterManufacturers(
+          result.map(manu => ({
+            label: manu.Manufacturer,
+            value: manu.Manufacturer
+          })).sort((a, b) => a.label.localeCompare(b.label))
+        );
+        console.log("Manufacturers set:", meterManufacturers);
+      } catch (err) {
+        console.error('SQL Error: ', err);
+      }
+    } else {
+      console.log("meterDetails.meterType is falsy, setting manufacturers to empty array");
+      setMeterManufacturers([]);
+    }
+  }, [meterDetails?.meterType]);
+
   useEffect(() => {
-    if (selectedMeterType) {
-        getMeterManufacturers();
-    }
-}, [selectedMeterType]);
-useEffect (() => { 
-    getMeterModelCodes(); 
-}  , [selectedMeterManufacturer]);
-useEffect(() => {
-    if (selectedMeterManufacturer && selectedMeterModelCode) {
-        getMeterDetails();
-    }
-}, [selectedMeterManufacturer, selectedMeterModelCode]);
-
-async function getMeterTypes() {
-  try {
-      const result = meterType
-      SetMeterTypes(result.map(type => ({
-      label: type.displayName,
-      value: type.value
-      })).sort((a, b) => a.label.localeCompare(b.label)));
-      console.log('meter Types:',result); 
-  } 
-  catch (err) {
-      console.error( err);    
-  }
-}
-async function getMeterManufacturers() {
-  if (selectedMeterType && tableNames[selectedMeterType]) {
-      try {
-          const query = `SELECT DISTINCT Manufacturer FROM ${tableNames[selectedMeterType]}`;
-          const result = await db.getAllAsync(query);
-          setMeterManufacturers(result.map(manu => ({
-              label: manu.Manufacturer,
-              value: manu.Manufacturer
-          })).sort((a, b) => a.label.localeCompare(b.label)));
-      } catch (err) {
-          console.error('SQL Error: ', err);
-      }
-  }
-}
-
-async function getMeterModelCodes() {
-  if (selectedMeterType && tableNames[selectedMeterType]) {
-      try {
-          const query = `SELECT DISTINCT "ModelCode" FROM ${tableNames[selectedMeterType]} WHERE Manufacturer = '${selectedMeterManufacturer}'`;
-          const result = await db.getAllAsync(query);
-          console.log ('Meter Model Codes:',result);
-          setMeterModelCodes(result.map(model => ({
-              label: model["ModelCode"],
-              value: model["ModelCode"]
-          })).sort((a, b) => a.label.localeCompare(b.label)));
-      } catch (err) {
-          console.error('SQL Error: ', err);
-      }
-  }
-}
-async function getMeterDetails() {
-  if (selectedMeterType && tableNames[selectedMeterType]) {
-    try {
-      const tableName = tableNames[selectedMeterType];
-      const query = `SELECT MeasuringCapacity, NumberOfDials, PulseValue, UnitsOfMeasure, MeterMechanism, PaymentMethod FROM ${tableName} WHERE Manufacturer = ? AND ModelCode = ?`;
-      const params = [selectedMeterManufacturer, selectedMeterModelCode];
-      const result = await db.getAllAsync(query, params);
-
-      if (result.length > 0) {
-        const details = result[0];
-        appContext.setMeterDetails(prevDetails => ({
-          ...prevDetails,
-          measuringCapacity: details.MeasuringCapacity || prevDetails.measuringCapacity,
-          numberOfDials: details.NumberOfDials || prevDetails.numberOfDials,
-          pulseValue: details.PulseValue !== 0 
-                       ? { ...prevDetails.pulseValue, value: details.PulseValue }
-                       : prevDetails?.pulseValue,
-          unitsOfMeasure: details.UnitsOfMeasure || prevDetails.unitsOfMeasure,
-          meterMechanism: details.MeterMechanism || prevDetails.meterMechanism,
-          paymentMethod: details.PaymentMethod || prevDetails.paymentMethod,
-        }));
-
-        setHavePulseValue(details.PulseValue !== 0);
-        console.log('Meter details:', details);
-        console.log('Meter details:', meterDetails);
-      } else {
-        console.log('No meter details found for the selected type, manufacturer, and model code.');
-        setMeterDetails(prevDetails => ({
-          ...prevDetails,
-          measuringCapacity: null,
-          numberOfDials: null,
-          pulseValue: null,
-          unitsOfMeasure: null,
-          meterMechanism: null,
-          paymentMethod: null,
-        }));
-      }
-    } catch (err) {
-      console.error('SQL Error: ', err);
-    }
-  }
-}
-
-
-const handleMeterTypeChange = (item) => {
-  const value = item.value;
-  setSelectedMeterType(value);
-  setSelectedMeterManufacturer('');
-  setSelectedMeterModelCode('');
-  if (value !== '7') {
-      getMeterManufacturers();
-  } else {
+    getMeterTypes();
+    console.log('Meter Details:', meterDetails);
+  }, [getMeterTypes, meterDetails]);
+  
+  useEffect(() => {
+    if (meterDetails?.meterType && meterDetails.meterType.value !== undefined) {
+          console.log('Fetching meter manufacturers for meter type:', meterDetails?.meterType);
+    getMeterManufacturers();
+    } else {
       setMeterManufacturers([]);
       setMeterModelCodes([]);
-  }
-};
+    }
+  }, [getMeterManufacturers, meterDetails?.meterType]);
+  
+  useEffect(() => {
+    
+    if (meterDetails?.manufacturer && meterDetails.manufacturer.value !== undefined) {
+      console.log('Fetching meter model codes for manufacturer:', meterDetails?.manufacturer);
+      getMeterModelCodes();
+    } else {
+      setMeterModelCodes([]);
+    }
+  }, [getMeterModelCodes, meterDetails?.manufacturer]);
 
-  const saveMeterDetailsToDatabase = async () => {
-    const db = await openDatabase();
-
-    const meterDetailsJson = JSON.stringify({
-      location,
-      model:selectedMeterModelCode,
-      manufacturer:selectedMeterManufacturer,
-      uom,
-      type:selectedMeterType,
-      status,
-      measuringCapacity,
-      year,
-      reading,
-      dialNumber,
-      serialNumber,
-      pulseValue,
-      mechanism,
-      pressureTier,
-      pressure,
-      havePulseValue,
-      haveSerialNumber,
-    });
-    const progress = 5;
-    db.transaction(tx => {
-      tx.executeSql(
-        `UPDATE Jobs SET meterDetails = ?, progress = ? WHERE id = ?`,
-        [meterDetailsJson, progress, jobId], // Assuming appContext.jobId is the current job's ID
-        (_, result) => {
-          console.log('Meter details updated in database.');
-        },
-        (_, error) => {
-          console.log('Error updating meter details in database:', error);
-        }
-      );
-    });
+  const handleMeterTypeChange = (item) => {
+    handleInputChange('meterType', item);
+    handleInputChange('manufacturer', null);
+    handleInputChange('model', null);
+    handleInputChange('pressureTier', null);
   };
 
   const nextPressed = async () => {
-    if (location == null) {
+    if (meterDetails.location == null) {
       EcomHelper.showInfoMessage("Please Choose 'Meter Location'");
       return;
     }
-    if (selectedMeterModelCode == null) {
+    if (meterDetails.model == null) {
       EcomHelper.showInfoMessage("Please Choose 'Meter Model'");
       return;
     }
-    if (selectedMeterManufacturer == null) {
+    if (meterDetails.manufacturer == null) {
       EcomHelper.showInfoMessage("Please Choose 'Meter Manufacturer'");
       return;
     }
-    if (uom == null) {
+    if (meterDetails.uom == null) {
       EcomHelper.showInfoMessage("Please Choose 'UOM'");
       return;
     }
-    if (selectedMeterType == null) {
+    if (meterDetails.meterType == null) {
       EcomHelper.showInfoMessage("Please Choose 'Meter Type'");
       return;
     }
-    if (havePulseValue && pulseValue == null) {
+    if (meterDetails.havePulseValue && meterDetails.pulseValue == null) {
       EcomHelper.showInfoMessage("Please Choose 'Meter Pulse Value'");
       return;
     }
-    if (mechanism == null) {
+    if (meterDetails.mechanism == null) {
       EcomHelper.showInfoMessage("Please Choose 'Meter Mechanism'");
       return;
     }
-    if (pressureTier == null) {
+    if (meterDetails.pressureTier == null) {
       EcomHelper.showInfoMessage("Please Choose 'Metering Pressure Tier'");
       return;
     }
-    if (pressure == null) {
+    if (meterDetails.pressure == null) {
       EcomHelper.showInfoMessage("Please Input 'Pressure'");
       return;
     }
 
-    appContext.setMeterDetails({
-      ...meterDetails,
-      location: location,
-      model: selectedMeterModelCode,
-      manufacturer: selectedMeterManufacturer,
-      uom: uom,
-      type: selectedMeterType,
-      status: status,
-      measuringCapacity: measuringCapacity,
-      year: year,
-      reading: reading,
-      dialNumber: dialNumber,
-      serialNumber: serialNumber,
-      pulseValue: pulseValue,
-      mechanism: mechanism,
-      pressureTier: pressureTier,
-      pressure: pressure,
-      havePulseValue: havePulseValue,
-
-    });
-
-    let isDiaphragm = [1, 2, 4].includes(type.value);
-    let isNotML = [1, 4].includes(pressureTier.value);
+    let isDiaphragm = meterDetails.meterType && [1, 2, 4].includes(meterDetails.meterType.value);
+    let isNotML = meterDetails.pressureTier && [1, 4].includes(meterDetails.pressureTier.value);
     if (isDiaphragm && isNotML) {
       EcomHelper.showInfoMessage("Diagphragm Meter can only be LP or MP");
       return;
     }
-    console.log(" navigating to", nextScreen);
+    console.log("Navigating to", nextScreen);
     try {
-      await saveMeterDetailsToDatabase();
+      await saveToDatabase();
       console.log("Meter details saved, navigating to", nextScreen);
       navigation.navigate(nextScreen);
     } catch (error) {
       console.error("Failed to save meter details or navigate:", error);
     }
-
   };
 
   const backPressed = () => {
-    appContext.setMeterDetails({
-      ...meterDetails,
-      location: location,
-      model: selectedMeterModelCode,
-      manufacturer: selectedMeterManufacturer,
-      uom: uom,
-      type: selectedMeterType,
-      status: status,
-      measuringCapacity: measuringCapacity,
-      year: year,
-      reading: reading,
-      dialNumber: dialNumber,
-      serialNumber: serialNumber,
-      pulseValue: pulseValue,
-      mechanism: mechanism,
-      pressureTier: pressureTier,
-      pressure: pressure,
-      havePulseValue: havePulseValue,
-      haveSerialNumber: haveSerialNumber,
-    });
+    saveToDatabase();
     navigation.goBack();
   };
 
@@ -377,19 +278,15 @@ const handleMeterTypeChange = (item) => {
     EcomHelper.showInfoMessage(codes.data);
     console.log(codes);
     setIsModal(false);
-    setSerialNumber(codes.data);
+    handleInputChange('serialNumber', codes.data);
   };
-
-
-
-
   return (
     <SafeAreaView style={styles.content}>
       <Header
         hasLeftBtn={true}
         hasCenterText={true}
         hasRightBtn={true}
-        centerText={""}
+        centerText={title}
         leftBtnPressed={backPressed}
         rightBtnPressed={nextPressed}
       />
@@ -403,12 +300,12 @@ const handleMeterTypeChange = (item) => {
           <View style={styles.body}>
             <EcomDropDown
               width={width * 0.5}
-              value={location}
+              value={meterDetails.location}
               valueList={METER_POINT_LOCATION_CHOICES}
               placeholder={"Meter location"}
               onChange={(item) => {
                 console.log(item);
-                setLocation(item);
+                handleInputChange('location', item);
               }}
             />
             <View style={styles.spacer} />
@@ -416,38 +313,33 @@ const handleMeterTypeChange = (item) => {
               <View style={{ flex: 0.5 }}>
                 <EcomDropDown
                   width={width * 0.5}
-                  value={selectedMeterType}
+                  value={meterDetails.meterType}
                   valueList={meterTypes}
                   placeholder="Select a Meter Type"
-                  onChange={(item) => {
-                    setSelectedMeterType(item.value);
-                   
-                    let isDiaphragm = [1, 2, 4].includes(item.value);
-                    let isML = [3, 2].includes(pressureTier?.value);
-                    if (isDiaphragm) {
-                      setPressureTierList([
-                        { label: "LP", data: "LP", value: 3 },
-                        { label: "MP", data: "MP", value: 2 },
-                      ])
-                    } else {
-                      setPressureTierList(METER_PRESSURE_TIER_CHOICES)
-                    }
-                    if (!isDiaphragm && isML) {
-                      setPressureTier(null)
-                    }
-                  }}
+                  onChange={handleMeterTypeChange}
                 />
               </View>
-
+  
               <View style={{ flex: 0.5 }}>
-                <EcomDropDown
-                  width={width * 1}
-                  value={selectedMeterManufacturer}
-                        valueList={meterManufacturers}
-                        placeholder="Select a Manufacturer"
-                        onChange={(item) => setSelectedMeterManufacturer(item.value)}
-                  
-                />
+                {meterDetails.meterType && meterDetails.meterType.value === '7' ? (
+                  <View style={{ flex: 1 }}>
+                  <TextInput
+                    value={meterDetails.manufacturer}
+                    onChangeText={(txt) => handleInputChange('manufacturer', txt)}
+                    placeholder="Enter Manufacturer"
+                    style={styles.input}
+                    
+                  />
+                  </View>
+                ) : (
+                  <EcomDropDown
+                    width={width * 1}
+                    value={meterDetails.manufacturer}
+                    valueList={meterManufacturers}
+                    placeholder="Select a Manufacturer"
+                    onChange={(item) => handleInputChange('manufacturer', item)}
+                  />
+                )}
               </View>
             </View>
             <View style={styles.spacer} />
@@ -455,27 +347,35 @@ const handleMeterTypeChange = (item) => {
               <View style={{ flex: 0.5 }}>
                 <EcomDropDown
                   width={width * 0.35}
-                  value={uom}
+                  value={meterDetails.uom || { _index: 1, label: "Standard Cubic Meters per hour", value: 2 }}
                   valueList={UNIT_OF_MEASURE_CHOICES}
                   placeholder={"UOM"}
                   onChange={(item) => {
                     console.log(item);
-                    setUom(item);
+                    handleInputChange('uom', item);
                   }}
                 />
               </View>
               <View style={{ flex: 0.5 }}>
-                <EcomDropDown
-                  width={width * 0.5}
-                  value={selectedMeterModelCode}
-                        valueList={meterModelCodes}
-                        placeholder="Select Model Code"
-                        onChange={(item) => setSelectedMeterModelCode(item.value)}
-                                       
-                />
+                {meterDetails.meterType && meterDetails.meterType.value === '7' ? (
+                  <TextInput
+                    value={meterDetails.model}
+                    onChangeText={(txt) => handleInputChange('model', txt)}
+                    placeholder="Enter Model Code"
+                    style={styles.input}
+                  />
+                ) : (
+                  <EcomDropDown
+                    width={width * 0.5}
+                    value={meterDetails.model}
+                    valueList={meterModelCodes}
+                    placeholder="Select Model Code"
+                    onChange={(item) => handleInputChange('model', item)}
+                  />
+                )}
               </View>
             </View>
-
+  
             <View style={styles.spacer} />
             <View style={styles.row}>
               <View style={{ flex: 0.5 }}>
@@ -486,34 +386,34 @@ const handleMeterTypeChange = (item) => {
                     options={["Yes", "No"]}
                     actions={[
                       () => {
-                        setHavePulseValue(true);
+                        handleInputChange('havePulseValue', true)
                       },
                       () => {
-                        setHavePulseValue(false);
-                        setPulseValue(null);
-                      },
+                        handleInputChange('havePulseValue', false)
+                        handleInputChange('pulseValue', null)
+                      }
                     ]}
                     value={
-                      havePulseValue === null
+                      meterDetails.havePulseValue === null
                         ? null
-                        : havePulseValue
+                        : meterDetails.havePulseValue
                           ? "Yes"
                           : "No"
                     }
                   />
                 </View>
               </View>
-
-              {havePulseValue === true ? (
+  
+              {meterDetails.havePulseValue === true ? (
                 <View style={{ flex: 0.5 }}>
                   <EcomDropDown
                     width={width * 0.35}
-                    value={pulseValue}
+                    value={meterDetails.pulseValue || { _index: 0, label: "1", value: 1 }}
                     valueList={PULSE_VALUE}
                     placeholder={"Meter pulse value"}
                     onChange={(item) => {
                       console.log(item);
-                      setPulseValue(item);
+                      handleInputChange('pulseValue', item);
                     }}
                   />
                 </View>
@@ -521,17 +421,17 @@ const handleMeterTypeChange = (item) => {
                 <View style={{ flex: 1 }} />
               )}
             </View>
-
-
+  
+  
             <View style={styles.spacer} />
             <View style={styles.row}>
               <View style={{ flex: 0.5 }}>
                 <TextInputWithTitle
                   title={"Measuring capacity"}
-                  value={measuringCapacity}
+                  value={meterDetails.measuringCapacity}
                   onChangeText={(txt) => {
                     const numericValue = txt.replace(/[^0-9]/g, "");
-                    setMeasuringCapacity(numericValue);
+                    handleInputChange('measuringCapacity', numericValue);
                   }}
                   keyboardType="numeric"
                   style={styles.input}
@@ -540,49 +440,49 @@ const handleMeterTypeChange = (item) => {
               <View style={{ flex: 0.5 }}>
                 <EcomDropDown
                   width={width * 0.35}
-                  value={year}
+                  value={meterDetails.year}
                   valueList={EcomHelper.getYears(1901)}
                   placeholder={"Year of manufacturer"}
                   onChange={(item) => {
                     console.log(item);
-                    setYear(item);
+                    handleInputChange('year', item);
                   }}
                 />
               </View>
             </View>
-
-
+  
+  
             <View style={styles.spacer} />
             <View style={styles.row}>
-            <View style={{ flex: 0.5 }}>
+              <View style={{ flex: 0.5 }}>
                 <EcomDropDown
-                  value={dialNumber}
+                  value={meterDetails.dialNumber}
                   valueList={NUMBER_OF_DIALS}
                   placeholder={"Number of dials"}
                   onChange={(item) => {
                     console.log(item);
-                    setDialNumber(item);
+                    handleInputChange('dialNumber', item);
                   }}
                 />
               </View>
               <View style={{ flex: 0.5, marginTop: 8, marginLeft: 8 }}>
                 <TextInputWithTitle
-                  value={reading}
+                  value={meterDetails.reading}
                   title={"Meter read"}
                   onChangeText={(txt) => {
                     //validation
                     const numericValue = txt.replace(/[^0-9]/g, "");
-                    setReading(numericValue);
+                    handleInputChange('reading', numericValue);
                   }}
                   keyboardType="numeric"
-                  maxLength={dialNumber ? parseInt(dialNumber.value) : 0}
-                  style={[styles.input, {width: '100%'}]}
+                  maxLength={meterDetails.dialNumber ? parseInt(meterDetails.dialNumber.value) : 0}
+                  style={[styles.input, { width: '100%' }]}
                 />
               </View>
-           
+  
             </View>
-
-
+  
+  
             <View style={styles.spacer} />
             <View style={styles.row}>
               <View style={{ flex: 0.5 }}>
@@ -590,11 +490,11 @@ const handleMeterTypeChange = (item) => {
                 <View style={{ height: 5 }} />
                 <View style={styles.row}>
                   <TextInput
-                    value={serialNumber}
+                    value={meterDetails.serialNumber}
                     onChangeText={(txt) => {
                       const withSpacesAllowed = txt.toUpperCase();
                       const formattedText = withSpacesAllowed.replace(/[^A-Z0-9]+/g, '');
-                      setSerialNumber(formattedText);
+                      handleInputChange('serialNumber', formattedText);
                     }}
                     style={{ ...styles.input, }}
                   />
@@ -608,48 +508,47 @@ const handleMeterTypeChange = (item) => {
               <View style={{ flex: 0.5 }}>
                 <EcomDropDown
                   width={'35%'}
-                  value={status}
+                  value={meterDetails.status || { _index: 2, data: "LI", label: "Live", value: 3 }}
                   valueList={METER_POINT_STATUS_CHOICES}
                   placeholder={"Meter status"}
                   onChange={(item) => {
                     console.log(item);
-                    setStatus(item);
+                    handleInputChange('status', item);
                   }}
                 />
               </View>
             </View>
-
-
+  
+  
             <View style={styles.spacer} />
             <View style={styles.row}>
-
+  
               <View style={{ flex: 0.5 }}>
-
+  
                 <EcomDropDown
-
-                  value={mechanism}
+                  value={meterDetails.mechanism || { _index: 0, label: "Credit", value: 1 }}
                   valueList={MECHANISM_TYPE_CHOICES}
                   placeholder={"Meter Mechanism"}
                   onChange={(item) => {
                     console.log(item);
-                    setMechanism(item);
+                    handleInputChange('mechanism', item);
                   }}
                 />
               </View>
               <View style={{ flex: 0.5 }}>
                 <EcomDropDown
                   width={'35%'}
-                  value={pressureTier}
+                  value={meterDetails.pressureTier}
                   valueList={pressureTierList} //METER_PRESSURE_TIER_CHOICES
                   placeholder={"Metering pressure tier"}
                   onChange={(item) => {
                     console.log(item);
-                    setPressureTier(item);
+                    handleInputChange('pressureTier', item);
                   }}
                 />
               </View>
             </View>
-
+  
             <View style={styles.spacer} />
             <View style={styles.row}>
               <View style={{ flex: 1 }}>
@@ -661,7 +560,7 @@ const handleMeterTypeChange = (item) => {
                   }}
                 >
                   <TextInput
-                    value={pressure}
+                    value={meterDetails.pressure}
                     onChangeText={(txt) => {
                       if (txt.length > 5) {
                         EcomHelper.showInfoMessage(
@@ -669,7 +568,7 @@ const handleMeterTypeChange = (item) => {
                         );
                         return;
                       }
-                      setPressure(txt);
+                      handleInputChange('pressure', txt);
                     }}
                     keyboardType="numeric"
                     style={{
@@ -686,8 +585,8 @@ const handleMeterTypeChange = (item) => {
             <View style={styles.spacer} />
             <View style={styles.spacer} />
             <View style={styles.spacer} />
-
-
+  
+  
           </View>
           {isModal && (
             <BarcodeScanner
@@ -701,7 +600,6 @@ const handleMeterTypeChange = (item) => {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   content: {
     flex: 1,

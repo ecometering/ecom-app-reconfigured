@@ -5,14 +5,15 @@ import { AppContext } from '../../context/AppContext';
 const  CorrectorGatewayScreen= () => {
     const navigation = useNavigation();
     const route = useRoute();
-    const {pageRoute} = route.params;
+    const { pageRoute } = route.params || {};
     const {  jobType,meterDetails } = useContext(AppContext);
     console.log("CorrectorGatewayScreen",meterDetails);
     console.log("CorrectorGatewayScreen",jobType);
     const [isCorrector,SetIsCorrector] = useState(meterDetails?.isCorrector );
     const [isAmr,SetIsAmr] = useState(meterDetails?.isAmr );
     const [isMeter,SetIsMeter] = useState(meterDetails?.isMeter );
-
+    const {meterType,pressureTier} = meterDetails;
+  
     console.log(" gateway screen",isMeter,isCorrector,isAmr);
     useEffect(() => {
         console.log('CorrectorGatewayScreen Mounted');
@@ -59,19 +60,19 @@ const  CorrectorGatewayScreen= () => {
                     }
                       break;
                   case "Survey":
-                    const nextAfterCorrector = ({ datalogger, meter, meterType, meterPressure }) => {
+                    
                       if (isAmr) {
-                        navigation.replace('DataLoggerDetails');
+                        navigation.replace('ExistingDataLoggerDetails');
                       }else if (isMeter)
                       {
-                        if ((Type === '1' || Type === '2' || Type === '4') && pressureTier === 'MP' || (Type !== '1' && Type !== '2' && Type !== '4')) {
+                        if ((meterType.value === '1' || meterType.value === '2' || meterType.value === '4') && pressureTier === 'MP' || (meterType.value !== '1' && meterType.value !== '2' && meterType.value !== '4')) {
                           navigation.replace('StreamsSetSealDetails');
                       }
                   
                     }else {
                       navigation.replace('StandardPage');
                     }
-                    };
+                    
                     
                       // Add specific logic for Survey job type
                       break;
@@ -97,7 +98,7 @@ const  CorrectorGatewayScreen= () => {
                         navigation.replace('DataLoggerDetails');
                       }else if (isMeter)
                       {
-                        if ((Type === '1' || Type === '2' || Type === '4') && pressureTier === 'MP' || (Type !== '1' && Type !== '2' && Type !== '4')) {
+                        if ((meterType.value === '1' || meterType.value === '2' || meterType.value === '4') && pressureTier === 'MP' || (meterType.value !== '1' && meterType.value !== '2' && meterType.value !== '4')) {
                           navigation.replace('StreamsSetSealDetails');
                       }
                   

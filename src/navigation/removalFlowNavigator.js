@@ -50,8 +50,8 @@ const assetSelection = ({ meter, corrector, datalogger }) => {
 return(
     <Stack.Navigator > 
     <Stack.Screen name="AssetTypeSelectionPage" component={AssetTypeSelectionPage} initialParams={{title:'Assets being Removed',nextScreen:'AssetGateway'}} />
-    <Stack.Screen name="AssetGateway" component={AssetSelectGatewayScreen} />
-    <Stack.Screen name="RemovedMeterDetails" component={MeterDetailsPage} initialParams={{title:' Removed Meter Details',nextScreen:'MeterGatway1'}} />
+    <Stack.Screen name="AssetGateway" component={AssetSelectGatewayScreen}initialParams={{pageFlow:1}} />
+    <Stack.Screen name="RemovedMeterDetails" component={MeterDetailsPage} initialParams={{title:' Removed Meter Details',nextScreen:'MeterGateway1'}} />
     <Stack.Screen name ="MeterGateway1" component={MeterGatewayScreen} initialParams={{pageflow:1}} />
     <Stack.Screen 
     key = "RemovedMeterDataBadge"

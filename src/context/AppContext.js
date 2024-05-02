@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { meterType } from "../utils/constant";
+import { database } from "../utils/db";
 
 const AppContext = createContext({
   numberOfStreams: 0,
@@ -12,10 +14,10 @@ export const useAppContext = () => {
 }
 
 const AppContextProvider = (props) => {
+  const [jobID, setJobID] = useState(null);
   const [jobType, setJobType] = useState(null);
   const [jobDetails, setJobDetails] = useState(null);
   const[jobStarted,setJobStarted] = useState(false);
-  const [isWarrant, setIsWarrant] = useState(false);
   const [photos, setPhotos] = useState({});
 
   const savePhoto = async(photoKey, photoDetails) => {
@@ -41,38 +43,30 @@ const AppContextProvider = (props) => {
   const [streamCounter, setStreamCounter] = useState(0);
 
   const [extraCounter, setExtraCounter] = useState(0);
-  const [passedRemoval, setPassedRemoval] = useState(false);
-  const [startRemoval, setStartRemoval] = useState(false);
 
   // CHOSEN ITEM or METER
   const [siteDetails, setSiteDetails] = useState({
-    mprn: "",
-    companyName: "",
-    buildingName: "",
-    address1: "",
-    address2: "",
-    address3: "",
-    town: "",
-    county: "",
-    postCode: "",
-    title: "",
-    contact: "",
-    email1: "",
-    email2: "",
-    number1: "",
-    number2: "",
-    instructions: "",
-    confirmContact: false,
-    confirmWarrant:false, // Assuming confirmContact is a boolean, provide a default value accordingly
+    mprn: "",companyName: "",buildingName: "",address1: "",
+    address2: "",address3: "",town: "",county: "",postCode: "",
+    title: "",contact: "",email1: "",email2: "",number1: "",number2: "",
+    instructions: "",confirmContact: false,confirmWarrant:false, // Assuming confirmContact is a boolean, provide a default value accordingly
   });
   const [siteQuestions, setSiteQuestions] = useState({
-    
+    isSafe: false,isGeneric: false,genericReason: "",
+    isCarryOut: false,carryOutReason: "", isFitted: false,
+    isStandard: false,
   });
 
-  const [meterDetails, setMeterDetails] = useState(null);
+  const [meterDetails, setMeterDetails] = useState({
+  });
+  const [kioskDetails, setKioskDetails] = useState({});
+  const [ecvDetails, setEcvDetails] = useState({}) 
+  const [movDetails,setMovDetails]= useState({});
   const [regulatorDetails, setRegulatorDetails] = useState(null);
   const [standardDetails, setStandardDetails] = useState(null);
+  const [ventDetails,setVentDetails]= useState({});
   //.. removed
+  const [dataLoggerDetails,setDataLoggerDetails]= useState({});
   const [removedMeterDetails, setRemovedMeterDetails] = useState(null);
   //.. warant
   // ... Maintenance
@@ -91,65 +85,53 @@ const AppContextProvider = (props) => {
     setJobType(job);
     console.log("Job type changed", job);
   };
-  const [visitCounts, setVisitCounts] = useState({});
-  const updateVisitCount = (screenName) => {
-    setVisitCounts((prevCounts) => ({
-      ...prevCounts,
-      [screenName]: (prevCounts[screenName] || 0) + 1,
-    }));
-  };
+  const [correctorDetails, setCorrectorDetails] = useState({
+    manufacturer: '',
+    model: '',
+    serialNumber: '',
+    isMountingBracket: null,
+    uncorrected: '',
+    corrected: ''
+  });
+  
 
   const resetContext = () => {
     setJobType(null);
     setJobDetails(null);
     setJobStarted(false);
-    setIsWarrant(false);
     setPhotos({});
     setHasStreamNumber(false);
     setStreamNumber(0);
     setStreamValue([]);
     setStreamCounter(0);
     setExtraCounter(0);
-    setPassedRemoval(false);
-    setStartRemoval(false);
     setSiteDetails({
-      mprn: "",
-      companyName: "",
-      buildingName: "",
-      address1: "",
-      address2: "",
-      address3: "",
-      town: "",
-      county: "",
-      postCode: "",
-      title: "",
-      contact: "",
-      email1: "",
-      email2: "",
-      number1: "",
-      number2: "",
-      instructions: "",
-      confirmContact: false,
-      confirmWarrant: false,
+    mprn: "",companyName: "",buildingName: "",address1: "",address2: "",
+    address3: "",town: "",county: "",postCode: "",title: "",contact: "",
+    email1: "",email2: "",number1: "",number2: "",instructions: "",
+    confirmContact: false,confirmWarrant: false,
     });
-    setSiteQuestions({});
+    setSiteQuestions({
+      isSafe: false,isGeneric: false,genericReason: "",
+    isCarryOut: false,carryOutReason: "", isFitted: false,
+    isStandard: false,
+    });
     setMeterDetails(null);
     setRegulatorDetails(null);
     setStandardDetails(null);
-    setRemovedMeterDetails(null);
     setMaintenanceDetails(null);
     setJobdata(null);
-    setVisitCounts({});
   };
 
   const providerValue = {
     resetContext,
     jobType,
+    jobID,
     jobDetails,
     siteQuestions,
     photos,
-
-    isWarrant,
+    dataLoggerDetails,
+    correctorDetails,
     hasStreamNumber,
     jobData,
     streamNumber,
@@ -157,14 +139,15 @@ const AppContextProvider = (props) => {
     streamCounter,
     siteDetails,
     meterDetails,
+    kioskDetails,
+    ecvDetails,
+    movDetails,
+    ventDetails,
     regulatorDetails,
     standardDetails,
     extraCounter,
     removedMeterDetails,
-    passedRemoval,
     maintenanceDetails,
-    startRemoval,
-    setStartRemoval,
     setJobType,
     setJobDetails,
     setSiteQuestions,
@@ -174,19 +157,24 @@ const AppContextProvider = (props) => {
     // addPhotoDetail,
     updatePhoto,
     setJobdata,
+    setJobID,
     setMaintenanceDetails,
-    setPassedRemoval,
     setRemovedMeterDetails,
     setExtraCounter,
+    setKioskDetails,
+    setEcvDetails,
+    setMovDetails,
+    setDataLoggerDetails,
+    setVentDetails,
     setStandardDetails,
     setRegulatorDetails,
     setMeterDetails,
     setSiteDetails,
+    setCorrectorDetails,
     setHasStreamNumber,
     setStreamCounter,
     setStreamValue,
     setStreamNumber,
-    setIsWarrant,
     setJobTypes,
     setJobStarted,
     blobs,

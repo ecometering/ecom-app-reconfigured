@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -7,54 +7,64 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { unitH, unitW, width } from "../../utils/constant";
+import { unitH, width } from "../../utils/constant";
 import Header from "../../components/Header";
-import { useNavigation,useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import Text from "../../components/Text";
 import { TextType } from "../../theme/typography";
-import TextInput from "../../components/TextInput";
 import SwitchWithTitle from "../../components/Switch";
 import { AppContext } from "../../context/AppContext";
 import EcomHelper from "../../utils/ecomHelper";
 
-
 function AssetTypeSelectionPage() {
   const navigation = useNavigation();
-  const { params } = useRoute();
-  const { setMeterDetails, jobType, meterDetails } = useContext(AppContext);
+  const route = useRoute();
+  const { title, nextScreen,  } = route.params;
+
+  const { setMeterDetails, jobType, meterDetails,jobID } = useContext(AppContext);
 
   // Destructuring parameters directly to ensure they're accessed consistently
-  const { title, nextScreen } = params;
+const saveToDatabase = async () => {
+  const meterDetailsJson = JSON.stringify(meterDetails);
+  try {
+    await db.runAsync(
+      'UPDATE Jobs SET meterDetails = ? WHERE id = ?',
+      [meterDetailsJson, jobID],
+    )
+    .then((result) => {
+      console.log('meterDetails saved to database:', result);
+    });
+  } catch (error) {
+    console.log('Error saving meterDetails to database:', error);
+  }
+};
 
-  // State initialization
-  const [isMeter, setIsMeter] = useState(meterDetails?.isMeter ?? false);
-  const [isAmr, setIsAmr] = useState(meterDetails?.isAmr ?? false);
-  const [isCorrector, setIsCorrector] = useState(meterDetails?.isCorrector ?? false);
 
-  
-console.log("Next Screen:", nextScreen); // Log check
-console.log("jobType:", jobType); // Log check
+  const handleInputChange = (name, value) => {
+    setMeterDetails(prevDetails => ({
+      ...prevDetails,
+      [name]: value,
+    }));
+  };
 
-const backPressed = () => {
-    console.log("Back Pressed"); // Event handler check
-    setMeterDetails({ isMeter, isAmr, isCorrector });
+  const backPressed = () => {
+    console.log("Back Pressed");
+    saveToDatabase();
     navigation.goBack();
   };
 
   const nextPressed = () => {
-    console.log("Next Pressed"); // Event handler check
+    console.log("Next Pressed");
+    const { isMeter, isAmr, isCorrector } = meterDetails;
+
     if (!isMeter && !isAmr && !isCorrector) {
       EcomHelper.showInfoMessage("You must select at least one asset type to proceed.");
       return;
-  }
+    }
 
-    setMeterDetails({ isMeter, isAmr, isCorrector });
-  navigation.navigate(nextScreen, { ...params, meterDetails });
-
-
-    // Navigate to the determined screen
-
-
+    console.log("Meter Details:", { isMeter, isAmr, isCorrector });
+   saveToDatabase();
+    navigation.navigate(nextScreen);
   };
 
   return (
@@ -76,28 +86,28 @@ const backPressed = () => {
             <Text type={TextType.CAPTION_3}>{jobType}</Text>
             <SwitchWithTitle
               title={"Meter"}
-              value={isMeter}
+              value={meterDetails.isMeter}
               onValueChange={(e) => {
-                setIsMeter(e);
-                console.log("Meter Switch Changed:", e); // State change check
+                handleInputChange('isMeter', e);
+                console.log("Meter Switch Changed:", e);
               }}
             />
             <View style={styles.spacer} />
             <SwitchWithTitle
               title={"AMR"}
-              value={isAmr}
+              value={meterDetails.isAmr}
               onValueChange={(e) => {
-                setIsAmr(e);
-                console.log("AMR Switch Changed:", e); // State change check
+                handleInputChange('isAmr', e);
+                console.log("AMR Switch Changed:", e);
               }}
             />
             <View style={styles.spacer} />
             <SwitchWithTitle
               title={"Corrector"}
-              value={isCorrector}
+              value={meterDetails.isCorrector}
               onValueChange={(e) => {
-                setIsCorrector(e);
-                console.log("Corrector Switch Changed:", e); // State change check
+                handleInputChange('isCorrector', e);
+                console.log("Corrector Switch Changed:", e);
               }}
             />
             <View style={styles.spacer} />

@@ -2,33 +2,36 @@ import React, { useEffect, useState } from 'react';
 import { SafeAreaView, View, Text, ScrollView, TouchableOpacity, StyleSheet, Dimensions, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
-import { openDatabase, getDatabaseJob } from '../utils/database'; // Importing required functions
-const { width } = Dimensions.get('window'); // Get the screen width
+import { openDatabase, getDatabaseJob } from '../utils/database';
+import { loadJob } from '../utils/loadJob';
 
-const dynamicFontSize = width < 360 ? 9 : width < 600 ? 11 : 13; // Adjust font size based on screen width
-const dynamicPadding = width < 360 ? 6 : 8; // Adjust padding based on screen width
+const { width } = Dimensions.get('window');
+
+const dynamicFontSize = width < 360 ? 9 : width < 600 ? 11 : 13;
+const dynamicPadding = width < 360 ? 6 : 8;
 
 const JobsTable = ({ route }) => {
   const [jobs, setJobs] = useState([]);
   const navigation = useNavigation();
+
   useEffect(() => {
-    fetchData(); // Call fetchData on component mount
+    fetchData();
   }, [route?.params]);
 
-
   const fetchData = async () => {
-
     await getDatabaseJob(setJobs);
-
-
   };
 
   const filteredData = jobs.filter(item => item.jobStatus === 'In Progress');
 
-
-  const handleRowClick = (jobId) => {
-
-    navigation.navigate('JobDetails', { jobId });
+  const handleRowClick = async (jobId) => {
+    try {
+      const jobData = await loadJob(jobId);
+      navigation.navigate('JobDetails', { jobData });
+    } catch (error) {
+      console.error('Error loading job:', error);
+      // Handle the error, e.g., show an error message
+    }
   };
 
   const handleDeleteJob = async (jobId) => {
@@ -37,7 +40,6 @@ const JobsTable = ({ route }) => {
       { text: "Cancel" },
       {
         text: "Yes", onPress: async () => {
-
           db.transaction(tx => {
             tx.executeSql(
               'DELETE FROM Jobs WHERE id = ?',
@@ -51,8 +53,6 @@ const JobsTable = ({ route }) => {
               }
             );
           });
-
-
         }
       }
     ]);
@@ -72,13 +72,10 @@ const JobsTable = ({ route }) => {
   );
 
   const TableRow = ({ item }) => (
-    <TouchableOpacity onPress={() => navigation.navigate('SiteDetailsPage', {
-      jobData: item
-    })} style={[styles.row, { padding: dynamicPadding }]}>
+    <TouchableOpacity onPress={() => handleRowClick(item.id)} style={[styles.row, { padding: dynamicPadding }]}>
       <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.id}</Text>
       <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.MPRN}</Text>
       <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.jobType}</Text>
-
       <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.startDate}</Text>
       <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.postcode}</Text>
       <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.endDate}</Text>
@@ -103,7 +100,6 @@ const JobsTable = ({ route }) => {
     </SafeAreaView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

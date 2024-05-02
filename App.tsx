@@ -13,7 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createStackNavigator } from '@react-navigation/stack';
 import Constants from 'expo-constants';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
-import { SQLiteProvider } from 'expo-sqlite/next';
+import { SQLiteProvider,useSQLiteContext } from 'expo-sqlite/next';
 import { NavigationContainer } from '@react-navigation/native';
 
 const CheckFirstLaunch = async () => {
@@ -41,7 +41,7 @@ const CheckFirstLaunch = async () => {
 
 const MainApp = () => {
   const { OnLogout } = useAuth();
-
+  const db = useSQLiteContext();
   const checkAppVersionAndUpdate = async () => {
     const storedVersion = await AsyncStorage.getItem('appVersion');
     const currentVersion = Constants.expoConfig.version;

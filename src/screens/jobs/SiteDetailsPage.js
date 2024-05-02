@@ -1,5 +1,5 @@
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -9,16 +9,16 @@ import {
   Text,
   View,
 } from "react-native";
+import { TextType } from "../../theme/typography";
 import EcomDropDown from "../../components/DropDown";
 import Header from "../../components/Header";
 import OptionalButton from "../../components/OptionButton";
 import { TextInputWithTitle } from "../../components/TextInput";
 import { AppContext } from "../../context/AppContext";
 import { PrimaryColors } from "../../theme/colors";
-import { TextType } from "../../theme/typography";
-import { openDatabase, printRowById } from "../../utils/database";
 import EcomHelper from "../../utils/ecomHelper";
 import moment from "moment";
+import { useSQLiteContext } from "expo-sqlite/next";
 const ukPostCodeRegex = /^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i;
 const phoneNumberRegex =
   /^(?:(0\d{4})\s?\d{3}\s?\d{3}|(07\d{3})\s?\d{3}\s?\d{3}|(01\d{1,2})\s?\d{3}\s?\d{3,4}|(02\d{1,2})\s?\d{3}\s?\d{4})$/;
@@ -26,29 +26,23 @@ const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 function SiteDetailsPage() {
   const navigation = useNavigation();
-  const appContext = useContext(AppContext);
-  const { jobType, siteDetails, setSiteDetails,setJobStarted } = appContext
   const route = useRoute();
   const params = route.params;
-  appContext?.setJobdata(route?.params?.jobData)
-
+  const appContext = useContext(AppContext);
+  const { jobType, siteDetails, setSiteDetails, setJobStarted,jobID,setJobID } = appContext;
+const db = useSQLiteContext();
   useEffect(() => {
-    // Assume route.params.jobType exists
-    const routeJobType = route.params.jobType;
-    if (routeJobType) {
-      appContext.setJobTypes(routeJobType);
-      console.log("SiteDetailsPage");
-      console.log("jobType", jobType);
+    if (params?.jobData) {
+      appContext.setJobdata(params.jobData);
     }
-  }, []);
-  const [jobDetails, setJobDetails] = useState({
-    jobType: "",
-    status: "",
-    progress: "",
-    totalPages: "",
-    jobID: "",
 
-  });
+    if (params?.jobType) {
+      appContext.setJobTypes(params.jobType);
+    }
+  }, [params, appContext]);
+
+
+
 
   const handleInputChange = (name, value) => {
     setSiteDetails(prevDetails => ({
@@ -56,51 +50,34 @@ function SiteDetailsPage() {
       [name]: value,
     }));
   };
-  const handlejobDetails = (name, value) => {
-    setJobDetails(prevDetails => ({
-      ...prevDetails,
-      [name]: value,
-    }));
-    appContext.setJobDetails(prevData => ({
-      ...prevData,
-      [name]: value
-    }))
-  };
+ 
 
   const saveSiteDetailsToDatabase = async () => {
-    console.log("creating job")
-    const db = await openDatabase();
-    console.log('Db status:', db)
     const siteDetailsJSON = JSON.stringify(siteDetails);
-
-    // Assuming SiteDetails.id is the correct identifier for your record
-
+  
     const getCurrentDateTime = () => {
       return moment().format('YYYY-MM-DD HH:mm');
     };
+  
     const mprn = siteDetails.mprn;
     const postcode = siteDetails.postCode;
-    const jobStatus = 'In Progress'
-    handlejobDetails('status', jobStatus);
-    handlejobDetails('progress', '1');
-    handlejobDetails('totalPages', '5');
-    const progress = '1';
+    const jobStatus = 'In Progress';
     const startDate = getCurrentDateTime();
+  
+    try {
+      await db.runAsync(
+        'INSERT INTO Jobs (jobType, MPRN, postcode, startDate, jobStatus, siteDetails) VALUES (?, ?, ?, ?, ?, ?)',
+        [jobType, mprn, postcode, startDate, jobStatus, siteDetailsJSON]
+      )
+      .then((result) => {
+        console.log('Site details saved to database:', result);
+        setJobID(result.lastInsertRowId);
+        console.log("jobID",jobID);
 
-    // Ensure this is the correct way to access the job's ID
-    db.transaction((tx) => {
-      tx.executeSql(
-        `INSERT INTO Jobs (jobType,MPRN,postcode,startDate,jobStatus,progress,siteDetails) VALUES (?,?,?,?,?,?,?);`,
-        [jobType, mprn, startDate, postcode, jobStatus, progress, siteDetailsJSON],
-        (_, result) => {
-          console.log('Site details and progress updated in database. Generated ID:', result.insertId);
-          // Pass the result.insertId as JobId parameter to the next navigation call
-          handlejobDetails('JobID', result.insertId);
-
-        },
-        (_, error) => console.log('Error updating site details in database:', error)
-      );
-    });
+      });
+    } catch (error) {
+      console.error('Error saving site details to database:', error);
+    }
   };
   const backPressed = () => {
     appContext.setSiteDetails(siteDetails);
@@ -178,8 +155,8 @@ function SiteDetailsPage() {
     appContext.setSiteDetails(siteDetails);
 
     saveSiteDetailsToDatabase();
-    console.log("jobDetails", jobDetails);
     console.log("siteDetails", siteDetails);
+    
     navigation.navigate("SitePhotoPage")
 
   };
@@ -190,13 +167,9 @@ function SiteDetailsPage() {
         hasLeftBtn={true}
         hasCenterText={true}
         hasRightBtn={true}
-        centerText={""}
+        centerText={"Site Details"}
         leftBtnPressed={backPressed}
         rightBtnPressed={nextPressed}
-        hasMenuButton={false}
-        totalPages={params.totalPages}
-        currentPage={params.currentPage}
-        onPageChange={(pageNum) => console.log("navigated to page:", pageNum)}
       />
       <KeyboardAvoidingView
         style={{ flex: 1 }}

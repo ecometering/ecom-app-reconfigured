@@ -1,4 +1,3 @@
-
 import React, {useContext, useState} from 'react';
 import {
   KeyboardAvoidingView,
@@ -7,42 +6,38 @@ import {
   ScrollView,
   StyleSheet,
   View,
+  Dimensions,
 } from 'react-native';
 import Text from '../../components/Text';
 import Header from '../../components/Header';
-import {useNavigation} from '@react-navigation/native';
-import { width, height, unitH} from '../../utils/constant';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {TextType} from '../../theme/typography';
 import TextInput from '../../components/TextInput';
 import NumberInput from '../../components/NumberInput';
 import {AppContext} from '../../context/AppContext';
 import EcomHelper from '../../utils/ecomHelper';
 
+const {width, height} = Dimensions.get('window');
+
 const RepeatComponent = ({title, onChangeText, value}) => {
-  const containerStyle = {width: width * 0.25};
-  const titleContainerStyle = {
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  };
-  const titleStyle = {textAlign: 'left', fontWeight: '800'};
   return (
-    <View style={containerStyle}>
-      <View style={titleContainerStyle}>
-        <Text type={TextType.BODY_1} style={titleStyle}>
+    <View style={styles.repeatComponentContainer}>
+      <View style={styles.titleContainer}>
+        <Text type={TextType.BODY_1} style={styles.titleStyle}>
           {title}
         </Text>
       </View>
-      <View style={{...styles.row, width: width * 0.1}}>
+      <View style={styles.inputContainer}>
         <TextInput
           value={value}
           onChangeText={onChangeText}
           style={styles.input}
           keyboardType="numeric"
         />
-        <View style={styles.spacer2} />
-        <Text type={TextType.BUTTON_1}>{'mbar'}</Text>
       </View>
+      <Text type={TextType.BUTTON_1} style={styles.mbarText}>
+        {'mbar'}
+      </Text>
     </View>
   );
 };
@@ -53,7 +48,8 @@ function StreamsSetSealDetailsPage() {
   const [n, setN] = useState(appContext.streamNumber);
   const [streamValue, setStreamValue] = useState(appContext.streamValue);
   const jobType = appContext.jobType;
-  const pageTitle = jobType === 'Install' ? 'New Meter Details' : jobType;
+  const route = useRoute();
+  const {title, nextScreen, jobId} = route.params;
 
   console.log('StreamsSetSealDetailsPage');
 
@@ -80,8 +76,9 @@ function StreamsSetSealDetailsPage() {
     }
     appContext.setStreamValue(streamValue);
     appContext.setStreamNumber(n);
-    navigation.navigate('SealedSlamShutPhotoPage');
+    navigation.navigate(nextScreen);
   };
+
   const backPressed = () => {
     appContext.setStreamValue(streamValue);
     appContext.setStreamNumber(n);
@@ -94,46 +91,40 @@ function StreamsSetSealDetailsPage() {
   };
 
   const handleFieldChange = (value, index, field) => {
-    // Create a copy of the streamValue array
     const updatedStreamValue = [...streamValue];
-    // Update the specific field for the corresponding index
     updatedStreamValue[index] = {
       ...updatedStreamValue[index],
-      // [`${field}_${index}`]: value,
       [`${field}`]: value,
     };
-    // Update the state with the new streamValue array
     setStreamValue(updatedStreamValue);
   };
 
   return (
-    <ScrollView style={styles.scrollView}>
-      <KeyboardAvoidingView
-        style={styles.keyboard}
-        behavior={Platform.OS === 'ios' ? 'padding' : null}>
-        <SafeAreaView style={styles.content}>
-          <Header
-            hasLeftBtn={true}
-            hasCenterText={true}
-            hasRightBtn={true}
-            centerText={pageTitle}
-            leftBtnPressed={backPressed}
-            rightBtnPressed={nextPressed}
-          />
+    <SafeAreaView style={styles.container}>
+      <Header
+        hasLeftBtn={true}
+        hasCenterText={true}
+        hasRightBtn={true}
+        centerText={title}
+        leftBtnPressed={backPressed}
+        rightBtnPressed={nextPressed}
+      />
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        <KeyboardAvoidingView
+          style={styles.keyboardAvoidingView}
+          behavior={Platform.OS === 'ios' ? 'padding' : null}>
           <View style={styles.body}>
             <Text type={TextType.CAPTION_2}>Streams Set and Seal Details</Text>
             <View style={styles.spacer} />
-            <View style={{...styles.row, width: width * 0.6}}>
-              <Text
-                type={TextType.CAPTION_2}
-                style={{...styles.text, width: width * 0.5}}>
+            <View style={styles.streamNumberContainer}>
+              <Text type={TextType.CAPTION_2} style={styles.streamNumberText}>
                 {'Number of streams:'}
               </Text>
               <NumberInput initial={n} handleChangeValue={handleChangeValue} />
             </View>
             <View style={styles.spacer} />
             {Array.from({length: n}, (_, index) => (
-              <View style={styles.column}>
+              <View style={styles.streamContainer}>
                 <View style={styles.spacer} />
                 <Text type={TextType.CAPTION_2}>{`stream ${index + 1}`}</Text>
                 <View style={styles.section}>
@@ -181,64 +172,74 @@ function StreamsSetSealDetailsPage() {
             ))}
             <View style={styles.spacer} />
           </View>
-        </SafeAreaView>
-      </KeyboardAvoidingView>
-    </ScrollView>
+        </KeyboardAvoidingView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollView: {
-    width: width,
-    height: height,
+  container: {
+    flex: 1,
   },
-  keyboard: {
-    // width: width,
-    // height: height,
+  scrollViewContent: {
+    flexGrow: 1,
   },
-  content: {
+  keyboardAvoidingView: {
     flex: 1,
   },
   body: {
+    flex: 1,
     alignItems: 'center',
-    marginVerticalHorizontal: width * 0.1,
+    paddingHorizontal: width * 0.05,
   },
-  row: {
-    width: '90%',
-    alignSelf: 'center',
+  streamNumberContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    flexDirection: 'row',
+    width: '60%',
   },
-  column: {
-    width: '90%',
-    alignSelf: 'center',
-    flexDirection: 'column',
+  streamNumberText: {
+    flex: 1,
+    textAlign: 'left',
+  },
+  streamContainer: {
+    width: '100%',
     alignItems: 'flex-start',
   },
-  text: {
-    width: width * 0.5,
-    textAlign: 'left',
-    lineHeight: unitH * 20,
-  },
   section: {
+    flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    flexDirection: 'row',
   },
-  noteContainer: {
-    width: width * 0.9,
-    alignSelf: 'center',
+  repeatComponentContainer: {
+    width: '30%',
+    alignItems: 'center',
+  },
+  titleContainer: {
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  titleStyle: {
+    textAlign: 'left',
+    fontWeight: '800',
+  },
+  inputContainer: {
+    width: '100%',
   },
   input: {
-    height: unitH * 40,
-    alignSelf: 'center',
+    height: 50,
+    width: '100%',
+    textAlign: 'center',
+    fontSize: 18,
   },
-
+  mbarText: {
+    marginTop: 5,
+  },
   spacer: {
-    height: unitH * 20,
+    height: 20,
   },
-  spacer2: {width: 5},
 });
 
 export default StreamsSetSealDetailsPage;

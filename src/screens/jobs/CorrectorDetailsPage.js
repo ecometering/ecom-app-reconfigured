@@ -12,7 +12,7 @@ import {
   Dimensions
 } from "react-native";
 import Header from "../../components/Header";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation,useRoute } from "@react-navigation/native";
 import {tablename} from "../../utils/constant";
 import Text from "../../components/Text";
 import TextInput,{ TextInputWithTitle, InputRowWithTitle } from "../../components/TextInput";
@@ -33,33 +33,55 @@ const { width, height } = Dimensions.get("window");
 
 export default function CorrectorDetailsPage() {
   const db = useSQLiteContext();
-  const appContext = useContext(AppContext);
   const navigation = useNavigation();
-  const jobType = appContext.jobType;
+  const route = useRoute();
+  const appContext = useContext(AppContext);
+  const { title, nextScreen, photoKey } = route.params;
+  const existingPhoto = photos && photoKey ? photos[photoKey] : null;
+  const [selectedImage, setSelectedImage] = useState(existingPhoto?.uri || null);
+  const { jobType,correctorDetails ,setCorrectorDetails, jobID,photos,savePhoto } = useContext(AppContext);
 
   console.log("CorrectorDetailsPage");
+  const handleInputChange = (name, value) => {
+    setCorrectorDetails(prevDetails => ({
+      ...prevDetails,
+      [name]: value,
+    }));
 
-  const correctorDetails = appContext.correctorDetails;
-  const [correctorSerialNumber, setCorrectorSerialNumber] = useState('');
-  const [isMountingBracket, setIsMountingBracket] = useState(
-    correctorDetails?.isMountingBracket
-  );
+    console.log('value updated:', name);
+    console.log('value updated:', value);
+    console.log('Corrector Details:', correctorDetails);
+  };
 
-  const [selectedCorrectorManufacturer, setSelectedCorrectorManufacturer] = useState(
-    correctorDetails?.manufacturer
-  );
-  const [selectedCorrectorModelCode, setSelectedCorrectorModelCode] = useState(correctorDetails?.model);
+  const handlePhotoSelected = (uri) => {
+    setSelectedImage(uri);
+    savePhoto(photoKey, { title, photoKey, uri });
+    console.log('Photo saved:', { title, photoKey, uri });
+  };
+const camera = createRef(null)
+const saveToDatabase = async () => {
+  const photosJson = JSON.stringify(photos);
+  const correctorJson = JSON.stringify(correctorDetails);
+  try {
+    await db.runAsync(
+      'UPDATE Jobs SET photos = ?, correctorDetails = ? WHERE id = ?',
+      [photosJson, correctorJson, jobID],
+    )
+      .then((result) => {
+        console.log('photos saved to database:', result);
+      });
+  } catch (error) {
+    console.log('Error saving photos to database:', error);
+  }
+};
   const [correctorManufacturers, setCorrectorManufacturers] = useState([]);
   const [correctorModelCodes, setCorrectorModelCodes] = useState([]);
 
-  const [correctorImage, setcorrectorImage] = useState(
-    correctorDetails?.loggerImage
-  );
-  const [isModal, setIsModal] = useState(false);
-  const [uncorrectedReads, setUncorrectedReads] = useState(correctorDetails?.uncorrectedReads);
-  const [correctedReads, setCorrectedReads] = useState(correctorDetails?.correctedReads);
 
-const camera = createRef(null)
+
+  const [isModal, setIsModal] = useState(false);
+
+
 async function getCorrectorManufacturers() {
   try {
       const query = `SELECT DISTINCT Manufacturer FROM ${tablename[9]}`;
@@ -74,7 +96,7 @@ async function getCorrectorManufacturers() {
 }
 async function getCorrectorModelCodes() {
   try {
-      const query = `SELECT DISTINCT "ModelCode" FROM ${tablename[9]} WHERE Manufacturer = '${selectedCorrectorManufacturer}'`;
+      const query = `SELECT DISTINCT "ModelCode" FROM ${tablename[9]} WHERE Manufacturer = '${correctorDetails.manufacturer}'`;
       const result = await db.getAllAsync(query);
       setCorrectorModelCodes(result.map(model => ({
           label: model["ModelCode"],
@@ -85,117 +107,56 @@ async function getCorrectorModelCodes() {
   }
 }
   const backPressed = () => {
-    // appContext.setCorrectorDetails(correctorDetails);
+    saveToDatabase();
       navigation.goBack();
     
   };
-const updateCorrectorDetails = async() => { 
-  const db = await openDatabase(); 
-  const photosJSON = await fetchPhotosJSON(db,jobId);
-  const photoDetails = {
-    title: "Corrector Image",
-    uri: correctorImage,
-    photoKey: "correctorImage",
-  };
-  const updatedPhotosJSON = appendPhotoDetail(photosJSON, photoDetail);
-
-  let existingCorrectorDetailsJSON = '';
-  db.transaction(tx => {
-    tx.executeSql(
-      'SELECT correctorDetails FROM Jobs WHERE id = ?',
-      [jobId],
-      (_, { rows }) => {
-        if (rows.length > 0 && rows._array[0].correctorDetails) {
-          existingCorrectorDetailsJSON = rows._array[0].correctorDetails;
-        }
-
-        // Parse existing corrector details JSON, or initialize to an empty array if none exist
-        const existingCorrectorDetails = existingCorrectorDetailsJSON ? JSON.parse(existingCorrectorDetailsJSON) : [];
-
-        // New corrector details to append
-        const newCorrectorDetails = {
-          correctorSerialNumber,
-          isMountingBracket,
-          manufacturer,
-          model,
-          uncorrectedReads,
-          correctedReads,
-          correctorImage, // Assuming you want to save the image path as part of the corrector details
-        };
-
-        // Append new corrector details
-        existingCorrectorDetails.push(newCorrectorDetails);
-
-        // Convert back to JSON string
-        const updatedCorrectorDetailsJSON = JSON.stringify(existingCorrectorDetails);
-
-        // Update the database with the new JSON string
-        tx.executeSql(
-          'UPDATE Jobs SET correctorDetails = ? WHERE id = ?',
-          [updatedCorrectorDetailsJSON, jobId],
-          () => console.log('Corrector details updated successfully'),
-          (_, error) => console.log('Error updating corrector details:', error)
-        );
-      },
-      (_, error) => console.log('Error fetching existing corrector details:', error)
-    );
-  });
-};
 
   const nextPressed = async () => {
     console.log("nextPressed invoked.");
-    if (!correctorImage) {
+    if (!selectedImage) {
       EcomHelper.showInfoMessage("Please choose image");
       return;
     }
-    try {
-      const response = await fetch(correctorImage);
-      const blob = await response.blob();
-      appContext.setBlobs((prev) => [...prev, blob]);
-    } catch (err) {
-      console.log(err);
-    }
-    if (!correctorSerialNumber || correctorSerialNumber === "") {
+    if (!correctorDetails.serialNumber || correctorDetails.serialNumber === "") {
       EcomHelper.showInfoMessage("Please enter serial number");
       return;
     }
-    if (isMountingBracket == null) {
+    if (correctorDetails.isMountingBracket == null) {
       EcomHelper.showInfoMessage("Please answer if mounting bracket was used");
       return;
     }
-    if (manufacturer == null) {
+    if (correctorDetails.manufacturer == null) {
       EcomHelper.showInfoMessage("Please choose manufacturer");
       return;
     }
-    if (model == null) {
+    if (correctorDetails.model == null) {
       EcomHelper.showInfoMessage("Please choose model");
       return;
     }
-    updateCorrectorDetails();
-    navigation.navigate("CorrectorGateWay",{jobType:jobType});
-   
-
+    saveToDatabase();
+    navigation.navigate(nextScreen);
   };
   const [manufacturers, setManufacturers] = useState([]);
   const [models, setModels] = useState([]);
 
   useEffect(() => {
     getCorrectorManufacturers();
-  }, []);
+  }, [db]);
 
   useEffect(() => {
-    if (selectedCorrectorManufacturer) {
+    if (correctorDetails.manufacturer) {
         getCorrectorModelCodes();
+       
     }
-}, [selectedCorrectorManufacturer]);
+}, [db,correctorDetails.manufacturer]);
 const onManufacturerChange = async (item) => {
-  setManufacturer(item);
+  handleInputChange("manufacturer", item.value);
   console.log("---------item", item)
   try {
     const modelsData = await fetchModelsForManufacturer('4', item.value); // Assuming item.value contains the manufacturer's identifier
     console.log("corrector-----------", modelsData)
-    setModels(modelsData.map((model, index) => ({ label: model.label, value: model.value }))); // Update models based on the selected manufacturer
-  } catch (error) {
+    setCorrectorModelCodes(modelsData.map((model, index) => ({ label: model.label, value: model.value })));  } catch (error) {
     console.error("Failed to fetch models for manufacturer:", error);
   }
 };
@@ -205,9 +166,10 @@ const onManufacturerChange = async (item) => {
 
   const readSerialNumber = (codes) => {
     setIsModal(false);
-    setCorrectorSerialNumber(codes.data);
+    if (codes && codes.data) {
+      handleInputChange("serialNumber", codes.data.toString());
+    }
   };
-
 
   return (
     <SafeAreaView style={styles.content}>
@@ -244,14 +206,14 @@ const onManufacturerChange = async (item) => {
                       onChangeText={(txt) => {
                         const withSpacesAllowed = txt.toUpperCase();
                           const formattedText = withSpacesAllowed.replace(/[^A-Z0-9]+/g, '');
-                          setCorrectorSerialNumber(formattedText);
+                          handleInputChange("serialNumber", formattedText);
                       }}
                       style={{
                         ...styles.input,
                         width: width * 0.25,
                         alignSelf: "flex-end",
                       }}
-                      value={correctorSerialNumber}
+                      value={correctorDetails.serialNumber}
                     />
                     <Button title="📷" onPress={scanBarcode} />
                   </View>
@@ -263,16 +225,16 @@ const onManufacturerChange = async (item) => {
                       options={["Yes", "No"]}
                       actions={[
                         () => {
-                          setIsMountingBracket(true);
+                          handleInputChange("isMountingBracket", true);
                         },
                         () => {
-                          setIsMountingBracket(false);
+                          handleInputChange("isMountingBracket", false)
                         },
                       ]}
                       value={
-                        isMountingBracket == null
+                        correctorDetails.isMountingBracket == null
                           ? null
-                          : isMountingBracket
+                          : correctorDetails.isMountingBracket
                           ? "Yes"
                           : "No"
                       }
@@ -291,47 +253,75 @@ const onManufacturerChange = async (item) => {
                 <View style={{ width: width * 0.45 }}>
                   <EcomDropDown
                     width={width * 0.35}
-                    value={selectedCorrectorManufacturer}
+                    value={correctorDetails.manufacturer}
                     valueList={correctorManufacturers}
                     placeholder="Select a Manufacturer"
-                    onChange={(item) => setSelectedCorrectorManufacturer(item.value)}
+                    onChange={(item) => handleInputChange("manufacturer", item.value)}
                     
                   />
                 </View>
 
                 <EcomDropDown
                   width={width * 0.35}
-                  value={selectedCorrectorModelCode}
+                  value={correctorDetails.model}
                 valueList={correctorModelCodes}
                 placeholder="Select Model Code"
-                onChange={(item) => setSelectedCorrectorModelCode(item.value)}
+                onChange={(item) => handleInputChange("model", item.value)}
                 />
               </View>
               <View style={styles.spacer} />
-            <InputRowWithTitle
-              title1="Uncorrected Reads"
-              title2="Corrected Reads"
-              onChangeText1={(text) => setUncorrectedReads(text)}
-              onChangeText2={(text) => setCorrectedReads(text)}
-              placeholder1="Enter Uncorrected Reads"
-              placeholder2="Enter Corrected Reads"
-              keyboardType1="numeric"
-              keyboardType2="numeric"
-            />
+              <View
+              style={{
+
+                flexDirection: "row",
+
+              }}
+            >
+              <View style={{ flex: 0.5 }}>
+              <TextInputWithTitle
+                  style={{ width: "100%" }}
+                  title={"Uncorrected Reads"}
+                  value={correctorDetails.uncorrected}
+                  keyboardType="numeric" // Set keyboardType to numeric
+                  onChangeText={(txt) => {
+                    const filteredText = txt.replace(/[^0-9]/g, ""); // Allow only numbers
+                    handleInputChange('uncorrected', filteredText);
+                  }}
+                />
+              </View>
+              <View style={{ flex: 0.5 }}>
+              <TextInputWithTitle
+                  style={{ width: "100%" }}
+                  title={"corrected Reads"}
+                  value={correctorDetails.corrected}
+                  keyboardType="numeric" // Set keyboardType to numeric
+                  onChangeText={(txt) => {
+                    const filteredText = txt.replace(/[^0-9]/g, ""); // Allow only numbers
+                    handleInputChange('corrected', filteredText);
+                  }}
+                />
+              </View>
+              </View>
+            
             </View>
             <View style={styles.spacer} />
-            <Text type={TextType.BODY_1}>Picture</Text>
             
-            <ImagePickerButton
-              onImageSelected={(uri) => setcorrectorImage(uri)}
-            />
-            {correctorImage && (
-              <Image
-                source={{ uri: correctorImage }}
-                style={styles.image}
-                resizeMode="contain"
-              />
-            )}
+            
+            <View style={styles.imagePickerContainer}>
+              
+             
+          
+              <View style={styles.body}>
+          <Text type="caption" style={styles.text}>AMR photo</Text>
+          <ImagePickerButton
+            onImageSelected={handlePhotoSelected}
+            currentImage={selectedImage}
+          />
+          {selectedImage && (
+            <Image source={{ uri: selectedImage }} style={styles.image} />
+          )}
+        </View>
+            </View>
           </View>
          
           {isModal && (

@@ -35,7 +35,7 @@ const BarcodeScanner = ({
             width: width * 0.8, // Example: 80% of screen width
             height: height * 0.5, // Example: 50% of screen height
           }]}          
-          autoFocus={Camera.Constants.AutoFocus.off}
+          autoFocus={Camera.Constants.AutoFocus.on}
           focusDepth={0.3}
           barCodeScannerSettings={{
             barCodeTypes: [

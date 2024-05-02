@@ -11,6 +11,7 @@ const  DataloggerGatewayScreen= () => {
     const [isCorrector,SetIsCorrector] = useState(meterDetails?.isCorrector );
     const [isAmr,SetIsAmr] = useState(meterDetails?.isAmr );
     const [isMeter,SetIsMeter] = useState(meterDetails?.isMeter );
+    const {meterType,pressureTier} = meterDetails;
 console.log(" gateway screen",isMeter,isCorrector,isAmr);
     useEffect(() => {
         console.log('CorrectorGatewayScreen Mounted');
@@ -48,21 +49,20 @@ console.log(" gateway screen",isMeter,isCorrector,isAmr);
                       // Add specific logic for Maintenance job type
                       break;
                   case "Removal":
-                    navigaation.replace('StandardPage'); // Fallback to StandardsNavigation
+                    navigation.replace('StandardPage'); // Fallback to StandardsNavigation
                       break;
-                  case "Survey":
-                    if (isMeter)
-                    {
-                      if ((Type === '1' || Type === '2' || Type === '4') && pressureTier === 'MP' || (Type !== '1' && Type !== '2' && Type !== '4')) {
-                        navigation.replace('StreamsSetSealDetails');
-                    }
-                
-                  }else {
-                    navigation.replace('StandardPage');
-                  };
-                    
-                      // Add specific logic for Survey job type
-                      break;
+                      case "Survey":
+                        console.log('Survey job type detected, navigating to the next screen.');
+                        if (isMeter) {
+                          if ((meterType.value === '1' || meterType.value === '2' || meterType.value === '4') && pressureTier === 'MP') {
+                            navigation.replace('StreamsSetSealDetails');
+                          } else {
+                            navigation.replace('StandardPage');
+                          }
+                        } else {
+                          navigation.replace('StandardPage');
+                        }
+                        break;
                   case "Warant":
                     navigation.replace('StandardPage'); // Fallback to StandardsNavigation
 
@@ -70,7 +70,7 @@ console.log(" gateway screen",isMeter,isCorrector,isAmr);
                   case "exchange":
                     if (isMeter)
                     {
-                      if ((Type === '1' || Type === '2' || Type === '4') && pressureTier === 'MP' || (Type !== '1' && Type !== '2' && Type !== '4')) {
+                      if ((meterType.value === '1' || meterType.value === '2' || meterType.value === '4') && pressureTier === 'MP' || (meterType.value !== '1' && meterType.value !== '2' && meterType.value !== '4')) {
                         navigation.replace('StreamsSetSealDetails');
                     }
                 
