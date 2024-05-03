@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -8,23 +8,23 @@ import {
   View,
   Button as RNButton,
   Switch,
-} from "react-native";
-import { unitH, width } from "../../utils/constant";
-import Header from "../../components/Header";
-import { useNavigation } from "@react-navigation/native";
-import { TextInputWithTitle } from "../../components/TextInput";
-import Text, { CenteredText } from "../../components/Text";
-import { TextType } from "../../theme/typography";
-import { PrimaryColors, Transparents } from "../../theme/colors";
-import { AppContext } from "../../context/AppContext";
-import EcomHelper from "../../utils/ecomHelper";
-import { EcomPressable as Button } from "../../components/ImageButton";
+} from 'react-native';
+import { unitH, width } from '../../utils/constant';
+import Header from '../../components/Header';
+import { useNavigation } from '@react-navigation/native';
+import { TextInputWithTitle } from '../../components/TextInput';
+import Text, { CenteredText } from '../../components/Text';
+import { TextType } from '../../theme/typography';
+import { PrimaryColors, Transparents } from '../../theme/colors';
+import { AppContext } from '../../context/AppContext';
+import EcomHelper from '../../utils/ecomHelper';
+import { EcomPressable as Button } from '../../components/ImageButton';
 
 function SnClientInfoPage() {
   const navigation = useNavigation();
   const appContext = useContext(AppContext);
   const jobType = appContext.jobType;
-  const title = jobType === "Install" ? "New Meter Details" : jobType;
+  const title = jobType === 'Install' ? 'New Meter Details' : jobType;
 
   const standardDetails = appContext.standardDetails;
 
@@ -86,26 +86,29 @@ function SnClientInfoPage() {
     navigation.goBack();
   };
 
-  const nextPressed = () => {
-
+  const nextPressed = async () => {
     if (tableData.length === 0) {
-      EcomHelper.showInfoMessage("Atleast one entry required")
+      EcomHelper.showInfoMessage('Atleast one entry required');
       return;
     }
 
-   
-
-    appContext.setStandardDetails({
+    const standards = {
       ...standardDetails,
-
       tableData,
-    });
-    navigation.navigate("GasSafeWarningPage");
+    };
+
+    appContext.setStandardDetails(standards);
+    await db.runAsync('UPDATE Jobs SET standards = ? WHERE id = ?', [
+      JSON.stringify(standards),
+      appContext.jobID,
+    ]);
+
+    navigation.navigate('GasSafeWarningPage');
   };
   const deleteEntry = (index) => {
     setTableData((currentData) => currentData.filter((_, i) => i !== index));
   };
-  console.log("SnClientInfoPage");
+  console.log('SnClientInfoPage');
 
   return (
     <SafeAreaView style={styles.flex}>
@@ -119,7 +122,7 @@ function SnClientInfoPage() {
       />
       <KeyboardAvoidingView
         style={styles.flex}
-        behavior={Platform.OS === "ios" ? "padding" : null}
+        behavior={Platform.OS === 'ios' ? 'padding' : null}
       >
         <ScrollView style={styles.flex}>
           <View style={styles.spacer} />
@@ -129,17 +132,17 @@ function SnClientInfoPage() {
           <View style={styles.spacer} />
           <View style={styles.row}>
             <TextInputWithTitle
-              title={"Type"}
+              title={'Type'}
               value={type}
-              placeholder={""}
+              placeholder={''}
               onChangeText={(txt) => {
                 setType(txt);
               }}
               containerStyle={styles.inputContainer}
             />
             <TextInputWithTitle
-              title={"Location"}
-              placeholder={""}
+              title={'Location'}
+              placeholder={''}
               value={location}
               onChangeText={(txt) => {
                 setLocation(txt);
@@ -151,8 +154,8 @@ function SnClientInfoPage() {
           <View style={styles.spacer} />
           <View style={styles.row}>
             <TextInputWithTitle
-              title={"Make"}
-              placeholder={""}
+              title={'Make'}
+              placeholder={''}
               value={make}
               onChangeText={(txt) => {
                 setMake(txt);
@@ -160,8 +163,8 @@ function SnClientInfoPage() {
               containerStyle={styles.inputContainer}
             />
             <TextInputWithTitle
-              title={"Model"}
-              placeholder={""}
+              title={'Model'}
+              placeholder={''}
               value={model}
               onChangeText={(txt) => {
                 setModel(txt);
@@ -173,25 +176,27 @@ function SnClientInfoPage() {
           <View style={styles.spacer} />
           <View style={styles.row}>
             <View>
-            <TextInputWithTitle
-            title={"Serial Number"}
-            placeholder={""}
-            value={serialNumber}
-            onChangeText={(txt) => {
-              // Capitalize the text and allow only letters and numbers
-              const formattedText = txt.toUpperCase().replace(/[^A-Z0-9]/gi, '');
-              setSerialNumber(formattedText);
-            }}
-            containerStyle={styles.inputContainer}
-            />
+              <TextInputWithTitle
+                title={'Serial Number'}
+                placeholder={''}
+                value={serialNumber}
+                onChangeText={(txt) => {
+                  // Capitalize the text and allow only letters and numbers
+                  const formattedText = txt
+                    .toUpperCase()
+                    .replace(/[^A-Z0-9]/gi, '');
+                  setSerialNumber(formattedText);
+                }}
+                containerStyle={styles.inputContainer}
+              />
               <View style={styles.spacer} />
 
               <View>
                 <TextInputWithTitle
                   title={
-                    "Remedial action required to rectify the unsafe situation"
+                    'Remedial action required to rectify the unsafe situation'
                   }
-                  placeholder={""}
+                  placeholder={''}
                   onChangeText={(txt) => {
                     setRemedial(txt);
                   }}
@@ -203,9 +208,9 @@ function SnClientInfoPage() {
               </View>
             </View>
             <TextInputWithTitle
-              title={"Description of fault"}
+              title={'Description of fault'}
               value={descript}
-              placeholder={""}
+              placeholder={''}
               onChangeText={(txt) => {
                 setDescript(txt);
               }}
@@ -224,42 +229,42 @@ function SnClientInfoPage() {
               type={TextType.HEADER_TABLE}
               style={styles.blackTxt}
             >
-              {"Escape of Gas"}
+              {'Escape of Gas'}
             </CenteredText>
             <CenteredText
               containerStyle={{ ...styles.headerCell, width: width * 0.12 }}
               type={TextType.HEADER_TABLE}
               style={styles.blackTxt}
             >
-              {"Meter issue"}
+              {'Meter issue'}
             </CenteredText>
             <CenteredText
               containerStyle={{ ...styles.headerCell, width: width * 0.18 }}
               type={TextType.HEADER_TABLE}
               style={styles.blackTxt}
             >
-              {"Pipework issue"}
+              {'Pipework issue'}
             </CenteredText>
             <CenteredText
               containerStyle={{ ...styles.headerCell, width: width * 0.18 }}
               type={TextType.HEADER_TABLE}
               style={styles.blackTxt}
             >
-              {"Chimney/Flute"}
+              {'Chimney/Flute'}
             </CenteredText>
             <CenteredText
               containerStyle={{ ...styles.headerCell, width: width * 0.14 }}
               type={TextType.HEADER_TABLE}
               style={styles.blackTxt}
             >
-              {"Ventilation"}
+              {'Ventilation'}
             </CenteredText>
             <CenteredText
               containerStyle={{ ...styles.headerCell, width: width * 0.1 }}
               type={TextType.HEADER_TABLE}
               style={styles.blackTxt}
             >
-              {"Other"}
+              {'Other'}
             </CenteredText>
           </View>
           <View
@@ -275,7 +280,7 @@ function SnClientInfoPage() {
                   setIsEscapeGas(!isEscapeGas);
                 }}
               >
-                <Text>{isEscapeGas ? "✅" : "❌"}</Text>
+                <Text>{isEscapeGas ? '✅' : '❌'}</Text>
               </Button>
             </View>
             <View style={{ ...styles.headerCell, width: width * 0.12 }}>
@@ -284,7 +289,7 @@ function SnClientInfoPage() {
                   setIsMeterIssue(!isMeterIssue);
                 }}
               >
-                <Text>{isMeterIssue ? "✅" : "❌"}</Text>
+                <Text>{isMeterIssue ? '✅' : '❌'}</Text>
               </Button>
             </View>
             <View style={{ ...styles.headerCell, width: width * 0.18 }}>
@@ -293,7 +298,7 @@ function SnClientInfoPage() {
                   setIsPipeworkIssue(!isPipeworkIssue);
                 }}
               >
-                <Text>{isPipeworkIssue ? "✅" : "❌"}</Text>
+                <Text>{isPipeworkIssue ? '✅' : '❌'}</Text>
               </Button>
             </View>
             <View style={{ ...styles.headerCell, width: width * 0.18 }}>
@@ -302,7 +307,7 @@ function SnClientInfoPage() {
                   setIsChimneyFlute(!isChimneyFlute);
                 }}
               >
-                <Text>{isChimneyFlute ? "✅" : "❌"}</Text>
+                <Text>{isChimneyFlute ? '✅' : '❌'}</Text>
               </Button>
             </View>
             <View style={{ ...styles.headerCell, width: width * 0.14 }}>
@@ -311,7 +316,7 @@ function SnClientInfoPage() {
                   setIsVentilation(!isVentilation);
                 }}
               >
-                <Text>{isVentilation ? "✅" : "❌"}</Text>
+                <Text>{isVentilation ? '✅' : '❌'}</Text>
               </Button>
             </View>
             <View style={{ ...styles.headerCell, width: width * 0.1 }}>
@@ -320,7 +325,7 @@ function SnClientInfoPage() {
                   setIsOther(!isOther);
                 }}
               >
-                <Text>{isOther ? "✅" : "❌"}</Text>
+                <Text>{isOther ? '✅' : '❌'}</Text>
               </Button>
             </View>
           </View>
@@ -387,127 +392,232 @@ does not remove the risk`}</Text>
               onPress={() => {
                 setTableData((prev) => [
                   ...prev,
-                  { type, location, model, make, serialNumber, descript,remedial,isEscapeGas: isEscapeGas ? "Yes" : "No", // Format boolean values for display
-                  isMeterIssue: isMeterIssue ? "Yes" : "No",
-                  isPipeworkIssue: isPipeworkIssue ? "Yes" : "No",
-                  isChimneyFlute: isChimneyFlute ? "Yes" : "No",
-                  isVentilation: isVentilation ? "Yes" : "No",
-                  isOther: isOther ? "Yes" : "No",
-                  isDisconnectDanger: isDisconnectDanger ? "Yes" : "No", // Adjust the text based on your application's context
-                  isTurnOffDanger: isTurnOffDanger ? "Yes" : "No",
-                  isNotRemove: isNotRemove ? "Yes" : "No", },
+                  {
+                    type,
+                    location,
+                    model,
+                    make,
+                    serialNumber,
+                    descript,
+                    remedial,
+                    isEscapeGas: isEscapeGas ? 'Yes' : 'No', // Format boolean values for display
+                    isMeterIssue: isMeterIssue ? 'Yes' : 'No',
+                    isPipeworkIssue: isPipeworkIssue ? 'Yes' : 'No',
+                    isChimneyFlute: isChimneyFlute ? 'Yes' : 'No',
+                    isVentilation: isVentilation ? 'Yes' : 'No',
+                    isOther: isOther ? 'Yes' : 'No',
+                    isDisconnectDanger: isDisconnectDanger ? 'Yes' : 'No', // Adjust the text based on your application's context
+                    isTurnOffDanger: isTurnOffDanger ? 'Yes' : 'No',
+                    isNotRemove: isNotRemove ? 'Yes' : 'No',
+                  },
                 ]);
-                setType("");
-                setLocation("");
-                setMake("");
-                setModel("");
-                setSerialNumber("");
-                setDescript("");
-                setRemedial("");
-                setIsEscapeGas(false)
-                setIsMeterIssue(false)
-                setIsPipeworkIssue(false)
-                setIsChimneyFlute(false)
-                setIsVentilation(false)
-                setIsOther(false)
-                setIsDisconnectDanger(false)
-                setIsTurnOffDanger(false)
-                setIsNotRemove(false)
-                
-                
+                setType('');
+                setLocation('');
+                setMake('');
+                setModel('');
+                setSerialNumber('');
+                setDescript('');
+                setRemedial('');
+                setIsEscapeGas(false);
+                setIsMeterIssue(false);
+                setIsPipeworkIssue(false);
+                setIsChimneyFlute(false);
+                setIsVentilation(false);
+                setIsOther(false);
+                setIsDisconnectDanger(false);
+                setIsTurnOffDanger(false);
+                setIsNotRemove(false);
               }}
             />
           </View>
 
-         
-
           {tableData.map((item, index) => {
             return (
-              <View key={index} style={{ borderWidth: StyleSheet.hairlineWidth, margin:20, padding: 20 }}>
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+              <View
+                key={index}
+                style={{
+                  borderWidth: StyleSheet.hairlineWidth,
+                  margin: 20,
+                  padding: 20,
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
                   <Text>Type - </Text>
                   <Text>{item.type}</Text>
                 </View>
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
                   <Text>Location - </Text>
                   <Text>{item.location}</Text>
                 </View>
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
                   <Text>Make - </Text>
                   <Text>{item.make}</Text>
                 </View>
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
                   <Text>Model - </Text>
                   <Text>{item.model}</Text>
                 </View>
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
                   <Text>Serial Number - </Text>
                   <Text>{item.serialNumber}</Text>
                 </View>
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
                   <Text>Description - </Text>
                   <Text>{item.descript}</Text>
                 </View>
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
                   <Text>Remdeial Required Action - </Text>
                   <Text>{item.remedial}</Text>
                 </View>
 
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
                   <Text>Escape of gas - </Text>
                   <Text>{item.isEscapeGas}</Text>
                 </View>
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
                   <Text>Meter issue - </Text>
                   <Text>{item.isMeterIssue}</Text>
                 </View>
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
                   <Text>Pipework - </Text>
                   <Text>{item.isPipeworkIssue}</Text>
                 </View>
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
                   <Text>Chimney/ Flute issue - </Text>
                   <Text>{item.isChimneyFlute}</Text>
                 </View>
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
                   <Text>Ventilation - </Text>
                   <Text>{item.isVentilation}</Text>
                 </View>
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
                   <Text>Other - </Text>
                   <Text>{item.isOther}</Text>
                 </View>
-                {
-                  item.isDisconnectDanger === "Yes" && (
-                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                      <Text>Disconnected & labelled Danger - </Text>
-                      <Text>{item.isDisconnectDanger}</Text>
-                    </View>
-                  )
-                }
-                {
-                  item.isTurnOffDanger === "Yes" && (
-                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                      <Text>Turn Off & labelled Danger - </Text>
-                      <Text>{item.isTurnOffDanger}</Text>
-                    </View>
-                  )
-                }
-                {
-                  item.isNotRemove === "Yes" && (
-                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                      <Text>At Risk - </Text>
-                      <Text>{item.isNotRemove}</Text>
-                    </View>
-                  )
-                }
+                {item.isDisconnectDanger === 'Yes' && (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <Text>Disconnected & labelled Danger - </Text>
+                    <Text>{item.isDisconnectDanger}</Text>
+                  </View>
+                )}
+                {item.isTurnOffDanger === 'Yes' && (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <Text>Turn Off & labelled Danger - </Text>
+                    <Text>{item.isTurnOffDanger}</Text>
+                  </View>
+                )}
+                {item.isNotRemove === 'Yes' && (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <Text>At Risk - </Text>
+                    <Text>{item.isNotRemove}</Text>
+                  </View>
+                )}
 
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                <RNButton
-      title="Delete"
-      onPress={() => deleteEntry(index)}
-    />
-              </View> 
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <RNButton title="Delete" onPress={() => deleteEntry(index)} />
+                </View>
               </View>
             );
           })}
@@ -525,20 +635,20 @@ const styles = StyleSheet.create({
   },
 
   content: {
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   inputContainer: {
     width: width * 0.35,
   },
   row: {
     width: width * 0.9,
-    alignSelf: "center",
-    justifyContent: "space-between",
-    flexDirection: "row",
+    alignSelf: 'center',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
   },
   optionContainer: {
     width: 100,
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
   },
   spacer: {
     height: unitH * 20,
@@ -547,28 +657,28 @@ const styles = StyleSheet.create({
     height: 10,
   },
   blackTxt: {
-    color: "black",
-    textAlign: "left",
+    color: 'black',
+    textAlign: 'left',
   },
   headerCell: {
-    textAlign: "center",
+    textAlign: 'center',
     borderWidth: 1,
     borderBottomWidth: 0,
     borderColor: PrimaryColors.Black,
     minHeight: 40,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   cell: {
     flex: 1,
-    textAlign: "center",
+    textAlign: 'center',
     borderWidth: 1,
     borderBottomWidth: 0,
     borderTopWidth: 0,
     borderColor: PrimaryColors.Black,
     minHeight: 40,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

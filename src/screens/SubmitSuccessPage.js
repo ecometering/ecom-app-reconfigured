@@ -1,5 +1,13 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { View, Text, Button, Alert, StyleSheet, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  Button,
+  Alert,
+  StyleSheet,
+  ActivityIndicator,
+  SafeAreaView,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { AppContext } from '../context/AppContext';
 import { openDatabase } from '../utils/database';
@@ -21,30 +29,30 @@ const SubmitSuccessPage = () => {
     setLoading(true);
     try {
       const db = await openDatabase();
-      db.transaction(tx => {
+      db?.transaction((tx) => {
         tx.executeSql(
-          "SELECT * FROM Jobs WHERE id = ?",
-          [appContext?.jobDetails?.JobID],
+          'SELECT * FROM Jobs WHERE id = ?',
+          [appContext?.jobID],
           async (_, { rows: { _array } }) => {
             if (_array.length > 0) {
               const jobData = JSON.stringify(_array[0]);
               await sendData(jobData);
             } else {
-              Alert.alert("Error", "No job data found.");
+              Alert.alert('Error', 'No job data found.');
               setLoading(false);
             }
           },
           (error) => {
             console.error('SQL error:', error);
             setLoading(false);
-            Alert.alert("Database Error", "Failed to fetch job data.");
+            Alert.alert('Database Error', 'Failed to fetch job data.');
           }
         );
       });
     } catch (error) {
       console.error('Database error:', error);
       setLoading(false);
-      Alert.alert("Database Error", "Failed to open database.");
+      Alert.alert('Database Error', 'Failed to open database.');
     }
   }
 
@@ -52,82 +60,145 @@ const SubmitSuccessPage = () => {
     const config = {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${authState.token}`
-      }
+        Authorization: `Bearer ${authState.token}`,
+      },
     };
     const body = {
       data: jobData,
-      userId: 1
+      engineer_id: 1,
     };
     try {
-      const response = await axios.post('https://test.ecomdata.co.uk/api/incoming-jobs/', body, config);
-      if (response.status === 201) {
-        uploadPhotos(response.data.job_id);
-        updateJobStatus();
-      } else if (response.status === 401) {
-        await refresh();
-        sendData(jobData); // Retry after refreshing token
-      } else {
-        throw new Error(`Upload failed with status: ${response.status}`);
-      }
+      axios
+        .post('https://test.ecomdata.co.uk/api/incoming-jobs/', body, config)
+        .then((response) => {
+          console.log('Job data uploaded:', response.data);
+          uploadPhotos(response.data.job_id)
+            .then(() => {
+              updateJobStatus();
+            })
+            .catch((error) => {
+              console.error('Photo upload error:', error);
+              Alert.alert('Photo Upload Error', 'Failed to upload photos.');
+              setLoading(false);
+            });
+        })
+        .catch((error) => {
+          if (error?.response?.status === 401) {
+            console.log('Token expired, refreshing token...');
+            refresh();
+            sendData(jobData);
+          }
+          console.error('Upload error:', error);
+          setLoading(false);
+          Alert.alert(
+            'Upload Error',
+            `Upload failed with status: ${response.status}`
+          );
+        });
     } catch (error) {
       console.error('Upload error:', error);
       setLoading(false);
-      Alert.alert("Upload Error", "Failed to upload job data.");
+      Alert.alert('Upload Error', 'Failed to upload job data.');
     }
   }
 
   async function uploadPhotos(job_id) {
-    const photos = JSON.parse(appContext.photos);
-    for (const photo of photos) {
-      await uploadResource(photo, job_id);
-    }
+    console.log('Uploading photos...');
+    const photos =
+      (appContext.photos && Object.values(appContext.photos)) || [];
+
+    // Parse and Add extra photos to the list
+    const extraPhotos =
+      (appContext?.standardDetails?.extras &&
+        appContext.standardDetails.extras.map((extra) => {
+          return {
+            photoKey: 'OtherPhoto',
+            description: extra.extraComment,
+            uri: extra.extraPhoto,
+          };
+        })) ||
+      [];
+
+    [...photos, ...extraPhotos].forEach((photo) => {
+      uploadResource(photo, job_id);
+    });
   }
 
-  const uploadResource = async (photo, job_id) => {
+  const uploadResource = (photo, job_id) => {
     const formData = new FormData();
     formData.append('photo_type', photo.photoKey);
     formData.append('userId', '1');
     formData.append('job_id', job_id);
     formData.append('description', photo.description);
     formData.append('photo', {
-      uri: photo.uri,
+      uri: photo.uri.replace('file://', ''), // Adjust the URI if necessary
       type: 'image/jpeg',
-      name: `${photo.photoKey}.jpg`
+      name: `${photo.photoKey}.jpg`,
     });
 
-    try {
-      const response = await fetch('https://test.ecomdata.co.uk/api/upload-photos/', {
-        method: 'POST',
+    axios
+      .post('https://test.ecomdata.co.uk/api/upload-photos/', formData, {
         headers: {
-          'Authorization': `Bearer ${authState.token}`
+          Authorization: `Bearer ${authState.token}`,
+          'Content-Type': 'multipart/form-data', // Axios sets this automatically, but specifying just in case
         },
-        body: formData
+      })
+      .then((response) => {
+        console.log('Upload successful:', response.data);
+      })
+      .catch((error) => {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.error('Photo upload error:', error.response.data);
+          Alert.alert(
+            'Photo Upload Error',
+            `Failed to upload photo. Status: ${error.response.status}. Detail: ${error.response.data}`
+          );
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.error(
+            'Photo upload error: No response received',
+            error.request
+          );
+          Alert.alert(
+            'Photo Upload Error',
+            'No response received from server.'
+          );
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.error('Photo upload error:', error.message);
+          Alert.alert('Photo Upload Error', error.message);
+        }
       });
-
-      const responseData = await response.json();
-      if (!response.ok) {
-        throw new Error(`Failed to upload photo. ${responseData.detail}`);
-      }
-    } catch (error) {
-      console.error('Photo upload error:', error);
-      Alert.alert("Photo Upload Error", `Failed to upload photo. ${error}`);
-    }
   };
 
-  function updateJobStatus() {
-    const db = openDatabase();
-    db.transaction(tx => {
+  async function updateJobStatus() {
+    const db = await openDatabase();
+    db.transaction((tx) => {
       tx.executeSql(
         'UPDATE Jobs SET jobStatus = ? WHERE id = ?',
         ['Completed', appContext?.jobDetails?.JobID],
         () => {
-          Alert.alert("Upload Complete", "Job and photos uploaded successfully.", [{ text: "OK", onPress: () => navigation.navigate("Home") }]);
+          Alert.alert(
+            'Upload Complete',
+            'Job and photos uploaded successfully.',
+            [
+              {
+                text: 'OK',
+                onPress: () => {
+                  // Clear job data and navigate to home
+                  appContext.resetContext();
+                  navigation.navigate('Home');
+                },
+              },
+            ]
+          );
           setLoading(false);
         },
         (error) => {
           console.error('SQL error:', error);
-          Alert.alert("Database Error", "Failed to update job status.");
+          Alert.alert('Database Error', 'Failed to update job status.');
           setLoading(false);
         }
       );
@@ -135,7 +206,7 @@ const SubmitSuccessPage = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Header
         hasLeftBtn={true}
         leftBtnPressed={() => navigation.goBack()}
@@ -144,9 +215,13 @@ const SubmitSuccessPage = () => {
       />
       <View style={styles.content}>
         <Text>Submit the job</Text>
-        {isLoading ? <ActivityIndicator size="large" /> : <Button title="Send" onPress={fetchAndUploadJobData} />}
+        {isLoading ? (
+          <ActivityIndicator size="large" />
+        ) : (
+          <Button title="Send" onPress={fetchAndUploadJobData} />
+        )}
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

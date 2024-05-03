@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState } from 'react';
 import {
   Button,
   Image,
@@ -8,26 +8,26 @@ import {
   ScrollView,
   StyleSheet,
   View,
-  Dimensions
-} from "react-native";
-import { isIos } from "../../utils/constant";
-import { useNavigation } from "@react-navigation/native";
-import Header from "../../components/Header";
-import Text from "../../components/Text";
-import OptionalButton from "../../components/OptionButton";
-import TextInput, { TextInputWithTitle } from "../../components/TextInput";
-import { AppContext } from "../../context/AppContext";
-import EcomHelper from "../../utils/ecomHelper";
-import { PrimaryColors } from "../../theme/colors";
-import SignatureScreen from "react-native-signature-canvas";
+  Dimensions,
+} from 'react-native';
+import { isIos } from '../../utils/constant';
+import { useNavigation } from '@react-navigation/native';
+import Header from '../../components/Header';
+import Text from '../../components/Text';
+import OptionalButton from '../../components/OptionButton';
+import TextInput, { TextInputWithTitle } from '../../components/TextInput';
+import { AppContext } from '../../context/AppContext';
+import EcomHelper from '../../utils/ecomHelper';
+import { PrimaryColors } from '../../theme/colors';
+import SignatureScreen from 'react-native-signature-canvas';
 
-const { width, height } = Dimensions.get("window");
+const { width, height } = Dimensions.get('window');
 function StandardPage() {
   const navigation = useNavigation();
   const appContext = useContext(AppContext);
   const jobType = appContext.jobType;
-const{standardDetails,meterDetails}=appContext; 
-  const title = "Standard Details";
+  const { standardDetails, meterDetails, jobID } = appContext;
+  const title = 'Standard Details';
 
   const [testPassed, setTestPassed] = useState(standardDetails?.testPassed);
   const [conformStandard, setconformStandard] = useState(
@@ -44,49 +44,15 @@ const{standardDetails,meterDetails}=appContext;
   const [signature, setSignature] = useState(standardDetails?.signature);
   const [isModal, setIsModal] = useState(false);
 
-  console.log("StandardPage");
-
   const handleOK = (signature) => {
-    const base64String = signature.replace("data:image/png;base64,", "");
+    const base64String = signature.replace('data:image/png;base64,', '');
     setSignature(base64String);
     console.log(base64String);
     setIsModal(false);
   };
 
-  const nextPressed = () => {
-    
-    if (conformStandard == null) {
-      EcomHelper.showInfoMessage(
-        "Please answer if the network service/ECV conform to standards"
-      );
-      return;
-    }
-    
-    if (pressure == null) {
-      EcomHelper.showInfoMessage("Please set inlet pressure");
-      return;
-    }
-
-    if (signature == null) {
-      EcomHelper.showInfoMessage("Please enter signature");
-      return;
-    }
-    if (riddorReportable == null) {
-      EcomHelper.showInfoMessage("Please answer if RIDDOR reportable");
-      return;
-    }
-    if (meterDetails.isMeter ) {
-      if (testPassed == null) {
-      EcomHelper.showInfoMessage("Please answer if tightness test passed");
-      return;
-    }
-    
-    if (useOutlet == null) {
-      EcomHelper.showInfoMessage("Please answer if Outlet kit is used");
-      return;
-    }
-  }
-    appContext.setStandardDetails({
+  const nextPressed = async () => {
+    const standards = {
       ...standardDetails,
       testPassed: testPassed,
       conformStandard: conformStandard,
@@ -95,22 +61,78 @@ const{standardDetails,meterDetails}=appContext;
       pressure: pressure,
       conformText: conformText,
       signature,
-    });
-    appContext.setMeterDetails({
+    };
+
+    const meterDetailsUpdate = {
       ...meterDetails,
       isStandard: riddorReportable,
-    });
+    };
+    // console.log('Standard Details before JSON:', standards);
+    // console.log('Meter Details before JSON:', meterDetailsUpdate);
 
-    if (riddorReportable === true) {
-      navigation.navigate("RiddorReportPage");
-    } else {
-      if (conformStandard === false) {
-        navigation.navigate("SnClientInfoPage");
-      } else {
-        navigation.navigate("CompositeLabelPhoto");
+    try {
+      if (conformStandard == null) {
+        EcomHelper.showInfoMessage(
+          'Please answer if the network service/ECV conform to standards'
+        );
+        return;
       }
+
+      if (pressure == null) {
+        EcomHelper.showInfoMessage('Please set inlet pressure');
+        return;
+      }
+
+      if (signature == null) {
+        EcomHelper.showInfoMessage('Please enter signature');
+        return;
+      }
+      if (riddorReportable == null) {
+        EcomHelper.showInfoMessage('Please answer if RIDDOR reportable');
+        return;
+      }
+      if (meterDetails?.isMeter) {
+        if (testPassed == null) {
+          EcomHelper.showInfoMessage('Please answer if tightness test passed');
+          return;
+        }
+
+        if (useOutlet == null) {
+          EcomHelper.showInfoMessage('Please answer if Outlet kit is used');
+          return;
+        }
+      }
+
+      appContext.setStandardDetails(standards);
+      await db.runAsync('UPDATE Jobs SET standards = ? WHERE id = ?', [
+        JSON.stringify(standards),
+        jobID,
+      ]);
+
+      appContext.setMeterDetails(meterDetailsUpdate);
+
+      await db.runAsync('UPDATE Jobs SET meterDetails = ? WHERE id = ?', [
+        JSON.stringify(meterDetailsUpdate),
+        jobID,
+      ]);
+
+      if (riddorReportable === true) {
+        navigation.navigate('RiddorReportPage');
+      } else {
+        if (conformStandard === false) {
+          navigation.navigate('SnClientInfoPage');
+        } else {
+          navigation.navigate('CompositeLabelPhoto');
+        }
+      }
+    } catch (error) {
+      console.error('Error updating job details:', error);
+      EcomHelper.showInfoMessage(
+        'Error updating job details. Please try again.'
+      );
     }
   };
+
   const backPressed = () => {
     appContext.setStandardDetails({
       ...standardDetails,
@@ -138,17 +160,16 @@ const{standardDetails,meterDetails}=appContext;
       />
       <KeyboardAvoidingView
         style={styles.content}
-        behavior={isIos ? "padding" : null}
+        behavior={isIos ? 'padding' : null}
       >
         <ScrollView style={styles.scrollView}>
           <View style={styles.spacer} />
           <View style={styles.body}>
-            
             <View style={styles.spacer} />
             <Text>Does the network service /ECV conform to standards</Text>
             <View style={styles.optionContainer}>
               <OptionalButton
-                options={["Yes", "No"]}
+                options={['Yes', 'No']}
                 actions={[
                   () => {
                     setconformStandard(true);
@@ -161,8 +182,8 @@ const{standardDetails,meterDetails}=appContext;
                   conformStandard == null
                     ? null
                     : conformStandard
-                      ? "Yes"
-                      : "No"
+                    ? 'Yes'
+                    : 'No'
                 }
               />
             </View>
@@ -170,7 +191,7 @@ const{standardDetails,meterDetails}=appContext;
             <Text>RIDDOR reportable</Text>
             <View style={styles.optionContainer}>
               <OptionalButton
-                options={["Yes", "No"]}
+                options={['Yes', 'No']}
                 actions={[
                   () => {
                     setRiddorReportable(true);
@@ -183,78 +204,81 @@ const{standardDetails,meterDetails}=appContext;
                   riddorReportable == null
                     ? null
                     : riddorReportable
-                      ? "Yes"
-                      : "No"
+                    ? 'Yes'
+                    : 'No'
                 }
               />
             </View>
             <View style={styles.spacer} />
             <View style={styles.container}>
-      {meterDetails.isMeter && (
-        <>
-          <Text>Outlet kit be used</Text>
-          <View style={styles.optionContainer}>
-            <OptionalButton
-              options={["Yes", "No"]}
-              actions={[
-                () => setUseOutlet(true),
-                () => setUseOutlet(false)
-              ]}
-              value={useOutlet == null ? null : useOutlet ? "Yes" : "No"}
-            />
-          </View>
-          <View style={styles.spacer} />
-          <Text>Tightness test passed</Text>
-          <View style={styles.optionContainer}>
-            <OptionalButton
-              options={["Yes", "No"]}
-              actions={[
-                () => setTestPassed(true),
-                () => setTestPassed(false)
-              ]}
-              value={testPassed == null ? null : testPassed ? "Yes" : "No"}
-            />
-          </View>
-        </>
-      )}
-    </View>
-
+              {meterDetails?.isMeter && (
+                <>
+                  <Text>Outlet kit be used</Text>
+                  <View style={styles.optionContainer}>
+                    <OptionalButton
+                      options={['Yes', 'No']}
+                      actions={[
+                        () => setUseOutlet(true),
+                        () => setUseOutlet(false),
+                      ]}
+                      value={
+                        useOutlet == null ? null : useOutlet ? 'Yes' : 'No'
+                      }
+                    />
+                  </View>
+                  <View style={styles.spacer} />
+                  <Text>Tightness test passed</Text>
+                  <View style={styles.optionContainer}>
+                    <OptionalButton
+                      options={['Yes', 'No']}
+                      actions={[
+                        () => setTestPassed(true),
+                        () => setTestPassed(false),
+                      ]}
+                      value={
+                        testPassed == null ? null : testPassed ? 'Yes' : 'No'
+                      }
+                    />
+                  </View>
+                </>
+              )}
+            </View>
 
             <View style={styles.spacer} />
             <TextInputWithTitle
-              title={"Inlet Pressure"}
+              title={'Inlet Pressure'}
               width={'100%'}
               value={pressure}
-              onChange={(item) => {
-                setPressure(item);
+              onChange={(event) => {
+                // its sendign native event with numeric keyboard
+                setPressure(event.nativeEvent.text);
               }}
-              keyboardType='numeric'
+              keyboardType="numeric"
             />
 
             <View style={styles.spacer} />
             <TextInputWithTitle
-              title={"Notes"}
+              title={'Notes'}
               value={conformText}
               onChangeText={(text) => {
                 setconformText(text);
               }}
               style={{
                 ...styles.input,
-                width: "100%",
+                width: '100%',
                 height: height * 0.2,
               }}
               multiline={true}
             />
             <View style={styles.spacer} />
             <Text>
-              I confirm that all works have been carried out in
-              accordance with current industry standards and
-              health safety policies
-              </Text>
+              I confirm that all works have been carried out in accordance with
+              current industry standards and health safety policies
+            </Text>
             <View style={styles.spacer} />
             <View>
               <Button
-                title={"Signature"}
+                title={'Signature'}
                 onPress={() => {
                   setIsModal(true);
                 }}
@@ -269,31 +293,35 @@ const{standardDetails,meterDetails}=appContext;
             </View>
 
             <Modal
-        animationType="slide"
-        transparent={true}
-        visible={isModal}
-        onRequestClose={() => {
-          setIsModal(!isModal);
-        }}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={[styles.modalInnerContainer, { width: width * 0.8, height: height * 0.6 }]}>
-            <Button
-              title="Close"
-              onPress={() => {
-                setIsModal(false);
+              animationType="slide"
+              transparent={true}
+              visible={isModal}
+              onRequestClose={() => {
+                setIsModal(!isModal);
               }}
-            />
-            <SignatureScreen
-              onOK={handleOK}
-              webStyle={`.m-signature-pad { ... }`}
-              backgroundColor={PrimaryColors.Sand}
-              scrollable={true}
-            />
-          </View>
-        </View>
-      </Modal>
-
+            >
+              <View style={styles.modalOverlay}>
+                <View
+                  style={[
+                    styles.modalInnerContainer,
+                    { width: width * 0.8, height: height * 0.6 },
+                  ]}
+                >
+                  <Button
+                    title="Close"
+                    onPress={() => {
+                      setIsModal(false);
+                    }}
+                  />
+                  <SignatureScreen
+                    onOK={handleOK}
+                    webStyle={`.m-signature-pad { ... }`}
+                    backgroundColor={PrimaryColors.Sand}
+                    scrollable={true}
+                  />
+                </View>
+              </View>
+            </Modal>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -307,7 +335,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
   modalOverlay: {
     flex: 1,
@@ -323,11 +351,11 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5
+    elevation: 5,
   },
   signatureContainer: {
     flex: 1,
@@ -337,19 +365,19 @@ const styles = StyleSheet.create({
   signImage: {
     width: width * 0.8,
     height: height * 0.2,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   inputContainer: {
     marginBottom: 20,
   },
   row: {
-    flexDirection: "row",
-    justifyContent: "space-around",
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     marginTop: 20,
   },
   optionContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     width: width * 0.4, // Adjusted for responsiveness
   },
 });

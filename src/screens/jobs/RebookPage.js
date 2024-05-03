@@ -1,32 +1,48 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, TextInput, Button, Alert } from 'react-native';
+import React, { useContext, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  TextInput,
+  Button,
+  Alert,
+  SafeAreaView,
+} from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import moment from 'moment'; // For handling dates
-import openDatabase from '../../utils/database';
+import { openDatabase } from '../../utils/database';
+import Header from '../../components/Header';
+import { AppContext } from '../../context/AppContext';
+import { useNavigation } from '@react-navigation/native';
 const { width } = Dimensions.get('window');
 
 const RebookPage = () => {
+  const navigation = useNavigation();
+  const appContext = useContext(AppContext);
   const [canRebookToday, setCanRebookToday] = useState(null);
   const [rebookReason, setRebookReason] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
+  const jobID = appContext.jobID;
 
   const twoWeeksFromNow = moment().add(14, 'days').format('YYYY-MM-DD');
-  const minDate = moment().add(1, 'days').format('YYYY-MM-DD');
+  // const minDate = moment().add(1, 'days').format('YYYY-MM-DD');
+
   const updateRebookDetails = async () => {
-    const db = openDatabase();
-  
+    const db = await openDatabase();
+
     // Create a JSON object with all details
     const rebookDetailsJSON = JSON.stringify({
       canRebookToday,
       selectedDate: canRebookToday ? selectedDate : null,
       rebookReason: canRebookToday ? null : rebookReason,
     });
-  
-    db.transaction(tx => {
+
+    db.transaction((tx) => {
       // Update the database with the JSON object
       tx.executeSql(
         'UPDATE Jobs SET rebookDetails = ? WHERE id = ?',
-        [rebookDetailsJSON, jobId],
+        [rebookDetailsJSON, jobID],
         (_, results) => {
           console.log('Rebook details updated successfully', results);
         },
@@ -35,53 +51,76 @@ const RebookPage = () => {
         }
       );
     });
-  };  const handleConfirmRebook = () => {
+  };
+  const handleConfirmRebook = () => {
     Alert.alert(
-      "Confirm Rebook Date",
+      'Confirm Rebook Date',
       `Are you sure you want to rebook for ${selectedDate}?`,
       [
         {
-          text: "Cancel",
-          style: "cancel"
+          text: 'Cancel',
+          style: 'cancel',
         },
-        { text: "OK", onPress: () => console.log("Rebook Confirmed for:", selectedDate) }
+        {
+          text: 'OK',
+          onPress: () => {
+            console.log('Rebook Confirmed for:', selectedDate);
+            updateRebookDetails().then(() => {
+              navigation.navigate('SubmitSuccessPage');
+            });
+          },
+        },
       ]
     );
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.question}>Can job be rebooked today?</Text>
-      <View style={styles.optionsContainer}>
-        <Button title="Yes" onPress={() => setCanRebookToday(true)} />
-        <Button title="No" onPress={() => setCanRebookToday(false)} />
+    <SafeAreaView style={{ flex: 1 }}>
+      <Header
+        hasLeftBtn={true}
+        hasCenterText={true}
+        hasRightBtn={true}
+        centerText={'Rebooking'}
+        leftBtnPressed={() => {}}
+        rightBtnPressed={handleConfirmRebook}
+      />
+      <View style={styles.container}>
+        <Text style={styles.question}>Can job be rebooked today?</Text>
+        <View style={styles.optionsContainer}>
+          <Button title="Yes" onPress={() => setCanRebookToday(true)} />
+          <Button title="No" onPress={() => setCanRebookToday(false)} />
+        </View>
+
+        {canRebookToday === true && (
+          <Calendar
+            minDate={twoWeeksFromNow}
+            onDayPress={(day) => {
+              setSelectedDate(day.dateString);
+            }}
+            markedDates={{
+              [selectedDate]: {
+                selected: true,
+                disableTouchEvent: true,
+                selectedColor: 'blue',
+                selectedTextColor: 'white',
+              },
+            }}
+            disableAllTouchEventsForDisabledDays={true}
+          />
+        )}
+
+        {canRebookToday === false && (
+          <TextInput
+            style={styles.input}
+            onChangeText={setRebookReason}
+            value={rebookReason}
+            placeholder="Why can't it be rebooked?"
+          />
+        )}
+
+        {/* <Button title="Next" onPress={handleConfirmRebook} /> */}
       </View>
-
-      {canRebookToday === true && (
-        <Calendar
-          minDate={minDate}
-          maxDate={twoWeeksFromNow}
-          onDayPress={(day) => {
-            setSelectedDate(day.dateString);
-          }}
-          markedDates={{
-            [selectedDate]: {selected: true, disableTouchEvent: true, selectedColor: 'blue', selectedTextColor: 'white'}
-          }}
-          disableAllTouchEventsForDisabledDays={true}
-        />
-      )}
-
-      {canRebookToday === false && (
-        <TextInput
-          style={styles.input}
-          onChangeText={setRebookReason}
-          value={rebookReason}
-          placeholder="Why can't it be rebooked?"
-        />
-      )}
-
-      <Button title="Next" onPress={handleConfirmRebook} />
-    </View>
+    </SafeAreaView>
   );
 };
 

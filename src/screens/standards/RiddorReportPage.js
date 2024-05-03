@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState } from 'react';
 import {
   Alert,
   Button,
@@ -8,52 +8,61 @@ import {
   StyleSheet,
   View,
   Dimensions,
-} from "react-native";
-import Header from "../../components/Header";
-import Text from "../../components/Text";
-import TextInput from "../../components/TextInput";
-import ImagePickerButton from "../../components/ImagePickerButton"; // Adjust this path as necessary
-import { useNavigation } from "@react-navigation/native";
-import { TextType } from "../../theme/typography";
-import { AppContext } from "../../context/AppContext";
-import EcomHelper from "../../utils/ecomHelper";
+} from 'react-native';
+import Header from '../../components/Header';
+import Text from '../../components/Text';
+import TextInput from '../../components/TextInput';
+import ImagePickerButton from '../../components/ImagePickerButton'; // Adjust this path as necessary
+import { useNavigation } from '@react-navigation/native';
+import { TextType } from '../../theme/typography';
+import { AppContext } from '../../context/AppContext';
+import EcomHelper from '../../utils/ecomHelper';
 
-const { width, height } = Dimensions.get("window"); // Use Dimensions to get width and height
+const { width, height } = Dimensions.get('window'); // Use Dimensions to get width and height
 
 export default function RiddorReportPage() {
   const navigation = useNavigation();
   const appContext = useContext(AppContext);
   const standardDetails = appContext.standardDetails;
   const jobType = appContext.jobType;
-  const title = jobType === "Install" ? "New Meter Details" : jobType;
+  const jobID = appContext.jobID;
+  const title = jobType === 'Install' ? 'New Meter Details' : jobType;
   const confirmStandard = standardDetails?.confirmStandard;
   const [riddorImage, setRiddorImage] = useState(standardDetails?.riddorImage); // Renamed state
   const [notes, setNotes] = useState(standardDetails?.notes);
   const [riddorRef, setRiddorRef] = useState(standardDetails?.riddorRef);
 
-  const backPressed = () => {
-    appContext.setStandardDetails({
+  const backPressed = async () => {
+    const standards = {
       ...standardDetails,
       riddorImage: riddorImage, // Updated reference
       notes,
       riddorRef,
-    });
+    };
+
+    appContext.setStandardDetails(standards);
+    await db.runAsync('UPDATE Jobs SET standards = ? WHERE id = ?', [
+      JSON.stringify(standards),
+      jobID,
+    ]);
+
     navigation.goBack();
   };
 
   const nextPressed = async () => {
-    if (!riddorImage) { // Updated check
-      EcomHelper.showInfoMessage("Please choose an image.");
+    if (!riddorImage) {
+      // Updated check
+      EcomHelper.showInfoMessage('Please choose an image.');
       return;
     }
 
     if (!notes) {
-      EcomHelper.showInfoMessage("Notes are compulsory!");
+      EcomHelper.showInfoMessage('Notes are compulsory!');
       return;
     }
 
     if (!riddorRef) {
-      EcomHelper.showInfoMessage("RIDDOR reference is required!");
+      EcomHelper.showInfoMessage('RIDDOR reference is required!');
       return;
     }
 
@@ -65,17 +74,23 @@ export default function RiddorReportPage() {
       console.error(err);
     }
 
-    appContext.setStandardDetails({
+    const standards = {
       ...standardDetails,
       riddorImage: riddorImage, // Updated reference
       notes,
       riddorRef,
-    });
+    };
+
+    appContext.setStandardDetails(standards);
+    await db.runAsync('UPDATE Jobs SET standards = ? WHERE id = ?', [
+      JSON.stringify(standards),
+      jobID,
+    ]);
 
     if (standardDetails.conformStandard === false) {
-      navigation.navigate("SnClientInfoPage");
+      navigation.navigate('SnClientInfoPage');
     } else {
-      navigation.navigate("CompositeLabelPhoto");
+      navigation.navigate('CompositeLabelPhoto');
     }
   };
 
@@ -101,7 +116,7 @@ export default function RiddorReportPage() {
               />
             )}
             <View style={styles.row}>
-              <ImagePickerButton onImageSelected={setRiddorImage} /> 
+              <ImagePickerButton onImageSelected={setRiddorImage} />
             </View>
           </View>
 
@@ -143,22 +158,22 @@ const styles = StyleSheet.create({
   image: {
     width: width * 0.8,
     height: height * 0.3,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginTop: 20,
   },
   spacer: {
     height: 20,
   },
   input: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     padding: 10,
     borderRadius: 5,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: '#ccc',
     marginTop: 10,
   },
   formContainer: {

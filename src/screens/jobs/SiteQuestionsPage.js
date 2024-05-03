@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Alert,
   Image,
@@ -6,58 +6,60 @@ import {
   ScrollView,
   StyleSheet,
   View,
-  Dimensions
-} from "react-native";
-import Text from "../../components/Text";
-import { TextInputWithTitle } from "../../components/TextInput";
-import Header from "../../components/Header";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import OptionalButton from "../../components/OptionButton";
-import { useAppContext } from "../../context/AppContext";
-import EcomHelper from "../../utils/ecomHelper";
-import ImagePickerButton from "../../components/ImagePickerButton";
+  Dimensions,
+} from 'react-native';
+import Text from '../../components/Text';
+import { TextInputWithTitle } from '../../components/TextInput';
+import Header from '../../components/Header';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import OptionalButton from '../../components/OptionButton';
+import { useAppContext } from '../../context/AppContext';
+import EcomHelper from '../../utils/ecomHelper';
+import ImagePickerButton from '../../components/ImagePickerButton';
 
 const { width, height } = Dimensions.get('window');
 
 function SiteQuestionsPage() {
   const navigation = useNavigation();
   const route = useRoute();
-  const { jobType,jobID, setSiteQuestions, siteQuestions, photos, savePhoto } = useAppContext();
+  const { jobType, jobID, setSiteQuestions, siteQuestions, photos, savePhoto } =
+    useAppContext();
   const { params } = useRoute();
-  const { title,photoKey } = params;
+  const { title, photoKey } = params;
   const existingPhoto = photos[photoKey];
-  const [selectedImage, setSelectedImage] = useState(existingPhoto?.uri || null);
+  const [selectedImage, setSelectedImage] = useState(
+    existingPhoto?.uri || null
+  );
 
-const saveToDatabase = async () => {
-  const photosJson = JSON.stringify(photos);
-  const questionJson = JSON.stringify(siteQuestions);
-  try {
-    await db.runAsync(
-  'UPDATE Jobs SET photos = ?, siteQuestions = ? WHERE id = ?',
-      [photosJson,questionJson, jobID],)
-    .then((result) => {
-      console.log('photos saved to database:', result);
-    });
-  } catch (error) {
-    console.log('Error saving photos to database:', error);
-  }
-};
-
+  const saveToDatabase = async () => {
+    const photosJson = JSON.stringify(photos);
+    const questionJson = JSON.stringify(siteQuestions);
+    try {
+      await db
+        .runAsync(
+          'UPDATE Jobs SET photos = ?, siteQuestions = ? WHERE id = ?',
+          [photosJson, questionJson, jobID]
+        )
+        .then((result) => {
+          console.log('photos saved to database:', result);
+        });
+    } catch (error) {
+      console.log('Error saving photos to database:', error);
+    }
+  };
 
   const handleInputChange = (name, value) => {
-    setSiteQuestions(prevDetails => ({
+    setSiteQuestions((prevDetails) => ({
       ...prevDetails,
       [name]: value,
-      
     }));
-  console.log("SiteQuestionsPage handleInputChange invoked.",siteQuestions)
-    
+    console.log('SiteQuestionsPage handleInputChange invoked.', siteQuestions);
   };
   const handlePhotoSelected = (uri) => {
     setSelectedImage(uri);
     savePhoto(photoKey, { title, photoKey, uri });
     console.log('Photo saved:', { title, photoKey, uri });
-    console.log('photos:',photos);
+    console.log('photos:', photos);
   };
   const backPressed = () => {
     saveToDatabase();
@@ -65,35 +67,49 @@ const saveToDatabase = async () => {
   };
 
   const nextPressed = () => {
-    console.log("nextPressed invoked.");
+    console.log('nextPressed invoked.');
 
     // Individual validation checks with specific messages
-    if (siteQuestions.isSafe === null) {
-      EcomHelper.showInfoMessage("Please indicate if the meter location is safe.");
+    if (siteQuestions?.isSafe === null) {
+      EcomHelper.showInfoMessage(
+        'Please indicate if the meter location is safe.'
+      );
       return;
     }
-    if (siteQuestions.isGeneric === null) {
-      EcomHelper.showInfoMessage("Please indicate if the job is covered by the generic risk assessment.");
+    if (siteQuestions?.isGeneric === null) {
+      EcomHelper.showInfoMessage(
+        'Please indicate if the job is covered by the generic risk assessment.'
+      );
       return;
     }
-    if (siteQuestions.isCarryOut === null) {
-      EcomHelper.showInfoMessage("Please indicate if the job can be carried out.");
+    if (siteQuestions?.isCarryOut === null) {
+      EcomHelper.showInfoMessage(
+        'Please indicate if the job can be carried out.'
+      );
       return;
     }
-    if (siteQuestions.isCarryOut === false && (!siteQuestions.carryOutReason || siteQuestions.carryOutReason.trim().length === 0)) {
-      EcomHelper.showInfoMessage("Please indicate why the job can't be carried out.");
+    if (
+      siteQuestions?.isCarryOut === false &&
+      (!siteQuestions?.carryOutReason ||
+        siteQuestions?.carryOutReason?.trim()?.length === 0)
+    ) {
+      EcomHelper.showInfoMessage(
+        "Please indicate why the job can't be carried out."
+      );
       return;
     }
-    if (siteQuestions.isFitted === null) {
-      EcomHelper.showInfoMessage("Please indicate if a bypass is fitted.");
+    if (siteQuestions?.isFitted === null) {
+      EcomHelper.showInfoMessage('Please indicate if a bypass is fitted.');
       return;
     }
-    if (siteQuestions.isFitted && !photos.bypassPhoto) {
-      EcomHelper.showInfoMessage("Please provide a photo of the bypass.");
+    if (siteQuestions?.isFitted && !photos?.bypassPhoto) {
+      EcomHelper.showInfoMessage('Please provide a photo of the bypass.');
       return;
     }
-    if (siteQuestions.isStandard === null) {
-      EcomHelper.showInfoMessage("Please indicate if the customer installation conforms to current standards.");
+    if (siteQuestions?.isStandard === null) {
+      EcomHelper.showInfoMessage(
+        'Please indicate if the customer installation conforms to current standards.'
+      );
       return;
     }
     saveToDatabase();
@@ -102,15 +118,15 @@ const saveToDatabase = async () => {
   };
 
   const handleNavigationBasedOnConditions = () => {
-    if (!siteQuestions.isSafe || !siteQuestions.isStandard) {
-      navigation.navigate("StandardPage", { fromPage: "SiteQuestionsPage" });
-      console.log("Navigating to StandardPage");
-    } else if (!siteQuestions.isCarryOut) {
-      navigation.navigate("RebookPage", { fromPage: "SiteQuestionsPage" });
-      console.log("Navigating to RebookPage");
+    if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
+      navigation.navigate('StandardPage', { fromPage: 'SiteQuestionsPage' });
+      console.log('Navigating to StandardPage');
+    } else if (!siteQuestions?.isCarryOut) {
+      navigation.navigate('RebookPage', { fromPage: 'SiteQuestionsPage' });
+      console.log('Navigating to RebookPage');
     } else {
       // Continue with conditional navigation based on jobType
-      navigation.navigate("JobTypeNavigator");
+      navigation.navigate('JobTypeNavigator');
     }
   };
 
@@ -133,16 +149,22 @@ const saveToDatabase = async () => {
           </Text>
           <View style={styles.optionContainer}>
             <OptionalButton
-              options={["Yes", "No"]}
+              options={['Yes', 'No']}
               actions={[
                 () => {
-                  handleInputChange("isSafe", true);
+                  handleInputChange('isSafe', true);
                 },
                 () => {
-                  handleInputChange("isSafe", false);
+                  handleInputChange('isSafe', false);
                 },
               ]}
-              value={siteQuestions.isSafe === null ? null : siteQuestions.isSafe ? "Yes" : "No"}
+              value={
+                siteQuestions?.isSafe === null
+                  ? null
+                  : siteQuestions?.isSafe
+                  ? 'Yes'
+                  : 'No'
+              }
             />
           </View>
           <View style={styles.spacer} />
@@ -150,27 +172,33 @@ const saveToDatabase = async () => {
           <Text>Is the job covered by the generic risk assessment</Text>
           <View style={styles.optionContainer}>
             <OptionalButton
-              options={["Yes", "No"]}
+              options={['Yes', 'No']}
               actions={[
                 () => {
-                  handleInputChange("isGeneric", true);
+                  handleInputChange('isGeneric', true);
                 },
                 () => {
-                  handleInputChange("isGeneric", false);
+                  handleInputChange('isGeneric', false);
                 },
               ]}
-              value={siteQuestions.isGeneric === null ? null : siteQuestions.isGeneric ? "Yes" : "No"}
+              value={
+                siteQuestions?.isGeneric === null
+                  ? null
+                  : siteQuestions?.isGeneric
+                  ? 'Yes'
+                  : 'No'
+              }
             />
           </View>
-          {!siteQuestions.isGeneric && (
+          {!siteQuestions?.isGeneric && (
             <TextInputWithTitle
               title={
-                "Why is this job not covered by the generic risk assesment"
+                'Why is this job not covered by the generic risk assesment'
               }
-              placeholder={""}
-              value={siteQuestions.genericReason}
+              placeholder={''}
+              value={siteQuestions?.genericReason}
               onChangeText={(txt) => {
-                handleInputChange("genericReason", txt);
+                handleInputChange('genericReason', txt);
               }}
             />
           )}
@@ -179,25 +207,31 @@ const saveToDatabase = async () => {
           <Text>Can the Job be carried out</Text>
           <View style={styles.optionContainer}>
             <OptionalButton
-              options={["Yes", "No"]}
+              options={['Yes', 'No']}
               actions={[
                 () => {
-                  handleInputChange("isCarryOut", true);
+                  handleInputChange('isCarryOut', true);
                 },
                 () => {
-                  handleInputChange("isCarryOut", false);
+                  handleInputChange('isCarryOut', false);
                 },
               ]}
-              value={siteQuestions.isCarryOut === null ? null : siteQuestions.isCarryOut ? "Yes" : "No"}
+              value={
+                siteQuestions?.isCarryOut === null
+                  ? null
+                  : siteQuestions?.isCarryOut
+                  ? 'Yes'
+                  : 'No'
+              }
             />
           </View>
-          {!siteQuestions.isCarryOut && (
+          {!siteQuestions?.isCarryOut && (
             <TextInputWithTitle
-              title={"Why it cant be carried out"}
-              placeholder={""}
-              value={siteQuestions.carryOutReason}
+              title={'Why it cant be carried out'}
+              placeholder={''}
+              value={siteQuestions?.carryOutReason}
               onChangeText={(txt) => {
-                handleInputChange("carryOutReason", txt);
+                handleInputChange('carryOutReason', txt);
               }}
               containerStyle={styles.inputContainer}
             />
@@ -207,38 +241,42 @@ const saveToDatabase = async () => {
           <Text>Is a bypass fitted</Text>
           <View style={styles.optionContainer}>
             <OptionalButton
-              options={["Yes", "No"]}
+              options={['Yes', 'No']}
               actions={[
                 () => {
-                  handleInputChange("isFitted", true);
+                  handleInputChange('isFitted', true);
                 },
                 () => {
-                  handleInputChange("isFitted", false);
+                  handleInputChange('isFitted', false);
                 },
               ]}
-              value={siteQuestions.isFitted === null ? null : siteQuestions.isFitted ? "Yes" : "No"}
+              value={
+                siteQuestions?.isFitted === null
+                  ? null
+                  : siteQuestions?.isFitted
+                  ? 'Yes'
+                  : 'No'
+              }
             />
           </View>
 
-          {siteQuestions.isFitted && (
+          {siteQuestions?.isFitted && (
             <View style={styles.imagePickerContainer}>
-              
-             
-          
               <View style={styles.body}>
-          <Text type="caption" style={styles.text}>Bypass</Text>
-          <ImagePickerButton
-            onImageSelected={handlePhotoSelected}
-            currentImage={selectedImage}
-          />
-          {selectedImage && (
-            <Image source={{ uri: selectedImage }} style={styles.image} />
-          )}
-        </View>
+                <Text type="caption" style={styles.text}>
+                  Bypass
+                </Text>
+                <ImagePickerButton
+                  onImageSelected={handlePhotoSelected}
+                  currentImage={selectedImage}
+                />
+                {selectedImage && (
+                  <Image source={{ uri: selectedImage }} style={styles.image} />
+                )}
+              </View>
             </View>
           )}
-            
-          
+
           <View style={styles.spacer} />
           <View style={styles.spacer} />
           <Text>
@@ -247,16 +285,22 @@ const saveToDatabase = async () => {
           </Text>
           <View style={styles.optionContainer}>
             <OptionalButton
-              options={["Yes", "No"]}
+              options={['Yes', 'No']}
               actions={[
                 () => {
-                  handleInputChange("isStandard", true);
+                  handleInputChange('isStandard', true);
                 },
                 () => {
-                  handleInputChange("isStandard", false);
+                  handleInputChange('isStandard', false);
                 },
               ]}
-              value={siteQuestions.isStandard === null ? null : siteQuestions.isStandard ? "Yes" : "No"}
+              value={
+                siteQuestions?.isStandard === null
+                  ? null
+                  : siteQuestions?.isStandard
+                  ? 'Yes'
+                  : 'No'
+              }
             />
           </View>
         </View>
@@ -270,12 +314,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   body: {
-    marginHorizontal: width * 0.1,
+    padding: 20,
   },
   optionContainer: {
     width: width * 0.25,
     marginVertical: height * 0.01,
-    alignSelf: "flex-start",
+    alignSelf: 'flex-start',
   },
   spacer: {
     height: height * 0.01,
@@ -286,7 +330,7 @@ const styles = StyleSheet.create({
   image: {
     width: width * 0.5,
     height: height * 0.25,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
 });
 

@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Dimensions, View, Image, Alert } from 'react-native';
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Dimensions,
+  View,
+  Image,
+  Alert,
+} from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useAppContext } from '../../context/AppContext';
 import Header from '../../components/Header';
@@ -9,37 +17,41 @@ import { useSQLiteContext } from 'expo-sqlite/next';
 const { width, height } = Dimensions.get('window');
 
 function GenericPhotoPage() {
-  db=useSQLiteContext();
+  db = useSQLiteContext();
   const navigation = useNavigation();
   const { params } = useRoute();
   const { title, photoKey, nextScreen } = params;
-  const { photos, savePhoto,jobID } = useAppContext();
-  const existingPhoto = photos[photoKey];
-  const [selectedImage, setSelectedImage] = useState(existingPhoto?.uri || null);
+  const { photos, savePhoto, jobID } = useAppContext();
+  const existingPhoto = photos?.[photoKey];
+  // RN uses cache storeage when picking image from gallery
+  // existing url may not work if the image is deleted from the gallery
+  // or deleted from the cache storage
+  // TODO: can move the image upload to a server and store the url in the database
+  const [selectedImage, setSelectedImage] = useState(
+    existingPhoto?.uri || null
+  );
 
   const handlePhotoSelected = (uri) => {
     setSelectedImage(uri);
     savePhoto(photoKey, { title, photoKey, uri });
     console.log('Photo saved:', { title, photoKey, uri });
-    console.log('photos:',photos);
+    console.log('photos:', photos);
   };
-const savePhotoToDatabase = async () => {
-  const photosJson = JSON.stringify(photos); 
-  try {
-    await db.runAsync(
-      'UPDATE Jobs SET photos = ? WHERE id = ?',
-      [photosJson, jobID],
-    )
-    .then((result) => {
-      console.log('photos saved to database:', result);
- 
-
-    });
-
-  } catch (error) {
-    console.log('Error saving photos to database:', error);
-  }
-};
+  const savePhotoToDatabase = async () => {
+    const photosJson = JSON.stringify(photos);
+    try {
+      await db
+        .runAsync('UPDATE Jobs SET photos = ? WHERE id = ?', [
+          photosJson,
+          jobID,
+        ])
+        .then((result) => {
+          console.log('photos saved to database:', result);
+        });
+    } catch (error) {
+      console.log('Error saving photos to database:', error);
+    }
+  };
   const nextPressed = () => {
     if (selectedImage) {
       savePhotoToDatabase();
@@ -47,13 +59,13 @@ const savePhotoToDatabase = async () => {
       navigation.navigate(nextScreen);
     } else {
       // If no photo has been selected, show an alert
-      Alert.alert("Select a Photo", "Please select a photo before proceeding.");
+      Alert.alert('Select a Photo', 'Please select a photo before proceeding.');
     }
   };
-const backPressed = () => {
-  savePhotoToDatabase();
-  navigation.goBack();
-};
+  const backPressed = () => {
+    savePhotoToDatabase();
+    navigation.goBack();
+  };
   return (
     <SafeAreaView style={styles.container}>
       <Header
@@ -66,7 +78,9 @@ const backPressed = () => {
       />
       <ScrollView style={styles.flex}>
         <View style={styles.body}>
-          <Text type="caption" style={styles.text}>{title}</Text>
+          <Text type="caption" style={styles.text}>
+            {title}
+          </Text>
           <ImagePickerButton
             onImageSelected={handlePhotoSelected}
             currentImage={selectedImage}

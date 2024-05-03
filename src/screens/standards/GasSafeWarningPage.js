@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState } from 'react';
 import {
   Dimensions,
   Button,
@@ -11,21 +11,21 @@ import {
   Text,
   View,
   Modal,
-} from "react-native";
-import Header from "../../components/Header";
-import { useNavigation } from "@react-navigation/native";
-import { TextInputWithTitle } from "../../components/TextInput";
-import OptionalButton from "../../components/OptionButton";
-import SignatureScreen from "react-native-signature-canvas";
-import { PrimaryColors } from "../../theme/colors";
-import EcomHelper from "../../utils/ecomHelper";
-import { AppContext } from "../../context/AppContext";
-const { width, height } = Dimensions.get("window");
+} from 'react-native';
+import Header from '../../components/Header';
+import { useNavigation } from '@react-navigation/native';
+import { TextInputWithTitle } from '../../components/TextInput';
+import OptionalButton from '../../components/OptionButton';
+import SignatureScreen from 'react-native-signature-canvas';
+import { PrimaryColors } from '../../theme/colors';
+import EcomHelper from '../../utils/ecomHelper';
+import { AppContext } from '../../context/AppContext';
+const { width, height } = Dimensions.get('window');
 function GasSafeWarningPage() {
   const navigation = useNavigation();
   const appContext = useContext(AppContext);
   const jobType = appContext.jobType;
-  const title = jobType === "Install" ? "New Meter Details" : jobType;
+  const title = jobType === 'Install' ? 'New Meter Details' : jobType;
   const standardDetails = appContext.standardDetails;
 
   const [certificateReference, setCertificateReference] = useState(
@@ -42,7 +42,7 @@ function GasSafeWarningPage() {
   const [isCustomerAvailable, setIsCustomerAvailable] = useState(
     standardDetails?.isCustomerAvailable
   );
-                                     
+
   const [isModal, setIsModal] = useState(false);
   const [isCustomerSign, setIsCustomerSign] = useState(true);
   const [customerSign, setCustomerSign] = useState(
@@ -52,11 +52,11 @@ function GasSafeWarningPage() {
     standardDetails?.engineerSign
   );
 
-  console.log("GasSafeWarningPage");
+  console.log('GasSafeWarningPage');
 
   const handleOK = (signature) => {
-    const base64String = signature.replace("data:image/png;base64,", "");
-    console.log("isCustomerSign", isCustomerSign);
+    const base64String = signature.replace('data:image/png;base64,', '');
+    console.log('isCustomerSign', isCustomerSign);
     // Use the base64String as needed
     if (isCustomerSign) {
       setCustomerSign(base64String);
@@ -82,46 +82,46 @@ function GasSafeWarningPage() {
     navigation.goBack();
   };
 
-  const nextPressed = () => {
+  const nextPressed = async () => {
     // validate
     if (certificateReference == null) {
-      EcomHelper.showInfoMessage("Please enter Certificate Reference");
+      EcomHelper.showInfoMessage('Please enter Certificate Reference');
       return;
     }
     if (engineerId == null) {
-      EcomHelper.showInfoMessage("Please enter Engineer ID");
+      EcomHelper.showInfoMessage('Please enter Engineer ID');
       return;
     }
     if (jobNumber == null) {
-      EcomHelper.showInfoMessage("Please enter Job Number");
+      EcomHelper.showInfoMessage('Please enter Job Number');
       return;
     }
     if (emergencyService == null) {
       EcomHelper.showInfoMessage(
-        "Please enter Details of gas EmergencySErvice Provider RED"
+        'Please enter Details of gas EmergencySErvice Provider RED'
       );
       return;
     }
     if (isPropertyRented == null) {
-      EcomHelper.showInfoMessage("Please answer if the property is rented");
+      EcomHelper.showInfoMessage('Please answer if the property is rented');
       return;
     }
     if (isCustomerAvailable == null) {
       EcomHelper.showInfoMessage(
-        "Please answer if Customer was available on site"
+        'Please answer if Customer was available on site'
       );
       return;
     }
     if (isCustomerAvailable && customerSign == null) {
-      EcomHelper.showInfoMessage("Please check Customer Signature");
+      EcomHelper.showInfoMessage('Please check Customer Signature');
       return;
     }
     if (engineerSign == null) {
-      EcomHelper.showInfoMessage("Please check Engineer Signature");
+      EcomHelper.showInfoMessage('Please check Engineer Signature');
       return;
     }
 
-    appContext.setStandardDetails({
+    const standards = {
       ...standardDetails,
       certificateReference: certificateReference,
       engineerId: engineerId,
@@ -131,9 +131,15 @@ function GasSafeWarningPage() {
       isCustomerAvailable: isCustomerAvailable,
       engineerSign: engineerSign,
       customerSign: customerSign,
-    });
+    };
 
-    navigation.navigate("CompositeLabelPhoto");
+    appContext.setStandardDetails(standards);
+    await db.runAsync('UPDATE Jobs SET standards = ? WHERE id = ?', [
+      JSON.stringify(standards),
+      appContext.jobID,
+    ]);
+
+    navigation.navigate('CompositeLabelPhoto');
   };
   return (
     <SafeAreaView style={styles.content}>
@@ -141,18 +147,18 @@ function GasSafeWarningPage() {
         hasLeftBtn={true}
         hasCenterText={true}
         hasRightBtn={true}
-        centerText={"Gas Safe Warning Notice"}
+        centerText={'Gas Safe Warning Notice'}
         leftBtnPressed={backPressed}
         rightBtnPressed={nextPressed}
       />
       <KeyboardAvoidingView
-        style={[styles.content,{marginHorizontal:'5%'}]}
-        behavior={Platform.OS === "ios" ? "padding" : null}
+        style={[styles.content, { marginHorizontal: '5%' }]}
+        behavior={Platform.OS === 'ios' ? 'padding' : null}
       >
         <ScrollView style={styles.content}>
           <TextInputWithTitle
-            title={"Certificate Reference"}
-            placeholder={""}
+            title={'Certificate Reference'}
+            placeholder={''}
             onChangeText={(txt) => {
               setCertificateReference(txt);
             }}
@@ -161,8 +167,8 @@ function GasSafeWarningPage() {
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
-            title={"Engineers ID"}
-            placeholder={""}
+            title={'Engineers ID'}
+            placeholder={''}
             value={engineerId}
             onChangeText={(txt) => {
               setEngineerId(txt);
@@ -171,8 +177,8 @@ function GasSafeWarningPage() {
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
-            title={"Job Number"}
-            placeholder={""}
+            title={'Job Number'}
+            placeholder={''}
             value={jobNumber}
             onChangeText={(txt) => {
               setJobNumber(txt);
@@ -181,8 +187,8 @@ function GasSafeWarningPage() {
           />
           <View style={styles.spacer} />
           <TextInputWithTitle
-            title={"Details of gas EmergencyService Provider REF"}
-            placeholder={""}
+            title={'Details of gas EmergencyService Provider REF'}
+            placeholder={''}
             onChangeText={(txt) => {
               setEmergencyService(txt);
             }}
@@ -192,140 +198,145 @@ function GasSafeWarningPage() {
           <View style={styles.spacer} />
           <View style={styles.spacer} />
           <View
-  style={{
-    marginHorizontal: width * 0.05, // Adjusted to create a gap between the sections
-    flexDirection: "row",
-    justifyContent: "space-between",
-  }}
->
-  <View
-    style={{
-      justifyContent: "space-between",
-      height: height * 0.1,
-      width: width * 0.35, // Adjusted width to accommodate the spacer
-    }}
-  >
-    <Text>{"Is the property Rented?"}</Text>
-    <View style={styles.spacer2} />
-    <View style={styles.optionContainer}>
-      <OptionalButton
-        options={["Yes", "No"]}
-        actions={[
-          () => {
-            setIsPropertyRented(true);
-          },
-          () => {
-            setIsPropertyRented(false);
-          },
-        ]}
-        value={
-          isPropertyRented == null
-            ? null
-            : isPropertyRented
-            ? "Yes"
-            : "No"
-        }
-      />
-    </View>
-  </View>
-
-  {/* Spacer View for the gap */}
-  <View style={{ width: 20 }}></View>
-
-  <View
-    style={{
-      justifyContent: "space-between",
-      height: height*0.1,
-      width: width * 0.35, // Adjusted width to match the first section
-    }}
-  >
-    <Text>{"Was Customer available on site"}</Text>
-    <View style={styles.spacer2} />
-    <View style={styles.optionContainer}>
-      <OptionalButton
-        options={["Yes", "No"]}
-        actions={[
-          () => {
-            setIsCustomerAvailable(true);
-          },
-          () => {
-            setIsCustomerAvailable(false);
-          },
-        ]}
-        value={
-          isCustomerAvailable == null
-            ? null
-            : isCustomerAvailable
-            ? "Yes"
-            : "No"
-        }
-      />
-    </View>
-  </View>
-</View>
-
-<View style={styles.spacer} />
-<View style={styles.row}>
-  {isCustomerAvailable && (
-    <View>
-      <Button
-        title={"Customer Signature"}
-        onPress={() => {
-          setIsModal(true);
-          setIsCustomerSign(true);
-        }}
-      />
-      <View style={styles.spacer2} />
-      {customerSign && (
-        <Image
-          source={{ uri: `data:image/png;base64,${customerSign}` }}
-          style={styles.signImage}
-        />
-      )}
-    </View>
-  )}
-
-  <View>
-    <Button
-      title={"Engineer Signature"}
-      onPress={() => {
-        setIsModal(true);
-        setIsCustomerSign(false);
-      }}
-    />
-    <View style={styles.spacer2} />
-    <Image
-      source={{ uri: `data:image/png;base64,${engineerSign}` }}
-      style={styles.signImage}
-    />
-  </View>
-</View>
-
-<Modal
-        animationType="slide"
-        transparent={true}
-        visible={isModal}
-        onRequestClose={() => {
-          setIsModal(!isModal);
-        }}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={[styles.modalInnerContainer, { width: width * 0.8, height: height * 0.6 }]}>
-            <Button
-              title="Close"
-              onPress={() => {
-                setIsModal(false);
+            style={{
+              marginHorizontal: width * 0.05, // Adjusted to create a gap between the sections
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}
+          >
+            <View
+              style={{
+                justifyContent: 'space-between',
+                height: height * 0.1,
+                width: width * 0.35, // Adjusted width to accommodate the spacer
               }}
-            />
-            <SignatureScreen
-              onOK={handleOK}
-              webStyle={`.m-signature-pad { ... }`}
-              backgroundColor={PrimaryColors.Sand}
-              scrollable={true}
-            />
+            >
+              <Text>{'Is the property Rented?'}</Text>
+              <View style={styles.spacer2} />
+              <View style={styles.optionContainer}>
+                <OptionalButton
+                  options={['Yes', 'No']}
+                  actions={[
+                    () => {
+                      setIsPropertyRented(true);
+                    },
+                    () => {
+                      setIsPropertyRented(false);
+                    },
+                  ]}
+                  value={
+                    isPropertyRented == null
+                      ? null
+                      : isPropertyRented
+                      ? 'Yes'
+                      : 'No'
+                  }
+                />
+              </View>
+            </View>
+
+            {/* Spacer View for the gap */}
+            <View style={{ width: 20 }}></View>
+
+            <View
+              style={{
+                justifyContent: 'space-between',
+                height: height * 0.1,
+                width: width * 0.35, // Adjusted width to match the first section
+              }}
+            >
+              <Text>{'Was Customer available on site'}</Text>
+              <View style={styles.spacer2} />
+              <View style={styles.optionContainer}>
+                <OptionalButton
+                  options={['Yes', 'No']}
+                  actions={[
+                    () => {
+                      setIsCustomerAvailable(true);
+                    },
+                    () => {
+                      setIsCustomerAvailable(false);
+                    },
+                  ]}
+                  value={
+                    isCustomerAvailable == null
+                      ? null
+                      : isCustomerAvailable
+                      ? 'Yes'
+                      : 'No'
+                  }
+                />
+              </View>
+            </View>
           </View>
-        </View>
-      </Modal>
+
+          <View style={styles.spacer} />
+          <View style={styles.row}>
+            {isCustomerAvailable && (
+              <View>
+                <Button
+                  title={'Customer Signature'}
+                  onPress={() => {
+                    setIsModal(true);
+                    setIsCustomerSign(true);
+                  }}
+                />
+                <View style={styles.spacer2} />
+                {customerSign && (
+                  <Image
+                    source={{ uri: `data:image/png;base64,${customerSign}` }}
+                    style={styles.signImage}
+                  />
+                )}
+              </View>
+            )}
+
+            <View>
+              <Button
+                title={'Engineer Signature'}
+                onPress={() => {
+                  setIsModal(true);
+                  setIsCustomerSign(false);
+                }}
+              />
+              <View style={styles.spacer2} />
+              <Image
+                source={{ uri: `data:image/png;base64,${engineerSign}` }}
+                style={styles.signImage}
+              />
+            </View>
+          </View>
+
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={isModal}
+            onRequestClose={() => {
+              setIsModal(!isModal);
+            }}
+          >
+            <View style={styles.modalOverlay}>
+              <View
+                style={[
+                  styles.modalInnerContainer,
+                  { width: width * 0.8, height: height * 0.6 },
+                ]}
+              >
+                <Button
+                  title="Close"
+                  onPress={() => {
+                    setIsModal(false);
+                  }}
+                />
+                <SignatureScreen
+                  onOK={handleOK}
+                  webStyle={`.m-signature-pad { ... }`}
+                  backgroundColor={PrimaryColors.Sand}
+                  scrollable={true}
+                />
+              </View>
+            </View>
+          </Modal>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -343,10 +354,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   optionsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     paddingHorizontal: width * 0.1,
-    alignItems: "center",
+    alignItems: 'center',
     marginBottom: 20,
   },
   optionTitle: {
@@ -359,7 +370,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalInnerContainer: {
     backgroundColor: 'white',
@@ -371,15 +382,15 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5
+    elevation: 5,
   },
   signImage: {
     width: width * 0.8,
     height: 150,
     resizeMode: 'contain',
     alignSelf: 'center',
-    marginVertical: 15
-  }
+    marginVertical: 15,
+  },
 });
 
 export default GasSafeWarningPage;
