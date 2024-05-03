@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { FlatList, SafeAreaView, StyleSheet, View, Text as RNText } from 'react-native';
+import {
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  View,
+  Text as RNText,
+} from 'react-native';
 import { PrimaryColors, Transparents } from '../theme/colors';
 import { EcomPressable as Button } from '../components/ImageButton';
 import Header from '../components/Header';
@@ -18,33 +24,41 @@ function PlannedJobPage() {
     const fetchPlannedJobs = async () => {
       setIsLoading(true);
       setError(null);
-  
-      console.log("Using token for API request:", authState.token); // Debug: Check what token is being used
-  
+
+      console.log('Using token for API request:', authState.token); // Debug: Check what token is being used
+
       if (!authState.token) {
-        setError("Authentication token is not available.");
+        setError('Authentication token is not available.');
         setIsLoading(false);
         return;
       }
 
-      try {
-        const response = await axios.get('https://test.ecomdata.co.uk/api/jobs', {
-          headers: {
-            Authorization: `Bearer ${authState.token}` // Ensure token is applied correctly
+      axios
+        .get('https://test.ecomdata.co.uk/api/jobs/')
+        .then((response) => {
+          console.log({ response });
+          const { data } = response;
+          if (data && data.length > 0) {
+            setPlannedJobs(data);
+          } else {
+            setError('No planned jobs found');
           }
+        })
+        .catch((error) => {
+          console.log({ error });
+          console.log(
+            'Error fetching jobs:',
+            error.response ? error.response.data : error.message
+          );
+          setError(
+            `Error loading data: ${
+              error.response ? error.response.data : error.message
+            }`
+          );
+        })
+        .finally(() => {
+          setIsLoading(false);
         });
-        const { data } = response;
-        if (data && data.length > 0) {
-          setPlannedJobs(data);
-        } else {
-          setError('No planned jobs found');
-        }
-      } catch (error) {
-        console.log("Error fetching jobs:", error.response ? error.response.data : error.message);
-        setError(`Error loading data: ${error.response ? error.response.data : error.message}`);
-      } finally {
-        setIsLoading(false);
-      }
     };
 
     fetchPlannedJobs();
@@ -54,7 +68,8 @@ function PlannedJobPage() {
     const handleItemClick = () => {
       navigation.navigate('SiteDetailsPage', { jobType: item.JobType });
     };
-    const rowColor = index % 2 === 0 ? Transparents.SandColor2 : Transparents.Clear;
+    const rowColor =
+      index % 2 === 0 ? Transparents.SandColor2 : Transparents.Clear;
 
     return (
       <Button key={item.id.toString()} onPress={handleItemClick}>
@@ -67,21 +82,40 @@ function PlannedJobPage() {
 
   const renderEmptyComponent = () => {
     if (isLoading) {
-      return <View style={styles.center}><RNText>Loading...</RNText></View>;
+      return (
+        <View style={styles.center}>
+          <RNText>Loading...</RNText>
+        </View>
+      );
     }
     if (error) {
-      return <View style={styles.center}><RNText>{error}</RNText></View>;
+      return (
+        <View style={styles.center}>
+          <RNText>{error}</RNText>
+        </View>
+      );
     }
-    return <View style={styles.center}><RNText>No planned jobs</RNText></View>;
+    return (
+      <View style={styles.center}>
+        <RNText>No planned jobs</RNText>
+      </View>
+    );
   };
 
   return (
     <SafeAreaView style={styles.body}>
-      <Header hasMenuButton={false} hasLeftBtn={true} hasCenterText={true} hasRightBtn={false} centerText={'Planned Jobs'} leftBtnPressed={() => navigation.goBack()} />
+      <Header
+        hasMenuButton={false}
+        hasLeftBtn={true}
+        hasCenterText={true}
+        hasRightBtn={false}
+        centerText={'Planned Jobs'}
+        leftBtnPressed={() => navigation.goBack()}
+      />
       <FlatList
         data={plannedJobs}
         renderItem={renderItem}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={(item) => item.id.toString()}
         ListEmptyComponent={renderEmptyComponent}
         ListHeaderComponent={<View style={styles.spacer} />}
         ListFooterComponent={<View style={styles.spacer} />}
@@ -107,7 +141,7 @@ const styles = StyleSheet.create({
   },
   spacer: {
     height: 20,
-  }
+  },
 });
 
 export default PlannedJobPage;

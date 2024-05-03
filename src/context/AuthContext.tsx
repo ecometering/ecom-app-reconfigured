@@ -3,7 +3,11 @@ import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
 interface AuthProps {
-  authState?: { token: string | null; refreshToken:string | null;  authenticated: boolean | null };
+  authState?: {
+    token: string | null;
+    refreshToken: string | null;
+    authenticated: boolean | null;
+  };
   OnLogin?: (username: string, password: string) => Promise<any>;
   OnLogout?: () => Promise<any>;
 }
@@ -36,7 +40,11 @@ export const AuthProvider = ({ children }: any) => {
 
       if (token) {
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        setAuthState({ token: token,refreshToken: refreshToken ,authenticated: true });
+        setAuthState({
+          token: token,
+          refreshToken: refreshToken,
+          authenticated: true,
+        });
       }
     };
     loadToken();
@@ -50,7 +58,11 @@ export const AuthProvider = ({ children }: any) => {
       });
 
       console.log('file : AuthContext.tsx ~ line 31 ~ login ~ result', result);
-      setAuthState({ token: result.data.access,refreshToken:result.data.refresh, authenticated: true });
+      setAuthState({
+        token: result.data.access,
+        refreshToken: result.data.refresh,
+        authenticated: true,
+      });
       console.log(
         'file : AuthContext.tsx ~ line 34 ~ login ~ authState',
         authState
@@ -60,7 +72,6 @@ export const AuthProvider = ({ children }: any) => {
         'Authorization'
       ] = `Bearer ${result.data.access}`;
 
-      
       await SecureStore.setItemAsync(TOKEN_KEY, result.data.access);
       return result;
     } catch (e) {
@@ -97,7 +108,7 @@ export const AuthProvider = ({ children }: any) => {
       'file : AuthContext.tsx ~ line 50 ~ logout ~ token removed',
       authState.token
     );
-    setAuthState({ token: null,refreshToken:null, authenticated: false });
+    setAuthState({ token: null, refreshToken: null, authenticated: false });
     console.log(
       'file : AuthContext.tsx ~ line 52 ~ logout ~ authState',
       authState
@@ -107,27 +118,31 @@ export const AuthProvider = ({ children }: any) => {
       authState.token
     );
   };
-  const refresh = async (refreshToken: string) => {
+  const refresh = async () => {
+    const refreshToken = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
+    console.log({ refreshToken });
     try {
       console.log('API url:', `${API_URL}/token/refresh`);
       const result = await axios.post(`${API_URL}/token/refresh/`, {
-        refreshToken
+        refreshToken,
       });
-  
+
       console.log('Refresh result:', result);
-      setAuthState(prevState => ({
+      setAuthState((prevState) => ({
         ...prevState,
         token: result.data.access,
         refreshToken: result.data.refresh || prevState.refreshToken,
-        authenticated: true
+        authenticated: true,
       }));
-  
-      axios.defaults.headers.common['Authorization'] = `Bearer ${result.data.access}`;
+
+      axios.defaults.headers.common[
+        'Authorization'
+      ] = `Bearer ${result.data.access}`;
       await SecureStore.setItemAsync(TOKEN_KEY, result.data.access);
       if (result.data.refresh) {
         await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, result.data.refresh);
       }
-  
+
       return result;
     } catch (e) {
       console.error('Refresh failed:', e);
@@ -136,24 +151,27 @@ export const AuthProvider = ({ children }: any) => {
         console.error('Status:', e.response.status);
         console.error('Headers:', e.response.headers);
       } else if (e.request) {
-        console.error('The request was made but no response was received', e.request);
+        console.error(
+          'The request was made but no response was received',
+          e.request
+        );
       } else {
         console.error('Error', e.message);
       }
       console.error('Config:', e.config);
-  
+
       return {
         error: true,
         msg: e?.response?.data?.msg || 'An unknown error occurred',
       };
     }
   };
-  
+
   const value = {
     OnLogin: login,
     OnLogout: logout,
     authState,
-    RefreshAccessToken: refresh
+    RefreshAccessToken: refresh,
   };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

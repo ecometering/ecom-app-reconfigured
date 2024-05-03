@@ -1,34 +1,34 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { meterType } from "../utils/constant";
-import { database } from "../utils/db";
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { meterType } from '../utils/constant';
+import { database } from '../utils/db';
 
 const AppContext = createContext({
   numberOfStreams: 0,
   currentStreamIndex: 0,
   updateCurrentStreamIndex: 0,
-  extraPhotoCount: 0
+  extraPhotoCount: 0,
 });
 
 export const useAppContext = () => {
   return useContext(AppContext);
-}
+};
 
 const AppContextProvider = (props) => {
   const [jobID, setJobID] = useState(null);
   const [jobType, setJobType] = useState(null);
   const [jobDetails, setJobDetails] = useState(null);
-  const[jobStarted,setJobStarted] = useState(false);
+  const [jobStarted, setJobStarted] = useState(false);
   const [photos, setPhotos] = useState({});
 
-  const savePhoto = async(photoKey, photoDetails) => {
-    setPhotos(prevPhotos => ({
+  const savePhoto = async (photoKey, photoDetails) => {
+    setPhotos((prevPhotos) => ({
       ...prevPhotos,
       [photoKey]: photoDetails,
     }));
   };
 
   const updatePhoto = (photoKey, newDetails) => {
-    setPhotos(prevPhotos => ({
+    setPhotos((prevPhotos) => ({
       ...prevPhotos,
       [photoKey]: { ...prevPhotos[photoKey], ...newDetails },
     }));
@@ -46,27 +46,44 @@ const AppContextProvider = (props) => {
 
   // CHOSEN ITEM or METER
   const [siteDetails, setSiteDetails] = useState({
-    mprn: "",companyName: "",buildingName: "",address1: "",
-    address2: "",address3: "",town: "",county: "",postCode: "",
-    title: "",contact: "",email1: "",email2: "",number1: "",number2: "",
-    instructions: "",confirmContact: false,confirmWarrant:false, // Assuming confirmContact is a boolean, provide a default value accordingly
+    mprn: '',
+    companyName: '',
+    buildingName: '',
+    address1: '',
+    address2: '',
+    address3: '',
+    town: '',
+    county: '',
+    postCode: '',
+    title: '',
+    contact: '',
+    email1: '',
+    email2: '',
+    number1: '',
+    number2: '',
+    instructions: '',
+    confirmContact: false,
+    confirmWarrant: false, // Assuming confirmContact is a boolean, provide a default value accordingly
   });
   const [siteQuestions, setSiteQuestions] = useState({
-    isSafe: false,isGeneric: false,genericReason: "",
-    isCarryOut: false,carryOutReason: "", isFitted: false,
+    isSafe: false,
+    isGeneric: false,
+    genericReason: '',
+    isCarryOut: false,
+    carryOutReason: '',
+    isFitted: false,
     isStandard: false,
   });
 
-  const [meterDetails, setMeterDetails] = useState({
-  });
+  const [meterDetails, setMeterDetails] = useState({});
   const [kioskDetails, setKioskDetails] = useState({});
-  const [ecvDetails, setEcvDetails] = useState({}) 
-  const [movDetails,setMovDetails]= useState({});
+  const [ecvDetails, setEcvDetails] = useState({});
+  const [movDetails, setMovDetails] = useState({});
   const [regulatorDetails, setRegulatorDetails] = useState(null);
   const [standardDetails, setStandardDetails] = useState(null);
-  const [ventDetails,setVentDetails]= useState({});
+  const [ventDetails, setVentDetails] = useState({});
   //.. removed
-  const [dataLoggerDetails,setDataLoggerDetails]= useState({});
+  const [dataLoggerDetails, setDataLoggerDetails] = useState({});
   const [removedMeterDetails, setRemovedMeterDetails] = useState(null);
   //.. warant
   // ... Maintenance
@@ -78,12 +95,12 @@ const AppContextProvider = (props) => {
   const [jobData, setJobdata] = useState(null);
 
   useEffect(() => {
-    console.log("appcontenxt, jobType", jobType);
+    console.log('appcontenxt, jobType', jobType);
   }, [jobType, userLogged]);
 
   const setJobTypes = async (job) => {
     setJobType(job);
-    console.log("Job type changed", job);
+    console.log('Job type changed', job);
   };
   const [correctorDetails, setCorrectorDetails] = useState({
     manufacturer: '',
@@ -91,9 +108,8 @@ const AppContextProvider = (props) => {
     serialNumber: '',
     isMountingBracket: null,
     uncorrected: '',
-    corrected: ''
+    corrected: '',
   });
-  
 
   const resetContext = () => {
     setJobType(null);
@@ -106,15 +122,33 @@ const AppContextProvider = (props) => {
     setStreamCounter(0);
     setExtraCounter(0);
     setSiteDetails({
-    mprn: "",companyName: "",buildingName: "",address1: "",address2: "",
-    address3: "",town: "",county: "",postCode: "",title: "",contact: "",
-    email1: "",email2: "",number1: "",number2: "",instructions: "",
-    confirmContact: false,confirmWarrant: false,
+      mprn: '',
+      companyName: '',
+      buildingName: '',
+      address1: '',
+      address2: '',
+      address3: '',
+      town: '',
+      county: '',
+      postCode: '',
+      title: '',
+      contact: '',
+      email1: '',
+      email2: '',
+      number1: '',
+      number2: '',
+      instructions: '',
+      confirmContact: false,
+      confirmWarrant: false,
     });
     setSiteQuestions({
-      isSafe: false,isGeneric: false,genericReason: "",
-    isCarryOut: false,carryOutReason: "", isFitted: false,
-    isStandard: false,
+      isSafe: false,
+      isGeneric: false,
+      genericReason: '',
+      isCarryOut: false,
+      carryOutReason: '',
+      isFitted: false,
+      isStandard: false,
     });
     setMeterDetails(null);
     setRegulatorDetails(null);

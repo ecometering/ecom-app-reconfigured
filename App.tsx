@@ -13,7 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createStackNavigator } from '@react-navigation/stack';
 import Constants from 'expo-constants';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
-import { SQLiteProvider,useSQLiteContext } from 'expo-sqlite/next';
+import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite/next';
 import { NavigationContainer } from '@react-navigation/native';
 
 const CheckFirstLaunch = async () => {
@@ -65,7 +65,7 @@ const MainApp = () => {
 export default function App() {
   return (
     <AuthProvider>
-      <SQLiteProvider databaseName='options.sqlite'>
+      <SQLiteProvider databaseName="options.sqlite">
         <MainApp />
       </SQLiteProvider>
     </AuthProvider>

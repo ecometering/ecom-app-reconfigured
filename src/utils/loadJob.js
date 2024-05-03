@@ -1,27 +1,30 @@
 import React, { useEffect, useContext } from 'react';
-import { AppContext } from "../context/AppContext";
+import { AppContext } from '../context/AppContext';
 import { openDatabase } from '../utils/database';
 
-
 // Function to load job details from the database
-export const loadJob = async () => {
-  const db = openDatabase(); // Ensure the database is opened correctly
+export const loadJob = async (jobId) => {
+  const db = await openDatabase(); // Assuming openDatabase() returns a promise of a database connection
 
-  try {
-    const result = await db.runAsync(
-      `SELECT * FROM Jobs WHERE id = ?;`,
-      [jobId]
-    );
-
-    if (result.rows.length > 0) {
-      return result.rows.item(0);
-    } else {
-      return null; // No job found
-    }
-  } catch (error) {
-    console.error('Error loading job:', error);
-    throw error;
-  }
+  return new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        'SELECT * FROM Jobs WHERE id = ?;',
+        [jobId],
+        (tx, results) => {
+          if (results.rows.length > 0) {
+            resolve(results.rows.item(0)); // Access the first row if it exists
+          } else {
+            resolve(null); // Resolve with null if no data found
+          }
+        },
+        (tx, error) => {
+          console.error('Error loading job:', error);
+          reject(error); // Proper error handling
+        }
+      );
+    });
+  });
 };
 
 // Component to process and update job details
@@ -40,7 +43,7 @@ const JobDetailsProcessor = ({ jobID }) => {
     setStandards,
     setRebook,
     setPhotos,
-    setOtherDetails
+    setOtherDetails,
   } = useContext(AppContext); // Use context to set details
 
   // Function to update app context with job data
@@ -68,10 +71,10 @@ const JobDetailsProcessor = ({ jobID }) => {
   // Main function to process and update context with the job details
   const processAndUpdateJobDetails = async () => {
     try {
-      const jobData = await loadJob(jobId);
+      const jobData = await loadJob(jobID);
 
       if (!jobData) {
-        console.log("No job found for ID:", jobId);
+        console.log('No job found for ID:', jobID);
         return;
       }
 
@@ -107,18 +110,18 @@ const JobDetailsProcessor = ({ jobID }) => {
         chatterboxDetails: JSON.parse(chatterboxDetails),
         standards: JSON.parse(standards),
         rebook: JSON.parse(rebook),
-        photos: JSON.parse(photos)
+        photos: JSON.parse(photos),
       };
 
       updateAppContext(parsedData);
     } catch (error) {
-      console.error("Error processing job details:", error);
+      console.error('Error processing job details:', error);
     }
   };
 
   useEffect(() => {
     processAndUpdateJobDetails();
-  }, [jobId]);
+  }, [jobID]);
 
   return null; // This component does not render anything
 };

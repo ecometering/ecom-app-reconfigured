@@ -1,121 +1,135 @@
-import React, { useContext } from "react";
-import { Alert, ScrollView, StyleSheet, View } from "react-native";
-import { height, unitH } from "../utils/constant";
-import { PrimaryColors } from "../theme/colors";
-import { EcomPressable as Button } from "../components/ImageButton";
-import Text from "../components/Text";
-import { useNavigation } from "@react-navigation/native";
-import { Button as RnButton } from "react-native";
-import { AppContext } from "../context/AppContext";
-import { useAuth } from "../context/AuthContext";
-import { getDatabaseJob } from "../utils/database";
+import React, { useContext } from 'react';
+import {
+  Alert,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { height, unitH } from '../utils/constant';
+import { PrimaryColors } from '../theme/colors';
+import { EcomPressable as Button } from '../components/ImageButton';
+import Text from '../components/Text';
+import { useNavigation } from '@react-navigation/native';
+import { AppContext } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
+import { getDatabaseJob } from '../utils/database';
 
 function HomePage() {
   const navigation = useNavigation();
 
   const { OnLogout } = useAuth();
-  const appContext = useContext(AppContext)
+  const appContext = useContext(AppContext);
   const navigationToPage = ({ navigationName }) => {
     navigation.navigate(navigationName);
   };
   const checkJobsAndNavigate = async () => {
     try {
-      const jobs = await getDatabaseJob() || []; // Ensure an array is always returned
-      const inProgressJobs = jobs.filter(job => job.status === "In Progress");
+      const jobs = (await getDatabaseJob()) || []; // Ensure an array is always returned
+      const inProgressJobs = jobs.filter((job) => job.status === 'In Progress');
 
       if (inProgressJobs.length >= 6) {
-        Alert.alert("Limit Reached", "Please finish or delete existing jobs to continue.");
+        Alert.alert(
+          'Limit Reached',
+          'Please finish or delete existing jobs to continue.'
+        );
       } else {
-        navigationToPage({ navigationName: "NewJobPage" });
+        navigationToPage({ navigationName: 'NewJobPage' });
       }
     } catch (error) {
-      console.error("Failed to check job status", error);
-      Alert.alert("Error", "Failed to fetch job data."); // Now Alert should work
+      console.error('Failed to check job status', error);
+      Alert.alert('Error', 'Failed to fetch job data.'); // Now Alert should work
     }
   };
   return (
-    <ScrollView style={styles.scrollView}>
-      <View style={styles.body}>
-        <Button
-          onPress={() => {
-            navigationToPage({ navigationName: "CalendarPage" });
-          }}
-          style={styles.button}
-        >
-          <Text style={styles.buttonTxt}>Engineers Calendar</Text>
-        </Button>
-        <Button
-          onPress={() => {
-            navigationToPage({ navigationName: "NewJobPage" });
-          }}
-          style={styles.button}
-        >
-          <Text style={styles.buttonTxt}>New Job</Text>
-        </Button>
-        <Button
-          onPress={() => {
-            navigationToPage({ navigationName: "PlannedJobPage" });
-          }}
-          style={styles.button}
-        >
-          <Text style={styles.buttonTxt}>Planned Job</Text>
-        </Button>
+    <SafeAreaView style={{ flex: 1 }}>
+      <ScrollView>
+        <View style={styles.body}>
+          <Button
+            onPress={() => {
+              navigationToPage({ navigationName: 'CalendarPage' });
+            }}
+            style={styles.button}
+          >
+            <Text style={styles.buttonTxt}>Engineers Calendar</Text>
+          </Button>
+          <Button
+            onPress={() => {
+              navigationToPage({ navigationName: 'NewJobPage' });
+            }}
+            style={styles.button}
+          >
+            <Text style={styles.buttonTxt}>New Job</Text>
+          </Button>
+          <Button
+            onPress={() => {
+              navigationToPage({ navigationName: 'PlannedJobPage' });
+            }}
+            style={styles.button}
+          >
+            <Text style={styles.buttonTxt}>Planned Job</Text>
+          </Button>
 
-        <Button
-          onPress={() => {
-            navigationToPage({ navigationName: "InProgressJobsPage" });
-          }}
-          style={styles.button}
-        >
-          <Text style={styles.buttonTxt}>Jobs in progress</Text>
-        </Button>
-        <Button
-          onPress={() => {
-            navigationToPage({ navigationName: "CompletedJobsPage" });
-          }}
-          style={styles.button}
-        >
-          <Text style={styles.buttonTxt}>Completed Job</Text>
-        </Button>
-        <Button
-          onPress={() => {
-            navigationToPage({ navigationName: "test" });
-          }}
-          style={styles.button}
-        >
-          <Text style={styles.buttonTxt}>Test</Text>
-        </Button>
-      </View>
-      
-      <RnButton title="Logout" onPress={OnLogout} />
-    </ScrollView>
+          <Button
+            onPress={() => {
+              navigationToPage({ navigationName: 'InProgressJobsPage' });
+            }}
+            style={styles.button}
+          >
+            <Text style={styles.buttonTxt}>Jobs in progress</Text>
+          </Button>
+          <Button
+            onPress={() => {
+              navigationToPage({ navigationName: 'CompletedJobsPage' });
+            }}
+            style={styles.button}
+          >
+            <Text style={styles.buttonTxt}>Completed Job</Text>
+          </Button>
+          <Button
+            onPress={() => {
+              navigationToPage({ navigationName: 'test' });
+            }}
+            style={styles.button}
+          >
+            <Text style={styles.buttonTxt}>Test</Text>
+          </Button>
+
+          <TouchableOpacity
+            onPress={OnLogout}
+            style={{
+              backgroundColor: PrimaryColors.Red,
+              padding: 20,
+              borderRadius: 5,
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{ color: PrimaryColors.White }}>Logout</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
   body: {
-    flex: 1,
-    height: height,
-    alignItems: "center",
-    justifyContent: "space-evenly",
-    // paddingVertical: height * 0.2,
+    padding: 20,
+    gap: 20,
   },
   spacer: {
     height: unitH * 30,
   },
   button: {
-    width: "80%",
     height: unitH * 150,
     backgroundColor: PrimaryColors.White,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     borderWidth: 1,
     borderColor: PrimaryColors.Black,
     elevation: 5,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOpacity: 0.5,
     shadowRadius: 1,
     shadowOffset: {
@@ -124,9 +138,9 @@ const styles = StyleSheet.create({
     },
   },
   buttonTxt: {
-    color: "black",
+    color: 'black',
     fontSize: 20,
-    fontWeight: "500",
+    fontWeight: '500',
   },
 });
 
