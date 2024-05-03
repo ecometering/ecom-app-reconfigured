@@ -124,7 +124,6 @@ async function getDatabaseJob(setJob) {
 			  'SELECT * FROM Jobs',
 			  [],
 			  (_, { rows: { _array } }) => {
-				console.log({ _array })
 				setJob(_array)
 			  },
 			  error => {

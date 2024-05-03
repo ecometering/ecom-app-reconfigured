@@ -58,7 +58,6 @@ export default function EcvPage() {
         'Distance from Rear Kiosk Wall is required.Please enter the Distance from Rear Kiosk Wall.'
       );
     } else {
-      console.log({ nextScreen });
       navigation.navigate(nextScreen);
     }
   };
