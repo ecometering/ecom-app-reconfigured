@@ -74,6 +74,10 @@ const RebookPage = () => {
     );
   };
 
+  const handleGoBack = () => {
+    navigation.goBack();
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Header
@@ -81,7 +85,7 @@ const RebookPage = () => {
         hasCenterText={true}
         hasRightBtn={true}
         centerText={'Rebooking'}
-        leftBtnPressed={() => {}}
+        leftBtnPressed={handleGoBack}
         rightBtnPressed={handleConfirmRebook}
       />
       <View style={styles.container}>

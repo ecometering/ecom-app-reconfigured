@@ -73,6 +73,7 @@ export const AuthProvider = ({ children }: any) => {
       ] = `Bearer ${result.data.access}`;
 
       await SecureStore.setItemAsync(TOKEN_KEY, result.data.access);
+      await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, result.data.refresh);
       return result;
     } catch (e) {
       console.error('Login failed:', e); // Log high-level error

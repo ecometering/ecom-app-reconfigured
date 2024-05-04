@@ -131,7 +131,7 @@ const SubmitSuccessPage = () => {
     formData.append('job_id', job_id);
     formData.append('description', photo.description);
     formData.append('photo', {
-      uri: photo.uri.replace('file://', ''), // Adjust the URI if necessary
+      uri: photo?.uri?.replace('file://', ''), // Adjust the URI if necessary
       type: 'image/jpeg',
       name: `${photo.photoKey}.jpg`,
     });
@@ -178,7 +178,7 @@ const SubmitSuccessPage = () => {
     db.transaction((tx) => {
       tx.executeSql(
         'UPDATE Jobs SET jobStatus = ? WHERE id = ?',
-        ['Completed', appContext?.jobDetails?.JobID],
+        ['Completed', appContext?.jobID],
         () => {
           Alert.alert(
             'Upload Complete',
@@ -189,12 +189,12 @@ const SubmitSuccessPage = () => {
                 onPress: () => {
                   // Clear job data and navigate to home
                   appContext.resetContext();
+                  setLoading(false);
                   navigation.navigate('Home');
                 },
               },
             ]
           );
-          setLoading(false);
         },
         (error) => {
           console.error('SQL error:', error);

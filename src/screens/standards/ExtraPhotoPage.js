@@ -35,7 +35,7 @@ export default function ExtraPhotoPage() {
       (extra) => extra?.photoNumber === photoNumber
     );
     //  get the current extra photo and comment if it exists
-    if (currentExtra) {
+    if (currentExtra && currentExtra?.extraPhoto) {
       setHasExtraPhoto(true);
       setSelectedImage(currentExtra?.extraPhoto);
       setExtraComment(currentExtra?.extraComment);
@@ -46,13 +46,15 @@ export default function ExtraPhotoPage() {
   }, [photoNumber, standardDetails?.extras]);
 
   const handleSubmit = async () => {
-    if (!selectedImage) {
-      EcomHelper.showInfoMessage('Please add an extra photo');
-      return;
-    }
-    if (!extraComment) {
-      EcomHelper.showInfoMessage('Please provide comments on the photo');
-      return;
+    if (hasExtraPhoto) {
+      if (!selectedImage) {
+        EcomHelper.showInfoMessage('Please add an extra photo');
+        return;
+      }
+      if (!extraComment) {
+        EcomHelper.showInfoMessage('Please provide comments on the photo');
+        return;
+      }
     }
 
     const newExtra = { extraPhoto: selectedImage, extraComment, photoNumber };
