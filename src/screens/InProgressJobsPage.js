@@ -28,10 +28,8 @@ const JobsTable = ({ route }) => {
   }, [route?.params]);
 
   const fetchData = async () => {
-    await getDatabaseJob(setJobs);
+    await getDatabaseJob(setJobs, 'In Progress');
   };
-
-  const filteredData = jobs.filter((item) => item.jobStatus === 'In Progress');
 
   const handleRowClick = async (jobId) => {
     try {
@@ -138,10 +136,8 @@ const JobsTable = ({ route }) => {
           leftBtnPressed={() => navigation.goBack()}
         />
         <TableHeader />
-        {filteredData.length > 0 ? (
-          filteredData.map((item) => (
-            <TableRow key={item.id.toString()} item={item} />
-          ))
+        {jobs.length > 0 ? (
+          jobs.map((item) => <TableRow key={item.id.toString()} item={item} />)
         ) : (
           <Text style={styles.noJobsText}>No jobs available</Text>
         )}

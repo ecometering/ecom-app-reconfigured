@@ -6,7 +6,7 @@ const AssetSelectGatewayScreen = () => {
     const navigation = useNavigation();
     const { jobType, meterDetails } = useContext(AppContext);
     const route = useRoute();
-    const {  pageFlow } = route.params;
+    const {  pageFlow } = route.params || {};
     console.log("Asset select pageFlow",pageFlow);
     // Log for debugging purposes
     console.log("Unified gateway screen", meterDetails);

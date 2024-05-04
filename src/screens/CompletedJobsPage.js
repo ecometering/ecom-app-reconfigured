@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, View, Text, ScrollView, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import {
+  SafeAreaView,
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
 import { getDatabaseJob } from '../utils/database'; // Importing required functions
@@ -13,54 +21,82 @@ const CompletedJobsTable = () => {
   const [jobs, setJobs] = useState([]);
   const navigation = useNavigation();
 
-
   useEffect(() => {
-
     fetchData();
-  }, [filteredData]);
+  }, []);
 
   const fetchData = async () => {
-    const data = await getDatabaseJob(setJobs);
+    await getDatabaseJob(setJobs, 'Completed'); // Fetch completed jobs
   };
 
-
-  const filteredData = jobs.filter(item => item.jobStatus === 'Completed');
-
-  const handleRowClick = (jobId) => {
-
-  };
+  const handleRowClick = (jobId) => {};
 
   const TableHeader = () => (
     <View style={[styles.headerRow, { padding: dynamicPadding }]}>
       <Text style={[styles.headerCell, { fontSize: dynamicFontSize }]}>id</Text>
-      <Text style={[styles.headerCell, { fontSize: dynamicFontSize }]}>MPRN</Text>
-      <Text style={[styles.headerCell, { fontSize: dynamicFontSize }]}>Job Type</Text>
-      <Text style={[styles.headerCell, { fontSize: dynamicFontSize }]}>Postcode</Text>
-      <Text style={[styles.headerCell, { fontSize: dynamicFontSize }]}>Start Date</Text>
-      <Text style={[styles.headerCell, { fontSize: dynamicFontSize }]}>Start Time</Text>
-      <Text style={[styles.headerCell, { fontSize: dynamicFontSize }]}>Status</Text>
+      <Text style={[styles.headerCell, { fontSize: dynamicFontSize }]}>
+        MPRN
+      </Text>
+      <Text style={[styles.headerCell, { fontSize: dynamicFontSize }]}>
+        Job Type
+      </Text>
+      <Text style={[styles.headerCell, { fontSize: dynamicFontSize }]}>
+        Postcode
+      </Text>
+      <Text style={[styles.headerCell, { fontSize: dynamicFontSize }]}>
+        Start Date
+      </Text>
+      <Text style={[styles.headerCell, { fontSize: dynamicFontSize }]}>
+        Start Time
+      </Text>
+      <Text style={[styles.headerCell, { fontSize: dynamicFontSize }]}>
+        Status
+      </Text>
     </View>
   );
 
   const TableRow = ({ item }) => (
-    <TouchableOpacity style={[styles.row, { padding: dynamicPadding }]} onPress={() => handleRowClick(item.id)}>
-      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.id}</Text>
-      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.MPRN}</Text>
-      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.jobType}</Text>
-      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.postcode}</Text>
-      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.startDate}</Text>
-      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.startDate}</Text>
-      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>{item.jobStatus}</Text>
+    <TouchableOpacity
+      style={[styles.row, { padding: dynamicPadding }]}
+      onPress={() => handleRowClick(item.id)}
+    >
+      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>
+        {item.id}
+      </Text>
+      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>
+        {item.MPRN}
+      </Text>
+      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>
+        {item.jobType}
+      </Text>
+      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>
+        {item.postcode}
+      </Text>
+      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>
+        {item.startDate}
+      </Text>
+      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>
+        {item.startDate}
+      </Text>
+      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>
+        {item.jobStatus}
+      </Text>
     </TouchableOpacity>
   );
 
   return (
     <SafeAreaView style={styles.body}>
       <ScrollView style={styles.container}>
-        <Header hasLeftBtn={true} hasCenterText={true} hasRightBtn={false} centerText={'Completed Jobs'} leftBtnPressed={() => navigation.goBack()} />
+        <Header
+          hasLeftBtn={true}
+          hasCenterText={true}
+          hasRightBtn={false}
+          centerText={'Completed Jobs'}
+          leftBtnPressed={() => navigation.goBack()}
+        />
         <TableHeader />
-        {filteredData.length > 0 ? (
-          filteredData.map((item) => <TableRow key={item.id.toString()} item={item} />)
+        {jobs.length > 0 ? (
+          jobs.map((item) => <TableRow key={item.id.toString()} item={item} />)
         ) : (
           <Text style={styles.noJobsText}>No jobs available</Text>
         )}

@@ -8,6 +8,7 @@ interface AuthProps {
     refreshToken: string | null;
     authenticated: boolean | null;
   };
+  RefreshAccessToken?: () => Promise<any>;
   OnLogin?: (username: string, password: string) => Promise<any>;
   OnLogout?: () => Promise<any>;
 }
@@ -73,6 +74,7 @@ export const AuthProvider = ({ children }: any) => {
       ] = `Bearer ${result.data.access}`;
 
       await SecureStore.setItemAsync(TOKEN_KEY, result.data.access);
+      await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, result.data.refresh);
       return result;
     } catch (e) {
       console.error('Login failed:', e); // Log high-level error
@@ -124,10 +126,10 @@ export const AuthProvider = ({ children }: any) => {
     try {
       console.log('API url:', `${API_URL}/token/refresh`);
       const result = await axios.post(`${API_URL}/token/refresh/`, {
-        refreshToken,
+        refresh: refreshToken,
       });
 
-      console.log('Refresh result:', result);
+      console.log('Refresh result:', result.data.access);
       setAuthState((prevState) => ({
         ...prevState,
         token: result.data.access,

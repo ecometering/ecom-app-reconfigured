@@ -17,7 +17,7 @@ import { useAuth } from '../context/AuthContext';
 
 const SubmitSuccessPage = () => {
   const appContext = useContext(AppContext);
-  const { authState, refresh } = useAuth();
+  const { authState, RefreshAccessToken } = useAuth();
   const navigation = useNavigation();
   const [isLoading, setLoading] = useState(false);
 
@@ -57,19 +57,13 @@ const SubmitSuccessPage = () => {
   }
 
   async function sendData(jobData) {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${authState.token}`,
-      },
-    };
     const body = {
       data: jobData,
       engineer_id: 1,
     };
     try {
       axios
-        .post('https://test.ecomdata.co.uk/api/incoming-jobs/', body, config)
+        .post('https://test.ecomdata.co.uk/api/incoming-jobs/', body)
         .then((response) => {
           console.log('Job data uploaded:', response.data);
           uploadPhotos(response.data.job_id)
@@ -82,10 +76,10 @@ const SubmitSuccessPage = () => {
               setLoading(false);
             });
         })
-        .catch((error) => {
+        .catch(async (error) => {
           if (error?.response?.status === 401) {
             console.log('Token expired, refreshing token...');
-            refresh();
+            await RefreshAccessToken();
             sendData(jobData);
           }
           console.error('Upload error:', error);
@@ -109,15 +103,15 @@ const SubmitSuccessPage = () => {
 
     // Parse and Add extra photos to the list
     const extraPhotos =
-      (appContext?.standardDetails?.extras &&
-        appContext.standardDetails.extras.map((extra) => {
-          return {
-            photoKey: 'OtherPhoto',
-            description: extra.extraComment,
-            uri: extra.extraPhoto,
-          };
-        })) ||
-      [];
+      appContext?.standardDetails?.extras?.length > 0
+        ? appContext.standardDetails.extras
+            .filter((extra) => extra.extraPhoto) // Filter out items where extraPhoto is falsy (null, undefined, '', etc.)
+            .map((extra) => ({
+              photoKey: 'OtherPhoto',
+              description: extra.extraComment,
+              uri: extra.extraPhoto,
+            }))
+        : [];
 
     [...photos, ...extraPhotos].forEach((photo) => {
       uploadResource(photo, job_id);
@@ -125,6 +119,11 @@ const SubmitSuccessPage = () => {
   }
 
   const uploadResource = (photo, job_id) => {
+    if (!photo.uri) {
+      console.error({ photo });
+      console.error('Photo URI is empty');
+      return;
+    }
     const formData = new FormData();
     formData.append('photo_type', photo.photoKey);
     formData.append('userId', '1');
@@ -178,7 +177,7 @@ const SubmitSuccessPage = () => {
     db.transaction((tx) => {
       tx.executeSql(
         'UPDATE Jobs SET jobStatus = ? WHERE id = ?',
-        ['Completed', appContext?.jobDetails?.JobID],
+        ['Completed', appContext?.jobID],
         () => {
           Alert.alert(
             'Upload Complete',
@@ -189,12 +188,12 @@ const SubmitSuccessPage = () => {
                 onPress: () => {
                   // Clear job data and navigate to home
                   appContext.resetContext();
+                  setLoading(false);
                   navigation.navigate('Home');
                 },
               },
             ]
           );
-          setLoading(false);
         },
         (error) => {
           console.error('SQL error:', error);

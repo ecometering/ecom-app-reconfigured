@@ -60,7 +60,9 @@ function SnClientInfoPage() {
   const [isNotRemove, setIsNotRemove] = useState(standardDetails?.isNotRemove);
   const [remedial, setRemedial] = useState(standardDetails?.remedial);
 
-  const [tableData, setTableData] = useState([]);
+  const [tableData, setTableData] = useState(
+    appContext?.standards?.tableData ?? []
+  );
 
   const backPressed = () => {
     appContext.setStandardDetails({
