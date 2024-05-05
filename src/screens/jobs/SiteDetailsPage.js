@@ -118,7 +118,7 @@ function SiteDetailsPage() {
     navigation.goBack();
   };
 
-  const nextPressed = () => {
+  const nextPressed = async () => {
     if (siteDetails.buildingName === '') {
       EcomHelper.showInfoMessage('Please input Building Name');
       return;
@@ -165,7 +165,7 @@ function SiteDetailsPage() {
       EcomHelper.showInfoMessage('Not a valid email: email2');
       return;
     }
-    if (siteDetails.confirmContact == null) {
+    if (!siteDetails.confirmContact) {
       EcomHelper.showInfoMessage('Please make sure if all contact is correct');
       return;
     }
@@ -184,7 +184,7 @@ function SiteDetailsPage() {
 
     appContext.setSiteDetails(siteDetails);
 
-    saveSiteDetailsToDatabase();
+    await saveSiteDetailsToDatabase();
     console.log('siteDetails', siteDetails);
 
     navigation.navigate('SitePhotoPage');

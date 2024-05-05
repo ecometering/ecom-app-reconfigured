@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useRef, useState } from 'react';
 import {
   Alert,
   Button,
@@ -9,24 +9,25 @@ import {
   ScrollView,
   StyleSheet,
   View,
-  Dimensions
-} from "react-native";
-import Text from "../../components/Text";
-import Header from "../../components/Header";
-import { useNavigation } from "@react-navigation/native";
-import TextInput from "../../components/TextInput";
-import EcomHelper from "../../utils/ecomHelper";
-import { AppContext } from "../../context/AppContext";
-import BarcodeScanner from "../../components/BarcodeScanner";
-import ImagePickerButton from "../../components/ImagePickerButton";
-const { width, height } = Dimensions.get("window");
+  Dimensions,
+} from 'react-native';
+import Text from '../../components/Text';
+import Header from '../../components/Header';
+import { useNavigation } from '@react-navigation/native';
+import TextInput from '../../components/TextInput';
+import EcomHelper from '../../utils/ecomHelper';
+import { AppContext } from '../../context/AppContext';
+import BarcodeScanner from '../../components/BarcodeScanner';
+import ImagePickerButton from '../../components/ImagePickerButton';
+import { makeFontSmallerAsTextGrows } from '../../utils/styles';
+const { width, height } = Dimensions.get('window');
 const alphanumericRegex = /^[a-zA-Z0-9]+$/;
 
 function ChatterBoxPage() {
   const navigation = useNavigation();
   const appContext = useContext(AppContext);
   const jobType = appContext.jobType;
-  const title = jobType === "Install" ? "New Meter Details" : jobType;
+  const title = jobType === 'Install' ? 'New Meter Details' : jobType;
   const regulatorDetails = appContext.regulatorDetails;
   const camera = useRef(null);
   const [isModal, setIsModal] = useState(false);
@@ -45,20 +46,23 @@ function ChatterBoxPage() {
     // Open the database connection
     const db = await openDatabase();
     // Assuming jobId is available in your component's state or context
-    const jobId = appContext.jobId; 
-  
+    const jobId = appContext.jobId;
+
     // Serialize the photo details if you're storing images as part of the chatter box details
     const photoDetails = {
-      title: "ChatterBox Image",
+      title: 'ChatterBox Image',
       uri: chatterBoxImage,
-      photoKey: "chatterBoxImage"
+      photoKey: 'chatterBoxImage',
     };
     const photoDetailsJSON = JSON.stringify(photoDetails);
-  
+
     // Fetch existing photos JSON from the database, append new photo details, and update
     const existingPhotosJSON = await fetchPhotosJSON(db, jobId);
-    const updatedPhotosJSON = appendPhotoDetail(existingPhotosJSON, photoDetailsJSON);
-  
+    const updatedPhotosJSON = appendPhotoDetail(
+      existingPhotosJSON,
+      photoDetailsJSON
+    );
+
     // Serialize all chatter box details into a JSON string
     const chatterBoxDetailsJSON = JSON.stringify({
       manufacturer,
@@ -66,28 +70,30 @@ function ChatterBoxPage() {
       serialNumber,
       imageUri: chatterBoxImage,
     });
-  
+
     // Execute the SQL transaction to update the chatter box details and photos for the given jobId
-    db.transaction(tx => {
+    db.transaction((tx) => {
       tx.executeSql(
         'UPDATE Jobs SET chatterBoxDetails = ?, photos = ? WHERE id = ?',
         [chatterBoxDetailsJSON, updatedPhotosJSON, jobId],
         (_, result) => {
           console.log('Chatter box details updated successfully');
           // Optionally, navigate away or update UI to reflect the changes
-          navigation.navigate("standardPage"); // Adjust navigation as needed
+          navigation.navigate('standardPage'); // Adjust navigation as needed
         },
         (_, error) => {
-          console.error('Error updating chatter box details in database:', error);
+          console.error(
+            'Error updating chatter box details in database:',
+            error
+          );
         }
       );
     });
   };
 
-
   const nextPressed = async () => {
     if (!chatterBoxImage) {
-      EcomHelper.showInfoMessage("Please choose image");
+      EcomHelper.showInfoMessage('Please choose image');
       return;
     }
 
@@ -99,15 +105,15 @@ function ChatterBoxPage() {
       console.log(err);
     }
     if (!manufacturer) {
-      EcomHelper.showInfoMessage("Please choose manufacturer");
+      EcomHelper.showInfoMessage('Please choose manufacturer');
       return;
     }
     if (!serialNumber) {
-      EcomHelper.showInfoMessage("Please choose serial number");
+      EcomHelper.showInfoMessage('Please choose serial number');
       return;
     }
     if (!model) {
-      EcomHelper.showInfoMessage("Please choose model");
+      EcomHelper.showInfoMessage('Please choose model');
       return;
     }
 
@@ -119,7 +125,7 @@ function ChatterBoxPage() {
       chatterImage: chatterBoxImage,
     });
 
-    navigation.navigate("StandardPage");
+    navigation.navigate('StandardPage');
   };
   const backPressed = () => {
     appContext.setRegulatorDetails({
@@ -143,8 +149,6 @@ function ChatterBoxPage() {
     setSerialNumber(codes.data);
   };
 
-
-
   return (
     <SafeAreaView style={styles.content}>
       <Header
@@ -157,7 +161,7 @@ function ChatterBoxPage() {
       />
       <KeyboardAvoidingView
         style={styles.content}
-        behavior={Platform.OS === "ios" ? "padding" : null}
+        behavior={Platform.OS === 'ios' ? 'padding' : null}
       >
         <ScrollView style={styles.content}>
           <View style={styles.body}>
@@ -174,7 +178,7 @@ function ChatterBoxPage() {
                   style={styles.input}
                 />
               </View>
-              <View style={{ width: width * 0.4, alignItems: "flex-start" }}>
+              <View style={{ width: width * 0.4, alignItems: 'flex-start' }}>
                 <Text>Chatterbox model</Text>
                 <View style={styles.spacer2} />
                 <TextInput
@@ -192,7 +196,7 @@ function ChatterBoxPage() {
               <View
                 style={{
                   width: width * 0.45,
-                  alignSelf: "flex-end",
+                  alignSelf: 'flex-end',
                 }}
               >
                 <Text>ChatterBox serial Number</Text>
@@ -204,7 +208,9 @@ function ChatterBoxPage() {
                     }}
                     style={{
                       width: width * 0.25,
-                      alignSelf: "flex-end",
+                      // as serial number can be long, we can adjust the font size
+                      fontSize: makeFontSmallerAsTextGrows(serialNumber),
+                      alignSelf: 'flex-end',
                     }}
                     value={serialNumber}
                   />
@@ -216,7 +222,7 @@ function ChatterBoxPage() {
             <View style={styles.spacer} />
             <View style={styles.spacer} />
 
-            <Text>{"Chatter Box Image"}</Text>
+            <Text>{'Chatter Box Image'}</Text>
             <View style={styles.spacer} />
             {chatterBoxImage && (
               <Image
@@ -227,8 +233,8 @@ function ChatterBoxPage() {
             )}
             <View style={styles.row}>
               <ImagePickerButton
-              onImageSelected={(uri) => setchatterBoxImage(uri)}
-            />
+                onImageSelected={(uri) => setchatterBoxImage(uri)}
+              />
             </View>
             <View style={styles.spacer} />
           </View>
@@ -253,21 +259,21 @@ const styles = StyleSheet.create({
     marginHorizontal: width * 0.05,
   },
   row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-end",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
   },
   input: {
     width: width * 0.35, // Example adjustment
   },
   optionContainer: {
-    alignSelf: "flex-start",
-    justifyContent: "center",
-    alignItems: "flex-start",
+    alignSelf: 'flex-start',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
   },
   camera: {
     flex: 1,
-    width: "100%",
+    width: '100%',
   },
   spacer: {
     height: height * 0.02, // Example adjustment based on height
@@ -276,7 +282,7 @@ const styles = StyleSheet.create({
     height: height * 0.01, // Example adjustment based on height
   },
   closeButtonContainer: {
-    position: "absolute",
+    position: 'absolute',
     top: 10,
     right: 10,
   },

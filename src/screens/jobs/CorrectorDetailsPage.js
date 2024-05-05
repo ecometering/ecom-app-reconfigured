@@ -44,6 +44,7 @@ import {
   fetchPhotosJSON,
   appendPhotoDetail,
 } from '../../utils/database';
+import { makeFontSmallerAsTextGrows } from '../../utils/styles';
 
 const alphanumericRegex = /^[a-zA-Z0-9]+$/;
 const { width, height } = Dimensions.get('window');
@@ -262,6 +263,9 @@ export default function CorrectorDetailsPage() {
                         ...styles.input,
                         width: width * 0.25,
                         alignSelf: 'flex-end',
+                        fontSize: makeFontSmallerAsTextGrows(
+                          localCorrectorDetails.serialNumber
+                        ),
                       }}
                       value={localCorrectorDetails.serialNumber}
                     />
@@ -333,7 +337,7 @@ export default function CorrectorDetailsPage() {
                     value={localCorrectorDetails.uncorrected}
                     keyboardType="numeric" // Set keyboardType to numeric
                     onChangeText={(txt) => {
-                      const filteredText = txt.replace(/[^0-9]/g, ''); // Allow only numbers
+                      const filteredText = txt.replace(/[^0-9.]/g, ''); // Allow only numbers and decimal points
                       handleInputChange('uncorrected', filteredText);
                     }}
                   />
@@ -345,7 +349,7 @@ export default function CorrectorDetailsPage() {
                     value={localCorrectorDetails.corrected}
                     keyboardType="numeric" // Set keyboardType to numeric
                     onChangeText={(txt) => {
-                      const filteredText = txt.replace(/[^0-9]/g, ''); // Allow only numbers
+                      const filteredText = txt.replace(/[^0-9.]/g, ''); // Allow only numbers and decimal points
                       handleInputChange('corrected', filteredText);
                     }}
                   />

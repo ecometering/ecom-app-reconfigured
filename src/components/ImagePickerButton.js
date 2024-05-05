@@ -72,6 +72,11 @@ const ImagePickerButton = ({ onImageSelected }) => {
         if (!result.canceled && result.assets && result.assets.length > 0) {
           console.log('Photo taken, attempting to save to gallery...');
           // Here's where we handle considerations for createAssetAsync
+          const asset = await MediaLibrary.createAssetAsync(
+            result.assets[0].uri
+          );
+          console.log('Photo saved to gallery:', asset.uri);
+
           const permURI = await copyFileToPermanentStorage(
             result.assets[0].uri
           );

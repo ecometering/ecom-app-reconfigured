@@ -41,7 +41,7 @@ const RebookPage = () => {
     db.transaction((tx) => {
       // Update the database with the JSON object
       tx.executeSql(
-        'UPDATE Jobs SET rebookDetails = ? WHERE id = ?',
+        'UPDATE Jobs SET rebook = ? WHERE id = ?',
         [rebookDetailsJSON, jobID],
         (_, results) => {
           console.log('Rebook details updated successfully', results);
@@ -53,6 +53,12 @@ const RebookPage = () => {
     });
   };
   const handleConfirmRebook = () => {
+    if (canRebookToday === false) {
+      updateRebookDetails().then(() => {
+        navigation.navigate('SubmitSuccessPage');
+      });
+      return;
+    }
     Alert.alert(
       'Confirm Rebook Date',
       `Are you sure you want to rebook for ${selectedDate}?`,
