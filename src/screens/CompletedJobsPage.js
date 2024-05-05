@@ -11,6 +11,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
 import { getDatabaseJob } from '../utils/database'; // Importing required functions
+import { loadJob } from '../utils/loadJob';
 
 const { width } = Dimensions.get('window'); // Get the screen width
 
@@ -29,7 +30,15 @@ const CompletedJobsTable = () => {
     await getDatabaseJob(setJobs, 'Completed'); // Fetch completed jobs
   };
 
-  const handleRowClick = (jobId) => {};
+  const handleRowClick = async (jobId) => {
+    try {
+      const jobData = await loadJob(jobId);
+      navigation.navigate('SiteDetailsPage', { jobData });
+    } catch (error) {
+      console.error('Error loading job:', error);
+      // Handle the error, e.g., show an error message
+    }
+  };
 
   const TableHeader = () => (
     <View style={[styles.headerRow, { padding: dynamicPadding }]}>

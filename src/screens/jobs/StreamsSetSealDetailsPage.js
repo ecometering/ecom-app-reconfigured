@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, { useContext, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -10,16 +10,16 @@ import {
 } from 'react-native';
 import Text from '../../components/Text';
 import Header from '../../components/Header';
-import {useNavigation, useRoute} from '@react-navigation/native';
-import {TextType} from '../../theme/typography';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { TextType } from '../../theme/typography';
 import TextInput from '../../components/TextInput';
 import NumberInput from '../../components/NumberInput';
-import {AppContext} from '../../context/AppContext';
+import { AppContext } from '../../context/AppContext';
 import EcomHelper from '../../utils/ecomHelper';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
-const RepeatComponent = ({title, onChangeText, value}) => {
+const RepeatComponent = ({ title, onChangeText, value }) => {
   return (
     <View style={styles.repeatComponentContainer}>
       <View style={styles.titleContainer}>
@@ -49,7 +49,7 @@ function StreamsSetSealDetailsPage() {
   const [streamValue, setStreamValue] = useState(appContext.streamValue);
   const jobType = appContext.jobType;
   const route = useRoute();
-  const {title, nextScreen, jobId} = route.params;
+  const { title, nextScreen, jobId } = route?.params ?? {};
 
   console.log('StreamsSetSealDetailsPage');
 
@@ -85,7 +85,7 @@ function StreamsSetSealDetailsPage() {
     navigation.goBack();
   };
 
-  const handleChangeValue = newValue => {
+  const handleChangeValue = (newValue) => {
     console.log('New value:======', newValue);
     setN(newValue);
   };
@@ -112,7 +112,8 @@ function StreamsSetSealDetailsPage() {
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <KeyboardAvoidingView
           style={styles.keyboardAvoidingView}
-          behavior={Platform.OS === 'ios' ? 'padding' : null}>
+          behavior={Platform.OS === 'ios' ? 'padding' : null}
+        >
           <View style={styles.body}>
             <Text type={TextType.CAPTION_2}>Streams Set and Seal Details</Text>
             <View style={styles.spacer} />
@@ -123,7 +124,7 @@ function StreamsSetSealDetailsPage() {
               <NumberInput initial={n} handleChangeValue={handleChangeValue} />
             </View>
             <View style={styles.spacer} />
-            {Array.from({length: n}, (_, index) => (
+            {Array.from({ length: n }, (_, index) => (
               <View style={styles.streamContainer}>
                 <View style={styles.spacer} />
                 <Text type={TextType.CAPTION_2}>{`stream ${index + 1}`}</Text>
@@ -131,10 +132,10 @@ function StreamsSetSealDetailsPage() {
                   <RepeatComponent
                     title={'Slam Shut'}
                     value={streamValue[index]?.slamShut ?? 0}
-                    onChangeText={v => {
+                    onChangeText={(v) => {
                       if (v.length > 5) {
                         EcomHelper.showInfoMessage(
-                          'Max length should be less than 5',
+                          'Max length should be less than 5'
                         );
                         return;
                       }
@@ -144,10 +145,10 @@ function StreamsSetSealDetailsPage() {
                   <RepeatComponent
                     title={'Creep Relief'}
                     value={streamValue[index]?.creepRelief ?? 0}
-                    onChangeText={v => {
+                    onChangeText={(v) => {
                       if (v.length > 5) {
                         EcomHelper.showInfoMessage(
-                          'Max length should be less than 5',
+                          'Max length should be less than 5'
                         );
                         return;
                       }
@@ -157,10 +158,10 @@ function StreamsSetSealDetailsPage() {
                   <RepeatComponent
                     title={'Working Pressure'}
                     value={streamValue[index]?.workingPressure ?? 0}
-                    onChangeText={v => {
+                    onChangeText={(v) => {
                       if (v.length > 5) {
                         EcomHelper.showInfoMessage(
-                          'Max length should be less than 5',
+                          'Max length should be less than 5'
                         );
                         return;
                       }
