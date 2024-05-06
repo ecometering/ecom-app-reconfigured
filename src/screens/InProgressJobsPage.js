@@ -1,23 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import {
-  SafeAreaView,
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  Alert,
-} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { SafeAreaView, StyleSheet, Alert, FlatList } from 'react-native';
+
+// Components
 import Header from '../components/Header';
-import { openDatabase, getDatabaseJob } from '../utils/database';
+import JobCard from '../components/JobCard';
+
+// Utils
 import { loadJob } from '../utils/loadJob';
-
-const { width } = Dimensions.get('window');
-
-const dynamicFontSize = width < 360 ? 9 : width < 600 ? 11 : 13;
-const dynamicPadding = width < 360 ? 6 : 8;
+import { openDatabase, getDatabaseJob } from '../utils/database';
 
 const JobsTable = ({ route }) => {
   const [jobs, setJobs] = useState([]);
@@ -66,121 +57,52 @@ const JobsTable = ({ route }) => {
     ]);
   };
 
-  const TableHeader = () => (
-    <View style={[styles.headerRow, { padding: dynamicPadding }]}>
-      <Text style={[styles.headerCell, { fontSize: dynamicFontSize }]}>id</Text>
-      <Text style={[styles.headerCell, { fontSize: dynamicFontSize }]}>
-        MPRN
-      </Text>
-      <Text style={[styles.headerCell, { fontSize: dynamicFontSize }]}>
-        Job Type
-      </Text>
-      <Text style={[styles.headerCell, { fontSize: dynamicFontSize }]}>
-        Post code
-      </Text>
-      <Text style={[styles.headerCell, { fontSize: dynamicFontSize }]}>
-        Start Date
-      </Text>
-      <Text style={[styles.headerCell, { fontSize: dynamicFontSize }]}>
-        End Date
-      </Text>
-      <Text style={[styles.headerCell, { fontSize: dynamicFontSize }]}>
-        Status
-      </Text>
-      <Text style={[styles.headerCell, { fontSize: dynamicFontSize }]}>
-        Actions
-      </Text>
-    </View>
-  );
-
-  const TableRow = ({ item }) => (
-    <TouchableOpacity
-      onPress={() => handleRowClick(item.id)}
-      style={[styles.row, { padding: dynamicPadding }]}
-    >
-      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>
-        {item.id}
-      </Text>
-      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>
-        {item.MPRN}
-      </Text>
-      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>
-        {item.jobType}
-      </Text>
-      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>
-        {item.startDate}
-      </Text>
-      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>
-        {item.postcode}
-      </Text>
-      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>
-        {item.endDate}
-      </Text>
-      <Text style={[styles.cell, { fontSize: dynamicFontSize - 2 }]}>
-        {item.jobStatus}
-      </Text>
-      <TouchableOpacity onPress={() => handleDeleteJob(item.id)}>
-        <Text style={{ color: 'red', padding: 10 }}>Delete</Text>
-      </TouchableOpacity>
-    </TouchableOpacity>
-  );
-
   return (
     <SafeAreaView style={styles.body}>
-      <ScrollView style={styles.container}>
-        <Header
-          hasLeftBtn={true}
-          hasCenterText={true}
-          hasRightBtn={false}
-          centerText={'Jobs in progress'}
-          leftBtnPressed={() => navigation.goBack()}
-        />
-        <TableHeader />
-        {jobs.length > 0 ? (
-          jobs.map((item) => <TableRow key={item.id.toString()} item={item} />)
-        ) : (
+      <Header
+        hasLeftBtn={true}
+        hasCenterText={true}
+        hasRightBtn={false}
+        centerText={'Jobs in progress'}
+        leftBtnPressed={() => navigation.goBack()}
+      />
+      <FlatList
+        data={jobs}
+        style={styles.listContainer}
+        renderItem={({ item }) => (
+          <JobCard
+            item={item}
+            handleOnCardClick={handleRowClick}
+            buttonConfig={[
+              {
+                text: 'Delete',
+                backgroundColor: 'red',
+                textColor: 'white',
+                onPress: () => handleDeleteJob(item.id),
+              },
+            ]}
+          />
+        )}
+        keyExtractor={(item) => item.id.toString()}
+        ListEmptyComponent={() => (
           <Text style={styles.noJobsText}>No jobs available</Text>
         )}
-      </ScrollView>
+      />
     </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   body: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 20,
   },
-  headerRow: {
-    flexDirection: 'row',
-    backgroundColor: '#f0f0f0',
-    padding: dynamicPadding, // Apply dynamic padding to header row as well
-  },
-  headerCell: {
-    flex: 1,
-    fontWeight: 'bold',
-    marginRight: 5, // Reduced right margin
-    textAlign: 'center', // Center-align header text
-  },
-  row: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: '#cccccc',
-    padding: dynamicPadding, // Apply dynamic padding to each row for consistency
-  },
-  cell: {
-    flex: 1,
-    marginRight: 5, // Consistent with headerCell marginRight
-    fontSize: dynamicFontSize - 2, // Apply dynamic font size reduction to cells
-    textAlign: 'center', // Center-align cell text for a more uniform look
+  listContainer: {
+    padding: 10,
+    gap: 10,
   },
   noJobsText: {
-    padding: 10,
-    fontStyle: 'italic',
+    textAlign: 'center',
+    fontSize: 16,
+    marginTop: 20,
   },
 });
 
