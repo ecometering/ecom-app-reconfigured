@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { SafeAreaView, StyleSheet, Alert, FlatList } from 'react-native';
+import { SafeAreaView, StyleSheet, Alert, FlatList, Text } from 'react-native';
 
 // Components
 import Header from '../components/Header';
