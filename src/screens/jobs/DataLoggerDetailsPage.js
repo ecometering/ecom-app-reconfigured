@@ -26,6 +26,7 @@ import EcomHelper from '../../utils/ecomHelper';
 import { TextType } from '../../theme/typography';
 import { PrimaryColors } from '../../theme/colors';
 import { AppContext } from '../../context/AppContext';
+import { makeFontSmallerAsTextGrows } from '../../utils/styles';
 
 const alphanumericRegex = /^[a-zA-Z0-9]+$/;
 const { width, height } = Dimensions.get('window');
@@ -204,6 +205,9 @@ export default function DataLoggerDetailsPage() {
                         ...styles.input,
                         width: width * 0.25,
                         alignSelf: 'flex-end',
+                        fontSize: makeFontSmallerAsTextGrows(
+                          localDataLoggerDetails.serialNumber
+                        ),
                       }}
                       value={localDataLoggerDetails.serialNumber}
                     />

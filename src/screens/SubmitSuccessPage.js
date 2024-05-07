@@ -12,8 +12,10 @@ import { useNavigation } from '@react-navigation/native';
 import { AppContext } from '../context/AppContext';
 import { openDatabase } from '../utils/database';
 import axios from 'axios';
+import moment from 'moment';
 import Header from '../components/Header';
 import { useAuth } from '../context/AuthContext';
+import { useSQLiteContext } from 'expo-sqlite/next';
 
 const SubmitSuccessPage = () => {
   const appContext = useContext(AppContext);
@@ -25,10 +27,16 @@ const SubmitSuccessPage = () => {
     setLoading(false);
   }, []);
 
+  const getCurrentDateTime = () => {
+    return moment().format('YYYY-MM-DD HH:mm');
+  };
+
   async function fetchAndUploadJobData() {
     setLoading(true);
+
     try {
       const db = await openDatabase();
+
       db?.transaction((tx) => {
         tx.executeSql(
           'SELECT * FROM Jobs WHERE id = ?',
@@ -59,7 +67,8 @@ const SubmitSuccessPage = () => {
   async function sendData(jobData) {
     const body = {
       data: jobData,
-      engineer_id: 1,
+      // TODO: when no longer needed by the api remove this line
+      // engineer_id: 1,
     };
     try {
       axios
@@ -86,7 +95,7 @@ const SubmitSuccessPage = () => {
           setLoading(false);
           Alert.alert(
             'Upload Error',
-            `Upload failed with status: ${response.status}`
+            `Upload failed with status: ${error?.response?.status}`
           );
         });
     } catch (error) {
@@ -126,7 +135,6 @@ const SubmitSuccessPage = () => {
     }
     const formData = new FormData();
     formData.append('photo_type', photo.photoKey);
-    formData.append('userId', '1');
     formData.append('job_id', job_id);
     formData.append('description', photo.description);
     formData.append('photo', {
@@ -174,10 +182,12 @@ const SubmitSuccessPage = () => {
 
   async function updateJobStatus() {
     const db = await openDatabase();
+    const endDate = getCurrentDateTime();
+
     db.transaction((tx) => {
       tx.executeSql(
-        'UPDATE Jobs SET jobStatus = ? WHERE id = ?',
-        ['Completed', appContext?.jobID],
+        'UPDATE Jobs SET jobStatus = ?, endDate = ? WHERE id = ?',
+        ['Completed', endDate, appContext?.jobID],
         () => {
           Alert.alert(
             'Upload Complete',

@@ -36,6 +36,7 @@ import {
 } from '../../utils/constant';
 import EcomHelper from '../../utils/ecomHelper';
 import { AppContext } from '../../context/AppContext';
+import { makeFontSmallerAsTextGrows } from '../../utils/styles';
 
 const alphanumericRegex = /^[a-zA-Z0-9]*$/;
 const { width, height } = Dimensions.get('window');
@@ -577,7 +578,12 @@ function MeterDetailsPage() {
                       );
                       handleInputChange('serialNumber', formattedText);
                     }}
-                    style={{ ...styles.input }}
+                    style={{
+                      ...styles.input,
+                      fontSize: makeFontSmallerAsTextGrows(
+                        localMeterDetails.serialNumber
+                      ),
+                    }}
                   />
                   <Button
                     title="📷"
