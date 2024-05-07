@@ -1,5 +1,5 @@
 export const makeFontSmallerAsTextGrows = (text) => {
-  const minFontSize = 5; // Minimum font size
+  const minFontSize = 8; // Minimum font size
   const maxFontSize = 16; // Starting font size
 
   let length = text?.length || 0;

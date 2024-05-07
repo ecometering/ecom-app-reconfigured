@@ -69,6 +69,13 @@ function SiteDetailsPage() {
       appContext.setJobType(params.jobData.jobType);
       appContext.setJobID(params.jobData.id);
       appContext.setJobStarted(true);
+      appContext.setStreamValue(
+        params.jobData.streamValue && JSON.parse(params.jobData.streamValue)
+      );
+      appContext.setStreamNumber(
+        params.jobData.streamValue &&
+          JSON.parse(params.jobData.streamValue).length
+      );
     }
 
     if (params?.jobType) {
@@ -519,65 +526,3 @@ const styles = StyleSheet.create({
 });
 
 export default SiteDetailsPage;
-
-const hede = {
-  heyy: {
-    MPRN: '3452345',
-    additionalMaterials: null,
-    chatterboxDetails: null,
-    correctorDetails: null,
-    dataloggerDetails: null,
-    endDate: null,
-    id: 25,
-    jobId: null,
-    jobStatus: 'In Progress',
-    jobType: 'Warrant',
-    maintenanceQuestions: null,
-    meterDetails: null,
-    photos: {
-      sitePhoto: {
-        title: 'Site Photo',
-        photoKey: 'sitePhoto',
-        uri: 'file:///Users/naimmustafa/Library/Developer/CoreSimulator/Devices/92B09C83-0808-4443-ACBD-66E7146BAD53/data/Containers/Data/Application/FC1D94D2-440D-4157-9ADD-9D3284A7D444/Library/Caches/ImagePicker/5809272D-49A5-4AB1-85E6-6ADBCBC4E001.jpg',
-      },
-      compositeLabel: {
-        title: 'Composite label',
-        photoKey: 'compositeLabel',
-        uri: 'file:///Users/naimmustafa/Library/Developer/CoreSimulator/Devices/92B09C83-0808-4443-ACBD-66E7146BAD53/data/Containers/Data/Application/FC1D94D2-440D-4157-9ADD-9D3284A7D444/Library/Caches/ImagePicker/759935A7-DC1B-415E-9555-CF77D77F35B7.jpg',
-      },
-      dsearLabel: {
-        title: 'DSEAR label',
-        photoKey: 'dsearLabel',
-        uri: 'file:///Users/naimmustafa/Library/Developer/CoreSimulator/Devices/92B09C83-0808-4443-ACBD-66E7146BAD53/data/Containers/Data/Application/FC1D94D2-440D-4157-9ADD-9D3284A7D444/Library/Caches/ImagePicker/49251AA8-5525-4D63-817B-29C884BDC811.jpg',
-      },
-    },
-    postcode: 'SE2 3RE',
-    progress: null,
-    rebook: null,
-    regulator: null,
-    siteDetails: {
-      mprn: '3452345',
-      companyName: '',
-      buildingName: '11ee',
-      address1: 'Erwer',
-      address2: '',
-      address3: '',
-      town: 'London',
-      county: 'Rr',
-      postCode: 'SE2 3RE',
-      title: '',
-      contact: '',
-      email1: '',
-      email2: '',
-      number1: '',
-      number2: '',
-      instructions: '',
-      confirmContact: true,
-      confirmWarrant: false,
-    },
-    siteQuestions: null,
-    standards: null,
-    startDate: '2024-05-03 08:57',
-    streams: null,
-  },
-};

@@ -7,6 +7,7 @@ import {
   StyleSheet,
   View,
   Dimensions,
+  TouchableHighlight,
 } from 'react-native';
 import Text from '../../components/Text';
 import Header from '../../components/Header';
@@ -46,6 +47,7 @@ function StreamsSetSealDetailsPage() {
   const navigation = useNavigation();
   const appContext = useContext(AppContext);
   const [n, setN] = useState(appContext.streamNumber);
+
   const [streamValue, setStreamValue] = useState(appContext.streamValue);
   const jobType = appContext.jobType;
   const route = useRoute();
@@ -53,7 +55,25 @@ function StreamsSetSealDetailsPage() {
 
   console.log('StreamsSetSealDetailsPage');
 
-  const nextPressed = () => {
+  const saveToDatabase = async () => {
+    const streamDetailsJson = JSON.stringify(streamValue);
+
+    console.log({ streamDetailsJson });
+    try {
+      await db
+        .runAsync('UPDATE Jobs SET streams = ? WHERE id = ?', [
+          streamDetailsJson,
+          appContext.jobID,
+        ])
+        .then((result) => {
+          console.log('streams saved to database:', result);
+        });
+    } catch (error) {
+      console.log('Error saving streams to database:', error);
+    }
+  };
+
+  const nextPressed = async () => {
     console.log(streamValue);
 
     if (n === 0) {
@@ -74,14 +94,19 @@ function StreamsSetSealDetailsPage() {
         return;
       }
     }
+    await saveToDatabase();
     appContext.setStreamValue(streamValue);
     appContext.setStreamNumber(n);
+
+    // TODO: navigate to next screen is undefined here so need to fix this
+    // provide required navigation screen name in nextScreen
     navigation.navigate(nextScreen);
   };
 
   const backPressed = () => {
     appContext.setStreamValue(streamValue);
     appContext.setStreamNumber(n);
+
     navigation.goBack();
   };
 
@@ -116,17 +141,43 @@ function StreamsSetSealDetailsPage() {
         >
           <View style={styles.body}>
             <Text type={TextType.CAPTION_2}>Streams Set and Seal Details</Text>
-            <View style={styles.spacer} />
-            <View style={styles.streamNumberContainer}>
+
+            <View
+              style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}
+            >
               <Text type={TextType.CAPTION_2} style={styles.streamNumberText}>
                 {'Number of streams:'}
               </Text>
-              <NumberInput initial={n} handleChangeValue={handleChangeValue} />
+              <TouchableHighlight
+                style={styles.incDecrButton}
+                onPress={() => {
+                  if (n > 0) {
+                    setN((prev) => prev - 1);
+                  }
+
+                  // remove last stream value if n is decreased
+                  if (streamValue.length >= n) {
+                    const updatedStreamValue = [...streamValue];
+                    updatedStreamValue.pop();
+                    setStreamValue(updatedStreamValue);
+                  }
+                }}
+              >
+                <Text>-</Text>
+              </TouchableHighlight>
+              <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{n}</Text>
+              <TouchableHighlight
+                style={styles.incDecrButton}
+                onPress={() => {
+                  setN((prev) => prev + 1);
+                }}
+              >
+                <Text>+</Text>
+              </TouchableHighlight>
             </View>
-            <View style={styles.spacer} />
+
             {Array.from({ length: n }, (_, index) => (
               <View style={styles.streamContainer}>
-                <View style={styles.spacer} />
                 <Text type={TextType.CAPTION_2}>{`stream ${index + 1}`}</Text>
                 <View style={styles.section}>
                   <RepeatComponent
@@ -183,25 +234,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  scrollViewContent: {
-    flexGrow: 1,
-  },
-  keyboardAvoidingView: {
-    flex: 1,
-  },
+  scrollViewContent: {},
+  keyboardAvoidingView: {},
   body: {
-    flex: 1,
-    alignItems: 'center',
-    paddingHorizontal: width * 0.05,
+    paddingHorizontal: 20,
+    gap: 20,
   },
-  streamNumberContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '60%',
-  },
+  streamNumberContainer: {},
   streamNumberText: {
-    flex: 1,
     textAlign: 'left',
   },
   streamContainer: {
@@ -240,6 +280,24 @@ const styles = StyleSheet.create({
   },
   spacer: {
     height: 20,
+  },
+  incDecrButton: {
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    // elevate
+    elevation: 2,
+    // shadow
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
   },
 });
 

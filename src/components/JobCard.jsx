@@ -49,6 +49,7 @@ const JobCard = ({ item, handleOnCardClick, buttonConfig }) => (
 const styles = {
   cardContainer: {
     padding: 10,
+    marginBottom: 10, 
     backgroundColor: 'white',
     borderRadius: 5,
     gap: 5,
