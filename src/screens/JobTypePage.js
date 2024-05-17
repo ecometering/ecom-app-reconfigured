@@ -15,10 +15,13 @@ import { useNavigation } from '@react-navigation/native';
 import { AppContext } from '../context/AppContext';
 import Header from '../components/Header';
 import { addOrUpdateJobData } from '../utils/database';
+import { useProgressNavigation } from '../../ExampleFlowRouteProvider';
 
 function JobTypePage() {
   const navigation = useNavigation();
-  const { jobStarted, resetContext } = useContext(AppContext);
+  const { startFlow } = useProgressNavigation();
+  const { jobStarted, resetContext, setJobID, setJobType } =
+    useContext(AppContext);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedJobType, setSelectedJobType] = useState('');
@@ -34,8 +37,8 @@ function JobTypePage() {
   };
 
   const proceedWithJobType = async (jobType) => {
-    console.log(`Setting job type to: ${jobType} and navigating.`);
     try {
+      // TODO: set app context here instead of in SiteDetailsPage
       const jobId = `JOB-${Date.now()}`;
       const jobData = {
         jobType: jobType,
@@ -44,9 +47,12 @@ function JobTypePage() {
         progress: 0,
       };
       console.log(`Job type ${jobType} saved successfully.`);
-      navigation.navigate('SiteDetailsPage', {
-        totalPages: 9,
-        currentPage: 1,
+      // this is where we set the navigation flow and get the first screen details
+      const navigationDetails = startFlow(jobType);
+      console.log('Navigation details:', navigationDetails);
+      // here we pass the screen information for the flow
+      navigation.navigate(navigationDetails.screen, {
+        ...navigationDetails.params,
         jobId: jobId,
         jobType: jobType,
       });

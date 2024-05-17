@@ -16,6 +16,7 @@ import OptionalButton from '../../components/OptionButton';
 import { useAppContext } from '../../context/AppContext';
 import EcomHelper from '../../utils/ecomHelper';
 import ImagePickerButton from '../../components/ImagePickerButton';
+import { useProgressNavigation } from '../../../ExampleFlowRouteProvider';
 
 const { width, height } = Dimensions.get('window');
 
@@ -24,6 +25,7 @@ function SiteQuestionsPage() {
   const route = useRoute();
   const { jobType, jobID, setSiteQuestions, siteQuestions, photos, savePhoto } =
     useAppContext();
+  const { pushNavigation } = useProgressNavigation();
   const { params } = useRoute();
   const { title, photoKey } = params;
   const existingPhoto = photos[photoKey];
@@ -119,11 +121,9 @@ function SiteQuestionsPage() {
 
   const handleNavigationBasedOnConditions = () => {
     if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
-      navigation.navigate('StandardPage', { fromPage: 'SiteQuestionsPage' });
-      console.log('Navigating to StandardPage');
+      pushNavigation('StandardPage');
     } else if (!siteQuestions?.isCarryOut) {
-      navigation.navigate('RebookPage', { fromPage: 'SiteQuestionsPage' });
-      console.log('Navigating to RebookPage');
+      pushNavigation('RebookPage');
     } else {
       // Continue with conditional navigation based on jobType
       navigation.navigate('JobTypeNavigator');

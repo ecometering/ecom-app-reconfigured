@@ -19,6 +19,7 @@ import { PrimaryColors } from '../../theme/colors';
 import EcomHelper from '../../utils/ecomHelper';
 import moment from 'moment';
 import { useSQLiteContext } from 'expo-sqlite/next';
+import { useProgressNavigation } from '../../../ExampleFlowRouteProvider';
 const ukPostCodeRegex = /^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i;
 const phoneNumberRegex =
   /^(?:(0\d{4})\s?\d{3}\s?\d{3}|(07\d{3})\s?\d{3}\s?\d{3}|(01\d{1,2})\s?\d{3}\s?\d{3,4}|(02\d{1,2})\s?\d{3}\s?\d{4})$/;
@@ -29,6 +30,7 @@ function SiteDetailsPage() {
   const route = useRoute();
   const params = route.params;
   const appContext = useContext(AppContext);
+  const { goToNextStep } = useProgressNavigation();
   const {
     jobType,
     siteDetails,
@@ -37,6 +39,7 @@ function SiteDetailsPage() {
     jobID,
     setJobID,
   } = appContext;
+
   const db = useSQLiteContext();
 
   useEffect(() => {
@@ -194,7 +197,7 @@ function SiteDetailsPage() {
     await saveSiteDetailsToDatabase();
     console.log('siteDetails', siteDetails);
 
-    navigation.navigate('SitePhotoPage');
+    goToNextStep();
   };
 
   return (
