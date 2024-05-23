@@ -13,16 +13,16 @@ import {
   Modal,
 } from 'react-native';
 import Header from '../../components/Header';
-import { useNavigation } from '@react-navigation/native';
 import { TextInputWithTitle } from '../../components/TextInput';
 import OptionalButton from '../../components/OptionButton';
 import SignatureScreen from 'react-native-signature-canvas';
 import { PrimaryColors } from '../../theme/colors';
 import EcomHelper from '../../utils/ecomHelper';
 import { AppContext } from '../../context/AppContext';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 const { width, height } = Dimensions.get('window');
 function GasSafeWarningPage() {
-  const navigation = useNavigation();
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const appContext = useContext(AppContext);
   const jobType = appContext.jobType;
   const title = jobType === 'Install' ? 'New Meter Details' : jobType;
@@ -79,7 +79,7 @@ function GasSafeWarningPage() {
       engineerSign: engineerSign,
       customerSign: customerSign,
     });
-    navigation.goBack();
+    goToPreviousStep();
   };
 
   const nextPressed = async () => {
@@ -139,7 +139,7 @@ function GasSafeWarningPage() {
       appContext.jobID,
     ]);
 
-    navigation.navigate('CompositeLabelPhoto');
+    goToNextStep();
   };
   return (
     <SafeAreaView style={styles.content}>

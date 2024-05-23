@@ -19,9 +19,10 @@ import { PrimaryColors, Transparents } from '../../theme/colors';
 import { AppContext } from '../../context/AppContext';
 import EcomHelper from '../../utils/ecomHelper';
 import { EcomPressable as Button } from '../../components/ImageButton';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 
 function SnClientInfoPage() {
-  const navigation = useNavigation();
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const appContext = useContext(AppContext);
   const jobType = appContext.jobType;
   const title = jobType === 'Install' ? 'New Meter Details' : jobType;
@@ -85,7 +86,7 @@ function SnClientInfoPage() {
       remedial: remedial,
       tableData,
     });
-    navigation.goBack();
+    goToPreviousStep();
   };
 
   const nextPressed = async () => {
@@ -105,7 +106,7 @@ function SnClientInfoPage() {
       appContext.jobID,
     ]);
 
-    navigation.navigate('GasSafeWarningPage');
+    goToNextStep();
   };
   const deleteEntry = (index) => {
     setTableData((currentData) => currentData.filter((_, i) => i !== index));

@@ -17,12 +17,17 @@ import { useNavigation } from '@react-navigation/native';
 import { TextType } from '../../theme/typography';
 import { AppContext } from '../../context/AppContext';
 import EcomHelper from '../../utils/ecomHelper';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import {
+  CompositeLabelPhoto,
+  SnClientInfoPage,
+} from '../../utils/nagivation-routes/install-navigations';
 
 const { width, height } = Dimensions.get('window'); // Use Dimensions to get width and height
 
 export default function RiddorReportPage() {
-  const navigation = useNavigation();
   const appContext = useContext(AppContext);
+  const { pushNavigation, goToPreviousStep } = useProgressNavigation();
   const standardDetails = appContext.standardDetails;
   const jobType = appContext.jobType;
   const jobID = appContext.jobID;
@@ -46,7 +51,7 @@ export default function RiddorReportPage() {
       jobID,
     ]);
 
-    navigation.goBack();
+    goToPreviousStep();
   };
 
   const nextPressed = async () => {
@@ -88,9 +93,9 @@ export default function RiddorReportPage() {
     ]);
 
     if (standardDetails.conformStandard === false) {
-      navigation.navigate('SnClientInfoPage');
+      pushNavigation(SnClientInfoPage);
     } else {
-      navigation.navigate('CompositeLabelPhoto');
+      pushNavigation(CompositeLabelPhoto);
     }
   };
 

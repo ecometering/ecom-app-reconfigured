@@ -20,11 +20,18 @@ import { AppContext } from '../../context/AppContext';
 import EcomHelper from '../../utils/ecomHelper';
 import { PrimaryColors } from '../../theme/colors';
 import SignatureScreen from 'react-native-signature-canvas';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import {
+  CompositeLabelPhoto,
+  RiddorReportPage,
+  SnClientInfoPage,
+} from '../../utils/nagivation-routes/install-navigations';
 
 const { width, height } = Dimensions.get('window');
 function StandardPage() {
   const navigation = useNavigation();
   const appContext = useContext(AppContext);
+  const { pushNavigation, goToPreviousStep } = useProgressNavigation();
   const jobType = appContext.jobType;
   const { standardDetails, meterDetails, jobID } = appContext;
   const title = 'Standard Details';
@@ -117,12 +124,12 @@ function StandardPage() {
       ]);
 
       if (riddorReportable === true) {
-        navigation.navigate('RiddorReportPage');
+        pushNavigation(RiddorReportPage);
       } else {
         if (conformStandard === false) {
-          navigation.navigate('SnClientInfoPage');
+          pushNavigation(SnClientInfoPage);
         } else {
-          navigation.navigate('CompositeLabelPhoto');
+          pushNavigation(CompositeLabelPhoto);
         }
       }
     } catch (error) {
@@ -145,7 +152,7 @@ function StandardPage() {
       signature,
     });
 
-    navigation.goBack();
+    goToPreviousStep();
   };
 
   return (

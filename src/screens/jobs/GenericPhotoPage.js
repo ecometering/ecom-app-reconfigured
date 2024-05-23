@@ -8,21 +8,22 @@ import {
   Image,
   Alert,
 } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 import { useAppContext } from '../../context/AppContext';
 import Header from '../../components/Header';
 import Text from '../../components/Text';
 import ImagePickerButton from '../../components/ImagePickerButton';
 import { useSQLiteContext } from 'expo-sqlite/next';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 const { width, height } = Dimensions.get('window');
 
 function GenericPhotoPage() {
   db = useSQLiteContext();
-  const navigation = useNavigation();
   const { params } = useRoute();
   const { title, photoKey, nextScreen } = params;
   const { photos, savePhoto, jobID } = useAppContext();
   const existingPhoto = photos?.[photoKey];
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   // RN uses cache storeage when picking image from gallery
   // existing url may not work if the image is deleted from the gallery
   // or deleted from the cache storage
@@ -56,7 +57,7 @@ function GenericPhotoPage() {
     if (selectedImage) {
       savePhotoToDatabase();
       // If a photo has been selected, navigate to the next screen
-      navigation.navigate(nextScreen);
+      goToNextStep();
     } else {
       // If no photo has been selected, show an alert
       Alert.alert('Select a Photo', 'Please select a photo before proceeding.');
@@ -64,7 +65,7 @@ function GenericPhotoPage() {
   };
   const backPressed = () => {
     savePhotoToDatabase();
-    navigation.goBack();
+    goToPreviousStep();
   };
   return (
     <SafeAreaView style={styles.container}>

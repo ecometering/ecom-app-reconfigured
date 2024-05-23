@@ -52,7 +52,7 @@ import SlamshutPage from '../screens/jobs/SlamshutPage';
 import WaferCheckPage from '../screens/jobs/WaferCheckPage';
 import ReliefRegulatorPage from '../screens/jobs/ReliefRegulatorPage';
 import ActiveRegulatorPage from '../screens/jobs/ActiveRegulatorPage';
-import { NavigationProvider } from '../../ExampleFlowRouteProvider';
+import { NavigationProvider } from '../context/ExampleFlowRouteProvider';
 
 const Stack = createStackNavigator();
 const StreamsNavigator = createStackNavigator();

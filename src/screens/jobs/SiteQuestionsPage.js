@@ -16,7 +16,11 @@ import OptionalButton from '../../components/OptionButton';
 import { useAppContext } from '../../context/AppContext';
 import EcomHelper from '../../utils/ecomHelper';
 import ImagePickerButton from '../../components/ImagePickerButton';
-import { useProgressNavigation } from '../../../ExampleFlowRouteProvider';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import {
+  RebookPage,
+  StandardPage,
+} from '../../utils/nagivation-routes/install-navigations';
 
 const { width, height } = Dimensions.get('window');
 
@@ -25,7 +29,7 @@ function SiteQuestionsPage() {
   const route = useRoute();
   const { jobType, jobID, setSiteQuestions, siteQuestions, photos, savePhoto } =
     useAppContext();
-  const { pushNavigation } = useProgressNavigation();
+  const { pushNavigation, goToPreviousStep } = useProgressNavigation();
   const { params } = useRoute();
   const { title, photoKey } = params;
   const existingPhoto = photos[photoKey];
@@ -65,7 +69,7 @@ function SiteQuestionsPage() {
   };
   const backPressed = () => {
     saveToDatabase();
-    navigation.goBack();
+    goToPreviousStep();
   };
 
   const nextPressed = () => {
@@ -120,10 +124,11 @@ function SiteQuestionsPage() {
   };
 
   const handleNavigationBasedOnConditions = () => {
+    console.log(siteQuestions);
     if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
-      pushNavigation('StandardPage');
+      pushNavigation(StandardPage);
     } else if (!siteQuestions?.isCarryOut) {
-      pushNavigation('RebookPage');
+      pushNavigation(RebookPage);
     } else {
       // Continue with conditional navigation based on jobType
       navigation.navigate('JobTypeNavigator');

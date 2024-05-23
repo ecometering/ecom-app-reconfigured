@@ -19,7 +19,7 @@ import { PrimaryColors } from '../../theme/colors';
 import EcomHelper from '../../utils/ecomHelper';
 import moment from 'moment';
 import { useSQLiteContext } from 'expo-sqlite/next';
-import { useProgressNavigation } from '../../../ExampleFlowRouteProvider';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 const ukPostCodeRegex = /^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i;
 const phoneNumberRegex =
   /^(?:(0\d{4})\s?\d{3}\s?\d{3}|(07\d{3})\s?\d{3}\s?\d{3}|(01\d{1,2})\s?\d{3}\s?\d{3,4}|(02\d{1,2})\s?\d{3}\s?\d{4})$/;
@@ -195,8 +195,6 @@ function SiteDetailsPage() {
     appContext.setSiteDetails(siteDetails);
 
     await saveSiteDetailsToDatabase();
-    console.log('siteDetails', siteDetails);
-
     goToNextStep();
   };
 

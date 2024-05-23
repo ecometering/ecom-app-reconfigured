@@ -16,11 +16,13 @@ import moment from 'moment';
 import Header from '../components/Header';
 import { useAuth } from '../context/AuthContext';
 import { useSQLiteContext } from 'expo-sqlite/next';
+import { useProgressNavigation } from '../context/ExampleFlowRouteProvider';
 
 const SubmitSuccessPage = () => {
   const appContext = useContext(AppContext);
   const { authState, RefreshAccessToken } = useAuth();
   const navigation = useNavigation();
+  const { goToPreviousStep } = useProgressNavigation();
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -218,7 +220,7 @@ const SubmitSuccessPage = () => {
     <SafeAreaView style={styles.container}>
       <Header
         hasLeftBtn={true}
-        leftBtnPressed={() => navigation.goBack()}
+        leftBtnPressed={() => goToPreviousStep()}
         hasCenterText={true}
         centerText="Submit Job"
       />

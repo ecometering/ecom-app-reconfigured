@@ -15,7 +15,7 @@ import { useNavigation } from '@react-navigation/native';
 import { AppContext } from '../context/AppContext';
 import Header from '../components/Header';
 import { addOrUpdateJobData } from '../utils/database';
-import { useProgressNavigation } from '../../ExampleFlowRouteProvider';
+import { useProgressNavigation } from '../context/ExampleFlowRouteProvider';
 
 function JobTypePage() {
   const navigation = useNavigation();

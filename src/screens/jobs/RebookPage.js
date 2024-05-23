@@ -14,11 +14,11 @@ import moment from 'moment'; // For handling dates
 import { openDatabase } from '../../utils/database';
 import Header from '../../components/Header';
 import { AppContext } from '../../context/AppContext';
-import { useNavigation } from '@react-navigation/native';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 const { width } = Dimensions.get('window');
 
 const RebookPage = () => {
-  const navigation = useNavigation();
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const appContext = useContext(AppContext);
   const [canRebookToday, setCanRebookToday] = useState(null);
   const [rebookReason, setRebookReason] = useState('');
@@ -55,7 +55,7 @@ const RebookPage = () => {
   const handleConfirmRebook = () => {
     if (canRebookToday === false) {
       updateRebookDetails().then(() => {
-        navigation.navigate('SubmitSuccessPage');
+        goToNextStep();
       });
       return;
     }
@@ -72,7 +72,7 @@ const RebookPage = () => {
           onPress: () => {
             console.log('Rebook Confirmed for:', selectedDate);
             updateRebookDetails().then(() => {
-              navigation.navigate('SubmitSuccessPage');
+              goToNextStep();
             });
           },
         },
@@ -81,7 +81,7 @@ const RebookPage = () => {
   };
 
   const handleGoBack = () => {
-    navigation.goBack();
+    goToPreviousStep();
   };
 
   return (
