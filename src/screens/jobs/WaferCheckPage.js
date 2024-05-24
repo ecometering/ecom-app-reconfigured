@@ -1,23 +1,26 @@
-
 import useState from 'react';
 import { View, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
-import TextInputWithTitle, { InputRowWithTitle } from '../../components/TextInput'; // Adjust path as needed
-import EcomDropDown from '../../components/DropDown'
+import TextInputWithTitle, {
+  InputRowWithTitle,
+} from '../../components/TextInput'; // Adjust path as needed
+import EcomDropDown from '../../components/DropDown';
 import ImagePickerButton from '../../components/ImagePickerButton';
 import { PrimaryColors } from '../../theme/colors'; // Adjust path as needed
-import Header from "../../components/Header";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import Header from '../../components/Header';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const WaferCheckPage = () => {
   const [manufacturer, setManufacturer] = useState('');
   const [serialNumber, setSerialNumber] = useState('');
   const [size, setSize] = useState('');
   const [imageUri, setImageUri] = useState('');
-  const [StreamOutletValveType , setStreamOutletValveType] = useState(''); // Add this line
-  const [StreamOutletValveSize , setStreamOutletValveSize] = useState(''); // Add this line
-  const [StreamOutletValveManufacturer , setStreamOutletValveManufacturer] = useState(''); // Add this line
+  const [StreamOutletValveType, setStreamOutletValveType] = useState(''); // Add this line
+  const [StreamOutletValveSize, setStreamOutletValveSize] = useState(''); // Add this line
+  const [StreamOutletValveManufacturer, setStreamOutletValveManufacturer] =
+    useState(''); // Add this line
   const [StreamOutletValveModel, setStreamOutletValveModel] = useState(''); // Add this line
   const navigation = useNavigation();
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const route = useRoute();
   // Dummy sizes for the dropdown
   const sizeOptions = [
@@ -26,19 +29,16 @@ const WaferCheckPage = () => {
     { label: 'Large', value: 'large' },
   ];
   const backPressed = () => {
-    console.log("Back button pressed");
-    navigation.goBack();
+    goToPreviousStep();
   };
 
   const nextPressed = async () => {
-    console.log("Next button pressed");
-    console.log("Navigating to next screen:", nextScreen);
-    navigation.navigate(nextScreen);
+    goToNextStep();
   };
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-      <Header
+        <Header
           hasLeftBtn={true}
           hasCenterText={true}
           hasRightBtn={true}
@@ -46,7 +46,7 @@ const WaferCheckPage = () => {
           leftBtnPressed={backPressed}
           rightBtnPressed={nextPressed}
         />
-        
+
         <View style={styles.card}>
           <TextInputWithTitle
             title="Manufacturer"
@@ -54,7 +54,7 @@ const WaferCheckPage = () => {
             onChangeText={setManufacturer}
             placeholder="Enter manufacturer"
           />
-          
+
           <EcomDropDown
             value={size}
             valueList={sizeOptions}
@@ -65,33 +65,35 @@ const WaferCheckPage = () => {
             title="Stream outlet Valve manufacturer
             "
             value={StreamOutletValveManufacturer}
-            onChangeText={text => setStreamOutletValveManufacturer(text)}
-            
+            onChangeText={(text) => setStreamOutletValveManufacturer(text)}
             placeholder="Enter manufacturer"
           />
           <TextInputWithTitle
             title="Stream outlet Valve model
             "
             value={StreamOutletValveModel}
-            onChangeText={text => setStreamOutletValveModel(text)}
-            placeholder="Enter model"/>
-          
+            onChangeText={(text) => setStreamOutletValveModel(text)}
+            placeholder="Enter model"
+          />
+
           <EcomDropDown
             value={StreamOutletValveType}
             valueList={valveType}
             placeholder="Select type"
-            onChange={(selectedItem) => setStreamOutletValveType(selectedItem.value)}
+            onChange={(selectedItem) =>
+              setStreamOutletValveType(selectedItem.value)
+            }
           />
           <EcomDropDown
             value={StreamOutletValveSize}
             valueList={valveSize}
             placeholder="Select Size"
-            onChange={(selectedItem) => setStreamOutletValveSize(selectedItem.value)}
+            onChange={(selectedItem) =>
+              setStreamOutletValveSize(selectedItem.value)
+            }
           />
         </View>
-        <ImagePickerButton
-          onImageSelected={setImageUri}
-        />
+        <ImagePickerButton onImageSelected={setImageUri} />
         {/* Additional content can be added here */}
       </ScrollView>
     </SafeAreaView>

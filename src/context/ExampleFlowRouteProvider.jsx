@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Flow types
 import { InstallNavigation } from '../utils/nagivation-routes/install-navigations';
+import { AppContext } from './AppContext';
 
 export const ProgressiveNavigationContext = createContext();
 
@@ -12,6 +13,7 @@ const config = {
 };
 
 export function NavigationProvider({ children }) {
+  const state = useContext(AppContext);
   const navigation = useNavigation();
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [flowType, setFlowType] = useState(); // Default flow type
@@ -26,7 +28,7 @@ export function NavigationProvider({ children }) {
 
   const goToNextStep = () => {
     if (flow[currentStepIndex].diversions) {
-      pushNavigation(flow[currentStepIndex].diversions);
+      pushNavigation(flow[currentStepIndex].diversions(state));
     } else {
       const nextIndex = currentStepIndex + 1;
       if (nextIndex < flow.length) {

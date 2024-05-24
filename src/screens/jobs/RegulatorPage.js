@@ -20,10 +20,14 @@ import EcomHelper from '../../utils/ecomHelper';
 import { AppContext } from '../../context/AppContext';
 import BarcodeScanner from '../../components/BarcodeScanner';
 import { openDatabase } from '../../utils/database';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 const alphanumericRegex = /^[a-zA-Z0-9]+$/;
+
 const { width, height } = Dimensions.get('window');
+
 function RegulatorPage() {
   const navigation = useNavigation();
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const appContext = useContext(AppContext);
   const jobType = appContext.jobType;
   const title = jobType === 'Install' ? 'New Meter Details' : jobType;
@@ -54,7 +58,6 @@ function RegulatorPage() {
     regulatorDetails?.isAdditionalMaterial
   );
   const [isNewLogger, setIsNewLogger] = useState(regulatorDetails?.isNewLogger);
-  console.log('RegulatorPage');
 
   const updateRegulatorDetails = async () => {
     const { jobId } = appContext; // Assuming appContext provides the jobId
@@ -150,7 +153,7 @@ function RegulatorPage() {
       isNewLogger: isNewLogger,
       serialNoExist: serialNoExist,
     });
-    navigation.navigate('RegulatorPhotoPage');
+    goToNextStep();
   };
 
   const backPressed = () => {
@@ -167,7 +170,7 @@ function RegulatorPage() {
       isNewLogger: isNewLogger,
       serialNoExist: serialNoExist,
     });
-    navigation.goBack();
+    goToPreviousStep();
   };
 
   const scanBarcode = () => {

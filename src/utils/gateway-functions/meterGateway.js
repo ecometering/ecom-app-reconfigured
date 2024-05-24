@@ -9,10 +9,10 @@ import {
   StreamsSetSealDetailsPage,
 } from '../nagivation-routes/install-navigations';
 
-export const getMeterRoute = ({ pageflow, pageRoute }) => {
+export const getMeterRoute = ({ state, pageflow, pageRoute }) => {
   // TODO: sort context switch
   // Redux might be a better option
-  const { jobType, meterDetails } = {};
+  const { jobType, meterDetails } = state || {};
 
   const isAmr = meterDetails?.isAmr;
   const Type = meterDetails?.meterType.value;

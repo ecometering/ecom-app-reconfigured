@@ -5,10 +5,10 @@ import {
   StreamsSetSealDetailsPage,
 } from '../nagivation-routes/install-navigations';
 
-export const getDataloggerRoute = () => {
+export const getDataloggerRoute = ({ state }) => {
   // TODO: sort context switch
   // Redux might be a better option
-  const { jobType, meterDetails } = {};
+  const { jobType, meterDetails } = state || {};
 
   const Type = meterDetails?.meterType.value;
   const pressureTier = meterDetails?.pressureTier.label;

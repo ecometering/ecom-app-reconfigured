@@ -7,7 +7,7 @@ import EcomDropDown from '../../components/DropDown';
 import ImagePickerButton from '../../components/ImagePickerButton';
 import { PrimaryColors } from '../../theme/colors'; // Adjust path as needed
 import Header from '../../components/Header';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 
 const ReliefRegulatorPage = () => {
@@ -15,7 +15,6 @@ const ReliefRegulatorPage = () => {
   const [serialNumber, setSerialNumber] = useState('');
   const [size, setSize] = useState('');
   const [imageUri, setImageUri] = useState('');
-  const navigation = useNavigation();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const route = useRoute();
   // Dummy sizes for the dropdown

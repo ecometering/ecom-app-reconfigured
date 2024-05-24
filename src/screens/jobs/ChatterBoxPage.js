@@ -20,11 +20,13 @@ import { AppContext } from '../../context/AppContext';
 import BarcodeScanner from '../../components/BarcodeScanner';
 import ImagePickerButton from '../../components/ImagePickerButton';
 import { makeFontSmallerAsTextGrows } from '../../utils/styles';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 const { width, height } = Dimensions.get('window');
 const alphanumericRegex = /^[a-zA-Z0-9]+$/;
 
 function ChatterBoxPage() {
   const navigation = useNavigation();
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const appContext = useContext(AppContext);
   const jobType = appContext.jobType;
   const title = jobType === 'Install' ? 'New Meter Details' : jobType;
@@ -125,7 +127,7 @@ function ChatterBoxPage() {
       chatterImage: chatterBoxImage,
     });
 
-    navigation.navigate('StandardPage');
+    goToNextStep();
   };
   const backPressed = () => {
     appContext.setRegulatorDetails({
@@ -135,7 +137,7 @@ function ChatterBoxPage() {
       chatterModel: model,
       chatterImage: chatterBoxImage,
     });
-    navigation.goBack();
+    goToPreviousStep();
   };
 
   const scanBarcode = () => {

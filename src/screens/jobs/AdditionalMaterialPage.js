@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import Text, { CenteredText } from '../../components/Text';
 import Header from '../../components/Header';
-import { useNavigation } from '@react-navigation/native';
 import { width, unitH } from '../../utils/constant';
 import { TextType } from '../../theme/typography';
 import EcomDropDown from '../../components/DropDown';
@@ -19,7 +18,7 @@ import { AppContext } from '../../context/AppContext';
 import EcomHelper from '../../utils/ecomHelper';
 import { openDatabase } from '../../utils/database';
 function AdditionalMaterialPage() {
-  const navigation = useNavigation();
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const appContext = useContext(AppContext);
   const regulatorDetails = appContext.regulatorDetails;
   const [category, setCategory] = useState('');
@@ -31,23 +30,26 @@ function AdditionalMaterialPage() {
   const title = jobType === 'Install' ? 'New Meter Details' : jobType;
 
   const saveAdditionalMaterialsToDatabase = async () => {
-    console.log("creating job")
+    console.log('creating job');
     const db = await openDatabase();
-    console.log('Db status:', db)
+    console.log('Db status:', db);
 
     const additionalMaterials = JSON.stringify(materials);
-
 
     db.transaction((tx) => {
       tx.executeSql(
         `UPDATE Jobs SET additionalMaterials=?, progress=? WHERE id=?`,
         [additionalMaterials, progress, jobId],
         (_, result) => {
-          console.log('Site details and progress updated in database. Generated ID:', result.insertId);
+          console.log(
+            'Site details and progress updated in database. Generated ID:',
+            result.insertId
+          );
           // Pass the result.insertId as JobId parameter to the next navigation call
-          navigation.navigate("StandardPage", { JobId: jobId });
+          goToNextStep();
         },
-        (_, error) => console.log('Error updating site details in database:', error)
+        (_, error) =>
+          console.log('Error updating site details in database:', error)
       );
     });
   };
@@ -56,14 +58,14 @@ function AdditionalMaterialPage() {
       EcomHelper.showInfoMessage('Please add materials');
       return;
     }
-    saveAdditionalMaterialsToDatabase()
+    saveAdditionalMaterialsToDatabase();
   };
   const backPressed = () => {
     appContext.setRegulatorDetails({
       ...regulatorDetails,
       materials: materials,
     });
-    navigation.goBack();
+    goToPreviousStep();
   };
 
   const addPressed = () => {
@@ -92,15 +94,14 @@ function AdditionalMaterialPage() {
     setMaterials(values);
   };
 
-  const deletePressed = index => {
+  const deletePressed = (index) => {
     const updatedMaterials = [...materials];
     updatedMaterials.splice(index, 1);
     setMaterials(updatedMaterials);
   };
 
   const renderItem = (one, index) => {
-    const handleItemClick = () => {
-    };
+    const handleItemClick = () => {};
     console.log('========', one, index);
     const element = one.item;
     const rowColor =
@@ -114,33 +115,39 @@ function AdditionalMaterialPage() {
             backgroundColor: rowColor,
             height: unitH * 40,
             alignItems: 'center',
-          }}>
+          }}
+        >
           <CenteredText
             containerStyle={{ ...styles.headerCell, width: width * 0.25 }}
             type={TextType.BODY_TABLE}
-            style={styles.blackTxt}>
+            style={styles.blackTxt}
+          >
             {element?.category.label}
           </CenteredText>
           <CenteredText
             containerStyle={{ ...styles.headerCell, width: width * 0.35 }}
             type={TextType.BODY_TABLE}
-            style={styles.blackTxt}>
+            style={styles.blackTxt}
+          >
             {element?.item.label}
           </CenteredText>
           <CenteredText
             containerStyle={{ ...styles.headerCell, width: width * 0.15 }}
             type={TextType.BODY_TABLE}
-            style={styles.blackTxt}>
+            style={styles.blackTxt}
+          >
             {element?.quantity.label}
           </CenteredText>
           <CenteredText
             containerStyle={{ ...styles.headerCell, width: width * 0.15 }}
             type={TextType.BODY_TABLE}
-            style={styles.blackTxt}>
+            style={styles.blackTxt}
+          >
             <Button
               onPress={() => {
                 deletePressed(index);
-              }}>
+              }}
+            >
               <Text>{'❌'}</Text>
             </Button>
           </CenteredText>
@@ -162,7 +169,8 @@ function AdditionalMaterialPage() {
       />
       <KeyboardAvoidingView
         style={styles.content}
-        behavior={Platform.OS === 'ios' ? 'padding' : null}>
+        behavior={Platform.OS === 'ios' ? 'padding' : null}
+      >
         <View style={styles.body}>
           <View style={styles.border}>
             <Text type={TextType.HEADER_1} style={{ alignSelf: 'center' }}>
@@ -178,7 +186,7 @@ function AdditionalMaterialPage() {
                   { _index: 2, label: 'Category 2', value: '2' },
                 ]}
                 placeholder={'Category'}
-                onChange={e => {
+                onChange={(e) => {
                   console.log(e);
                   setCategory(e);
                 }}
@@ -193,9 +201,10 @@ function AdditionalMaterialPage() {
                   value={item}
                   valueList={[
                     { _index: 1, label: '1', value: '1' },
-                    { _index: 2, label: '2', value: '2' }]}
+                    { _index: 2, label: '2', value: '2' },
+                  ]}
                   placeholder={'Item Code'}
-                  onChange={e => {
+                  onChange={(e) => {
                     console.log(e);
                     setItem(e);
                   }}
@@ -260,7 +269,7 @@ function AdditionalMaterialPage() {
                   { _index: 30, label: '30', value: '30' },
                 ]}
                 placeholder={'Quantity'}
-                onChange={e => {
+                onChange={(e) => {
                   console.log(e);
                   //{"_index": 1, "label": "Item 2", "value": "2"}
                   setQuantity(e);
@@ -284,37 +293,42 @@ function AdditionalMaterialPage() {
                 style={{
                   ...styles.row,
                   backgroundColor: Transparents.BlueColor2,
-                }}>
+                }}
+              >
                 <CenteredText
                   containerStyle={{ ...styles.headerCell, width: width * 0.25 }}
                   type={TextType.BODY_TABLE}
-                  style={styles.blackTxt}>
+                  style={styles.blackTxt}
+                >
                   {'Category'}
                 </CenteredText>
                 <CenteredText
                   containerStyle={{ ...styles.headerCell, width: width * 0.35 }}
                   type={TextType.BODY_TABLE}
-                  style={styles.blackTxt}>
+                  style={styles.blackTxt}
+                >
                   {'Item'}
                 </CenteredText>
                 <CenteredText
                   containerStyle={{ ...styles.headerCell, width: width * 0.15 }}
                   type={TextType.BODY_TABLE}
-                  style={styles.blackTxt}>
+                  style={styles.blackTxt}
+                >
                   {'Quantity'}
                 </CenteredText>
                 <CenteredText
                   containerStyle={{ ...styles.headerCell, width: width * 0.15 }}
                   type={TextType.BODY_TABLE}
-                  style={styles.blackTxt}>
+                  style={styles.blackTxt}
+                >
                   {'delete'}
                 </CenteredText>
               </View>
               <FlatList
                 data={materials}
                 renderItem={renderItem}
-                keyExtractor={e => e.id.toString()}
-              // horizontal={false}
+                keyExtractor={(e) => e.id.toString()}
+                // horizontal={false}
               />
             </View>
           ) : (

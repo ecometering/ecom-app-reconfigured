@@ -1,15 +1,13 @@
-import { useContext } from 'react';
-import { AppContext } from '../../context/AppContext';
 import {
   DataLoggerDetailsPage,
   StandardPage,
   StreamsSetSealDetailsPage,
 } from '../nagivation-routes/install-navigations';
 
-export const getCorrectorRoute = () => {
+export const getCorrectorRoute = ({ state }) => {
   // TODO: sort context switch
   // Redux might be a better option
-  const { jobType, meterDetails } = {};
+  const { jobType, meterDetails } = state || {};
   const { meterType, pressureTier } = meterDetails || {};
   const Type = meterDetails?.meterType.value;
   const isAmr = meterDetails?.isAmr;

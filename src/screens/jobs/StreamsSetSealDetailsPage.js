@@ -49,7 +49,6 @@ const RepeatComponent = ({ title, onChangeText, value }) => {
 };
 
 function StreamsSetSealDetailsPage() {
-  const navigation = useNavigation();
   const { goToNextStep, goToPreviousStep } = usePreventRemoveContext();
   const appContext = useContext(AppContext);
   const [n, setN] = useState(appContext.streamNumber);
@@ -91,6 +90,7 @@ function StreamsSetSealDetailsPage() {
         item?.workingPressure === ''
       ) {
         EcomHelper.showInfoMessage('Please input the whole mbars');
+
         return;
       }
     }
@@ -98,7 +98,7 @@ function StreamsSetSealDetailsPage() {
     appContext.setStreamValue(streamValue);
     appContext.setStreamNumber(n);
 
-    navigation.navigate(nextScreen);
+    goToNextStep();
   };
 
   const backPressed = () => {

@@ -1,6 +1,6 @@
 import { useSQLiteContext } from 'expo-sqlite/next';
 import * as ExpoImagePicker from 'expo-image-picker';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 import React, {
   useRef,
   useState,
@@ -54,7 +54,6 @@ export default function CorrectorDetailsPage() {
   const route = useRoute();
   const db = useSQLiteContext();
   const camera = createRef(null);
-  const navigation = useNavigation();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const {
     jobID,

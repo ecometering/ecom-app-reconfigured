@@ -1,5 +1,3 @@
-import { useContext } from 'react';
-import { AppContext } from '../../context/AppContext';
 import { getCorrectorRoute } from '../gateway-functions/correctorGateway';
 import { getDataloggerRoute } from '../gateway-functions/dataloggerGateway';
 import { getMeterRoute } from '../gateway-functions/meterGateway';
@@ -125,7 +123,8 @@ export const MeterDetailsPage = [
       title: 'New ECV to MOV',
       photoKey: 'NewEcvToMov',
     },
-    diversions: getMeterRoute({ jobType: 'Install', pageflow: 1 }),
+    diversions: (state) =>
+      getMeterRoute({ state, jobType: 'Install', pageflow: 1 }),
   },
 ];
 
@@ -136,7 +135,7 @@ export const CorrectorDetailsPage = [
       title: 'New Corrector installed',
       photoKey: 'installedCorrector',
     },
-    diversions: getCorrectorRoute(),
+    diversions: (state) => getCorrectorRoute({ state }),
   },
 ];
 
@@ -147,7 +146,7 @@ export const DataLoggerDetailsPage = [
       title: 'New AMR installed',
       photoKey: 'installedAMR',
     },
-    diversions: getDataloggerRoute(),
+    diversions: (state) => getDataloggerRoute({ state }),
   },
 ];
 
@@ -166,7 +165,8 @@ export const MeterIndexPage = [
       title: 'New Meter photo',
       photoKey: 'NewMeterPhoto',
     },
-    diversions: getMeterRoute({ jobType: 'Install', pageflow: 2 }),
+    diversions: (state) =>
+      getMeterRoute({ state, jobType: 'Install', pageflow: 2 }),
   },
 ];
 
@@ -181,14 +181,10 @@ export const MeterDataBadgePage = [
   ...MeterIndexPage,
 ];
 
-// CorrectorDetailsPage
-// DataLoggerDetailsPage
-// StandardPage
-
-export const InstancesForStreamFlow = () => {
+export const InstancesForStreamFlow = ({ state }) => {
   // TODO: sort context switch
   // Redux might be a better option
-  const { numberOfStreams } = 5;
+  const { numberOfStreams } = state || {};
 
   return Array.from(
     { length: numberOfStreams },
@@ -237,7 +233,8 @@ export const StreamsSetSealDetailsPage = [
       title: 'Streams Set Seal Details',
       nextScreen: 'FilterPage-1',
     },
-    diversions: InstancesForStreamFlow().push(RegulatorPage),
+    diversions: (state) =>
+      InstancesForStreamFlow({ state }).push(RegulatorPage),
   },
 ];
 
@@ -245,11 +242,8 @@ export const RegulatorPage = [
   {
     screen: 'Regulator',
   },
-];
-
-export const RegulatorPhotoPage = [
   {
-    screen: 'RegulatorPhoto',
+    screen: 'RegulatorPhotoPage',
     params: {
       title: 'New Regulator photo',
       photoKey: 'RegulatorPhotoPage',
