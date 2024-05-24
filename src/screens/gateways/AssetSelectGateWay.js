@@ -18,7 +18,6 @@ const AssetSelectGatewayScreen = () => {
   }, [jobType, meterDetails, navigation]);
 
   const navigateToNextScreen = () => {
-    console.log({ jobType, meterDetails, pageFlow });
     switch (jobType) {
       case 'Install':
         if (meterDetails?.isMeter) {

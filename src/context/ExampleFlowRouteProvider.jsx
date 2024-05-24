@@ -1,11 +1,14 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { createContext, useContext, useState, useEffect } from 'react';
+
+// Flow types
 import { InstallNavigation } from '../utils/nagivation-routes/install-navigations';
 
 export const ProgressiveNavigationContext = createContext();
 
 const config = {
   Install: InstallNavigation,
+  // TODO: Add more flow types here
 };
 
 export function NavigationProvider({ children }) {
@@ -22,11 +25,14 @@ export function NavigationProvider({ children }) {
   }, [flowType]);
 
   const goToNextStep = () => {
-    const nextIndex = currentStepIndex + 1;
-    console.log({ nextIndex, flowLength: flow.length });
-    if (nextIndex < flow.length) {
-      setCurrentStepIndex(nextIndex);
-      navigation.navigate(flow[nextIndex].screen, flow[nextIndex].params);
+    if (flow[currentStepIndex].diversions) {
+      pushNavigation(flow[currentStepIndex].diversions);
+    } else {
+      const nextIndex = currentStepIndex + 1;
+      if (nextIndex < flow.length) {
+        setCurrentStepIndex(nextIndex);
+        navigation.navigate(flow[nextIndex].screen, flow[nextIndex].params);
+      }
     }
   };
 

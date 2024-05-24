@@ -1,40 +1,46 @@
-import React, { useContext, useState } from 'react';
 import {
-  Button,
-  Image,
-  KeyboardAvoidingView,
-  Modal,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
   View,
+  Image,
+  Modal,
+  Button,
+  StyleSheet,
   Dimensions,
+  ScrollView,
+  SafeAreaView,
+  KeyboardAvoidingView,
 } from 'react-native';
+import React, { useContext, useState } from 'react';
+import SignatureScreen from 'react-native-signature-canvas';
+
 import { isIos } from '../../utils/constant';
-import { useNavigation } from '@react-navigation/native';
-import Header from '../../components/Header';
+
+// Components
 import Text from '../../components/Text';
+import Header from '../../components/Header';
 import OptionalButton from '../../components/OptionButton';
 import TextInput, { TextInputWithTitle } from '../../components/TextInput';
+
+// Context
 import { AppContext } from '../../context/AppContext';
-import EcomHelper from '../../utils/ecomHelper';
-import { PrimaryColors } from '../../theme/colors';
-import SignatureScreen from 'react-native-signature-canvas';
 import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+
+// Utils
 import {
-  CompositeLabelPhoto,
   RiddorReportPage,
   SnClientInfoPage,
+  CompositeLabelPhoto,
 } from '../../utils/nagivation-routes/install-navigations';
+import EcomHelper from '../../utils/ecomHelper';
+import { PrimaryColors } from '../../theme/colors';
 
 const { width, height } = Dimensions.get('window');
 function StandardPage() {
-  const navigation = useNavigation();
   const appContext = useContext(AppContext);
   const { pushNavigation, goToPreviousStep } = useProgressNavigation();
+
+  const title = 'Standard Details';
   const jobType = appContext.jobType;
   const { standardDetails, meterDetails, jobID } = appContext;
-  const title = 'Standard Details';
 
   const [testPassed, setTestPassed] = useState(standardDetails?.testPassed);
   const [conformStandard, setconformStandard] = useState(
@@ -54,7 +60,6 @@ function StandardPage() {
   const handleOK = (signature) => {
     const base64String = signature.replace('data:image/png;base64,', '');
     setSignature(base64String);
-    console.log(base64String);
     setIsModal(false);
   };
 

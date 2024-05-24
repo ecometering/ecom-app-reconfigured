@@ -195,6 +195,7 @@ const InstallFlowNavigator = () => {
         component={StreamsSetSealDetailsPage}
         initialParams={{
           title: 'Streams Set Seal Details',
+          nextScreen: 'FilterPage-1',
         }}
       />
       {generateScreenInstancesForStreams(numberOfStreams).map(
@@ -213,6 +214,16 @@ const InstallFlowNavigator = () => {
 
       {/* regulator process */}
       <Stack.Screen name="Regulator" component={RegulatorPage} />
+      <Stack.Screen
+        key="RegulatorPhotoPage"
+        name="RegulatorPhotoPage"
+        component={GenericPhotoPage}
+        initialParams={{
+          title: 'New Regulator photo',
+          photoKey: 'RegulatorPhotoPage',
+          nextScreen: 'ChatterBox',
+        }}
+      />
       <Stack.Screen name="ChatterBox" component={ChatterBoxPage} />
       <Stack.Screen
         name="AdditionalMaterial"

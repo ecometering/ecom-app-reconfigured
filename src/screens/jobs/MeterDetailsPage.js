@@ -37,6 +37,7 @@ import {
 import EcomHelper from '../../utils/ecomHelper';
 import { AppContext } from '../../context/AppContext';
 import { makeFontSmallerAsTextGrows } from '../../utils/styles';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 
 const alphanumericRegex = /^[a-zA-Z0-9]*$/;
 const { width, height } = Dimensions.get('window');
@@ -46,6 +47,8 @@ function MeterDetailsPage() {
   const camera = useRef(null);
   const db = useSQLiteContext();
   const navigation = useNavigation();
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
+
   const isIos = Platform.OS === 'ios';
   const { title, nextScreen } = route.params;
   const diaphragmMeterTypes = ['1', '2', '4'];
@@ -71,7 +74,6 @@ function MeterDetailsPage() {
     // This effect only runs once on mount
     return () => {
       isMounted.current = false; // Set to false when component will unmount
-      console.log('Unmounted MeterDetailsPage');
     };
   }, []);
 
@@ -102,7 +104,6 @@ function MeterDetailsPage() {
   useEffect(() => {
     if (isMounted.current) {
       getMeterTypes();
-      console.log('Meter Details:', localMeterDetails);
     }
   }, [
     getMeterTypes,
@@ -202,7 +203,6 @@ function MeterDetailsPage() {
   }, []);
 
   const getMeterModelCodes = useCallback(async () => {
-    console.log('getMeterModelCodes called');
     const tableName = localMeterDetails?.meterType
       ? tableNames[localMeterDetails.meterType.value]
       : null;
@@ -210,9 +210,9 @@ function MeterDetailsPage() {
       try {
         const query = `SELECT DISTINCT ModelCode FROM ${tableName} WHERE Manufacturer = ?`;
         const params = [localMeterDetails.manufacturer?.value || '']; // Use localMeterDetails.manufacturer?.value
-        console.log('Executing query:', query, 'with params:', params);
+
         const result = await db.getAllAsync(query, params);
-        console.log('Query result:', result);
+
         setMeterModelCodes(
           result
             .map((model) => ({
@@ -221,7 +221,6 @@ function MeterDetailsPage() {
             }))
             .sort((a, b) => a.label.localeCompare(b.label))
         );
-        console.log('Model codes set:', meterModelCodes);
       } catch (err) {
         console.error('SQL Error: ', err);
       }
@@ -233,17 +232,16 @@ function MeterDetailsPage() {
   }, [localMeterDetails?.meterType, localMeterDetails?.manufacturer]);
 
   const getMeterManufacturers = useCallback(async () => {
-    console.log('getMeterManufacturers called');
     const meterType = localMeterDetails?.meterType?.value;
     const tableName = meterType && tableNames[meterType];
     if (tableName) {
       try {
         const query = `SELECT DISTINCT Manufacturer FROM ${tableName}`;
-        console.log('Executing query:', query);
+
         const result = await db.getAllAsync(query);
         if (isMounted.current) {
           // Check if component is still mounted
-          console.log('Query result:', result);
+
           setMeterManufacturers(
             result
               .map((manu) => ({
@@ -316,21 +314,19 @@ function MeterDetailsPage() {
       EcomHelper.showInfoMessage('Diagphragm Meter can only be LP or MP');
       return;
     }
-    console.log('Navigating to', nextScreen);
+
     try {
       await saveToDatabase();
       setMeterDetails(localMeterDetails);
-      console.log('Meter details saved, navigating to', nextScreen);
-      navigation.navigate(nextScreen);
-    } catch (error) {
-      console.error('Failed to save meter details or navigate:', error);
-    }
+
+      goToNextStep();
+    } catch (error) {}
   };
 
   const backPressed = async () => {
     await saveToDatabase();
     setMeterDetails(localMeterDetails);
-    navigation.goBack();
+    goToPreviousStep();
   };
 
   const scanBarcode = () => {
@@ -339,7 +335,6 @@ function MeterDetailsPage() {
 
   const barcodeRecognized = (codes) => {
     EcomHelper.showInfoMessage(codes.data);
-    console.log(codes);
     setIsModal(false);
     handleInputChange('serialNumber', codes.data);
   };

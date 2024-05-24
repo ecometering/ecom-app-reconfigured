@@ -1,19 +1,28 @@
 import React, { useState } from 'react';
-import { View, SafeAreaView, ScrollView, StyleSheet, Image } from 'react-native';
-import TextInputWithTitle, { InputRowWithTitle } from '../../components/TextInput';
+import {
+  View,
+  Image,
+  StyleSheet,
+  ScrollView,
+  SafeAreaView,
+} from 'react-native';
+import { useRoute } from '@react-navigation/native';
+
+import Header from '../../components/Header';
 import EcomDropDown from '../../components/DropDown';
+import TextInputWithTitle from '../../components/TextInput';
 import ImagePickerButton from '../../components/ImagePickerButton';
+
 import { PrimaryColors } from '../../theme/colors';
-import Header from "../../components/Header";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 
 const FilterPage = () => {
-  const [manufacturer, setManufacturer] = useState('');
-  const [serialNumber, setSerialNumber] = useState('');
   const [size, setSize] = useState('');
   const [imageUri, setImageUri] = useState('');
+  const [manufacturer, setManufacturer] = useState('');
+  const [serialNumber, setSerialNumber] = useState('');
 
-  const navigation = useNavigation();
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const route = useRoute();
 
   const sizeOptions = [
@@ -22,17 +31,14 @@ const FilterPage = () => {
     { label: 'Large', value: 'large' },
   ];
 
-  const { title, nextScreen, jobId } = route.params;
+  const { title } = route.params;
 
   const backPressed = () => {
-    console.log("Back button pressed");
-    navigation.goBack();
+    goToPreviousStep();
   };
 
   const nextPressed = async () => {
-    console.log("Next button pressed");
-    console.log("Navigating to next screen:", nextScreen);
-    navigation.navigate(nextScreen);
+    goToNextStep();
   };
 
   return (
@@ -70,9 +76,7 @@ const FilterPage = () => {
           />
         </View>
 
-        <ImagePickerButton
-          onImageSelected={setImageUri}
-        />
+        <ImagePickerButton onImageSelected={setImageUri} />
 
         {imageUri && (
           <Image

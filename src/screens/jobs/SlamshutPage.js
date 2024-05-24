@@ -1,11 +1,20 @@
 import React, { useState } from 'react';
-import { View, SafeAreaView, ScrollView, StyleSheet, Image } from 'react-native';
-import TextInputWithTitle, { InputRowWithTitle } from '../../components/TextInput';
+import {
+  View,
+  Image,
+  ScrollView,
+  StyleSheet,
+  SafeAreaView,
+} from 'react-native';
+import { useRoute } from '@react-navigation/native';
+
+import Header from '../../components/Header';
 import EcomDropDown from '../../components/DropDown';
+import TextInputWithTitle from '../../components/TextInput';
 import ImagePickerButton from '../../components/ImagePickerButton';
+
 import { PrimaryColors } from '../../theme/colors';
-import Header from "../../components/Header";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 
 const SlamshutPage = () => {
   const [manufacturer, setManufacturer] = useState('');
@@ -13,9 +22,9 @@ const SlamshutPage = () => {
   const [size, setSize] = useState('');
   const [imageUri, setImageUri] = useState('');
 
-  const navigation = useNavigation();
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const route = useRoute();
-  const { title, nextScreen } = route.params;
+  const { title } = route.params;
 
   const sizeOptions = [
     { label: 'Small', value: 'small' },
@@ -24,14 +33,11 @@ const SlamshutPage = () => {
   ];
 
   const backPressed = () => {
-    console.log("Back button pressed");
-    navigation.goBack();
+    goToPreviousStep();
   };
 
   const nextPressed = async () => {
-    console.log("Next button pressed");
-    console.log("Navigating to next screen:", nextScreen);
-    navigation.navigate(nextScreen);
+    goToNextStep();
   };
 
   return (
@@ -69,9 +75,7 @@ const SlamshutPage = () => {
           />
         </View>
 
-        <ImagePickerButton
-          onImageSelected={setImageUri}
-        />
+        <ImagePickerButton onImageSelected={setImageUri} />
 
         {imageUri && (
           <Image

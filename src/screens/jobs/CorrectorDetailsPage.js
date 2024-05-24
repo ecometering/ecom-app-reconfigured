@@ -45,6 +45,7 @@ import {
   appendPhotoDetail,
 } from '../../utils/database';
 import { makeFontSmallerAsTextGrows } from '../../utils/styles';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 
 const alphanumericRegex = /^[a-zA-Z0-9]+$/;
 const { width, height } = Dimensions.get('window');
@@ -54,7 +55,7 @@ export default function CorrectorDetailsPage() {
   const db = useSQLiteContext();
   const camera = createRef(null);
   const navigation = useNavigation();
-  const appContext = useContext(AppContext);
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const {
     jobID,
     photos,
@@ -82,15 +83,10 @@ export default function CorrectorDetailsPage() {
       ...prevDetails,
       [name]: value,
     }));
-
-    console.log('value updated:', name);
-    console.log('value updated:', value);
-    console.log('Corrector Details:', localCorrectorDetails);
   };
 
   const handlePhotoSelected = (uri) => {
     setSelectedImage({ title, photoKey, uri });
-    console.log('Photo saved:', { title, photoKey, uri });
   };
 
   const saveToDatabase = async () => {
@@ -147,11 +143,10 @@ export default function CorrectorDetailsPage() {
     saveToDatabase();
     if (selectedImage.uri) savePhoto(photoKey, selectedImage);
     setCorrectorDetails(localCorrectorDetails);
-    navigation.goBack();
+    goToPreviousStep();
   };
 
   const nextPressed = async () => {
-    console.log('nextPressed invoked.');
     if (!selectedImage?.uri) {
       EcomHelper.showInfoMessage('Please choose image');
       return;
@@ -178,7 +173,7 @@ export default function CorrectorDetailsPage() {
     saveToDatabase();
     if (selectedImage.uri) savePhoto(photoKey, selectedImage);
     setCorrectorDetails(localCorrectorDetails);
-    navigation.navigate(nextScreen);
+    goToNextStep();
   };
 
   useEffect(() => {

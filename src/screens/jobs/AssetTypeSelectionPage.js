@@ -1,25 +1,33 @@
-import React, { useContext } from 'react';
 import {
-  KeyboardAvoidingView,
+  View,
   Platform,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
-  View,
+  SafeAreaView,
+  KeyboardAvoidingView,
 } from 'react-native';
-import { unitH, width } from '../../utils/constant';
-import Header from '../../components/Header';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import React, { useContext } from 'react';
+import { useRoute } from '@react-navigation/native';
+
+// Components
 import Text from '../../components/Text';
-import { TextType } from '../../theme/typography';
+import Header from '../../components/Header';
 import SwitchWithTitle from '../../components/Switch';
-import { AppContext } from '../../context/AppContext';
+
+// Utils
 import EcomHelper from '../../utils/ecomHelper';
+import { TextType } from '../../theme/typography';
+import { unitH, width } from '../../utils/constant';
+
+// Context
+import { AppContext } from '../../context/AppContext';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import { getAssetSelectRoute } from '../../utils/gateway-functions/assetSelectGateway';
 
 function AssetTypeSelectionPage() {
-  const navigation = useNavigation();
+  const { goToPreviousStep, pushNavigation } = useProgressNavigation();
   const route = useRoute();
-  const { title, nextScreen } = route.params;
+  const { title } = route.params;
 
   const { setMeterDetails, jobType, meterDetails, jobID } =
     useContext(AppContext);
@@ -49,9 +57,8 @@ function AssetTypeSelectionPage() {
   };
 
   const backPressed = () => {
-    console.log('Back Pressed');
     saveToDatabase();
-    navigation.goBack();
+    goToPreviousStep();
   };
 
   const nextPressed = () => {
@@ -64,9 +71,8 @@ function AssetTypeSelectionPage() {
       return;
     }
 
-    console.log('Meter Details:', { isMeter, isAmr, isCorrector });
     saveToDatabase();
-    navigation.navigate(nextScreen);
+    pushNavigation(getAssetSelectRoute({ jobType, meterDetails, pageFlow: 1 }));
   };
 
   return (
@@ -91,7 +97,6 @@ function AssetTypeSelectionPage() {
               value={meterDetails?.isMeter}
               onValueChange={(e) => {
                 handleInputChange('isMeter', e);
-                console.log('Meter Switch Changed:', e);
               }}
             />
             <View style={styles.spacer} />
@@ -100,7 +105,6 @@ function AssetTypeSelectionPage() {
               value={meterDetails?.isAmr}
               onValueChange={(e) => {
                 handleInputChange('isAmr', e);
-                console.log('AMR Switch Changed:', e);
               }}
             />
             <View style={styles.spacer} />
@@ -109,7 +113,6 @@ function AssetTypeSelectionPage() {
               value={meterDetails?.isCorrector}
               onValueChange={(e) => {
                 handleInputChange('isCorrector', e);
-                console.log('Corrector Switch Changed:', e);
               }}
             />
             <View style={styles.spacer} />

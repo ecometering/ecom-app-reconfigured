@@ -4,24 +4,16 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { AppContext } from '../../context/AppContext';
 
 const DataloggerGatewayScreen = () => {
-  const route = useRoute();
   const navigation = useNavigation();
   const { jobType, meterDetails } = useContext(AppContext);
   const { meterType, pressureTier } = meterDetails ?? {};
   const Type = meterType?.value;
 
-  console.log({ Type });
-
-  console.log('CorrectorGatewayScreen', meterDetails);
-  console.log('CorrectorGatewayScreen', jobType);
-
   const isCorrector = meterDetails?.isCorrector;
   const isAmr = meterDetails?.isAmr;
   const isMeter = meterDetails?.isMeter;
 
-  console.log(' gateway screen', isMeter, isCorrector, isAmr);
   useEffect(() => {
-    console.log('CorrectorGatewayScreen Mounted');
     // Enhanced conditional logic
     setTimeout(() => {
       navigateBasedOnJobType();

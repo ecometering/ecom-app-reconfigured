@@ -1,21 +1,22 @@
-
 import useState from 'react';
+import { useRoute } from '@react-navigation/native';
 import { View, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
-import TextInputWithTitle, { InputRowWithTitle } from '../../components/TextInput'; // Adjust path as needed
-import EcomDropDown from '../../components/DropDown'
-import ImagePickerButton from '../../components/ImagePickerButton';
-import { PrimaryColors } from '../../theme/colors'; // Adjust path as needed
-import Header from "../../components/Header";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { openDatabase,addOrUpdateJobData } from '../../utils/database';
 
+import Header from '../../components/Header';
+import EcomDropDown from '../../components/DropDown';
+import TextInputWithTitle from '../../components/TextInput'; // Adjust path as needed
+import ImagePickerButton from '../../components/ImagePickerButton';
+
+import { PrimaryColors } from '../../theme/colors'; // Adjust path as needed
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 
 const ActiveRegulatorPage = () => {
   const [manufacturer, setManufacturer] = useState('');
   const [serialNumber, setSerialNumber] = useState('');
   const [size, setSize] = useState('');
   const [imageUri, setImageUri] = useState('');
-  const navigation = useNavigation();
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
+
   const route = useRoute();
   // Dummy sizes for the dropdown
   const sizeOptions = [
@@ -28,40 +29,37 @@ const ActiveRegulatorPage = () => {
     serialNumber,
     size,
   };
-  
+
   const imageData = {
     imageUri,
   };
-  
+
   const backPressed = () => {
-    console.log("Back button pressed");
-
-
-    navigation.goBack();
+    goToPreviousStep();
   };
 
   const nextPressed = async () => {
-    console.log("Next button pressed");
+    console.log('Next button pressed');
 
     try {
       // Save the data using the route title as an identifier
       await saveStreamData(route.params.title, streamData);
-      console.log("Data saved successfully. Navigating to next screen.");
+      console.log('Data saved successfully. Navigating to next screen.');
     } catch (error) {
-      console.error("Failed to save data:", error);
+      console.error('Failed to save data:', error);
       // Optionally handle the error, e.g., show an alert to the user
     }
-  
+
     // Proceed to navigate after saving
-  
-    console.log("Navigating to next screen:", nextScreen);
-    navigation.navigate(nextScreen);
+
+    console.log('Navigating to next screen:', nextScreen);
+    goToNextStep();
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-      <Header
+        <Header
           hasLeftBtn={true}
           hasCenterText={true}
           hasRightBtn={true}
@@ -69,7 +67,7 @@ const ActiveRegulatorPage = () => {
           leftBtnPressed={backPressed}
           rightBtnPressed={nextPressed}
         />
-       <View style={styles.card}>
+        <View style={styles.card}>
           <TextInputWithTitle
             title="Manufacturer"
             value={manufacturer}
@@ -89,9 +87,7 @@ const ActiveRegulatorPage = () => {
             onChange={(selectedItem) => setSize(selectedItem.value)}
           />
         </View>
-        <ImagePickerButton
-          onImageSelected={setImageUri}
-        />
+        <ImagePickerButton onImageSelected={setImageUri} />
         {/* Additional content can be added here */}
       </ScrollView>
     </SafeAreaView>

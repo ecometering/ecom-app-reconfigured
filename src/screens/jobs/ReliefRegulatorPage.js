@@ -1,12 +1,14 @@
-
 import useState from 'react';
 import { View, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
-import TextInputWithTitle, { InputRowWithTitle } from '../../components/TextInput'; // Adjust path as needed
-import EcomDropDown from '../../components/DropDown'
+import TextInputWithTitle, {
+  InputRowWithTitle,
+} from '../../components/TextInput'; // Adjust path as needed
+import EcomDropDown from '../../components/DropDown';
 import ImagePickerButton from '../../components/ImagePickerButton';
 import { PrimaryColors } from '../../theme/colors'; // Adjust path as needed
-import Header from "../../components/Header";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import Header from '../../components/Header';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 
 const ReliefRegulatorPage = () => {
   const [manufacturer, setManufacturer] = useState('');
@@ -14,6 +16,7 @@ const ReliefRegulatorPage = () => {
   const [size, setSize] = useState('');
   const [imageUri, setImageUri] = useState('');
   const navigation = useNavigation();
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const route = useRoute();
   // Dummy sizes for the dropdown
   const sizeOptions = [
@@ -23,27 +26,23 @@ const ReliefRegulatorPage = () => {
   ];
 
   const backPressed = () => {
-    console.log("Back button pressed");
-    navigation.goBack();
+    goToPreviousStep();
   };
 
   const nextPressed = async () => {
-    console.log("Next button pressed");
-    console.log("Navigating to next screen:", nextScreen);
-    navigation.navigate(nextScreen);
+    goToNextStep();
   };
 
-  
   return (
     <SafeAreaView style={styles.container}>
       <Header
-          hasLeftBtn={true}
-          hasCenterText={true}
-          hasRightBtn={true}
-          centerText={title}
-          leftBtnPressed={backPressed}
-          rightBtnPressed={nextPressed}
-        />
+        hasLeftBtn={true}
+        hasCenterText={true}
+        hasRightBtn={true}
+        centerText={title}
+        leftBtnPressed={backPressed}
+        rightBtnPressed={nextPressed}
+      />
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.card}>
           <TextInputWithTitle
@@ -65,9 +64,7 @@ const ReliefRegulatorPage = () => {
             onChange={(selectedItem) => setSize(selectedItem.value)}
           />
         </View>
-        <ImagePickerButton
-          onImageSelected={setImageUri}
-        />
+        <ImagePickerButton onImageSelected={setImageUri} />
         {/* Additional content can be added here */}
       </ScrollView>
     </SafeAreaView>

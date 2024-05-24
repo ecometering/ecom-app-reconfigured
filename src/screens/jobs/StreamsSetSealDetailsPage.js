@@ -1,24 +1,29 @@
+import {
+  View,
+  Platform,
+  StyleSheet,
+  Dimensions,
+  ScrollView,
+  SafeAreaView,
+  TouchableHighlight,
+  KeyboardAvoidingView,
+} from 'react-native';
 import React, { useContext, useState } from 'react';
 import {
-  KeyboardAvoidingView,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  View,
-  Dimensions,
-  TouchableHighlight,
-} from 'react-native';
+  useNavigation,
+  usePreventRemoveContext,
+  useRoute,
+} from '@react-navigation/native';
+
+// Components
 import Text from '../../components/Text';
 import Header from '../../components/Header';
-import { useNavigation, useRoute } from '@react-navigation/native';
 import { TextType } from '../../theme/typography';
 import TextInput from '../../components/TextInput';
-import NumberInput from '../../components/NumberInput';
-import { AppContext } from '../../context/AppContext';
-import EcomHelper from '../../utils/ecomHelper';
 
-const { width, height } = Dimensions.get('window');
+// Context & Utils
+import EcomHelper from '../../utils/ecomHelper';
+import { AppContext } from '../../context/AppContext';
 
 const RepeatComponent = ({ title, onChangeText, value }) => {
   return (
@@ -45,20 +50,17 @@ const RepeatComponent = ({ title, onChangeText, value }) => {
 
 function StreamsSetSealDetailsPage() {
   const navigation = useNavigation();
+  const { goToNextStep, goToPreviousStep } = usePreventRemoveContext();
   const appContext = useContext(AppContext);
   const [n, setN] = useState(appContext.streamNumber);
 
   const [streamValue, setStreamValue] = useState(appContext.streamValue);
-  const jobType = appContext.jobType;
   const route = useRoute();
-  const { title, nextScreen, jobId } = route?.params ?? {};
-
-  console.log('StreamsSetSealDetailsPage');
+  const { title, nextScreen } = route?.params ?? {};
 
   const saveToDatabase = async () => {
     const streamDetailsJson = JSON.stringify(streamValue);
 
-    console.log({ streamDetailsJson });
     try {
       await db
         .runAsync('UPDATE Jobs SET streams = ? WHERE id = ?', [
@@ -74,8 +76,6 @@ function StreamsSetSealDetailsPage() {
   };
 
   const nextPressed = async () => {
-    console.log(streamValue);
-
     if (n === 0) {
       EcomHelper.showInfoMessage("Stream value can't be 0.");
       return;
@@ -98,8 +98,6 @@ function StreamsSetSealDetailsPage() {
     appContext.setStreamValue(streamValue);
     appContext.setStreamNumber(n);
 
-    // TODO: navigate to next screen is undefined here so need to fix this
-    // provide required navigation screen name in nextScreen
     navigation.navigate(nextScreen);
   };
 
@@ -107,12 +105,7 @@ function StreamsSetSealDetailsPage() {
     appContext.setStreamValue(streamValue);
     appContext.setStreamNumber(n);
 
-    navigation.goBack();
-  };
-
-  const handleChangeValue = (newValue) => {
-    console.log('New value:======', newValue);
-    setN(newValue);
+    goToPreviousStep();
   };
 
   const handleFieldChange = (value, index, field) => {

@@ -1,6 +1,6 @@
 import { useSQLiteContext } from 'expo-sqlite/next';
+import { useRoute } from '@react-navigation/native';
 import React, { useContext, useRef, useState } from 'react';
-import { useNavigation, useRoute } from '@react-navigation/native';
 import {
   View,
   Image,
@@ -27,6 +27,7 @@ import { TextType } from '../../theme/typography';
 import { PrimaryColors } from '../../theme/colors';
 import { AppContext } from '../../context/AppContext';
 import { makeFontSmallerAsTextGrows } from '../../utils/styles';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 
 const alphanumericRegex = /^[a-zA-Z0-9]+$/;
 const { width, height } = Dimensions.get('window');
@@ -35,7 +36,7 @@ export default function DataLoggerDetailsPage() {
   const route = useRoute();
   const camera = useRef(null);
   const db = useSQLiteContext();
-  const navigation = useNavigation();
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const {
     jobID,
     photos,
@@ -97,7 +98,7 @@ export default function DataLoggerDetailsPage() {
     savePhoto(photoKey, selectedImage);
     setDataLoggerDetails(localDataLoggerDetails);
     await saveToDatabase();
-    navigation.goBack();
+    goToPreviousStep();
   };
   console.log(localDataLoggerDetails);
 
@@ -141,8 +142,7 @@ export default function DataLoggerDetailsPage() {
     savePhoto(photoKey, selectedImage);
     setDataLoggerDetails(localDataLoggerDetails);
     await saveToDatabase();
-    navigation.navigate(nextScreen);
-
+    goToNextStep();
     return;
   };
 

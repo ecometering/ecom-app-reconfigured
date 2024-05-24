@@ -13,14 +13,9 @@ const CorrectorGatewayScreen = () => {
   const { jobType, meterDetails } = useContext(AppContext);
   const { meterType, pressureTier } = meterDetails || {};
 
-  console.log('CorrectorGatewayScreen', meterDetails);
-  console.log('CorrectorGatewayScreen', jobType);
-
   const isAmr = meterDetails?.isAmr;
   const isMeter = meterDetails?.isMeter;
   const isCorrector = meterDetails?.isCorrector;
-
-  console.log(' gateway screen', isMeter, isCorrector, isAmr);
 
   useEffect(() => {
     console.log('CorrectorGatewayScreen Mounted');
@@ -34,8 +29,6 @@ const CorrectorGatewayScreen = () => {
   }, [pageRoute]);
 
   function navigateBasedOnJobType() {
-    console.log('Navigating based on jobType:', jobType);
-    console.log('Heeeey', { isAmr, isMeter, isCorrector });
     switch (jobType) {
       case 'Install':
         if (isAmr) {
@@ -53,21 +46,6 @@ const CorrectorGatewayScreen = () => {
         }
         break;
       case 'Maintenance':
-        const nextAfterCorrectorMaintenance = ({
-          datalogger,
-          meter,
-          meterType,
-          meterPressure,
-        }) => {
-          if (datalogger) {
-            navigation.replace('ExistingDataLoggerDetails'); // Navigate to DataLogger if true
-          } else if (meter) {
-            navigation.replace('StreamsSetSealDetails'); // Use setAndSeal logic if meter is present
-          } else {
-            navigation.replace('MaintenanceQuestions'); // Fallback to maintenance questions
-          }
-        };
-        // Add specific logic for Maintenance job type
         break;
       case 'Removal':
         if (datalogger) {
