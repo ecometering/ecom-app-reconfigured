@@ -1,27 +1,31 @@
-import React, { useContext, useState } from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
   View,
   Modal,
+  ScrollView,
+  StyleSheet,
+  SafeAreaView,
   TouchableOpacity,
 } from 'react-native';
+import React, { useContext, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+
+// Utils and Constants
 import { height, unitH } from '../utils/constant';
 import { PrimaryColors } from '../theme/colors';
-import { EcomPressable as Button } from '../components/ImageButton';
+
+// Components
 import Text from '../components/Text';
-import { useNavigation } from '@react-navigation/native';
-import { AppContext } from '../context/AppContext';
 import Header from '../components/Header';
-import { addOrUpdateJobData } from '../utils/database';
+import { EcomPressable as Button } from '../components/ImageButton';
+
+// Context
+import { AppContext } from '../context/AppContext';
 import { useProgressNavigation } from '../context/ExampleFlowRouteProvider';
 
 function JobTypePage() {
   const navigation = useNavigation();
   const { startFlow } = useProgressNavigation();
-  const { jobStarted, resetContext, setJobID, setJobType } =
-    useContext(AppContext);
+  const { jobStarted, resetContext } = useContext(AppContext);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedJobType, setSelectedJobType] = useState('');
@@ -46,10 +50,10 @@ function JobTypePage() {
         jobStatus: 'in progress',
         progress: 0,
       };
-      console.log(`Job type ${jobType} saved successfully.`);
+
       // this is where we set the navigation flow and get the first screen details
       const navigationDetails = startFlow(jobType);
-      console.log('Navigation details:', navigationDetails);
+
       // here we pass the screen information for the flow
       navigation.navigate(navigationDetails.screen, {
         ...navigationDetails.params,

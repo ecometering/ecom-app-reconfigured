@@ -22,10 +22,9 @@ import { unitH, width } from '../../utils/constant';
 // Context
 import { AppContext } from '../../context/AppContext';
 import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
-import { getAssetSelectRoute } from '../../utils/gateway-functions/assetSelectGateway';
 
 function AssetTypeSelectionPage() {
-  const { goToPreviousStep, pushNavigation } = useProgressNavigation();
+  const { goToPreviousStep, goToNextStep } = useProgressNavigation();
   const route = useRoute();
   const { title } = route.params;
 
@@ -72,7 +71,7 @@ function AssetTypeSelectionPage() {
     }
 
     saveToDatabase();
-    pushNavigation(getAssetSelectRoute({ jobType, meterDetails, pageFlow: 1 }));
+    goToNextStep();
   };
 
   return (

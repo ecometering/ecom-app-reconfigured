@@ -1,38 +1,37 @@
-import React, { useContext, useState } from 'react';
 import {
-  Alert,
-  Button,
-  Image,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
   View,
+  Image,
+  StyleSheet,
   Dimensions,
+  ScrollView,
+  SafeAreaView,
 } from 'react-native';
-import Header from '../../components/Header';
+import React, { useContext, useState } from 'react';
+
+// Components
 import Text from '../../components/Text';
+import Header from '../../components/Header';
 import TextInput from '../../components/TextInput';
 import ImagePickerButton from '../../components/ImagePickerButton'; // Adjust this path as necessary
-import { useNavigation } from '@react-navigation/native';
-import { TextType } from '../../theme/typography';
+
+// Context
 import { AppContext } from '../../context/AppContext';
-import EcomHelper from '../../utils/ecomHelper';
 import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
-import {
-  CompositeLabelPhoto,
-  SnClientInfoPage,
-} from '../../utils/nagivation-routes/install-navigations';
+
+// Utils
+import { TextType } from '../../theme/typography';
+import EcomHelper from '../../utils/ecomHelper';
 
 const { width, height } = Dimensions.get('window'); // Use Dimensions to get width and height
 
 export default function RiddorReportPage() {
   const appContext = useContext(AppContext);
-  const { pushNavigation, goToPreviousStep } = useProgressNavigation();
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const standardDetails = appContext.standardDetails;
   const jobType = appContext.jobType;
   const jobID = appContext.jobID;
   const title = jobType === 'Install' ? 'New Meter Details' : jobType;
-  const confirmStandard = standardDetails?.confirmStandard;
+
   const [riddorImage, setRiddorImage] = useState(standardDetails?.riddorImage); // Renamed state
   const [notes, setNotes] = useState(standardDetails?.notes);
   const [riddorRef, setRiddorRef] = useState(standardDetails?.riddorRef);
@@ -92,11 +91,7 @@ export default function RiddorReportPage() {
       jobID,
     ]);
 
-    if (standardDetails.conformStandard === false) {
-      pushNavigation(SnClientInfoPage);
-    } else {
-      pushNavigation(CompositeLabelPhoto);
-    }
+    goToNextStep();
   };
 
   return (

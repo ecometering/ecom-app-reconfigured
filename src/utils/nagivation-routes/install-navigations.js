@@ -1,6 +1,7 @@
+import { getMeterRoute } from '../gateway-functions/meterGateway';
 import { getCorrectorRoute } from '../gateway-functions/correctorGateway';
 import { getDataloggerRoute } from '../gateway-functions/dataloggerGateway';
-import { getMeterRoute } from '../gateway-functions/meterGateway';
+import { getAssetSelectRoute } from '../gateway-functions/assetSelectGateway';
 
 export const InstallNavigation = [
   {
@@ -22,6 +23,16 @@ export const InstallNavigation = [
     params: {
       title: 'Site Questions',
       photoKey: 'bypassPhoto',
+    },
+    diversions: (state) => {
+      const { siteQuestions } = state;
+      if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
+        return StandardPage;
+      } else if (!siteQuestions?.isCarryOut) {
+        return RebookPage;
+      } else {
+        return AssetTypeSelectionPage;
+      }
     },
   },
 ];
@@ -49,6 +60,19 @@ export const ExtraPhotoPageRoute = (
 export const StandardPage = [
   {
     screen: 'StandardPage',
+    diversions: (state) => {
+      const { standardDetails } = state;
+      const { riddorReportable, conformStandard } = standardDetails;
+      if (riddorReportable === true) {
+        return RiddorReportPage;
+      } else {
+        if (conformStandard === false) {
+          return SnClientInfoPage;
+        } else {
+          return CompositeLabelPhoto;
+        }
+      }
+    },
   },
 ];
 
@@ -65,9 +89,16 @@ export const RebookPage = [
 export const RiddorReportPage = [
   {
     screen: 'RiddorReportPage',
+    diversions: (state) => {
+      const { standardDetails } = state;
+      if (standardDetails.conformStandard === false) {
+        return SnClientInfoPage;
+      } else {
+        return CompositeLabelPhoto;
+      }
+    },
   },
 ];
-
 // Riddor Report Alternative Flows
 // alternates between:
 // SnClientInfoPage
@@ -106,6 +137,9 @@ export const SnClientInfoPage = [
 export const AssetTypeSelectionPage = [
   {
     screen: 'AssetTypeSelectionPage',
+    diversions: (state) => {
+      getAssetSelectRoute({ state });
+    },
   },
 ];
 

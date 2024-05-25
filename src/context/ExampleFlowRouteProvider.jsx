@@ -1,14 +1,16 @@
+import { AppContext } from './AppContext';
 import { useNavigation } from '@react-navigation/native';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Flow types
 import { InstallNavigation } from '../utils/nagivation-routes/install-navigations';
-import { AppContext } from './AppContext';
+import { RemovalNavigation } from '../utils/nagivation-routes/removal-navigation';
 
 export const ProgressiveNavigationContext = createContext();
 
 const config = {
   Install: InstallNavigation,
+  Removal: RemovalNavigation,
   // TODO: Add more flow types here
 };
 

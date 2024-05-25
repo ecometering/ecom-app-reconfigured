@@ -18,11 +18,7 @@ import { TextInputWithTitle } from '../../components/TextInput';
 import ImagePickerButton from '../../components/ImagePickerButton';
 
 // Utils and Constants
-import {
-  RebookPage,
-  StandardPage,
-  AssetTypeSelectionPage,
-} from '../../utils/nagivation-routes/install-navigations';
+
 import EcomHelper from '../../utils/ecomHelper';
 import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 
@@ -30,7 +26,7 @@ const { width, height } = Dimensions.get('window');
 
 function SiteQuestionsPage() {
   const { params } = useRoute();
-  const { pushNavigation, goToPreviousStep } = useProgressNavigation();
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
   const { jobID, setSiteQuestions, siteQuestions, photos, savePhoto } =
     useAppContext();
@@ -119,17 +115,7 @@ function SiteQuestionsPage() {
       return;
     }
     saveToDatabase();
-    handleNavigationBasedOnConditions();
-  };
-
-  const handleNavigationBasedOnConditions = () => {
-    if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
-      pushNavigation(StandardPage);
-    } else if (!siteQuestions?.isCarryOut) {
-      pushNavigation(RebookPage);
-    } else {
-      pushNavigation(AssetTypeSelectionPage);
-    }
+    goToNextStep();
   };
 
   return (

@@ -4,7 +4,10 @@ import {
   MeterDetailsPage,
 } from '../nagivation-routes/install-navigations';
 
-export const getAssetSelectRoute = ({ jobType, meterDetails, pageFlow }) => {
+export const getAssetSelectRoute = ({ state }) => {
+  const { jobType, meterDetails } = state || {};
+  const { pageFlow } = meterDetails || {};
+
   switch (jobType) {
     case 'Install':
       if (meterDetails?.isMeter) {

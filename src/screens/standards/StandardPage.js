@@ -18,63 +18,42 @@ import { isIos } from '../../utils/constant';
 import Text from '../../components/Text';
 import Header from '../../components/Header';
 import OptionalButton from '../../components/OptionButton';
-import TextInput, { TextInputWithTitle } from '../../components/TextInput';
+import { TextInputWithTitle } from '../../components/TextInput';
 
 // Context
 import { AppContext } from '../../context/AppContext';
 import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 
 // Utils
-import {
-  RiddorReportPage,
-  SnClientInfoPage,
-  CompositeLabelPhoto,
-} from '../../utils/nagivation-routes/install-navigations';
 import EcomHelper from '../../utils/ecomHelper';
 import { PrimaryColors } from '../../theme/colors';
 
 const { width, height } = Dimensions.get('window');
 function StandardPage() {
   const appContext = useContext(AppContext);
-  const { pushNavigation, goToPreviousStep } = useProgressNavigation();
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
   const title = 'Standard Details';
-  const jobType = appContext.jobType;
-  const { standardDetails, meterDetails, jobID } = appContext;
+  const { standardDetails, meterDetails, jobID, setStandardDetails } =
+    appContext;
 
-  const [testPassed, setTestPassed] = useState(standardDetails?.testPassed);
-  const [conformStandard, setconformStandard] = useState(
-    standardDetails?.conformStandard
-  );
-  const [riddorReportable, setRiddorReportable] = useState(
+  const riddorReportable =
     standardDetails?.riddorReportable == null
       ? meterDetails?.isStandard
-      : standardDetails?.riddorReportable
-  );
-  const [useOutlet, setUseOutlet] = useState(standardDetails?.useOutlet);
-  const [pressure, setPressure] = useState(standardDetails?.pressure);
-  const [conformText, setconformText] = useState(standardDetails?.conformText);
-  const [signature, setSignature] = useState(standardDetails?.signature);
+      : standardDetails?.riddorReportable;
+
   const [isModal, setIsModal] = useState(false);
 
   const handleOK = (signature) => {
     const base64String = signature.replace('data:image/png;base64,', '');
-    setSignature(base64String);
+    setStandardDetails((curState) => ({
+      ...curState,
+      signature: base64String,
+    }));
     setIsModal(false);
   };
 
   const nextPressed = async () => {
-    const standards = {
-      ...standardDetails,
-      testPassed: testPassed,
-      conformStandard: conformStandard,
-      riddorReportable: riddorReportable,
-      useOutlet: useOutlet,
-      pressure: pressure,
-      conformText: conformText,
-      signature,
-    };
-
     const meterDetailsUpdate = {
       ...meterDetails,
       isStandard: riddorReportable,
@@ -83,19 +62,19 @@ function StandardPage() {
     // console.log('Meter Details before JSON:', meterDetailsUpdate);
 
     try {
-      if (conformStandard == null) {
+      if (standardDetails?.conformStandard == null) {
         EcomHelper.showInfoMessage(
           'Please answer if the network service/ECV conform to standards'
         );
         return;
       }
 
-      if (pressure == null) {
+      if (standardDetails?.pressure == null) {
         EcomHelper.showInfoMessage('Please set inlet pressure');
         return;
       }
 
-      if (signature == null) {
+      if (standardDetails?.signature == null) {
         EcomHelper.showInfoMessage('Please enter signature');
         return;
       }
@@ -109,15 +88,14 @@ function StandardPage() {
           return;
         }
 
-        if (useOutlet == null) {
+        if (standardDetails?.useOutlet == null) {
           EcomHelper.showInfoMessage('Please answer if Outlet kit is used');
           return;
         }
       }
 
-      appContext.setStandardDetails(standards);
       await db.runAsync('UPDATE Jobs SET standards = ? WHERE id = ?', [
-        JSON.stringify(standards),
+        JSON.stringify(),
         jobID,
       ]);
 
@@ -128,15 +106,8 @@ function StandardPage() {
         jobID,
       ]);
 
-      if (riddorReportable === true) {
-        pushNavigation(RiddorReportPage);
-      } else {
-        if (conformStandard === false) {
-          pushNavigation(SnClientInfoPage);
-        } else {
-          pushNavigation(CompositeLabelPhoto);
-        }
-      }
+      setStandardDetails(standardDetails);
+      goToNextStep();
     } catch (error) {
       console.error('Error updating job details:', error);
       EcomHelper.showInfoMessage(
@@ -146,17 +117,6 @@ function StandardPage() {
   };
 
   const backPressed = () => {
-    appContext.setStandardDetails({
-      ...standardDetails,
-      testPassed: testPassed,
-      conformStandard: conformStandard,
-      riddorReportable: riddorReportable,
-      useOutlet: useOutlet,
-      pressure: pressure,
-      conformText: conformText,
-      signature,
-    });
-
     goToPreviousStep();
   };
 
@@ -184,16 +144,22 @@ function StandardPage() {
                 options={['Yes', 'No']}
                 actions={[
                   () => {
-                    setconformStandard(true);
+                    setStandardDetails((curState) => ({
+                      ...curState,
+                      conformStandard: true,
+                    }));
                   },
                   () => {
-                    setconformStandard(false);
+                    setStandardDetails((curState) => ({
+                      ...curState,
+                      conformStandard: false,
+                    }));
                   },
                 ]}
                 value={
-                  conformStandard == null
+                  standardDetails?.conformStandard == null
                     ? null
-                    : conformStandard
+                    : standardDetails?.conformStandard
                     ? 'Yes'
                     : 'No'
                 }
@@ -206,10 +172,16 @@ function StandardPage() {
                 options={['Yes', 'No']}
                 actions={[
                   () => {
-                    setRiddorReportable(true);
+                    setStandardDetails((curState) => ({
+                      ...curState,
+                      riddorReportable: true,
+                    }));
                   },
                   () => {
-                    setRiddorReportable(false);
+                    setStandardDetails((curState) => ({
+                      ...curState,
+                      riddorReportable: true,
+                    }));
                   },
                 ]}
                 value={
@@ -230,11 +202,23 @@ function StandardPage() {
                     <OptionalButton
                       options={['Yes', 'No']}
                       actions={[
-                        () => setUseOutlet(true),
-                        () => setUseOutlet(false),
+                        () =>
+                          setStandardDetails((curState) => ({
+                            ...curState,
+                            useOutlet: true,
+                          })),
+                        () =>
+                          setStandardDetails((curState) => ({
+                            ...curState,
+                            useOutlet: false,
+                          })),
                       ]}
                       value={
-                        useOutlet == null ? null : useOutlet ? 'Yes' : 'No'
+                        standardDetails?.useOutlet == null
+                          ? null
+                          : standardDetails?.useOutlet
+                          ? 'Yes'
+                          : 'No'
                       }
                     />
                   </View>
@@ -244,11 +228,23 @@ function StandardPage() {
                     <OptionalButton
                       options={['Yes', 'No']}
                       actions={[
-                        () => setTestPassed(true),
-                        () => setTestPassed(false),
+                        () =>
+                          setStandardDetails((curState) => ({
+                            ...curState,
+                            testPassed: true,
+                          })),
+                        () =>
+                          setStandardDetails((curState) => ({
+                            ...curState,
+                            testPassed: false,
+                          })),
                       ]}
                       value={
-                        testPassed == null ? null : testPassed ? 'Yes' : 'No'
+                        standardDetails?.testPassed == null
+                          ? null
+                          : standardDetails?.testPassed
+                          ? 'Yes'
+                          : 'No'
                       }
                     />
                   </View>
@@ -260,10 +256,13 @@ function StandardPage() {
             <TextInputWithTitle
               title={'Inlet Pressure'}
               width={'100%'}
-              value={pressure}
+              value={standardDetails?.pressure}
               onChange={(event) => {
                 // its sendign native event with numeric keyboard
-                setPressure(event.nativeEvent.text);
+                setStandardDetails((curState) => ({
+                  ...curState,
+                  pressure: event.nativeEvent.text,
+                }));
               }}
               keyboardType="numeric"
             />
@@ -271,9 +270,12 @@ function StandardPage() {
             <View style={styles.spacer} />
             <TextInputWithTitle
               title={'Notes'}
-              value={conformText}
+              value={standardDetails?.conformText}
               onChangeText={(text) => {
-                setconformText(text);
+                setStandardDetails((curState) => ({
+                  ...curState,
+                  conformText: text,
+                }));
               }}
               style={{
                 ...styles.input,
@@ -296,9 +298,11 @@ function StandardPage() {
                 }}
               />
               <View style={styles.spacer} />
-              {signature && (
+              {standardDetails?.signature && (
                 <Image
-                  source={{ uri: `data:image/png;base64,${signature}` }}
+                  source={{
+                    uri: `data:image/png;base64,${standardDetails?.signature}`,
+                  }}
                   style={styles.signImage}
                 />
               )}
