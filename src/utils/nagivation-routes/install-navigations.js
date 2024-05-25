@@ -193,31 +193,31 @@ export const InstancesForStreamFlow = ({ state }) => {
     return [
       ...acc,
       {
-        screen: `FilterPage-${stream}`,
+        screen: 'StreamFilterPage',
         params: {
           title: `Filter Page ${stream}`,
         },
       },
       {
-        screen: `SlamshutPage-${stream}`,
+        screen: 'StreamSlamshutPage',
         params: {
           title: `Slamshut Page ${stream}`,
         },
       },
       {
-        screen: `ActiveRegulatorPage-${stream}`,
+        screen: 'StreamActiveRegulatorPage',
         params: {
           title: `Active Regulator Page ${stream}`,
         },
       },
       {
-        screen: `ReliefRegulatorPage-${stream}`,
+        screen: 'StreamReliefRegulatorPage',
         params: {
           title: `Relief Regulator Page ${stream}`,
         },
       },
       {
-        screen: `WaferCheckPage-${stream}`,
+        screen: 'StreamWaferCheckPage',
         params: {
           title: `Wafer Check Page ${stream}`,
         },

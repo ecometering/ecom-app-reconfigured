@@ -17,6 +17,7 @@ import { EcomPressable as Button } from '../../components/ImageButton';
 import { AppContext } from '../../context/AppContext';
 import EcomHelper from '../../utils/ecomHelper';
 import { openDatabase } from '../../utils/database';
+
 function AdditionalMaterialPage() {
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const appContext = useContext(AppContext);
