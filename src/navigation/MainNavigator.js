@@ -40,7 +40,7 @@ import GenericPhotoPage from '../screens/jobs/GenericPhotoPage';
 
 // navigation stacks
 import CorrectorDetailsPage from '../screens/jobs/CorrectorDetailsPage';
-import { installFlowScreens } from './installFlowNavigator';
+import { unitedFlowNavigators } from './flowNavigatorsUnited';
 
 const Stack = createStackNavigator();
 
@@ -202,7 +202,7 @@ const MainNavigator = () => {
                 name="SubmitSuccessPage"
                 component={SubmitSuccessPage}
               />
-              {installFlowScreens.map((screen) => (
+              {unitedFlowNavigators.map((screen) => (
                 <Stack.Screen
                   key={screen.name}
                   name={screen.name}

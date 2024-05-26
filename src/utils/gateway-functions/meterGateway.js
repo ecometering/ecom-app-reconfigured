@@ -1,13 +1,42 @@
-import { useContext } from 'react';
-import { AppContext } from '../../context/AppContext';
 import {
+  ExchangeStandardPage,
+  ExchangeStreamsSetSealDetailsPage,
+  ExistingCorrectorDetails,
+  ExistingDataLoggerDetails,
+  ExistingMeterDataBadge,
+  ExistingMeterIndex,
+  InstalledCorrectorDetails,
+  InstalledDataLoggerDetails,
+  InstalledMeterDataBadge,
+  InstalledMeterIndex,
+} from '../nagivation-routes/exchange-navigations';
+import {
+  StandardPage,
+  MeterIndexPage,
+  MeterDataBadgePage,
   CorrectorDetailsPage,
   DataLoggerDetailsPage,
-  MeterDataBadgePage,
-  MeterIndexPage,
-  StandardPage,
   StreamsSetSealDetailsPage,
 } from '../nagivation-routes/install-navigations';
+import {
+  RemovedMeterIndex,
+  RemovedStandardPage,
+  RemovedMeterDataBadge,
+  RemovedCorrectorDetails,
+  RemovedDataLoggerDetails,
+} from '../nagivation-routes/removal-navigations';
+import {
+  SurveyExistingCorrectorDetails,
+  SurveyExistingDataLoggerDetails,
+  SurveyExistingMeterDataBadge,
+  SurveyExistingMeterIndex,
+  SurveyStandardPage,
+  SurveyStreamsSetSealDetailsPage,
+} from '../nagivation-routes/survey-navigations';
+import {
+  WarrantRemovedMeterDataBadge,
+  WarrantRemovedMeterIndex,
+} from '../nagivation-routes/warrant-navigations';
 
 export const getMeterRoute = ({ state, pageflow, pageRoute }) => {
   // TODO: sort context switch
@@ -47,103 +76,97 @@ export const getMeterRoute = ({ state, pageflow, pageRoute }) => {
     case 'Removal':
       if (pageflow === 1) {
         if (!['1', '2', '4'].includes(Type)) {
-          navigation.replace('RemovedMeterDataBadge');
+          return RemovedMeterDataBadge;
         } else {
-          navigation.replace('RemovedMeterIndex');
+          return RemovedMeterIndex;
         }
       }
       if (pageflow === 2) {
         if (isCorrector === true) {
-          navigation.replace('RemovedCorrectorDetails');
+          return RemovedCorrectorDetails;
         } else if (isAmr) {
-          navigation.replace('RemovedDataLoggerDetails');
+          return RemovedDataLoggerDetails;
         } else {
-          navigation.replace('StandardPage');
+          return RemovedStandardPage;
         }
       }
       break;
     case 'Survey':
       if (pageflow === 1) {
         if (!['1', '2', '4'].includes(Type)) {
-          navigation.replace('ExistingMeterDataBadge');
+          return SurveyExistingMeterDataBadge;
         } else {
-          console.log('Navigating to MeterIndex');
-          navigation.replace('ExistingMeterIndex');
+          return SurveyExistingMeterIndex;
         }
       }
       if (pageflow === 2) {
         if (isCorrector === true) {
-          navigation.replace('ExistingCorrectorDetails');
+          return SurveyExistingCorrectorDetails;
         } else if (isAmr) {
-          navigation.replace('ExistingDataLoggerDetails');
+          return SurveyExistingDataLoggerDetails;
         } else if (
           ((Type === '1' || Type === '2' || Type === '4') &&
             pressureTier === 'MP') ||
           (Type !== '1' && Type !== '2' && Type !== '4')
         ) {
-          navigation.replace('StreamsSetSealDetails');
+          return SurveyStreamsSetSealDetailsPage;
         } else {
-          navigation.replace('StandardPage');
+          return SurveyStandardPage;
         }
       }
-      // Add specific logic for Survey job type
       break;
     case 'Warant':
       if (pageRoute === 1) {
         if (Type === '1' || Type === '2' || Type === '4') {
-          navigation.replace('RemovedMeterDataBadge');
+          return WarrantRemovedMeterDataBadge;
         } else {
-          navigation.replace('RemovedMeterIndex');
+          return WarrantRemovedMeterIndex;
         }
       }
-
       break;
     case 'Exchange':
       if (pageRoute === 1) {
         if (pageflow === 1) {
-          console.log('Navigating to Screen 1 of Flow 1');
           if (Type === '1' || Type === '2' || Type === '4') {
-            navigation.replace('ExistingMeterDataBadge');
+            return ExistingMeterDataBadge;
           } else {
-            navigation.replace('ExistingMeterIndex');
+            return ExistingMeterIndex;
           }
         } else if (pageflow === '2') {
-          // Navigate to the first screen of the second flow
           if (isCorrector) {
-            navigation.navigate('ExistingCorrectorDetails');
+            return ExistingCorrectorDetails;
           } else if (datalogger) {
-            navigation.navigate('ExistingDataLoggerDetails');
+            return ExistingDataLoggerDetails;
           } else {
-            navigation.navigate('NewScreen'); // Replace 'NewScreen' with the actual screen name you want to navigate to
+            // TODO check this logic if its correct
+            return 'NewScreen'; // Replace 'NewScreen' with the actual screen name you want to navigate to
           }
-          // Example: navigateToScreen1Flow2();
         } else {
           console.log('Invalid page flow for route 1, navigating to default.');
-          // Example: navigateToDefaultScreen();
         }
-      } else if (pageRoute === '2') {
-        if (pageflow === '1') {
+      } else if (pageRoute === 2) {
+        if (pageflow === 1) {
           if (Type === '1' || Type === '2' || Type === '4') {
-            navigation.replace('InstalledMeterDataBadge');
+            return InstalledMeterDataBadge;
           } else {
-            navigation.replace('InstalledMeterIndex');
+            return InstalledMeterIndex;
           }
-        } else if (pageflow === '2') {
-          // Navigate to the first screen of the second flow in the second route
+        } else if (pageflow === 2) {
           if (isCorrector) {
-            navigation.replace('InstalledCorrectorDetails');
+            return InstalledCorrectorDetails;
           } else if (isAmr) {
-            navigation.replace('InstalledDataLoggerDetails');
+            return InstalledDataLoggerDetails;
+            // TODO: isMeter is not defined
           } else if (isMeter) {
             if (
               ((Type === '1' || Type === '2' || Type === '4') &&
                 pressureTier === 'MP') ||
               (Type !== '1' && Type !== '2' && Type !== '4')
             ) {
-              navigation.replace('StreamsSetSealDetails');
+              return ExchangeStreamsSetSealDetailsPage;
             }
           } else {
-            navigation.replace('StandardPage');
+            return ExchangeStandardPage;
           }
         } else {
           console.log('Invalid page flow for route 2, navigating to default.');

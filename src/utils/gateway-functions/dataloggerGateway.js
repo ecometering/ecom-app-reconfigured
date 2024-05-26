@@ -1,9 +1,21 @@
-import { useContext } from 'react';
-import { AppContext } from '../../context/AppContext';
+import {
+  ExchangeStandardPage,
+  ExchangeStreamsSetSealDetailsPage,
+} from '../nagivation-routes/exchange-navigations';
 import {
   StandardPage,
   StreamsSetSealDetailsPage,
 } from '../nagivation-routes/install-navigations';
+import {
+  MaintenanceQuestionsPage,
+  MaintenanceStreamsSetSealDetailsPage,
+} from '../nagivation-routes/maintenance-navigations';
+import { RemovedStandardPage } from '../nagivation-routes/removal-navigations';
+import {
+  SurveyStandardPage,
+  SurveyStreamsSetSealDetailsPage,
+} from '../nagivation-routes/survey-navigations';
+import { WarrantStandardPage } from '../nagivation-routes/warrant-navigations';
 
 export const getDataloggerRoute = ({ state }) => {
   // TODO: sort context switch
@@ -39,18 +51,17 @@ export const getDataloggerRoute = ({ state }) => {
             pressureTier === 'MP') ||
           (Type !== '1' && Type !== '2' && Type !== '4')
         ) {
-          return 'StreamsSetSealDetails';
+          return MaintenanceStreamsSetSealDetailsPage;
         }
       } else {
-        return 'MaintenanceQuestions';
+        return MaintenanceQuestionsPage;
       }
       // Add specific logic for Maintenance job type
       break;
     case 'Removal':
-      return 'StandardPage'; // Fallback to StandardsNavigation
+      return RemovedStandardPage; // Fallback to StandardsNavigation
       break;
     case 'Survey':
-      console.log('Survey job type detected, navigating to the next screen.');
       if (isMeter) {
         if (
           (meterType.value === '1' ||
@@ -58,19 +69,19 @@ export const getDataloggerRoute = ({ state }) => {
             meterType.value === '4') &&
           pressureTier === 'MP'
         ) {
-          return 'StreamsSetSealDetails';
+          return SurveyStreamsSetSealDetailsPage;
         } else {
-          return 'StandardPage';
+          return SurveyStandardPage;
         }
       } else {
-        return 'StandardPage';
+        return SurveyStandardPage;
       }
       break;
     case 'Warant':
-      return 'StandardPage'; // Fallback to StandardsNavigation
+      return WarrantStandardPage; // Fallback to StandardsNavigation
 
       break;
-    case 'exchange':
+    case 'Exchange':
       if (isMeter) {
         if (
           ((meterType.value === '1' ||
@@ -81,10 +92,10 @@ export const getDataloggerRoute = ({ state }) => {
             meterType.value !== '2' &&
             meterType.value !== '4')
         ) {
-          return 'StreamsSetSealDetails';
+          return ExchangeStreamsSetSealDetailsPage;
         }
       } else {
-        return 'StandardPage';
+        return ExchangeStandardPage;
       }
       break;
     // Add more cases for different jobTypes if needed

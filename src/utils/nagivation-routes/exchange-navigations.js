@@ -1,9 +1,9 @@
-import { getMeterRoute } from '../gateway-functions/meterGateway';
+import { getAssetSelectRoute } from '../gateway-functions/assetSelectGateway';
 import { getCorrectorRoute } from '../gateway-functions/correctorGateway';
 import { getDataloggerRoute } from '../gateway-functions/dataloggerGateway';
-import { getAssetSelectRoute } from '../gateway-functions/assetSelectGateway';
+import { getMeterRoute } from '../gateway-functions/meterGateway';
 
-export const InstallNavigation = [
+export const ExchangeNavigation = [
   {
     screen: 'SiteDetailsPage',
     params: {
@@ -27,7 +27,7 @@ export const InstallNavigation = [
     diversions: (state) => {
       const { siteQuestions } = state;
       if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
-        return StandardPage;
+        return ExchangeStandardPage;
       } else if (!siteQuestions?.isCarryOut) {
         return RebookPage;
       } else {
@@ -57,7 +57,7 @@ export const ExtraPhotoPageRoute = (
 ];
 
 // Site Questions Alternative Flows
-export const StandardPage = [
+export const ExchangeStandardPage = [
   {
     screen: 'StandardPage',
     diversions: (state) => {
@@ -83,8 +83,6 @@ export const RebookPage = [
   ...SubmitSuccessPage,
 ];
 
-// navigation.navigate('JobTypeNavigator'); i dont know what this suposed to do
-
 // Standard Page Alternative Flows
 export const RiddorReportPage = [
   {
@@ -99,10 +97,6 @@ export const RiddorReportPage = [
     },
   },
 ];
-// Riddor Report Alternative Flows
-// alternates between:
-// SnClientInfoPage
-// CompositeLabelPhoto
 
 export const CompositeLabelPhoto = [
   {
@@ -133,87 +127,164 @@ export const SnClientInfoPage = [
   ...CompositeLabelPhoto,
 ];
 
-// AssetTypeSelectionPage
+// TODO: Asset Type Selection never uses pageFlow 2
 export const AssetTypeSelectionPage = [
   {
     screen: 'AssetTypeSelectionPage',
     ...SubmitSuccessPage,
     diversions: (state) => {
-      getAssetSelectRoute({ state });
+      getAssetSelectRoute({ state, pageFlow: 1 });
     },
   },
 ];
 
-// AssetTypeSelectionPage Alternative Flows
-export const MeterDetailsPage = [
+export const ExistingMeterDetails = [
   {
     screen: 'MeterDetails',
     params: {
-      title: 'New Meter Details',
+      title: 'Existing Meter Details',
     },
-  },
-  {
-    screen: 'NewEcvToMov',
-    params: {
-      title: 'New ECV to MOV',
-      photoKey: 'NewEcvToMov',
+    diversions: (state) => {
+      getMeterRoute({ state, pageRoute: 1, pageFlow: 1 });
     },
-    diversions: (state) =>
-      getMeterRoute({ state, jobType: 'Install', pageflow: 1 }),
   },
 ];
 
-export const CorrectorDetailsPage = [
+export const InstalledMeterDetails = [
+  {
+    screen: 'MeterDetails',
+    params: {
+      title: 'Installed Meter Details',
+    },
+  },
+  {
+    screen: 'EcvToMovphoto',
+    params: {
+      title: 'ECV to MOV photo',
+      photoKey: 'ecvToMovPhoto',
+    },
+    diversions: (state) => {
+      getMeterRoute({ state, pageRoute: 2, pageFlow: 1 });
+    },
+  },
+];
+
+export const InstalledCorrectorDetails = [
   {
     screen: 'CorrectorDetails',
     params: {
-      title: 'New Corrector installed',
-      photoKey: 'installedCorrector',
+      title: 'Installed Corrector Details',
+      photoKey: 'removedCorrector',
     },
-    diversions: (state) => getCorrectorRoute({ state }),
+    diversions: (state) => getCorrectorRoute({ state, pageRoute: 2 }),
   },
 ];
 
-export const DataLoggerDetailsPage = [
+export const InstalledDataLoggerDetails = [
   {
     screen: 'DataLoggerDetails',
     params: {
-      title: 'New AMR installed',
-      photoKey: 'installedAMR',
+      title: 'Installed AMR',
+      photoKey: 'RemovedAMR',
     },
     diversions: (state) => getDataloggerRoute({ state }),
   },
 ];
 
-// export const MeterDetails Alternative Flows
-export const MeterIndexPage = [
+export const InstalledMeterIndex = [
   {
     screen: 'MeterIndex',
     params: {
-      title: 'New Meter index',
-      photoKey: 'MeterIndex',
+      title: 'Installed Meter index',
+      photoKey: 'InstalledMeterIndex',
     },
   },
   {
-    screen: 'NewMeterPhoto',
+    screen: 'MeterPhoto',
     params: {
-      title: 'New Meter photo',
-      photoKey: 'NewMeterPhoto',
+      title: 'Installed Meter Photo',
+      photoKey: 'InstalledMeterPhoto',
     },
-    diversions: (state) =>
-      getMeterRoute({ state, jobType: 'Install', pageflow: 2 }),
+    diversions: (state) => getMeterRoute({ state, pageRoute: 2, pageFlow: 2 }),
   },
 ];
 
-export const MeterDataBadgePage = [
+export const InstalledMeterDataBadge = [
   {
     screen: 'MeterDataBadge',
     params: {
-      title: 'New Meter data badge',
-      photoKey: 'MeterDataBadge',
+      title: 'Installed Meter data badge',
+      photoKey: 'InstalledMeterDataBadge',
     },
   },
-  ...MeterIndexPage,
+  ...InstalledMeterIndex,
+];
+
+export const ExistingMeterIndex = [
+  {
+    screen: 'MeterIndex',
+    params: {
+      title: 'Existing Meter index',
+      photoKey: 'ExistingMeterIndex',
+    },
+  },
+  {
+    screen: 'MeterPhoto',
+    params: {
+      title: 'Existing Meter Photo',
+      photoKey: 'ExistingMeterPhoto',
+    },
+  },
+  {
+    screen: 'EcvPhoto',
+    params: {
+      title: 'Ecv Photo',
+      photoKey: 'EcvPhoto',
+    },
+    diversions: (state) => getCorrectorRoute({ state, pageRoute: 1 }),
+  },
+];
+
+export const ExistingMeterDataBadge = [
+  {
+    screen: 'MeterDataBadge',
+    params: {
+      title: 'Existing Meter data badge',
+      photoKey: 'ExistingMeterDataBadge',
+    },
+  },
+  ...ExistingMeterIndex,
+];
+
+export const ExistingDataLoggerDetails = [
+  {
+    screen: 'DataLoggerDetails',
+    params: {
+      title: 'Existing DataLogger Details',
+    },
+    diversions: (state) => getAssetSelectRoute({ state, pageFlow: 2 }),
+  },
+];
+
+export const ExistingCorrectorDetails = [
+  {
+    screen: 'CorrectorDetails',
+    params: {
+      title: 'Existing Corrector Details',
+    },
+    diversions: (state) => {
+      // TODO: check this logic if its correct
+      const { meter, corrector, datalogger } = state;
+
+      if (datalogger) {
+        return ExistingDataLoggerDetails;
+      } else {
+        if (meter) return InstalledMeterDetails;
+        if (corrector) return InstalledCorrectorDetails;
+        if (datalogger) return InstalledDataLoggerDetails;
+      }
+    },
+  },
 ];
 
 export const InstancesForStreamFlow = ({ state }) => {
@@ -261,11 +332,12 @@ export const InstancesForStreamFlow = ({ state }) => {
   }, []);
 };
 
-export const StreamsSetSealDetailsPage = [
+export const ExchangeStreamsSetSealDetailsPage = [
   {
     screen: 'StreamsSetSealDetails',
     params: {
       title: 'Streams Set Seal Details',
+      nextScreen: 'FilterPage-1',
     },
     diversions: (state) =>
       InstancesForStreamFlow({ state }).push(RegulatorPage),
@@ -289,5 +361,5 @@ export const RegulatorPage = [
   {
     screen: 'AdditionalMaterial',
   },
-  ...StandardPage,
+  ...ExchangeStandardPage,
 ];

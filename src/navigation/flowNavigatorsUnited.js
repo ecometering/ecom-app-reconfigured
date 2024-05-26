@@ -17,8 +17,9 @@ import DataloggerGatewayScreen from '../screens/gateways/DataloggerGateWay';
 import AdditionalMaterialPage from '../screens/jobs/AdditionalMaterialPage';
 import AssetSelectGatewayScreen from '../screens/gateways/AssetSelectGateWay';
 import StreamsSetSealDetailsPage from '../screens/jobs/StreamsSetSealDetailsPage';
+import MaintenanceQuestionsPage from '../screens/maintenance/MaintenanceQuestionsPage';
 
-export const installFlowScreens = [
+export const unitedFlowNavigators = [
   {
     name: 'AssetTypeSelectionPage',
     component: AssetTypeSelectionPage,
@@ -151,4 +152,5 @@ export const installFlowScreens = [
   },
   { name: 'ChatterBox', component: ChatterBoxPage },
   { name: 'AdditionalMaterial', component: AdditionalMaterialPage },
+  { name: 'MaintenanceQuestions', component: MaintenanceQuestionsPage },
 ];

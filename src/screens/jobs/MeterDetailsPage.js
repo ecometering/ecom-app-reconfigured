@@ -46,7 +46,6 @@ function MeterDetailsPage() {
   const route = useRoute();
   const camera = useRef(null);
   const db = useSQLiteContext();
-  const navigation = useNavigation();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
   const isIos = Platform.OS === 'ios';

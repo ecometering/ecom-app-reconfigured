@@ -1,9 +1,8 @@
-import { getMeterRoute } from '../gateway-functions/meterGateway';
+import { getAssetSelectRoute } from '../gateway-functions/assetSelectGateway';
 import { getCorrectorRoute } from '../gateway-functions/correctorGateway';
 import { getDataloggerRoute } from '../gateway-functions/dataloggerGateway';
-import { getAssetSelectRoute } from '../gateway-functions/assetSelectGateway';
 
-export const InstallNavigation = [
+export const MaintenanceNavigation = [
   {
     screen: 'SiteDetailsPage',
     params: {
@@ -27,7 +26,7 @@ export const InstallNavigation = [
     diversions: (state) => {
       const { siteQuestions } = state;
       if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
-        return StandardPage;
+        return MaintenanceStandardPage;
       } else if (!siteQuestions?.isCarryOut) {
         return RebookPage;
       } else {
@@ -56,8 +55,7 @@ export const ExtraPhotoPageRoute = (
   },
 ];
 
-// Site Questions Alternative Flows
-export const StandardPage = [
+export const MaintenanceStandardPage = [
   {
     screen: 'StandardPage',
     diversions: (state) => {
@@ -76,16 +74,6 @@ export const StandardPage = [
   },
 ];
 
-export const RebookPage = [
-  {
-    screen: 'RebookPage',
-  },
-  ...SubmitSuccessPage,
-];
-
-// navigation.navigate('JobTypeNavigator'); i dont know what this suposed to do
-
-// Standard Page Alternative Flows
 export const RiddorReportPage = [
   {
     screen: 'RiddorReportPage',
@@ -99,10 +87,6 @@ export const RiddorReportPage = [
     },
   },
 ];
-// Riddor Report Alternative Flows
-// alternates between:
-// SnClientInfoPage
-// CompositeLabelPhoto
 
 export const CompositeLabelPhoto = [
   {
@@ -133,6 +117,13 @@ export const SnClientInfoPage = [
   ...CompositeLabelPhoto,
 ];
 
+export const RebookPage = [
+  {
+    screen: 'RebookPage',
+  },
+  ...SubmitSuccessPage,
+];
+
 // AssetTypeSelectionPage
 export const AssetTypeSelectionPage = [
   {
@@ -144,76 +135,45 @@ export const AssetTypeSelectionPage = [
   },
 ];
 
-// AssetTypeSelectionPage Alternative Flows
-export const MeterDetailsPage = [
+export const MaintenanceExistingMeterDetails = [
   {
     screen: 'MeterDetails',
     params: {
-      title: 'New Meter Details',
+      title: 'Existing Meter Details',
     },
   },
   {
-    screen: 'NewEcvToMov',
+    screen: 'ExistingEcvToMov',
     params: {
       title: 'New ECV to MOV',
-      photoKey: 'NewEcvToMov',
+      photoKey: 'ExistingEcvToMov',
     },
-    diversions: (state) =>
-      getMeterRoute({ state, jobType: 'Install', pageflow: 1 }),
+    diversions: (state) => {
+      getMeterRoute({ state, pageFlow: 1 });
+    },
   },
 ];
 
-export const CorrectorDetailsPage = [
+export const MaintenanceExistingCorrectorDetails = [
   {
     screen: 'CorrectorDetails',
     params: {
-      title: 'New Corrector installed',
-      photoKey: 'installedCorrector',
+      title: 'Existing Corrector installed',
     },
-    diversions: (state) => getCorrectorRoute({ state }),
+    diversions: (state) => {
+      getCorrectorRoute({ state });
+    },
   },
 ];
 
-export const DataLoggerDetailsPage = [
+export const MaintenanceExistingDataLoggerDetails = [
   {
     screen: 'DataLoggerDetails',
     params: {
-      title: 'New AMR installed',
-      photoKey: 'installedAMR',
+      title: 'Existing AMR installed',
     },
     diversions: (state) => getDataloggerRoute({ state }),
   },
-];
-
-// export const MeterDetails Alternative Flows
-export const MeterIndexPage = [
-  {
-    screen: 'MeterIndex',
-    params: {
-      title: 'New Meter index',
-      photoKey: 'MeterIndex',
-    },
-  },
-  {
-    screen: 'NewMeterPhoto',
-    params: {
-      title: 'New Meter photo',
-      photoKey: 'NewMeterPhoto',
-    },
-    diversions: (state) =>
-      getMeterRoute({ state, jobType: 'Install', pageflow: 2 }),
-  },
-];
-
-export const MeterDataBadgePage = [
-  {
-    screen: 'MeterDataBadge',
-    params: {
-      title: 'New Meter data badge',
-      photoKey: 'MeterDataBadge',
-    },
-  },
-  ...MeterIndexPage,
 ];
 
 export const InstancesForStreamFlow = ({ state }) => {
@@ -261,18 +221,22 @@ export const InstancesForStreamFlow = ({ state }) => {
   }, []);
 };
 
-export const StreamsSetSealDetailsPage = [
+export const MaintenanceStreamsSetSealDetailsPage = [
   {
     screen: 'StreamsSetSealDetails',
     params: {
       title: 'Streams Set Seal Details',
+      nextScreen: 'FilterPage-1',
     },
     diversions: (state) =>
       InstancesForStreamFlow({ state }).push(RegulatorPage),
   },
 ];
 
-export const RegulatorPage = [
+export const MaintenanceQuestionsPage = [
+  {
+    screen: 'MaintenanceQuestions',
+  },
   {
     screen: 'Regulator',
   },
@@ -289,5 +253,6 @@ export const RegulatorPage = [
   {
     screen: 'AdditionalMaterial',
   },
-  ...StandardPage,
+
+  ...MaintenanceStandardPage,
 ];

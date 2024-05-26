@@ -4,14 +4,21 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Flow types
 import { InstallNavigation } from '../utils/nagivation-routes/install-navigations';
-import { RemovalNavigation } from '../utils/nagivation-routes/removal-navigation';
+import { RemovalNavigation } from '../utils/nagivation-routes/removal-navigations';
+import { ExchangeNavigation } from '../utils/nagivation-routes/exchange-navigations';
+import { SurveyNavigation } from '../utils/nagivation-routes/survey-navigations';
+import { WarrantNavigation } from '../utils/nagivation-routes/warrant-navigations';
+import { MaintenanceNavigation } from '../utils/nagivation-routes/maintenance-navigations';
 
 export const ProgressiveNavigationContext = createContext();
 
 const config = {
   Install: InstallNavigation,
   Removal: RemovalNavigation,
-  // TODO: Add more flow types here
+  Exchange: ExchangeNavigation,
+  Survey: SurveyNavigation,
+  Warrant: WarrantNavigation,
+  Maintenance: MaintenanceNavigation,
 };
 
 export function NavigationProvider({ children }) {

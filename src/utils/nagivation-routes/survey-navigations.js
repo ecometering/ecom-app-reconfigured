@@ -1,9 +1,6 @@
-import { getMeterRoute } from '../gateway-functions/meterGateway';
-import { getCorrectorRoute } from '../gateway-functions/correctorGateway';
-import { getDataloggerRoute } from '../gateway-functions/dataloggerGateway';
 import { getAssetSelectRoute } from '../gateway-functions/assetSelectGateway';
 
-export const InstallNavigation = [
+export const SurveyNavigation = [
   {
     screen: 'SiteDetailsPage',
     params: {
@@ -27,7 +24,7 @@ export const InstallNavigation = [
     diversions: (state) => {
       const { siteQuestions } = state;
       if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
-        return StandardPage;
+        return SurveyStandardPage;
       } else if (!siteQuestions?.isCarryOut) {
         return RebookPage;
       } else {
@@ -56,8 +53,51 @@ export const ExtraPhotoPageRoute = (
   },
 ];
 
+export const CompositeLabelPhoto = [
+  {
+    screen: 'CompositeLabelPhoto',
+    params: {
+      title: 'Composite label',
+      photoKey: 'compositeLabel',
+    },
+  },
+  {
+    screen: 'DSEARLabelPhoto',
+    params: {
+      title: 'DSEAR label',
+      photoKey: 'dsearLabel',
+    },
+  },
+  ...ExtraPhotoPageRoute(),
+  ...SubmitSuccessPage,
+];
+
+export const RiddorReportPage = [
+  {
+    screen: 'RiddorReportPage',
+    diversions: (state) => {
+      const { standardDetails } = state;
+      if (standardDetails.conformStandard === false) {
+        return SnClientInfoPage;
+      } else {
+        return CompositeLabelPhoto;
+      }
+    },
+  },
+];
+
+export const SnClientInfoPage = [
+  {
+    screen: 'SnClientInfoPage',
+  },
+  {
+    screen: 'GasSafeWarningPage',
+  },
+  ...CompositeLabelPhoto,
+];
+
 // Site Questions Alternative Flows
-export const StandardPage = [
+export const SurveyStandardPage = [
   {
     screen: 'StandardPage',
     diversions: (state) => {
@@ -83,56 +123,6 @@ export const RebookPage = [
   ...SubmitSuccessPage,
 ];
 
-// navigation.navigate('JobTypeNavigator'); i dont know what this suposed to do
-
-// Standard Page Alternative Flows
-export const RiddorReportPage = [
-  {
-    screen: 'RiddorReportPage',
-    diversions: (state) => {
-      const { standardDetails } = state;
-      if (standardDetails.conformStandard === false) {
-        return SnClientInfoPage;
-      } else {
-        return CompositeLabelPhoto;
-      }
-    },
-  },
-];
-// Riddor Report Alternative Flows
-// alternates between:
-// SnClientInfoPage
-// CompositeLabelPhoto
-
-export const CompositeLabelPhoto = [
-  {
-    screen: 'CompositeLabelPhoto',
-    params: {
-      title: 'Composite label',
-      photoKey: 'compositeLabel',
-    },
-  },
-  {
-    screen: 'DSEARLabelPhoto',
-    params: {
-      title: 'DSEAR label',
-      photoKey: 'dsearLabel',
-    },
-  },
-  ...ExtraPhotoPageRoute(),
-  ...SubmitSuccessPage,
-];
-
-export const SnClientInfoPage = [
-  {
-    screen: 'SnClientInfoPage',
-  },
-  {
-    screen: 'GasSafeWarningPage',
-  },
-  ...CompositeLabelPhoto,
-];
-
 // AssetTypeSelectionPage
 export const AssetTypeSelectionPage = [
   {
@@ -144,76 +134,45 @@ export const AssetTypeSelectionPage = [
   },
 ];
 
-// AssetTypeSelectionPage Alternative Flows
-export const MeterDetailsPage = [
+export const SurveyExistingMeterDetails = [
   {
     screen: 'MeterDetails',
     params: {
-      title: 'New Meter Details',
+      title: 'Existing Meter Details',
     },
   },
   {
-    screen: 'NewEcvToMov',
+    screen: 'ExistingEcvToMov',
     params: {
       title: 'New ECV to MOV',
-      photoKey: 'NewEcvToMov',
+      photoKey: 'ExistingEcvToMov',
     },
-    diversions: (state) =>
-      getMeterRoute({ state, jobType: 'Install', pageflow: 1 }),
+    diversions: (state) => {
+      getMeterRoute({ state, pageFlow: 1 });
+    },
   },
 ];
 
-export const CorrectorDetailsPage = [
+export const SurveyExistingCorrectorDetails = [
   {
     screen: 'CorrectorDetails',
     params: {
-      title: 'New Corrector installed',
-      photoKey: 'installedCorrector',
+      title: 'Existing Corrector installed',
     },
-    diversions: (state) => getCorrectorRoute({ state }),
+    diversions: (state) => {
+      getCorrectorRoute({ state });
+    },
   },
 ];
 
-export const DataLoggerDetailsPage = [
+export const SurveyExistingDataLoggerDetails = [
   {
     screen: 'DataLoggerDetails',
     params: {
-      title: 'New AMR installed',
-      photoKey: 'installedAMR',
+      title: 'Existing AMR installed',
     },
     diversions: (state) => getDataloggerRoute({ state }),
   },
-];
-
-// export const MeterDetails Alternative Flows
-export const MeterIndexPage = [
-  {
-    screen: 'MeterIndex',
-    params: {
-      title: 'New Meter index',
-      photoKey: 'MeterIndex',
-    },
-  },
-  {
-    screen: 'NewMeterPhoto',
-    params: {
-      title: 'New Meter photo',
-      photoKey: 'NewMeterPhoto',
-    },
-    diversions: (state) =>
-      getMeterRoute({ state, jobType: 'Install', pageflow: 2 }),
-  },
-];
-
-export const MeterDataBadgePage = [
-  {
-    screen: 'MeterDataBadge',
-    params: {
-      title: 'New Meter data badge',
-      photoKey: 'MeterDataBadge',
-    },
-  },
-  ...MeterIndexPage,
 ];
 
 export const InstancesForStreamFlow = ({ state }) => {
@@ -261,7 +220,7 @@ export const InstancesForStreamFlow = ({ state }) => {
   }, []);
 };
 
-export const StreamsSetSealDetailsPage = [
+export const SurveyStreamsSetSealDetailsPage = [
   {
     screen: 'StreamsSetSealDetails',
     params: {
@@ -277,17 +236,46 @@ export const RegulatorPage = [
     screen: 'Regulator',
   },
   {
-    screen: 'RegulatorPhotoPage',
-    params: {
-      title: 'New Regulator photo',
-      photoKey: 'RegulatorPhotoPage',
-    },
-  },
-  {
     screen: 'ChatterBox',
   },
   {
     screen: 'AdditionalMaterial',
   },
-  ...StandardPage,
+  ...SurveyStandardPage,
+];
+
+export const SurveyExistingMeterIndex = [
+  {
+    screen: 'MeterIndex',
+    params: {
+      title: 'Existing Meter index',
+      photoKey: 'ExistingMeterIndex',
+    },
+  },
+  {
+    screen: 'MeterPhoto',
+    params: {
+      title: 'Existing Meter Photo',
+      photoKey: 'ExistingMeterPhoto',
+    },
+  },
+  {
+    screen: 'EcvPhoto',
+    params: {
+      title: 'Ecv Photo',
+      photoKey: 'EcvPhoto',
+    },
+    diversions: (state) => getCorrectorRoute({ state, pageRoute: 1 }),
+  },
+];
+
+export const SurveyExistingMeterDataBadge = [
+  {
+    screen: 'MeterDataBadge',
+    params: {
+      title: 'Existing Meter data badge',
+      photoKey: 'ExistingMeterDataBadge',
+    },
+  },
+  ...SurveyExistingMeterIndex,
 ];

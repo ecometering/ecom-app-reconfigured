@@ -1,8 +1,33 @@
 import {
+  ExchangeStandardPage,
+  ExchangeStreamsSetSealDetailsPage,
+  ExistingDataLoggerDetails,
+  InstalledDataLoggerDetails,
+} from '../nagivation-routes/exchange-navigations';
+import {
   DataLoggerDetailsPage,
   StandardPage,
   StreamsSetSealDetailsPage,
 } from '../nagivation-routes/install-navigations';
+import {
+  MaintenanceExistingCorrectorDetails,
+  MaintenanceQuestionsPage,
+  MaintenanceStreamsSetSealDetailsPage,
+} from '../nagivation-routes/maintenance-navigations';
+import {
+  RemovedDataLoggerDetails,
+  RemovedStandardPage,
+} from '../nagivation-routes/removal-navigations';
+import {
+  SurveyExistingDataLoggerDetails,
+  SurveyStandardPage,
+  SurveyStreamsSetSealDetailsPage,
+} from '../nagivation-routes/survey-navigations';
+import {
+  WarrantRemovedDataLoggerDetails,
+  WarrantStandardPage,
+} from '../nagivation-routes/warrant-navigations';
+import { getAssetSelectRoute } from './assetSelectGateway';
 
 export const getCorrectorRoute = ({ state }) => {
   // TODO: sort context switch
@@ -31,18 +56,26 @@ export const getCorrectorRoute = ({ state }) => {
       }
       break;
     case 'Maintenance':
+      // TODO: datalogger logic is missing
+      if (datalogger) {
+        return MaintenanceExistingCorrectorDetails; // Navigate to DataLogger if true
+      } else if (isMeter) {
+        return MaintenanceStreamsSetSealDetailsPage; // Use setAndSeal logic if meter is present
+      } else {
+        return MaintenanceQuestionsPage; // Fallback to maintenance questions
+      }
       break;
     case 'Removal':
       if (datalogger) {
-        return 'RemovedDataLoggerDetails'; // Navigate to DataLogger if true
+        return RemovedDataLoggerDetails; // Navigate to DataLogger if true
         // Use setAndSeal logic if meter is present
       } else {
-        return 'StandardPage'; // Fallback to StandardsNavigation
+        return RemovedStandardPage; // Fallback to StandardsNavigation
       }
       break;
     case 'Survey':
       if (isAmr) {
-        return 'ExistingDataLoggerDetails';
+        return SurveyExistingDataLoggerDetails;
       } else if (isMeter) {
         if (
           ((meterType.value === '1' ||
@@ -53,33 +86,29 @@ export const getCorrectorRoute = ({ state }) => {
             meterType.value !== '2' &&
             meterType.value !== '4')
         ) {
-          return 'StreamsSetSealDetails';
+          return SurveyStreamsSetSealDetailsPage;
         }
       } else {
-        return 'StandardPage';
+        return SurveyStandardPage;
       }
 
-      // Add specific logic for Survey job type
       break;
     case 'Warant':
       if (datalogger) {
-        return 'RemovedDataLoggerDetails'; // Navigate to DataLogger if true
-        // Use setAndSeal logic if meter is present
+        return WarrantRemovedDataLoggerDetails;
       } else {
-        return 'StandardPage'; // Fallback to StandardsNavigation
+        return WarrantStandardPage;
       }
-
-      break;
-    case 'exchange':
+    case 'Exchange':
       if (pageRoute === 1) {
         if (isAmr) {
-          return 'DataLoggerDetails';
+          return ExistingDataLoggerDetails;
         } else {
-          return 'AssetSelectGatewayScreenFinal';
+          return getAssetSelectRoute({ state, pageFlow: 2 });
         }
       } else if (pageRoute === 2) {
         if (isAmr) {
-          return 'DataLoggerDetails';
+          return InstalledDataLoggerDetails;
         } else if (isMeter) {
           if (
             ((meterType.value === '1' ||
@@ -90,16 +119,14 @@ export const getCorrectorRoute = ({ state }) => {
               meterType.value !== '2' &&
               meterType.value !== '4')
           ) {
-            return 'StreamsSetSealDetails';
+            return ExchangeStreamsSetSealDetailsPage;
           }
         } else {
-          return 'StandardPage';
+          return ExchangeStandardPage;
         }
       }
       break;
-    // Add more cases for different jobTypes if needed
     default:
-      // Default case if jobType is not recognized
       console.log(
         'Job type not recognized, staying on the current screen or navigating to a default screen.'
       );

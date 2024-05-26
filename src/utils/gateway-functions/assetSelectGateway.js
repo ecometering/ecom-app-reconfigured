@@ -1,12 +1,39 @@
 import {
+  ExistingCorrectorDetails,
+  ExistingDataLoggerDetails,
+  ExistingMeterDetails,
+  InstalledCorrectorDetails,
+  InstalledDataLoggerDetails,
+  InstalledMeterDetails,
+} from '../nagivation-routes/exchange-navigations';
+import {
   CorrectorDetailsPage,
   DataLoggerDetailsPage,
   MeterDetailsPage,
 } from '../nagivation-routes/install-navigations';
+import {
+  MaintenanceExistingCorrectorDetails,
+  MaintenanceExistingDataLoggerDetails,
+  MaintenanceExistingMeterDetails,
+} from '../nagivation-routes/maintenance-navigations';
+import {
+  RemovedCorrectorDetails,
+  RemovedDataLoggerDetails,
+  RemovedMeterDetails,
+} from '../nagivation-routes/removal-navigations';
+import {
+  SurveyExistingCorrectorDetails,
+  SurveyExistingDataLoggerDetails,
+  SurveyExistingMeterDetails,
+} from '../nagivation-routes/survey-navigations';
+import {
+  WarrantRemovedCorrectorDetails,
+  WarrantRemovedDataLoggerDetails,
+  WarrantRemovedMeterDetails,
+} from '../nagivation-routes/warrant-navigations';
 
-export const getAssetSelectRoute = ({ state }) => {
+export const getAssetSelectRoute = ({ state, pageFlow }) => {
   const { jobType, meterDetails } = state || {};
-  const { pageFlow } = meterDetails || {};
 
   switch (jobType) {
     case 'Install':
@@ -20,48 +47,56 @@ export const getAssetSelectRoute = ({ state }) => {
       break;
     case 'Removal':
       if (meterDetails?.isMeter) {
-        return 'RemovedMeterDetails';
+        return RemovedMeterDetails;
       } else if (meterDetails?.isCorrector) {
-        return 'RemovedCorrectorDetails';
+        return RemovedCorrectorDetails;
       } else if (meterDetails?.isAmr) {
-        return 'RemovedDataLoggerDetails';
+        return RemovedDataLoggerDetails;
+      }
+      break;
+    case 'Warrant':
+      if (meterDetails?.isMeter) {
+        return WarrantRemovedMeterDetails;
+      } else if (meterDetails?.isCorrector) {
+        return WarrantRemovedCorrectorDetails;
+      } else if (meterDetails?.isAmr) {
+        return WarrantRemovedDataLoggerDetails;
       }
       break;
     case 'Maintenance':
       if (meterDetails?.isMeter) {
-        return 'ExistingMeterDetails';
+        return MaintenanceExistingMeterDetails;
       } else if (meterDetails?.isCorrector) {
-        return 'ExistingCorrectorDetails';
+        return MaintenanceExistingCorrectorDetails;
       } else if (meterDetails?.isAmr) {
-        return 'ExistingDataLoggerDetails';
+        return MaintenanceExistingDataLoggerDetails;
       }
       break;
     case 'Survey':
       if (meterDetails?.isMeter) {
-        return 'ExistingMeterDetails';
+        return SurveyExistingMeterDetails;
       } else if (meterDetails?.isCorrector) {
-        return 'ExistingCorrectorDetails';
+        return SurveyExistingCorrectorDetails;
       } else if (meterDetails?.isAmr) {
-        return 'ExistingDataLoggerDetails';
+        return SurveyExistingDataLoggerDetails;
       }
       break;
     case 'Exchange':
       if (pageFlow === 1) {
         if (meterDetails?.isMeter) {
-          console.log('Navigating to ExistingMeterDetails');
-          return 'ExistingMeterDetails';
+          return ExistingMeterDetails;
         } else if (meterDetails?.isCorrector) {
-          return 'ExistingCorrectorDetails';
+          return ExistingCorrectorDetails;
         } else if (meterDetails?.isAmr) {
-          return 'ExistingDataLoggerDetails';
+          return ExistingDataLoggerDetails;
         }
       } else if (pageFlow === 2) {
         if (meterDetails?.isMeter) {
-          return 'InstalledMeterDetailsScreen';
+          return InstalledMeterDetails;
         } else if (meterDetails?.isCorrector) {
-          return 'InstalledCorrectorDetailsScreen';
+          return InstalledCorrectorDetails;
         } else if (meterDetails?.isAmr) {
-          return 'InstalledDataLoggerDetailsScreen';
+          return InstalledDataLoggerDetails;
         }
       }
       break;
