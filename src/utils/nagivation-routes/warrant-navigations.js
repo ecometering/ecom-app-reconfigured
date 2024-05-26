@@ -132,9 +132,7 @@ export const WarrantRemovedMeterDetails = [
     params: {
       title: 'Removed Meter Details',
     },
-    diversions: (state) => {
-      getMeterRoute({ state, pageFlow: 1 });
-    },
+    diversions: (state) => getMeterRoute({ state, pageFlow: 1 }),
   },
 ];
 
@@ -152,10 +150,7 @@ export const WarrantRemovedCorrectorDetails = [
 export const AssetTypeSelectionPage = [
   {
     screen: 'AssetTypeSelectionPage',
-    ...SubmitSuccessPage,
-    diversions: (state) => {
-      getAssetSelectRoute({ state });
-    },
+    diversions: (state) => getAssetSelectRoute({ state }),
   },
 ];
 

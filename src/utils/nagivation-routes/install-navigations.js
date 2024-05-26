@@ -25,7 +25,7 @@ export const InstallNavigation = [
       photoKey: 'bypassPhoto',
     },
     diversions: (state) => {
-      const { siteQuestions } = state;
+      const { siteQuestions } = state || {};
       if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
         return StandardPage;
       } else if (!siteQuestions?.isCarryOut) {
@@ -137,10 +137,7 @@ export const SnClientInfoPage = [
 export const AssetTypeSelectionPage = [
   {
     screen: 'AssetTypeSelectionPage',
-    ...SubmitSuccessPage,
-    diversions: (state) => {
-      getAssetSelectRoute({ state });
-    },
+    diversions: (state) => getAssetSelectRoute({ state }),
   },
 ];
 

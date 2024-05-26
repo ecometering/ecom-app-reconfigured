@@ -131,10 +131,7 @@ export const SnClientInfoPage = [
 export const AssetTypeSelectionPage = [
   {
     screen: 'AssetTypeSelectionPage',
-    ...SubmitSuccessPage,
-    diversions: (state) => {
-      getAssetSelectRoute({ state, pageFlow: 1 });
-    },
+    diversions: (state) => getAssetSelectRoute({ state, pageFlow: 1 }),
   },
 ];
 
@@ -144,9 +141,7 @@ export const ExistingMeterDetails = [
     params: {
       title: 'Existing Meter Details',
     },
-    diversions: (state) => {
-      getMeterRoute({ state, pageRoute: 1, pageFlow: 1 });
-    },
+    diversions: (state) => getMeterRoute({ state, pageRoute: 1, pageFlow: 1 }),
   },
 ];
 
@@ -163,9 +158,7 @@ export const InstalledMeterDetails = [
       title: 'ECV to MOV photo',
       photoKey: 'ecvToMovPhoto',
     },
-    diversions: (state) => {
-      getMeterRoute({ state, pageRoute: 2, pageFlow: 1 });
-    },
+    diversions: (state) => getMeterRoute({ state, pageRoute: 2, pageFlow: 1 }),
   },
 ];
 

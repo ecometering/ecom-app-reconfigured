@@ -105,9 +105,7 @@ export const RiddorReportPage = [
 export const AssetTypeSelectionPage = [
   {
     screen: 'AssetTypeSelectionPage',
-    diversions: (state) => {
-      getAssetSelectRoute({ state, pageFlow: 1 });
-    },
+    diversions: (state) => getAssetSelectRoute({ state, pageFlow: 1 }),
   },
 ];
 
@@ -144,9 +142,7 @@ export const RemovedMeterDetails = [
     params: {
       title: 'Removed Meter Details',
     },
-    diversions: (state) => {
-      getMeterRoute({ state, pageFlow: 1 });
-    },
+    diversions: (state) => getMeterRoute({ state, pageFlow: 1 }),
   },
 ];
 

@@ -83,7 +83,7 @@ function StandardPage() {
         return;
       }
       if (meterDetails?.isMeter) {
-        if (testPassed == null) {
+        if (standardDetails?.testPassed == null) {
           EcomHelper.showInfoMessage('Please answer if tightness test passed');
           return;
         }

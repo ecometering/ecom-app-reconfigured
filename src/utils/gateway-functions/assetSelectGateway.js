@@ -32,8 +32,10 @@ import {
   WarrantRemovedMeterDetails,
 } from '../nagivation-routes/warrant-navigations';
 
-export const getAssetSelectRoute = ({ state, pageFlow }) => {
+export const getAssetSelectRoute = ({ state, pageFlow = 1 }) => {
   const { jobType, meterDetails } = state || {};
+
+  console.log({ jobType, meterDetails })
 
   switch (jobType) {
     case 'Install':

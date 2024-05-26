@@ -128,10 +128,7 @@ export const RebookPage = [
 export const AssetTypeSelectionPage = [
   {
     screen: 'AssetTypeSelectionPage',
-    ...SubmitSuccessPage,
-    diversions: (state) => {
-      getAssetSelectRoute({ state });
-    },
+    diversions: (state) => getAssetSelectRoute({ state }),
   },
 ];
 
@@ -148,9 +145,7 @@ export const MaintenanceExistingMeterDetails = [
       title: 'New ECV to MOV',
       photoKey: 'ExistingEcvToMov',
     },
-    diversions: (state) => {
-      getMeterRoute({ state, pageFlow: 1 });
-    },
+    diversions: (state) => getMeterRoute({ state, pageFlow: 1 }),
   },
 ];
 
@@ -160,9 +155,7 @@ export const MaintenanceExistingCorrectorDetails = [
     params: {
       title: 'Existing Corrector installed',
     },
-    diversions: (state) => {
-      getCorrectorRoute({ state });
-    },
+    diversions: (state) => getCorrectorRoute({ state }),
   },
 ];
 
