@@ -1,5 +1,3 @@
-import { getAssetSelectRoute } from '../gateway-functions/assetSelectGateway';
-
 export const SurveyNavigation = [
   {
     screen: 'SiteDetailsPage',
@@ -127,7 +125,16 @@ export const RebookPage = [
 export const AssetTypeSelectionPage = [
   {
     screen: 'AssetTypeSelectionPage',
-    diversions: (state) => getAssetSelectRoute({ state }),
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+      if (meterDetails?.isMeter) {
+        return SurveyExistingMeterDetails;
+      } else if (meterDetails?.isCorrector) {
+        return SurveyExistingCorrectorDetails;
+      } else if (meterDetails?.isAmr) {
+        return SurveyExistingDataLoggerDetails;
+      }
+    },
   },
 ];
 
@@ -144,7 +151,17 @@ export const SurveyExistingMeterDetails = [
       title: 'New ECV to MOV',
       photoKey: 'ExistingEcvToMov',
     },
-    diversions: (state) => getMeterRoute({ state, pageFlow: 1 }),
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+
+      const Type = meterDetails?.meterType.value;
+
+      if (!['1', '2', '4'].includes(Type)) {
+        return SurveyExistingMeterDataBadge;
+      } else {
+        return SurveyExistingMeterIndex;
+      }
+    },
   },
 ];
 
@@ -154,7 +171,31 @@ export const SurveyExistingCorrectorDetails = [
     params: {
       title: 'Existing Corrector installed',
     },
-    diversions: (state) => getCorrectorRoute({ state }),
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+      const { meterType, pressureTier } = meterDetails || {};
+
+      const isAmr = meterDetails?.isAmr;
+      const isMeter = meterDetails?.isMeter;
+
+      if (isAmr) {
+        return SurveyExistingDataLoggerDetails;
+      } else if (isMeter) {
+        if (
+          ((meterType.value === '1' ||
+            meterType.value === '2' ||
+            meterType.value === '4') &&
+            pressureTier === 'MP') ||
+          (meterType.value !== '1' &&
+            meterType.value !== '2' &&
+            meterType.value !== '4')
+        ) {
+          return SurveyStreamsSetSealDetailsPage;
+        }
+      } else {
+        return SurveyStandardPage;
+      }
+    },
   },
 ];
 
@@ -164,7 +205,28 @@ export const SurveyExistingDataLoggerDetails = [
     params: {
       title: 'Existing AMR installed',
     },
-    diversions: (state) => getDataloggerRoute({ state }),
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+
+      const pressureTier = meterDetails?.pressureTier?.label;
+      const meterType = meterDetails?.meterType;
+      const isMeter = meterDetails?.isMeter;
+
+      if (isMeter) {
+        if (
+          (meterType.value === '1' ||
+            meterType.value === '2' ||
+            meterType.value === '4') &&
+          pressureTier === 'MP'
+        ) {
+          return SurveyStreamsSetSealDetailsPage;
+        } else {
+          return SurveyStandardPage;
+        }
+      } else {
+        return SurveyStandardPage;
+      }
+    },
   },
 ];
 
@@ -219,8 +281,10 @@ export const SurveyStreamsSetSealDetailsPage = [
     params: {
       title: 'Streams Set Seal Details',
     },
-    diversions: (state) =>
-      InstancesForStreamFlow({ state }).push(RegulatorPage),
+    diversions: (state) => {
+      const streamFlows = InstancesForStreamFlow({ state });
+      return [...streamFlows, ...RegulatorPage];
+    },
   },
 ];
 
@@ -258,7 +322,31 @@ export const SurveyExistingMeterIndex = [
       title: 'Ecv Photo',
       photoKey: 'EcvPhoto',
     },
-    diversions: (state) => getCorrectorRoute({ state, pageRoute: 1 }),
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+      const { meterType, pressureTier } = meterDetails || {};
+
+      const isAmr = meterDetails?.isAmr;
+      const isMeter = meterDetails?.isMeter;
+
+      if (isAmr) {
+        return SurveyExistingDataLoggerDetails;
+      } else if (isMeter) {
+        if (
+          ((meterType.value === '1' ||
+            meterType.value === '2' ||
+            meterType.value === '4') &&
+            pressureTier === 'MP') ||
+          (meterType.value !== '1' &&
+            meterType.value !== '2' &&
+            meterType.value !== '4')
+        ) {
+          return SurveyStreamsSetSealDetailsPage;
+        }
+      } else {
+        return SurveyStandardPage;
+      }
+    },
   },
 ];
 

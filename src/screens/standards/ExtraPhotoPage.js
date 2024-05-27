@@ -17,10 +17,11 @@ import { AppContext } from '../../context/AppContext';
 import ImagePickerButton from '../../components/ImagePickerButton';
 import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 import { ExtraPhotoPageRoute } from '../../utils/nagivation-routes/install-navigations';
+import withUniqueKey from '../../utils/renderNavigationWithUniqueKey';
 
 const { width, height } = Dimensions.get('window');
 
-export default function ExtraPhotoPage() {
+const ExtraPhotoPage = () => {
   const route = useRoute();
   const { goToPreviousStep, pushNavigation, goToNextStep } =
     useProgressNavigation();
@@ -160,7 +161,7 @@ export default function ExtraPhotoPage() {
       </SafeAreaView>
     </ScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   scrollView: {
@@ -194,3 +195,5 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 });
+
+export default withUniqueKey(ExtraPhotoPage);

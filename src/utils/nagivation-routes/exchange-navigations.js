@@ -1,8 +1,3 @@
-import { getAssetSelectRoute } from '../gateway-functions/assetSelectGateway';
-import { getCorrectorRoute } from '../gateway-functions/correctorGateway';
-import { getDataloggerRoute } from '../gateway-functions/dataloggerGateway';
-import { getMeterRoute } from '../gateway-functions/meterGateway';
-
 export const ExchangeNavigation = [
   {
     screen: 'SiteDetailsPage',
@@ -131,7 +126,16 @@ export const SnClientInfoPage = [
 export const AssetTypeSelectionPage = [
   {
     screen: 'AssetTypeSelectionPage',
-    diversions: (state) => getAssetSelectRoute({ state, pageFlow: 1 }),
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+      if (meterDetails?.isMeter) {
+        return ExistingMeterDetails;
+      } else if (meterDetails?.isCorrector) {
+        return ExistingCorrectorDetails;
+      } else if (meterDetails?.isAmr) {
+        return ExistingDataLoggerDetails;
+      }
+    },
   },
 ];
 
@@ -141,7 +145,15 @@ export const ExistingMeterDetails = [
     params: {
       title: 'Existing Meter Details',
     },
-    diversions: (state) => getMeterRoute({ state, pageRoute: 1, pageFlow: 1 }),
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+      const Type = meterDetails?.meterType?.value;
+      if (Type === '1' || Type === '2' || Type === '4') {
+        return ExistingMeterDataBadge;
+      } else {
+        return ExistingMeterIndex;
+      }
+    },
   },
 ];
 
@@ -158,7 +170,15 @@ export const InstalledMeterDetails = [
       title: 'ECV to MOV photo',
       photoKey: 'ecvToMovPhoto',
     },
-    diversions: (state) => getMeterRoute({ state, pageRoute: 2, pageFlow: 1 }),
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+      const Type = meterDetails?.meterType?.value;
+      if (Type === '1' || Type === '2' || Type === '4') {
+        return InstalledMeterDataBadge;
+      } else {
+        return InstalledMeterIndex;
+      }
+    },
   },
 ];
 
@@ -169,7 +189,31 @@ export const InstalledCorrectorDetails = [
       title: 'Installed Corrector Details',
       photoKey: 'removedCorrector',
     },
-    diversions: (state) => getCorrectorRoute({ state, pageRoute: 2 }),
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+      const { meterType, pressureTier } = meterDetails || {};
+
+      const isAmr = meterDetails?.isAmr;
+      const isMeter = meterDetails?.isMeter;
+
+      if (isAmr) {
+        return InstalledDataLoggerDetails;
+      } else if (isMeter) {
+        if (
+          ((meterType.value === '1' ||
+            meterType.value === '2' ||
+            meterType.value === '4') &&
+            pressureTier === 'MP') ||
+          (meterType.value !== '1' &&
+            meterType.value !== '2' &&
+            meterType.value !== '4')
+        ) {
+          return ExchangeStreamsSetSealDetailsPage;
+        }
+      } else {
+        return ExchangeStandardPage;
+      }
+    },
   },
 ];
 
@@ -180,7 +224,29 @@ export const InstalledDataLoggerDetails = [
       title: 'Installed AMR',
       photoKey: 'RemovedAMR',
     },
-    diversions: (state) => getDataloggerRoute({ state }),
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+
+      const pressureTier = meterDetails?.pressureTier?.label;
+      const meterType = meterDetails?.meterType;
+      const isMeter = meterDetails?.isMeter;
+
+      if (isMeter) {
+        if (
+          ((meterType.value === '1' ||
+            meterType.value === '2' ||
+            meterType.value === '4') &&
+            pressureTier === 'MP') ||
+          (meterType.value !== '1' &&
+            meterType.value !== '2' &&
+            meterType.value !== '4')
+        ) {
+          return ExchangeStreamsSetSealDetailsPage;
+        }
+      } else {
+        return ExchangeStandardPage;
+      }
+    },
   },
 ];
 
@@ -198,7 +264,31 @@ export const InstalledMeterIndex = [
       title: 'Installed Meter Photo',
       photoKey: 'InstalledMeterPhoto',
     },
-    diversions: (state) => getMeterRoute({ state, pageRoute: 2, pageFlow: 2 }),
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+
+      const isAmr = meterDetails?.isAmr;
+      const Type = meterDetails?.meterType.value;
+      const isCorrector = meterDetails?.isCorrector;
+      const pressureTier = meterDetails?.pressureTier.label;
+
+      if (isCorrector) {
+        return InstalledCorrectorDetails;
+      } else if (isAmr) {
+        return InstalledDataLoggerDetails;
+        // TODO: isMeter is not defined
+      } else if (isMeter) {
+        if (
+          ((Type === '1' || Type === '2' || Type === '4') &&
+            pressureTier === 'MP') ||
+          (Type !== '1' && Type !== '2' && Type !== '4')
+        ) {
+          return ExchangeStreamsSetSealDetailsPage;
+        }
+      } else {
+        return ExchangeStandardPage;
+      }
+    },
   },
 ];
 
@@ -234,7 +324,23 @@ export const ExistingMeterIndex = [
       title: 'Ecv Photo',
       photoKey: 'EcvPhoto',
     },
-    diversions: (state) => getCorrectorRoute({ state, pageRoute: 1 }),
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+
+      const isAmr = meterDetails?.isAmr;
+
+      if (isAmr) {
+        return ExistingDataLoggerDetails;
+      } else {
+        if (meterDetails?.isMeter) {
+          return InstalledMeterDetails;
+        } else if (meterDetails?.isCorrector) {
+          return InstalledCorrectorDetails;
+        } else if (meterDetails?.isAmr) {
+          return InstalledDataLoggerDetails;
+        }
+      }
+    },
   },
 ];
 
@@ -255,7 +361,16 @@ export const ExistingDataLoggerDetails = [
     params: {
       title: 'Existing DataLogger Details',
     },
-    diversions: (state) => getAssetSelectRoute({ state, pageFlow: 2 }),
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+      if (meterDetails?.isMeter) {
+        return InstalledMeterDetails;
+      } else if (meterDetails?.isCorrector) {
+        return InstalledCorrectorDetails;
+      } else if (meterDetails?.isAmr) {
+        return InstalledDataLoggerDetails;
+      }
+    },
   },
 ];
 
@@ -332,8 +447,10 @@ export const ExchangeStreamsSetSealDetailsPage = [
       title: 'Streams Set Seal Details',
       nextScreen: 'FilterPage-1',
     },
-    diversions: (state) =>
-      InstancesForStreamFlow({ state }).push(RegulatorPage),
+    diversions: (state) => {
+      const streamFlow = InstancesForStreamFlow({ state });
+      return [...streamFlow, ...RegulatorPage];
+    },
   },
 ];
 

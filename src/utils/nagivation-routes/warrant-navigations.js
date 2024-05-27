@@ -1,8 +1,3 @@
-import { getAssetSelectRoute } from '../gateway-functions/assetSelectGateway';
-import { getCorrectorRoute } from '../gateway-functions/correctorGateway';
-import { getDataloggerRoute } from '../gateway-functions/dataloggerGateway';
-import { getMeterRoute } from '../gateway-functions/meterGateway';
-
 export const WarrantNavigation = [
   {
     screen: 'SiteDetailsPage',
@@ -17,7 +12,18 @@ export const WarrantNavigation = [
       title: 'Site Photo',
       photoKey: 'sitePhoto',
     },
+    diversions: (state) => {
+      const { siteDetails } = state;
+      if (siteDetails?.confirmWarrant) {
+        return SiteQuestionsPage;
+      } else {
+        return SubmitSuccessPage;
+      }
+    },
   },
+];
+
+export const SiteQuestionsPage = [
   {
     screen: 'SiteQuestionsPage',
     params: {
@@ -132,7 +138,17 @@ export const WarrantRemovedMeterDetails = [
     params: {
       title: 'Removed Meter Details',
     },
-    diversions: (state) => getMeterRoute({ state, pageFlow: 1 }),
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+
+      const Type = meterDetails?.meterType.value;
+
+      if (Type === '1' || Type === '2' || Type === '4') {
+        return WarrantRemovedMeterDataBadge;
+      } else {
+        return WarrantRemovedMeterIndex;
+      }
+    },
   },
 ];
 
@@ -143,14 +159,33 @@ export const WarrantRemovedCorrectorDetails = [
       title: 'Removed Corrector Details',
       photoKey: 'removedCorrector',
     },
-    diversions: (state) => getCorrectorRoute({ state }),
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+      const isAmr = meterDetails?.isAmr;
+
+      if (isAmr) {
+        return WarrantRemovedDataLoggerDetails;
+      } else {
+        return WarrantStandardPage;
+      }
+    },
   },
 ];
 
 export const AssetTypeSelectionPage = [
   {
     screen: 'AssetTypeSelectionPage',
-    diversions: (state) => getAssetSelectRoute({ state }),
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+
+      if (meterDetails?.isMeter) {
+        return WarrantRemovedMeterDetails;
+      } else if (meterDetails?.isCorrector) {
+        return WarrantRemovedCorrectorDetails;
+      } else if (meterDetails?.isAmr) {
+        return WarrantRemovedDataLoggerDetails;
+      }
+    },
   },
 ];
 
@@ -175,7 +210,18 @@ export const WarrantRemovedMeterIndex = [
       title: 'Ecv Photo',
       photoKey: 'EcvPhoto',
     },
-    diversions: (state) => getMeterRoute({ state, pageRoute: 1 }),
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+
+      const Type = meterDetails?.meterType.value;
+
+      // TODO: this is an infinite loop of screens logic needs to be looked at
+      if (Type === '1' || Type === '2' || Type === '4') {
+        return WarrantRemovedMeterDataBadge;
+      } else {
+        return WarrantRemovedMeterIndex;
+      }
+    },
   },
 ];
 
@@ -197,6 +243,10 @@ export const WarrantRemovedDataLoggerDetails = [
       title: 'Removed AMR',
       photoKey: 'RemovedAMR',
     },
-    diversions: (state) => getDataloggerRoute({ state }),
+    diversions: (state) => {
+      // TODO: this logic is not found in the original code but no diversion is found
+      // if not diversion needed then add this to the array as next page
+      return WarrantStandardPage;
+    },
   },
 ];

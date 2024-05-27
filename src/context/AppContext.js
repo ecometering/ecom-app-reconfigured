@@ -83,7 +83,9 @@ const AppContextProvider = (props) => {
   const [standardDetails, setStandardDetails] = useState(null);
   const [ventDetails, setVentDetails] = useState({});
   //.. removed
-  const [dataLoggerDetails, setDataLoggerDetails] = useState({});
+  const [dataLoggerDetails, setDataLoggerDetails] = useState({
+    loggerOwner: 'Eco Metering Solutions',
+  });
   const [removedMeterDetails, setRemovedMeterDetails] = useState(null);
   //.. warant
   // ... Maintenance

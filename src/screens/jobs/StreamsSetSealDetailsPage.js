@@ -9,11 +9,7 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import React, { useContext, useState } from 'react';
-import {
-  useNavigation,
-  usePreventRemoveContext,
-  useRoute,
-} from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 // Components
 import Text from '../../components/Text';
@@ -24,6 +20,7 @@ import TextInput from '../../components/TextInput';
 // Context & Utils
 import EcomHelper from '../../utils/ecomHelper';
 import { AppContext } from '../../context/AppContext';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 
 const RepeatComponent = ({ title, onChangeText, value }) => {
   return (
@@ -49,7 +46,7 @@ const RepeatComponent = ({ title, onChangeText, value }) => {
 };
 
 function StreamsSetSealDetailsPage() {
-  const { goToNextStep, goToPreviousStep } = usePreventRemoveContext();
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const appContext = useContext(AppContext);
   const [n, setN] = useState(appContext.streamNumber);
 
@@ -104,7 +101,6 @@ function StreamsSetSealDetailsPage() {
   const backPressed = () => {
     appContext.setStreamValue(streamValue);
     appContext.setStreamNumber(n);
-
     goToPreviousStep();
   };
 

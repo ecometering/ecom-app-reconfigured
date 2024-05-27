@@ -1,7 +1,3 @@
-import { getAssetSelectRoute } from '../gateway-functions/assetSelectGateway';
-import { getCorrectorRoute } from '../gateway-functions/correctorGateway';
-import { getDataloggerRoute } from '../gateway-functions/dataloggerGateway';
-
 export const MaintenanceNavigation = [
   {
     screen: 'SiteDetailsPage',
@@ -128,7 +124,17 @@ export const RebookPage = [
 export const AssetTypeSelectionPage = [
   {
     screen: 'AssetTypeSelectionPage',
-    diversions: (state) => getAssetSelectRoute({ state }),
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+
+      if (meterDetails?.isMeter) {
+        return MaintenanceExistingMeterDetails;
+      } else if (meterDetails?.isCorrector) {
+        return MaintenanceExistingCorrectorDetails;
+      } else if (meterDetails?.isAmr) {
+        return MaintenanceExistingDataLoggerDetails;
+      }
+    },
   },
 ];
 
@@ -145,7 +151,9 @@ export const MaintenanceExistingMeterDetails = [
       title: 'New ECV to MOV',
       photoKey: 'ExistingEcvToMov',
     },
-    diversions: (state) => getMeterRoute({ state, pageFlow: 1 }),
+    diversions: (state) => {
+      // TODO: no logic found in the original code
+    },
   },
 ];
 
@@ -155,7 +163,16 @@ export const MaintenanceExistingCorrectorDetails = [
     params: {
       title: 'Existing Corrector installed',
     },
-    diversions: (state) => getCorrectorRoute({ state }),
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+      if (meterDetails?.isAmr) {
+        return MaintenanceExistingCorrectorDetails;
+      } else if (meterDetails?.isMeter) {
+        return MaintenanceStreamsSetSealDetailsPage;
+      } else {
+        return MaintenanceQuestionsPage;
+      }
+    },
   },
 ];
 
@@ -165,7 +182,25 @@ export const MaintenanceExistingDataLoggerDetails = [
     params: {
       title: 'Existing AMR installed',
     },
-    diversions: (state) => getDataloggerRoute({ state }),
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+
+      const Type = meterDetails?.meterType?.value;
+      const pressureTier = meterDetails?.pressureTier?.label;
+      const isMeter = meterDetails?.isMeter;
+
+      if (isMeter) {
+        if (
+          ((Type === '1' || Type === '2' || Type === '4') &&
+            pressureTier === 'MP') ||
+          (Type !== '1' && Type !== '2' && Type !== '4')
+        ) {
+          return MaintenanceStreamsSetSealDetailsPage;
+        }
+      } else {
+        return MaintenanceQuestionsPage;
+      }
+    },
   },
 ];
 
@@ -221,8 +256,10 @@ export const MaintenanceStreamsSetSealDetailsPage = [
       title: 'Streams Set Seal Details',
       nextScreen: 'FilterPage-1',
     },
-    diversions: (state) =>
-      InstancesForStreamFlow({ state }).push(RegulatorPage),
+    diversions: (state) => {
+      const streamFlows = InstancesForStreamFlow({ state });
+      return [...streamFlows, ...MaintenanceQuestionsPage];
+    },
   },
 ];
 

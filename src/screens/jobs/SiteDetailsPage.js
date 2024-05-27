@@ -112,14 +112,13 @@ function SiteDetailsPage() {
           [jobType, mprn, postcode, startDate, jobStatus, siteDetailsJSON]
         )
         .then((result) => {
-          console.log('Site details saved to database:', result);
           setJobID(params?.jobData?.id ?? result.lastInsertRowId);
-          console.log('jobID', jobID);
         });
     } catch (error) {
       console.error('Error saving site details to database:', error);
     }
   };
+
   const backPressed = () => {
     appContext.setSiteDetails(siteDetails);
     if (siteDetails !== null) {
@@ -194,7 +193,9 @@ function SiteDetailsPage() {
 
     appContext.setSiteDetails(siteDetails);
 
-    await saveSiteDetailsToDatabase();
+    if (!jobID) {
+      await saveSiteDetailsToDatabase();
+    }
     goToNextStep();
   };
 

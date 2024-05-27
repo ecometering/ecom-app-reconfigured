@@ -78,7 +78,6 @@ function MaintenanceQuestionsPage() {
       );
       return;
     }
-    context();
     goToNextStep();
   };
   const backPressed = () => {

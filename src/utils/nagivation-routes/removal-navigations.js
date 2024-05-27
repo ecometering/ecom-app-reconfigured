@@ -1,9 +1,3 @@
-import { getAssetSelectRoute } from '../gateway-functions/assetSelectGateway';
-import { getCorrectorRoute } from '../gateway-functions/correctorGateway';
-import { getDataloggerRoute } from '../gateway-functions/dataloggerGateway';
-import { getMeterRoute } from '../gateway-functions/meterGateway';
-import { StandardPage } from './install-navigations';
-
 export const RemovalNavigation = [
   {
     screen: 'SiteDetailsPage',
@@ -105,7 +99,16 @@ export const RiddorReportPage = [
 export const AssetTypeSelectionPage = [
   {
     screen: 'AssetTypeSelectionPage',
-    diversions: (state) => getAssetSelectRoute({ state, pageFlow: 1 }),
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+      if (meterDetails?.isMeter) {
+        return RemovedMeterDetails;
+      } else if (meterDetails?.isCorrector) {
+        return RemovedCorrectorDetails;
+      } else if (meterDetails?.isAmr) {
+        return RemovedDataLoggerDetails;
+      }
+    },
   },
 ];
 
@@ -123,6 +126,7 @@ export const RemovedStandardPage = [
     diversions: (state) => {
       const { standardDetails } = state;
       const { riddorReportable, conformStandard } = standardDetails;
+
       if (riddorReportable === true) {
         return RiddorReportPage;
       } else {
@@ -142,7 +146,16 @@ export const RemovedMeterDetails = [
     params: {
       title: 'Removed Meter Details',
     },
-    diversions: (state) => getMeterRoute({ state, pageFlow: 1 }),
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+      const Type = meterDetails?.meterType.value;
+
+      if (!['1', '2', '4'].includes(Type)) {
+        return RemovedMeterDataBadge;
+      } else {
+        return RemovedMeterIndex;
+      }
+    },
   },
 ];
 
@@ -153,7 +166,15 @@ export const RemovedCorrectorDetails = [
       title: 'Removed Corrector Details',
       photoKey: 'removedCorrector',
     },
-    diversions: (state) => getCorrectorRoute({ state }),
+    diversions: (state) => {
+      const { meterDetails } = state;
+
+      if (meterDetails?.isAmr) {
+        return RemovedDataLoggerDetails;
+      } else {
+        return RemovedStandardPage;
+      }
+    },
   },
 ];
 
@@ -164,7 +185,11 @@ export const RemovedDataLoggerDetails = [
       title: 'Removed AMR',
       photoKey: 'RemovedAMR',
     },
-    diversions: (state) => getDataloggerRoute({ state }),
+    diversions: (state) => {
+      // TODO: this logic is not found in the original code but no diversion is found
+      // if not diversion needed then add this to the array as next page
+      return RemovedStandardPage;
+    },
   },
 ];
 
@@ -189,8 +214,20 @@ export const RemovedMeterIndex = [
       title: 'Ecv Photo',
       photoKey: 'EcvPhoto',
     },
-    diversions: (state) =>
-      getMeterRoute({ state, jobType: 'Removal', pageflow: 2 }),
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+
+      const isAmr = meterDetails?.isAmr;
+      const isCorrector = meterDetails?.isCorrector;
+
+      if (isCorrector === true) {
+        return RemovedCorrectorDetails;
+      } else if (isAmr) {
+        return RemovedDataLoggerDetails;
+      } else {
+        return RemovedStandardPage;
+      }
+    },
   },
 ];
 
@@ -219,7 +256,7 @@ export const AdditionalMaterial = [
         return RemovedDataLoggerDetails; // Navigate to DataLogger if true
         // Use setAndSeal logic if meter is present
       } else {
-        return StandardPage; // Fallback to StandardsNavigation
+        return RemovedStandardPage; // Fallback to StandardsNavigation
       }
     },
   },

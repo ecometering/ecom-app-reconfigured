@@ -28,6 +28,8 @@ export function NavigationProvider({ children }) {
   const [flowType, setFlowType] = useState(); // Default flow type
   const [flow, setFlow] = useState([]);
 
+  console.log({ flow });
+
   useEffect(() => {
     if (flowType) {
       setFlow(config[flowType]);

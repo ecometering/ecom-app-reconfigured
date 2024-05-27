@@ -180,7 +180,7 @@ function StandardPage() {
                   () => {
                     setStandardDetails((curState) => ({
                       ...curState,
-                      riddorReportable: true,
+                      riddorReportable: false,
                     }));
                   },
                 ]}
