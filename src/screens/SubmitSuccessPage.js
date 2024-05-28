@@ -148,7 +148,6 @@ const SubmitSuccessPage = () => {
     axios
       .post('https://test.ecomdata.co.uk/api/upload-photos/', formData, {
         headers: {
-          Authorization: `Bearer ${authState.token}`,
           'Content-Type': 'multipart/form-data', // Axios sets this automatically, but specifying just in case
         },
       })

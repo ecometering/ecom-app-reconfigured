@@ -48,9 +48,9 @@ const RepeatComponent = ({ title, onChangeText, value }) => {
 function StreamsSetSealDetailsPage() {
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const appContext = useContext(AppContext);
-  const [n, setN] = useState(appContext.streamNumber);
+  const [n, setN] = useState(appContext.streamNumber ?? 0);
 
-  const [streamValue, setStreamValue] = useState(appContext.streamValue);
+  const [streamValue, setStreamValue] = useState(appContext.streamValue ?? []);
   const route = useRoute();
   const { title, nextScreen } = route?.params ?? {};
 
@@ -108,7 +108,7 @@ function StreamsSetSealDetailsPage() {
     const updatedStreamValue = [...streamValue];
     updatedStreamValue[index] = {
       ...updatedStreamValue[index],
-      [`${field}`]: value,
+      [`${field}`]: Number(value) ? Number(value) : null,
     };
     setStreamValue(updatedStreamValue);
   };
@@ -171,20 +171,21 @@ function StreamsSetSealDetailsPage() {
                 <View style={styles.section}>
                   <RepeatComponent
                     title={'Slam Shut'}
-                    value={streamValue[index]?.slamShut ?? 0}
+                    value={streamValue?.[index]?.slamShut ?? 0}
                     onChangeText={(v) => {
-                      if (v.length > 5) {
+                      const filteredText = v.replace(/[^0-9]/g, ''); // Allow only numbers
+                      if (filteredText.length > 5) {
                         EcomHelper.showInfoMessage(
                           'Max length should be less than 5'
                         );
                         return;
                       }
-                      handleFieldChange(v, index, 'slamShut');
+                      handleFieldChange(filteredText, index, 'slamShut');
                     }}
                   />
                   <RepeatComponent
                     title={'Creep Relief'}
-                    value={streamValue[index]?.creepRelief ?? 0}
+                    value={streamValue?.[index]?.creepRelief ?? 0}
                     onChangeText={(v) => {
                       if (v.length > 5) {
                         EcomHelper.showInfoMessage(
@@ -197,7 +198,7 @@ function StreamsSetSealDetailsPage() {
                   />
                   <RepeatComponent
                     title={'Working Pressure'}
-                    value={streamValue[index]?.workingPressure ?? 0}
+                    value={streamValue?.[index]?.workingPressure ?? 0}
                     onChangeText={(v) => {
                       if (v.length > 5) {
                         EcomHelper.showInfoMessage(
