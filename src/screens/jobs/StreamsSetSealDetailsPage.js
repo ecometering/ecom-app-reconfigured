@@ -136,6 +136,7 @@ function StreamsSetSealDetailsPage() {
                 onPress={() => {
                   if (n > 0) {
                     setN(n - 1);
+                    appContext.setStreamNumber(n - 1);
                     setStreamValues(streamValues.slice(0, -1));
                   }
                 }}
@@ -147,6 +148,7 @@ function StreamsSetSealDetailsPage() {
                 style={styles.incDecrButton}
                 onPress={() => {
                   setN(n + 1);
+                  appContext.setStreamNumber(n + 1);
                   setStreamValues([...streamValues, {}]);
                 }}
               >

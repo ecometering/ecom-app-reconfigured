@@ -398,10 +398,10 @@ export const ExistingCorrectorDetails = [
 export const InstancesForStreamFlow = ({ state }) => {
   // TODO: sort context switch
   // Redux might be a better option
-  const { numberOfStreams } = state || {};
+  const { streamNumber } = state || {};
 
   return Array.from(
-    { length: numberOfStreams },
+    { length: streamNumber },
     (_, index) => index + 1
   ).reduce((acc, stream) => {
     return [

@@ -32,8 +32,6 @@ export const SurveyNavigation = [
   },
 ];
 
-
-
 export const SubmitSuccessPage = [
   {
     screen: 'SubmitSuccessPage',
@@ -190,9 +188,7 @@ export const SurveyExistingCorrectorDetails = [
       if (isAmr) {
         return SurveyExistingDataLoggerDetails;
       } else if (isMeter) {
-        if (
-            pressureTier === 'MP'
-        ) {
+        if (pressureTier === 'MP') {
           return SurveyStreamsSetSealDetailsPage;
         }
       } else {
@@ -215,9 +211,7 @@ export const SurveyExistingDataLoggerDetails = [
       const isMeter = meterDetails?.isMeter;
 
       if (isMeter) {
-        if (
-          pressureTier === 'MP'
-        ) {
+        if (pressureTier === 'MP') {
           return SurveyStreamsSetSealDetailsPage;
         } else {
           return SurveyStandardPage;
@@ -233,46 +227,45 @@ export const InstancesForStreamFlow = ({ state }) => {
   // TODO: sort context switch
   // Redux might be a better option
   const { streamNumber } = state || {};
-console.log("message:294 streamnumber:",
-streamNumber)
-  return Array.from(
-    { length: streamNumber },
-    (_, index) => index + 1
-  ).reduce((acc, stream) => {
-    return [
-      ...acc,
-      {
-        screen: 'StreamFilterPage',
-        params: {
-          title: `Filter Page ${stream}`,
+
+  return Array.from({ length: streamNumber }, (_, index) => index + 1).reduce(
+    (acc, stream) => {
+      return [
+        ...acc,
+        {
+          screen: 'StreamFilterPage',
+          params: {
+            title: `Filter Page ${stream}`,
+          },
         },
-      },
-      {
-        screen: 'StreamSlamshutPage',
-        params: {
-          title: `Slamshut Page ${stream}`,
+        {
+          screen: 'StreamSlamshutPage',
+          params: {
+            title: `Slamshut Page ${stream}`,
+          },
         },
-      },
-      {
-        screen: 'StreamActiveRegulatorPage',
-        params: {
-          title: `Active Regulator Page ${stream}`,
+        {
+          screen: 'StreamActiveRegulatorPage',
+          params: {
+            title: `Active Regulator Page ${stream}`,
+          },
         },
-      },
-      {
-        screen: 'StreamReliefRegulatorPage',
-        params: {
-          title: `Relief Regulator Page ${stream}`,
+        {
+          screen: 'StreamReliefRegulatorPage',
+          params: {
+            title: `Relief Regulator Page ${stream}`,
+          },
         },
-      },
-      {
-        screen: 'StreamWaferCheckPage',
-        params: {
-          title: `Wafer Check Page ${stream}`,
+        {
+          screen: 'StreamWaferCheckPage',
+          params: {
+            title: `Wafer Check Page ${stream}`,
+          },
         },
-      },
-    ];
-  }, []);
+      ];
+    },
+    []
+  );
 };
 
 export const SurveyStreamsSetSealDetailsPage = [
@@ -315,23 +308,20 @@ export const SurveyExistingMeterIndex = [
       title: 'Existing Meter Photo',
       photoKey: 'ExistingMeterPhoto',
     },
-  
+
     diversions: (state) => {
       const { meterDetails } = state || {};
       const { meterType, pressureTier } = meterDetails || {};
-      const isCorrector =meterDetails?.isCorrector;
+      const isCorrector = meterDetails?.isCorrector;
       const isAmr = meterDetails?.isAmr;
       const isMeter = meterDetails?.isMeter;
-      if (isCorrector){
+      if (isCorrector) {
         return SurveyExistingCorrectorDetails;
       }
       if (isAmr) {
         return SurveyExistingDataLoggerDetails;
       } else if (isMeter) {
-        if (
-          (pressureTier === 'MP') 
-          
-        ) {
+        if (pressureTier === 'MP') {
           return SurveyStreamsSetSealDetailsPage;
         }
       } else {
