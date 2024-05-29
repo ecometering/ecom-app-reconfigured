@@ -100,19 +100,7 @@ const MainNavigator = () => {
                   nextScreen: 'EcvPage',
                 }}
               />
-              <Stack.Screen
-                name="kioskPage"
-                component={KioskPage}
-                initialParams={{
-                  title: 'Kiosk details',
-                  nextScreen: 'EcvPage',
-                }}
-              />
-              <Stack.Screen
-                name="EcvPage"
-                component={EcvPage}
-                initialParams={{ title: 'ECV details', nextScreen: 'vents' }}
-              />
+             
               <Stack.Screen
                 name="SiteDetailsPage"
                 component={SiteDetailsPage}

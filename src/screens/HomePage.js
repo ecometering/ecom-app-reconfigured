@@ -87,15 +87,7 @@ function HomePage() {
           >
             <Text style={styles.buttonTxt}>Completed Job</Text>
           </Button>
-          <Button
-            onPress={() => {
-              navigationToPage({ navigationName: 'test' });
-            }}
-            style={styles.button}
-          >
-            <Text style={styles.buttonTxt}>Test</Text>
-          </Button>
-
+        
           <TouchableOpacity
             onPress={OnLogout}
             style={{

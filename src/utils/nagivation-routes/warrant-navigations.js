@@ -62,26 +62,6 @@ export const ExtraPhotoPageRoute = (
   },
 ];
 
-// Site Questions Alternative Flows
-export const WarrantStandardPage = [
-  {
-    screen: 'StandardPage',
-    diversions: (state) => {
-      const { standardDetails } = state;
-      const { riddorReportable, conformStandard } = standardDetails;
-      if (riddorReportable === true) {
-        return RiddorReportPage;
-      } else {
-        if (conformStandard === false) {
-          return SnClientInfoPage;
-        } else {
-          return CompositeLabelPhoto;
-        }
-      }
-    },
-  },
-];
-
 export const CompositeLabelPhoto = [
   {
     screen: 'CompositeLabelPhoto',
@@ -111,13 +91,7 @@ export const SnClientInfoPage = [
   ...CompositeLabelPhoto,
 ];
 
-export const RebookPage = [
-  {
-    screen: 'RebookPage',
-  },
-  ...SubmitSuccessPage,
-];
-
+// Standard Page Alternative Flows
 export const RiddorReportPage = [
   {
     screen: 'RiddorReportPage',
@@ -132,7 +106,52 @@ export const RiddorReportPage = [
   },
 ];
 
-export const WarrantRemovedMeterDetails = [
+// AssetTypeSelectionPage
+export const AssetTypeSelectionPage = [
+  {
+    screen: 'AssetTypeSelectionPage',
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+      if (meterDetails?.isMeter) {
+        return RemovedMeterDetails;
+      } else if (meterDetails?.isCorrector) {
+        return RemovedCorrectorDetails;
+      } else if (meterDetails?.isAmr) {
+        return RemovedDataLoggerDetails;
+      }
+    },
+  },
+];
+
+export const RebookPage = [
+  {
+    screen: 'RebookPage',
+  },
+  ...SubmitSuccessPage,
+];
+
+// Site Questions Alternative Flows
+export const RemovedStandardPage = [
+  {
+    screen: 'StandardPage',
+    diversions: (state) => {
+      const { standardDetails } = state;
+      const { riddorReportable, conformStandard } = standardDetails;
+
+      if (riddorReportable === true) {
+        return RiddorReportPage;
+      } else {
+        if (conformStandard === false) {
+          return SnClientInfoPage;
+        } else {
+          return CompositeLabelPhoto;
+        }
+      }
+    },
+  },
+];
+
+export const RemovedMeterDetails = [
   {
     screen: 'MeterDetails',
     params: {
@@ -140,19 +159,18 @@ export const WarrantRemovedMeterDetails = [
     },
     diversions: (state) => {
       const { meterDetails } = state || {};
-
       const Type = meterDetails?.meterType.value;
 
-      if (Type === '1' || Type === '2' || Type === '4') {
-        return WarrantRemovedMeterDataBadge;
+      if (!['1', '2', '4'].includes(Type)) {
+        return RemovedMeterDataBadge;
       } else {
-        return WarrantRemovedMeterIndex;
+        return RemovedMeterIndex;
       }
     },
   },
 ];
 
-export const WarrantRemovedCorrectorDetails = [
+export const RemovedCorrectorDetails = [
   {
     screen: 'CorrectorDetails',
     params: {
@@ -160,36 +178,33 @@ export const WarrantRemovedCorrectorDetails = [
       photoKey: 'removedCorrector',
     },
     diversions: (state) => {
-      const { meterDetails } = state || {};
-      const isAmr = meterDetails?.isAmr;
+      const { meterDetails } = state;
 
-      if (isAmr) {
-        return WarrantRemovedDataLoggerDetails;
+      if (meterDetails?.isAmr) {
+        return RemovedDataLoggerDetails;
       } else {
-        return WarrantStandardPage;
+        return RemovedStandardPage;
       }
     },
   },
 ];
 
-export const AssetTypeSelectionPage = [
+export const RemovedDataLoggerDetails = [
   {
-    screen: 'AssetTypeSelectionPage',
+    screen: 'DataLoggerDetails',
+    params: {
+      title: 'Removed AMR',
+      photoKey: 'RemovedAMR',
+    },
     diversions: (state) => {
-      const { meterDetails } = state || {};
-
-      if (meterDetails?.isMeter) {
-        return WarrantRemovedMeterDetails;
-      } else if (meterDetails?.isCorrector) {
-        return WarrantRemovedCorrectorDetails;
-      } else if (meterDetails?.isAmr) {
-        return WarrantRemovedDataLoggerDetails;
-      }
+      // TODO: this logic is not found in the original code but no diversion is found
+      // if not diversion needed then add this to the array as next page
+      return RemovedStandardPage;
     },
   },
 ];
 
-export const WarrantRemovedMeterIndex = [
+export const RemovedMeterIndex = [
   {
     screen: 'MeterIndex',
     params: {
@@ -213,19 +228,21 @@ export const WarrantRemovedMeterIndex = [
     diversions: (state) => {
       const { meterDetails } = state || {};
 
-      const Type = meterDetails?.meterType.value;
+      const isAmr = meterDetails?.isAmr;
+      const isCorrector = meterDetails?.isCorrector;
 
-      // TODO: this is an infinite loop of screens logic needs to be looked at
-      if (Type === '1' || Type === '2' || Type === '4') {
-        return WarrantRemovedMeterDataBadge;
+      if (isCorrector === true) {
+        return RemovedCorrectorDetails;
+      } else if (isAmr) {
+        return RemovedDataLoggerDetails;
       } else {
-        return WarrantRemovedMeterIndex;
+        return RemovedStandardPage;
       }
     },
   },
 ];
 
-export const WarrantRemovedMeterDataBadge = [
+export const RemovedMeterDataBadge = [
   {
     screen: 'MeterDataBadge',
     params: {
@@ -233,20 +250,25 @@ export const WarrantRemovedMeterDataBadge = [
       photoKey: 'RemovedMeterDataBadge',
     },
   },
-  ...WarrantRemovedMeterIndex,
+  ...RemovedMeterIndex,
 ];
 
-export const WarrantRemovedDataLoggerDetails = [
+// TODO: Nothing navigates to this page
+export const AdditionalMaterial = [
   {
-    screen: 'DataLoggerDetails',
+    name: 'AdditionalMaterial',
     params: {
-      title: 'Removed AMR',
-      photoKey: 'RemovedAMR',
+      title: 'Additional Material',
     },
     diversions: (state) => {
-      // TODO: this logic is not found in the original code but no diversion is found
-      // if not diversion needed then add this to the array as next page
-      return WarrantStandardPage;
+      // TODO: define dataLogger
+      const datalogger = true;
+      if (datalogger) {
+        return RemovedDataLoggerDetails; // Navigate to DataLogger if true
+        // Use setAndSeal logic if meter is present
+      } else {
+        return RemovedStandardPage; // Fallback to StandardsNavigation
+      }
     },
   },
 ];

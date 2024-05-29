@@ -14,6 +14,10 @@ import AssetTypeSelectionPage from '../screens/jobs/AssetTypeSelectionPage';
 import AdditionalMaterialPage from '../screens/jobs/AdditionalMaterialPage';
 import StreamsSetSealDetailsPage from '../screens/jobs/StreamsSetSealDetailsPage';
 import MaintenanceQuestionsPage from '../screens/maintenance/MaintenanceQuestionsPage';
+import KioskPage from '../screens/survey/KioskPage';
+import VentsDetailsPage from '../screens/survey/VentsPage';
+import MovDetailsPage from '../screens/survey/MovPage';
+import EcvDetailsPage from '../screens/survey/EcvPage';
 
 export const unitedFlowNavigators = [
   {
@@ -36,7 +40,14 @@ export const unitedFlowNavigators = [
       photoKey: 'NewEcvToMov',
     },
   },
-
+  {
+    name: 'ExistingEcvPhoto',
+    component: GenericPhotoPage,
+    initialParams: {
+      title: 'Existing ECV to MOV',
+      photoKey: 'ExistingEcvToMov',
+    },
+  },
   {
     name: 'MeterDataBadge',
     component: GenericPhotoPage,
@@ -123,4 +134,19 @@ export const unitedFlowNavigators = [
   { name: 'ChatterBox', component: ChatterBoxPage },
   { name: 'AdditionalMaterial', component: AdditionalMaterialPage },
   { name: 'MaintenanceQuestions', component: MaintenanceQuestionsPage },
+  {
+    name:'KioskPage',component: KioskPage},
+    {name: 'VentsPage', component: VentsDetailsPage},
+    {name: 'MovPage', component: MovDetailsPage},
+    {name: 'EcvPage', component: EcvDetailsPage},
+
+{
+    name: 'SiteDrawingPhoto',
+    component: GenericPhotoPage,
+    initialParams: {
+      title: 'Site Survey Drawing ',
+      photoKey: 'siteDrawing',
+    },
+  },
+  
 ];

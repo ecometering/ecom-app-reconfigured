@@ -9,6 +9,8 @@ import { PrimaryColors } from '../../theme/colors'; // Adjust path as needed
 import Header from '../../components/Header';
 import { useRoute } from '@react-navigation/native';
 import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import withUniqueKey from '../../utils/renderNavigationWithUniqueKey';
+
 
 const ReliefRegulatorPage = () => {
   const [manufacturer, setManufacturer] = useState('');
@@ -90,4 +92,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ReliefRegulatorPage;
+export default withUniqueKey(ReliefRegulatorPage);

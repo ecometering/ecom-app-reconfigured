@@ -112,6 +112,14 @@ const AppContextProvider = (props) => {
     uncorrected: '',
     corrected: '',
   });
+  const [correctorDetailsTwo, setCorrectorDetailsTwo] = useState({
+    manufacturer: '',
+    model: '',
+    serialNumber: '',
+    isMountingBracket: null,
+    uncorrected: '',
+    corrected: '',
+  });
 
   const resetContext = () => {
     setJobType(null);
@@ -168,6 +176,7 @@ const AppContextProvider = (props) => {
     photos,
     dataLoggerDetails,
     correctorDetails,
+    correctorDetailsTwo,
     hasStreamNumber,
     jobData,
     streamNumber,
@@ -207,6 +216,7 @@ const AppContextProvider = (props) => {
     setMeterDetails,
     setSiteDetails,
     setCorrectorDetails,
+    setCorrectorDetailsTwo,
     setHasStreamNumber,
     setStreamCounter,
     setStreamValue,

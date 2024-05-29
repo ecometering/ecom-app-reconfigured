@@ -20,24 +20,38 @@ import EcomDropDown from '../../components/DropDown';
 import TextInput, { TextInputWithTitle } from '../../components/TextInput';
 import { AppContext } from '../../context/AppContext';
 import EcomHelper from '../../utils/ecomHelper';
-
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 const isIos = Platform.OS === 'ios';
 const { width, height } = Dimensions.get('window');
-
+import { useSQLiteContext } from 'expo-sqlite/next';
 export default function VentsDetailsPage() {
   const route = useRoute();
-  const { title, nextScreen } = route.params;
-  const { ventDetails, setventDetails } = useContext(AppContext);
+  const { title} = route.params;
+  const { ventDetails, setVentDetails } = useContext(AppContext);
   const navigation = useNavigation();
-
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const handleInputChange = (key, value) => {
-    setventDetails((prev) => ({
+    setVentDetails((prev) => ({
       ...prev,
       [key]: value,
     }));
     console.log('ventDetails', ventDetails);
   };
-
+  const saveToDatabase = async () => {
+    const kioskJson = JSON.stringify(kioskDetails)
+    try {
+      await db 
+      .runAsync ( 
+        'UPDATE Jobs SET kioskDetails =? WHERE id = ?',
+        [kioskJson, job.id]
+      )
+      .then((result) => {
+        console.log('Kiosk Details saved to database:', result);
+      });
+  } catch (error) {
+    console.log('Error saving Kiosk details to database:', error);
+  }
+    };
   const nextPressed = async () => {
     const {
       type,
@@ -106,12 +120,12 @@ export default function VentsDetailsPage() {
         'Are there steps leading up to the vent? Please select an option.'
       );
     } else {
-      navigation.navigate(nextScreen);
+      goToNextStep();
     }
   };
 
   const backPressed = async () => {
-    navigation.goBack();
+   goToPreviousStep();
   };
 
   return (

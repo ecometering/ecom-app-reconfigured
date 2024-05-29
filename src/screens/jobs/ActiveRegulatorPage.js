@@ -6,7 +6,7 @@ import Header from '../../components/Header';
 import EcomDropDown from '../../components/DropDown';
 import TextInputWithTitle from '../../components/TextInput'; // Adjust path as needed
 import ImagePickerButton from '../../components/ImagePickerButton';
-
+import withUniqueKey from '../../utils/renderNavigationWithUniqueKey';
 import { PrimaryColors } from '../../theme/colors'; // Adjust path as needed
 import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 
@@ -114,4 +114,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ActiveRegulatorPage;
+export default withUniqueKey(ActiveRegulatorPage);

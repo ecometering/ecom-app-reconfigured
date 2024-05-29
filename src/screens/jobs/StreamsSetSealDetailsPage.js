@@ -2,7 +2,6 @@ import {
   View,
   Platform,
   StyleSheet,
-  Dimensions,
   ScrollView,
   SafeAreaView,
   TouchableHighlight,
@@ -22,7 +21,7 @@ import EcomHelper from '../../utils/ecomHelper';
 import { AppContext } from '../../context/AppContext';
 import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 
-const RepeatComponent = ({ title, onChangeText, value }) => {
+const RepeatComponent = ({ title, value, onChangeText }) => {
   return (
     <View style={styles.repeatComponentContainer}>
       <View style={styles.titleContainer}>
@@ -32,7 +31,7 @@ const RepeatComponent = ({ title, onChangeText, value }) => {
       </View>
       <View style={styles.inputContainer}>
         <TextInput
-          value={value}
+          value={String(value)} // Ensure the value is a string
           onChangeText={onChangeText}
           style={styles.input}
           keyboardType="numeric"
@@ -49,68 +48,66 @@ function StreamsSetSealDetailsPage() {
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const appContext = useContext(AppContext);
   const [n, setN] = useState(appContext.streamNumber ?? 0);
+  const [streamValues, setStreamValues] = useState(appContext.streamValue ?? []);
 
-  const [streamValue, setStreamValue] = useState(appContext.streamValue ?? []);
   const route = useRoute();
-  const { title, nextScreen } = route?.params ?? {};
+  const { title } = route?.params ?? {};
 
   const saveToDatabase = async () => {
-    const streamDetailsJson = JSON.stringify(streamValue);
-
+    const streamDetailsJson = JSON.stringify(streamValues);
+    console.log("message:292 Stream values:",streamValues)
+    console.log("messgae:293 number of streams:",appContext.streamNumber)
     try {
-      await db
-        .runAsync('UPDATE Jobs SET streams = ? WHERE id = ?', [
-          streamDetailsJson,
-          appContext.jobID,
-        ])
-        .then((result) => {
-          console.log('streams saved to database:', result);
-        });
+      await db.runAsync('UPDATE Jobs SET streams = ? WHERE id = ?', [
+        streamDetailsJson,
+        appContext.jobID,
+      ]);
     } catch (error) {
-      console.log('Error saving streams to database:', error);
+      console.error('Error saving streams to database:', error);
     }
   };
 
-  const nextPressed = async () => {
+  const handleInputChange = (index, field, value) => {
+    const updatedStreamValues = [...streamValues];
+    updatedStreamValues[index] = {
+      ...updatedStreamValues[index],
+      [field]: value ? Number(value) : null,
+    };
+    setStreamValues(updatedStreamValues);
+  };
+
+  const validateFields = () => {
     if (n === 0) {
       EcomHelper.showInfoMessage("Stream value can't be 0.");
-      return;
+      return false;
     }
     for (let i = 0; i < n; i++) {
-      let item = streamValue[i];
+      const item = streamValues[i];
       if (
-        item?.slamShut == null ||
-        item?.slamShut === '' ||
-        item?.creepRelief == null ||
-        item?.creepRelief === '' ||
-        item?.workingPressure == null ||
-        item?.workingPressure === ''
+        !item?.slamShut ||
+        !item?.creepRelief ||
+        !item?.workingPressure
       ) {
         EcomHelper.showInfoMessage('Please input the whole mbars');
-
-        return;
+        return false;
       }
     }
-    await saveToDatabase();
-    appContext.setStreamValue(streamValue);
-    appContext.setStreamNumber(n);
+    return true;
+  };
 
+  const nextPressed = async () => {
+    if (!validateFields()) return;
+    await saveToDatabase();
+    appContext.setStreamValue(streamValues);
+    appContext.setStreamNumber(n);
+    console.log("Message 295 n",n)
     goToNextStep();
   };
 
   const backPressed = () => {
-    appContext.setStreamValue(streamValue);
+    appContext.setStreamValue(streamValues);
     appContext.setStreamNumber(n);
     goToPreviousStep();
-  };
-
-  const handleFieldChange = (value, index, field) => {
-    const updatedStreamValue = [...streamValue];
-    updatedStreamValue[index] = {
-      ...updatedStreamValue[index],
-      [`${field}`]: Number(value) ? Number(value) : null,
-    };
-    setStreamValue(updatedStreamValue);
   };
 
   return (
@@ -130,10 +127,7 @@ function StreamsSetSealDetailsPage() {
         >
           <View style={styles.body}>
             <Text type={TextType.CAPTION_2}>Streams Set and Seal Details</Text>
-
-            <View
-              style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}
-            >
+            <View style={styles.streamNumberContainer}>
               <Text type={TextType.CAPTION_2} style={styles.streamNumberText}>
                 {'Number of streams:'}
               </Text>
@@ -141,24 +135,19 @@ function StreamsSetSealDetailsPage() {
                 style={styles.incDecrButton}
                 onPress={() => {
                   if (n > 0) {
-                    setN((prev) => prev - 1);
-                  }
-
-                  // remove last stream value if n is decreased
-                  if (streamValue.length >= n) {
-                    const updatedStreamValue = [...streamValue];
-                    updatedStreamValue.pop();
-                    setStreamValue(updatedStreamValue);
+                    setN(n - 1);
+                    setStreamValues(streamValues.slice(0, -1));
                   }
                 }}
               >
                 <Text>-</Text>
               </TouchableHighlight>
-              <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{n}</Text>
+              <Text style={styles.streamNumber}>{n}</Text>
               <TouchableHighlight
                 style={styles.incDecrButton}
                 onPress={() => {
-                  setN((prev) => prev + 1);
+                  setN(n + 1);
+                  setStreamValues([...streamValues, {}]);
                 }}
               >
                 <Text>+</Text>
@@ -166,48 +155,29 @@ function StreamsSetSealDetailsPage() {
             </View>
 
             {Array.from({ length: n }, (_, index) => (
-              <View style={styles.streamContainer}>
-                <Text type={TextType.CAPTION_2}>{`stream ${index + 1}`}</Text>
+              <View key={index} style={styles.streamContainer}>
+                <Text type={TextType.CAPTION_2}>{`Stream ${index + 1}`}</Text>
                 <View style={styles.section}>
                   <RepeatComponent
                     title={'Slam Shut'}
-                    value={streamValue?.[index]?.slamShut ?? 0}
-                    onChangeText={(v) => {
-                      const filteredText = v.replace(/[^0-9]/g, ''); // Allow only numbers
-                      if (filteredText.length > 5) {
-                        EcomHelper.showInfoMessage(
-                          'Max length should be less than 5'
-                        );
-                        return;
-                      }
-                      handleFieldChange(filteredText, index, 'slamShut');
-                    }}
+                    value={streamValues[index]?.slamShut ?? ''}
+                    onChangeText={(value) =>
+                      handleInputChange(index, 'slamShut', value.replace(/[^0-9]/g, ''))
+                    }
                   />
                   <RepeatComponent
                     title={'Creep Relief'}
-                    value={streamValue?.[index]?.creepRelief ?? 0}
-                    onChangeText={(v) => {
-                      if (v.length > 5) {
-                        EcomHelper.showInfoMessage(
-                          'Max length should be less than 5'
-                        );
-                        return;
-                      }
-                      handleFieldChange(v, index, 'creepRelief');
-                    }}
+                    value={streamValues[index]?.creepRelief ?? ''}
+                    onChangeText={(value) =>
+                      handleInputChange(index, 'creepRelief', value.replace(/[^0-9]/g, ''))
+                    }
                   />
                   <RepeatComponent
                     title={'Working Pressure'}
-                    value={streamValue?.[index]?.workingPressure ?? 0}
-                    onChangeText={(v) => {
-                      if (v.length > 5) {
-                        EcomHelper.showInfoMessage(
-                          'Max length should be less than 5'
-                        );
-                        return;
-                      }
-                      handleFieldChange(v, index, 'workingPressure');
-                    }}
+                    value={streamValues[index]?.workingPressure ?? ''}
+                    onChangeText={(value) =>
+                      handleInputChange(index, 'workingPressure', value.replace(/[^0-9]/g, ''))
+                    }
                   />
                 </View>
               </View>
@@ -230,9 +200,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     gap: 20,
   },
-  streamNumberContainer: {},
+  streamNumberContainer: {
+    flexDirection: 'row',
+    gap: 10,
+    alignItems: 'center',
+  },
   streamNumberText: {
     textAlign: 'left',
+  },
+  streamNumber: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   streamContainer: {
     width: '100%',
@@ -278,9 +256,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    // elevate
     elevation: 2,
-    // shadow
     shadowColor: '#000',
     shadowOffset: {
       width: 0,

@@ -1,4 +1,5 @@
 import { useContext, useRef, useState, useEffect } from "react";
+import { useSQLiteContext } from 'expo-sqlite/next';
 import {
   Button,
   KeyboardAvoidingView,
@@ -12,6 +13,7 @@ import {
 } from "react-native";
 import { TextType } from "../../theme/typography";
 import { PrimaryColors } from "../../theme/colors";
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Header from "../../components/Header";
@@ -25,11 +27,12 @@ const isIos = Platform.OS === 'ios';
 const { width, height } = Dimensions.get('window');
 
 export default function KioskPage() {
+  const db = useSQLiteContext();
   const route = useRoute();
-  const { title, nextScreen } = route.params;
+  const { title} = route.params;
   const { kioskDetails, setKioskDetails } = useContext(AppContext);
   const navigation = useNavigation();
-
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const handleInputChange = (key, value) => {
     setKioskDetails((prev) => ({
       ...prev,
@@ -37,6 +40,22 @@ export default function KioskPage() {
     }));
     console.log("kioskDetails", kioskDetails);
   };
+  const saveToDatabase = async () => {
+    const kioskJson = JSON.stringify(kioskDetails)
+    try {
+      await db 
+      .runAsync ( 
+        'UPDATE Jobs SET kioskDetails =? WHERE id = ?',
+        [kioskJson, job.id]
+      )
+      .then((result) => {
+        console.log('Kiosk Details saved to database:', result);
+      });
+  } catch (error) {
+    console.log('Error saving Kiosk details to database:', error);
+  }
+    };
+
 
   const nextPressed = async () => {
     const { type, condition, isWeatherResistant, isLockable, isVegitationFree, isStable, isFloodingFree, isExplosionReliefRoof, height, width, length, isAccessible, isSteps } = kioskDetails;
@@ -68,12 +87,14 @@ export default function KioskPage() {
     } else if (isSteps === null) {
       EcomHelper.showInfoMessage("Are there steps leading up to the kiosk? Please select an option.");
     } else {
-      navigation.navigate(nextScreen);
+      saveToDatabase();
+      goToNextStep();
     }
   };
 
   const backPressed = async () => {
-    navigation.goBack();
+    saveToDatabase();
+    goToPreviousStep();
   };
 
   return (

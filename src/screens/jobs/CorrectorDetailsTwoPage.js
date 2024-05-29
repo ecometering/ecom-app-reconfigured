@@ -50,7 +50,7 @@ import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 const alphanumericRegex = /^[a-zA-Z0-9]+$/;
 const { width, height } = Dimensions.get('window');
 
-export default function CorrectorDetailsPage() {
+export default function correctorDetailsTwoPage() {
   const route = useRoute();
   const db = useSQLiteContext();
   const camera = createRef(null);
@@ -60,8 +60,8 @@ export default function CorrectorDetailsPage() {
     photos,
     jobType,
     savePhoto,
-    correctorDetails,
-    setCorrectorDetails,
+    correctorDetailsTwo,
+    setcorrectorDetailsTwo,
   } = useContext(AppContext);
 
   const { title, nextScreen, photoKey } = route.params;
@@ -71,14 +71,14 @@ export default function CorrectorDetailsPage() {
   const [isModal, setIsModal] = useState(false);
   const [manufacturers, setManufacturers] = useState([]);
   const [correctorModelCodes, setCorrectorModelCodes] = useState([]);
-  const [localCorrectorDetails, setLocalCorrectorDetails] = useState(
-    correctorDetails ?? {}
+  const [localcorrectorDetailsTwo, setLocalcorrectorDetailsTwo] = useState(
+    correctorDetailsTwo ?? {}
   );
   const [correctorManufacturers, setCorrectorManufacturers] = useState([]);
   const [selectedImage, setSelectedImage] = useState(existingPhoto || {});
 
   const handleInputChange = (name, value) => {
-    setLocalCorrectorDetails((prevDetails) => ({
+    setLocalcorrectorDetailsTwo((prevDetails) => ({
       ...prevDetails,
       [name]: value,
     }));
@@ -90,11 +90,11 @@ export default function CorrectorDetailsPage() {
 
   const saveToDatabase = async () => {
     const photosJson = JSON.stringify(photos);
-    const correctorJson = JSON.stringify(localCorrectorDetails);
+    const correctorJson = JSON.stringify(localcorrectorDetailsTwo);
     try {
       await db
         .runAsync(
-          'UPDATE Jobs SET photos = ?, correctorDetails = ? WHERE id = ?',
+          'UPDATE Jobs SET photos = ?, correctorDetailsTwo = ? WHERE id = ?',
           [photosJson, correctorJson, jobID]
         )
         .then((result) => {
@@ -124,7 +124,7 @@ export default function CorrectorDetailsPage() {
 
   async function getCorrectorModelCodes() {
     try {
-      const query = `SELECT DISTINCT "ModelCode" FROM ${tablename[9]} WHERE Manufacturer = '${localCorrectorDetails.manufacturer}'`;
+      const query = `SELECT DISTINCT "ModelCode" FROM ${tablename[9]} WHERE Manufacturer = '${localcorrectorDetailsTwo.manufacturer}'`;
       const result = await db.getAllAsync(query);
       setCorrectorModelCodes(
         result
@@ -141,7 +141,7 @@ export default function CorrectorDetailsPage() {
   const backPressed = () => {
     saveToDatabase();
     if (selectedImage.uri) savePhoto(photoKey, selectedImage);
-    setCorrectorDetails(localCorrectorDetails);
+    setcorrectorDetailsTwo(localcorrectorDetailsTwo);
     goToPreviousStep();
   };
 
@@ -151,27 +151,27 @@ export default function CorrectorDetailsPage() {
       return;
     }
     if (
-      !localCorrectorDetails.serialNumber ||
-      localCorrectorDetails.serialNumber === ''
+      !localcorrectorDetailsTwo.serialNumber ||
+      localcorrectorDetailsTwo.serialNumber === ''
     ) {
       EcomHelper.showInfoMessage('Please enter serial number');
       return;
     }
-    if (localCorrectorDetails.isMountingBracket == null) {
+    if (localcorrectorDetailsTwo.isMountingBracket == null) {
       EcomHelper.showInfoMessage('Please answer if mounting bracket was used');
       return;
     }
-    if (localCorrectorDetails.manufacturer == null) {
+    if (localcorrectorDetailsTwo.manufacturer == null) {
       EcomHelper.showInfoMessage('Please choose manufacturer');
       return;
     }
-    if (localCorrectorDetails.model == null) {
+    if (localcorrectorDetailsTwo.model == null) {
       EcomHelper.showInfoMessage('Please choose model');
       return;
     }
     saveToDatabase();
     if (selectedImage.uri) savePhoto(photoKey, selectedImage);
-    setCorrectorDetails(localCorrectorDetails);
+    setcorrectorDetailsTwo(localcorrectorDetailsTwo);
     goToNextStep();
   };
 
@@ -180,10 +180,10 @@ export default function CorrectorDetailsPage() {
   }, [db]);
 
   useEffect(() => {
-    if (localCorrectorDetails.manufacturer) {
+    if (localcorrectorDetailsTwo.manufacturer) {
       getCorrectorModelCodes();
     }
-  }, [db, localCorrectorDetails.manufacturer]);
+  }, [db, localcorrectorDetailsTwo.manufacturer]);
 
   const onManufacturerChange = async (item) => {
     handleInputChange('manufacturer', item.value);
@@ -258,10 +258,10 @@ export default function CorrectorDetailsPage() {
                         width: width * 0.25,
                         alignSelf: 'flex-end',
                         fontSize: makeFontSmallerAsTextGrows(
-                          localCorrectorDetails.serialNumber
+                          localcorrectorDetailsTwo.serialNumber
                         ),
                       }}
-                      value={localCorrectorDetails.serialNumber}
+                      value={localcorrectorDetailsTwo.serialNumber}
                     />
                     <Button title="📷" onPress={scanBarcode} />
                   </View>
@@ -280,9 +280,9 @@ export default function CorrectorDetailsPage() {
                         },
                       ]}
                       value={
-                        localCorrectorDetails.isMountingBracket == null
+                        localcorrectorDetailsTwo.isMountingBracket == null
                           ? null
-                          : localCorrectorDetails.isMountingBracket
+                          : localcorrectorDetailsTwo.isMountingBracket
                           ? 'Yes'
                           : 'No'
                       }
@@ -301,7 +301,7 @@ export default function CorrectorDetailsPage() {
                 <View style={{ width: width * 0.45 }}>
                   <EcomDropDown
                     width={width * 0.35}
-                    value={localCorrectorDetails.manufacturer}
+                    value={localcorrectorDetailsTwo.manufacturer}
                     valueList={correctorManufacturers}
                     placeholder="Select a Manufacturer"
                     onChange={(item) =>
@@ -312,7 +312,7 @@ export default function CorrectorDetailsPage() {
 
                 <EcomDropDown
                   width={width * 0.35}
-                  value={localCorrectorDetails.model}
+                  value={localcorrectorDetailsTwo.model}
                   valueList={correctorModelCodes}
                   placeholder="Select Model Code"
                   onChange={(item) => handleInputChange('model', item.value)}
@@ -328,7 +328,7 @@ export default function CorrectorDetailsPage() {
                   <TextInputWithTitle
                     style={{ width: '100%' }}
                     title={'Uncorrected Reads'}
-                    value={localCorrectorDetails.uncorrected}
+                    value={localcorrectorDetailsTwo.uncorrected}
                     keyboardType="numeric" // Set keyboardType to numeric
                     onChangeText={(txt) => {
                       const filteredText = txt.replace(/[^0-9.]/g, ''); // Allow only numbers and decimal points
@@ -340,7 +340,7 @@ export default function CorrectorDetailsPage() {
                   <TextInputWithTitle
                     style={{ width: '100%' }}
                     title={'corrected Reads'}
-                    value={localCorrectorDetails.corrected}
+                    value={localcorrectorDetailsTwo.corrected}
                     keyboardType="numeric" // Set keyboardType to numeric
                     onChangeText={(txt) => {
                       const filteredText = txt.replace(/[^0-9.]/g, ''); // Allow only numbers and decimal points

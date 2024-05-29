@@ -26,11 +26,13 @@ export const SurveyNavigation = [
       } else if (!siteQuestions?.isCarryOut) {
         return RebookPage;
       } else {
-        return AssetTypeSelectionPage;
+        return SurveyQuestions;
       }
     },
   },
 ];
+
+
 
 export const SubmitSuccessPage = [
   {
@@ -64,6 +66,13 @@ export const CompositeLabelPhoto = [
     params: {
       title: 'DSEAR label',
       photoKey: 'dsearLabel',
+    },
+  },
+  {
+    screen: 'SiteDrawingPhoto',
+    params: {
+      title: 'Site Survey Drawing ',
+      photoKey: 'siteDrawing',
     },
   },
   ...ExtraPhotoPageRoute(),
@@ -146,9 +155,9 @@ export const SurveyExistingMeterDetails = [
     },
   },
   {
-    screen: 'ExistingEcvToMov',
+    screen: 'ExistingEcvPhoto',
     params: {
-      title: 'New ECV to MOV',
+      title: 'Existing ECV to MOV',
       photoKey: 'ExistingEcvToMov',
     },
     diversions: (state) => {
@@ -173,7 +182,7 @@ export const SurveyExistingCorrectorDetails = [
     },
     diversions: (state) => {
       const { meterDetails } = state || {};
-      const { meterType, pressureTier } = meterDetails || {};
+      const { pressureTier } = meterDetails || {};
 
       const isAmr = meterDetails?.isAmr;
       const isMeter = meterDetails?.isMeter;
@@ -182,13 +191,7 @@ export const SurveyExistingCorrectorDetails = [
         return SurveyExistingDataLoggerDetails;
       } else if (isMeter) {
         if (
-          ((meterType.value === '1' ||
-            meterType.value === '2' ||
-            meterType.value === '4') &&
-            pressureTier === 'MP') ||
-          (meterType.value !== '1' &&
-            meterType.value !== '2' &&
-            meterType.value !== '4')
+            pressureTier === 'MP'
         ) {
           return SurveyStreamsSetSealDetailsPage;
         }
@@ -209,14 +212,10 @@ export const SurveyExistingDataLoggerDetails = [
       const { meterDetails } = state || {};
 
       const pressureTier = meterDetails?.pressureTier?.label;
-      const meterType = meterDetails?.meterType;
       const isMeter = meterDetails?.isMeter;
 
       if (isMeter) {
         if (
-          (meterType.value === '1' ||
-            meterType.value === '2' ||
-            meterType.value === '4') &&
           pressureTier === 'MP'
         ) {
           return SurveyStreamsSetSealDetailsPage;
@@ -233,10 +232,11 @@ export const SurveyExistingDataLoggerDetails = [
 export const InstancesForStreamFlow = ({ state }) => {
   // TODO: sort context switch
   // Redux might be a better option
-  const { numberOfStreams } = state || {};
-
+  const { streamNumber } = state || {};
+console.log("message:294 streamnumber:",
+streamNumber)
   return Array.from(
-    { length: numberOfStreams },
+    { length: streamNumber },
     (_, index) => index + 1
   ).reduce((acc, stream) => {
     return [
@@ -315,31 +315,22 @@ export const SurveyExistingMeterIndex = [
       title: 'Existing Meter Photo',
       photoKey: 'ExistingMeterPhoto',
     },
-  },
-  {
-    screen: 'EcvPhoto',
-    params: {
-      title: 'Ecv Photo',
-      photoKey: 'EcvPhoto',
-    },
+  
     diversions: (state) => {
       const { meterDetails } = state || {};
       const { meterType, pressureTier } = meterDetails || {};
-
+      const isCorrector =meterDetails?.isCorrector;
       const isAmr = meterDetails?.isAmr;
       const isMeter = meterDetails?.isMeter;
-
+      if (isCorrector){
+        return SurveyExistingCorrectorDetails;
+      }
       if (isAmr) {
         return SurveyExistingDataLoggerDetails;
       } else if (isMeter) {
         if (
-          ((meterType.value === '1' ||
-            meterType.value === '2' ||
-            meterType.value === '4') &&
-            pressureTier === 'MP') ||
-          (meterType.value !== '1' &&
-            meterType.value !== '2' &&
-            meterType.value !== '4')
+          (pressureTier === 'MP') 
+          
         ) {
           return SurveyStreamsSetSealDetailsPage;
         }
@@ -359,4 +350,31 @@ export const SurveyExistingMeterDataBadge = [
     },
   },
   ...SurveyExistingMeterIndex,
+];
+export const SurveyQuestions = [
+  {
+    screen: 'KioskPage',
+    params: {
+      title: 'Kiosk Details',
+    },
+  },
+  {
+    screen: 'EcvPage',
+    params: {
+      title: 'ECV details',
+    },
+  },
+  {
+    screen: 'MovPage',
+    params: {
+      title: 'MOV details',
+    },
+  },
+  // {
+  //   screen: 'VentsPage',
+  //   params: {
+  //     title: 'Vents details',
+  //   },
+  // },
+  ...AssetTypeSelectionPage,
 ];

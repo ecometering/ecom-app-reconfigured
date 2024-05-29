@@ -8,6 +8,8 @@ import ImagePickerButton from '../../components/ImagePickerButton';
 import { PrimaryColors } from '../../theme/colors'; // Adjust path as needed
 import Header from '../../components/Header';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import withUniqueKey from '../../utils/renderNavigationWithUniqueKey';
+
 
 const WaferCheckPage = () => {
   const [manufacturer, setManufacturer] = useState('');
@@ -120,4 +122,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WaferCheckPage;
+export default withUniqueKey(WaferCheckPage);

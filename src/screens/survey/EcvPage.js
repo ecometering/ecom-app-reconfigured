@@ -17,14 +17,17 @@ import EcomDropDown from '../../components/DropDown';
 import TextInput, { TextInputWithTitle } from '../../components/TextInput';
 import { AppContext } from '../../context/AppContext';
 import EcomHelper from '../../utils/ecomHelper';
-
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import { useSQLiteContext } from 'expo-sqlite/next';
 const isIos = Platform.OS === 'ios';
 const { width, height } = Dimensions.get('window');
 export default function EcvPage() {
+  const db = useSQLiteContext();
   const route = useRoute();
-  const { title, nextScreen } = route.params;
+  const { title} = route.params;
   const { ecvDetails, setEcvDetails } = useContext(AppContext);
   const navigation = useNavigation();
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
   const handleInputChange = (key, value) => {
     setEcvDetails((prev) => ({
@@ -33,7 +36,21 @@ export default function EcvPage() {
     }));
     console.log('ecvDetails', ecvDetails);
   };
-
+  const saveToDatabase = async () => {
+    const ecvJson = JSON.stringify(ecvDetails)
+    try {
+      await db 
+      .runAsync ( 
+        'UPDATE Jobs SET ecvDetails =? WHERE id = ?',
+        [ecvJson, job.id]
+      )
+      .then((result) => {
+        console.log('ecv Details saved to database:', result);
+      });
+  } catch (error) {
+    console.log('Error saving ecv details to database:', error);
+  }
+    };
   const nextPressed = async () => {
     const { type, height, size, dfkw, dfrkw } = ecvDetails;
 
@@ -58,12 +75,14 @@ export default function EcvPage() {
         'Distance from Rear Kiosk Wall is required.Please enter the Distance from Rear Kiosk Wall.'
       );
     } else {
-      navigation.navigate(nextScreen);
+      saveToDatabase();
+      goToNextStep();
     }
   };
 
   const backPressed = async () => {
-    navigation.goBack();
+    saveToDatabase();
+    goToPreviousStep();
   };
 
   return (
