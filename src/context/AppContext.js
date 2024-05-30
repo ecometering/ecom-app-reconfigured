@@ -126,6 +126,7 @@ const AppContextProvider = (props) => {
     setJobDetails(null);
     setJobStarted(false);
     setPhotos({});
+    setJobID(null);
     setHasStreamNumber(false);
     setStreamNumber(0);
     setStreamValue([]);
