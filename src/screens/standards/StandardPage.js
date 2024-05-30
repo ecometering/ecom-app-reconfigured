@@ -197,7 +197,7 @@ function StandardPage() {
             <View style={styles.container}>
               {meterDetails?.isMeter && (
                 <>
-                  <Text>Outlet kit be used</Text>
+                  <Text>Outlet kit been used</Text>
                   <View style={styles.optionContainer}>
                     <OptionalButton
                       options={['Yes', 'No']}
@@ -222,6 +222,62 @@ function StandardPage() {
                       }
                     />
                   </View>
+                  <View style={styles.spacer} />
+            <Text>Any Additional materials used</Text>
+            <View style={styles.optionContainer}>
+              <OptionalButton
+                options={['Yes', 'No']}
+                actions={[
+                  () => {
+                    setStandardDetails((curState) => ({
+                      ...curState,
+                      additionalMaterials: true,
+                    }));
+                  },
+                  () => {
+                    setStandardDetails((curState) => ({
+                      ...curState,
+                      additionalMaterials: false,
+                    }));
+                  },
+                ]}
+                value={
+                  standardDetails?.additionalMaterials == null
+                    ? null
+                    : standardDetails?.additionalMaterials
+                    ? 'Yes'
+                    : 'No'
+                }
+              />
+            </View>
+            <View style={styles.spacer} />
+            <Text>Any chattterBox installed</Text>
+            <View style={styles.optionContainer}>
+              <OptionalButton
+                options={['Yes', 'No']}
+                actions={[
+                  () => {
+                    setStandardDetails((curState) => ({
+                      ...curState,
+                      chatterbox: true,
+                    }));
+                  },
+                  () => {
+                    setStandardDetails((curState) => ({
+                      ...curState,
+                      chatterbox: false,
+                    }));
+                  },
+                ]}
+                value={
+                  standardDetails?.chatterbox == null
+                    ? null
+                    : standardDetails?.chatterbox
+                    ? 'Yes'
+                    : 'No'
+                }
+              />
+            </View>
                   <View style={styles.spacer} />
                   <Text>Tightness test passed</Text>
                   <View style={styles.optionContainer}>

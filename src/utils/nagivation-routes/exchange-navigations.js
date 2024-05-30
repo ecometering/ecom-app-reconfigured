@@ -57,7 +57,14 @@ export const ExchangeStandardPage = [
     screen: 'StandardPage',
     diversions: (state) => {
       const { standardDetails } = state;
-      const { riddorReportable, conformStandard } = standardDetails;
+      const { riddorReportable, conformStandard,chatterbox,additionalMaterials } = standardDetails;
+      if (chatterbox === true) {
+        return chatterboxPage}
+      else {
+        if (additionalMaterials === true) {
+          return AdditionalMaterialsPage;
+        }
+        else{
       if (riddorReportable === true) {
         return RiddorReportPage;
       } else {
@@ -66,7 +73,7 @@ export const ExchangeStandardPage = [
         } else {
           return CompositeLabelPhoto;
         }
-      }
+      }}}
     },
   },
 ];
@@ -159,7 +166,7 @@ export const ExistingMeterDetails = [
 
 export const InstalledMeterDetails = [
   {
-    screen: 'MeterDetails',
+    screen: 'MeterDetailsTwo',
     params: {
       title: 'Installed Meter Details',
     },
@@ -184,14 +191,14 @@ export const InstalledMeterDetails = [
 
 export const InstalledCorrectorDetails = [
   {
-    screen: 'CorrectorDetails',
+    screen: 'CorrectorDetailsTwo',
     params: {
       title: 'Installed Corrector Details',
       photoKey: 'removedCorrector',
     },
     diversions: (state) => {
       const { meterDetails } = state || {};
-      const { meterType, pressureTier } = meterDetails || {};
+      const { pressureTier } = meterDetails || {};
 
       const isAmr = meterDetails?.isAmr;
       const isMeter = meterDetails?.isMeter;
@@ -200,18 +207,12 @@ export const InstalledCorrectorDetails = [
         return InstalledDataLoggerDetails;
       } else if (isMeter) {
         if (
-          ((meterType.value === '1' ||
-            meterType.value === '2' ||
-            meterType.value === '4') &&
-            pressureTier === 'MP') ||
-          (meterType.value !== '1' &&
-            meterType.value !== '2' &&
-            meterType.value !== '4')
-        ) {
+            pressureTier === 'MP') 
+         {
           return ExchangeStreamsSetSealDetailsPage;
         }
       } else {
-        return ExchangeStandardPage;
+        return RegulatorPage;
       }
     },
   },
@@ -278,11 +279,7 @@ export const InstalledMeterIndex = [
         return InstalledDataLoggerDetails;
         // TODO: isMeter is not defined
       } else if (isMeter) {
-        if (
-          ((Type === '1' || Type === '2' || Type === '4') &&
-            pressureTier === 'MP') ||
-          (Type !== '1' && Type !== '2' && Type !== '4')
-        ) {
+        if ( pressureTier === 'MP') {
           return ExchangeStreamsSetSealDetailsPage;
         }
       } else {
@@ -465,11 +462,6 @@ export const RegulatorPage = [
       photoKey: 'RegulatorPhotoPage',
     },
   },
-  {
-    screen: 'ChatterBox',
-  },
-  {
-    screen: 'AdditionalMaterial',
-  },
+
   ...ExchangeStandardPage,
 ];
