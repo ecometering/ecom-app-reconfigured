@@ -1,112 +1,356 @@
-import React, { useState } from 'react';
-import { View, SafeAreaView, ScrollView, StyleSheet, Image } from 'react-native';
-import TextInputWithTitle, { InputRowWithTitle } from '../../components/TextInput';
+import { useSQLiteContext } from 'expo-sqlite/next';
+import * as ExpoImagePicker from 'expo-image-picker';
+import { useRoute } from '@react-navigation/native';
+import React, {
+  createRef,
+  useState,
+  useContext,
+} from 'react';
+import {
+  View,
+  Image,
+  Alert,
+  ScrollView,
+  Platform,
+  StyleSheet,
+  Dimensions,
+  SafeAreaView,
+  KeyboardAvoidingView,
+} from 'react-native';
+
+// Components
+import TextInput, {
+  InputRowWithTitle,
+  TextInputWithTitle,
+} from '../../components/TextInput';
+import Text from '../../components/Text';
+import Header from '../../components/Header';
 import EcomDropDown from '../../components/DropDown';
+import OptionalButton from '../../components/OptionButton';
 import ImagePickerButton from '../../components/ImagePickerButton';
+import { SIZE_LIST } from '../../utils/constant';
+// Context & Utils
+import EcomHelper from '../../utils/ecomHelper';
+import { TextType } from '../../theme/typography';
 import { PrimaryColors } from '../../theme/colors';
-import Header from "../../components/Header";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { AppContext } from '../../context/AppContext';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import withUniqueKey from '../../utils/renderNavigationWithUniqueKey';
+const { width, height } = Dimensions.get('window');
 
-const SlamshutPage = () => {
-  const [manufacturer, setManufacturer] = useState('');
-  const [serialNumber, setSerialNumber] = useState('');
-  const [size, setSize] = useState('');
-  const [imageUri, setImageUri] = useState('');
-
-  const navigation = useNavigation();
+const SlamShutPage= () => {
   const route = useRoute();
-  const { title, nextScreen } = route.params;
+  const db = useSQLiteContext();
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
+  const { jobID, photos, savePhoto, streams, setStreams,  } = useContext(AppContext);
 
-  const sizeOptions = [
-    { label: 'Small', value: 'small' },
-    { label: 'Medium', value: 'medium' },
-    { label: 'Large', value: 'large' },
-  ];
+  const { title, stream, photoKey } = route.params;
+  const existingPhoto = photos && photoKey ? photos[photoKey] : null;
+
+  const [selectedImage, setSelectedImage] = useState(existingPhoto || {});
+
+  const handleInputChange = (name, value) => {
+    setStreams((prevDetails) => ({
+      ...prevDetails,
+      [name]: value,
+    }));
+    console.log('message: 303, streams: ', streams);
+  };
+
+  const handlePhotoSelected = (uri) => {
+    setSelectedImage({ title, photoKey, uri });
+  };
+
+  const saveToDatabase = async () => {
+    const photosJson = JSON.stringify(photos);
+    const streamsJson = JSON.stringify(streams);
+    try {
+      await db
+        .runAsync(
+          'UPDATE Jobs SET photos = ?, streams = ? WHERE id = ?',
+          [photosJson, streamsJson, jobID]
+        )
+        .then((result) => {
+          console.log('photos saved to database:', result);
+        });
+    } catch (error) {
+      console.log('Error saving photos to database:', error);
+    }
+  };
 
   const backPressed = () => {
-    console.log("Back button pressed");
-    navigation.goBack();
+    saveToDatabase();
+    if (selectedImage.uri) savePhoto(photoKey, selectedImage);
+   
+    goToPreviousStep();
   };
 
   const nextPressed = async () => {
-    console.log("Next button pressed");
-    console.log("Navigating to next screen:", nextScreen);
-    navigation.navigate(nextScreen);
+    if (streams[`SlamShut${stream}Exists`] === null) {
+      EcomHelper.showInfoMessage('Please select if the Slam Shut exists');
+      return;
+    }
+  
+    if (streams[`SlamShut${stream}Exists`]) {
+      if (!selectedImage?.uri) {
+        EcomHelper.showInfoMessage('Please choose an image');
+        return;
+      }
+      if (!streams[`SlamShutSerialNumber${stream}`]) {
+        EcomHelper.showInfoMessage('Please input the Slam Shut Serial Number.');
+        return;
+      }
+      if (!streams[`SlamShutSize${stream}`]) {
+        EcomHelper.showInfoMessage('Please select the Slam Shut Size.');
+        return;
+      }
+      if (!streams[`SlamShutManufacturer${stream}`]) {
+        EcomHelper.showInfoMessage('Please input the Slam Shut Manufacturer.');
+        return;
+      }
+     
+    }
+  
+    await saveToDatabase();
+  
+    if (selectedImage.uri) savePhoto(photoKey, selectedImage);
+  
+    goToNextStep();
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.content}>
-        <Header
-          hasLeftBtn={true}
-          hasCenterText={true}
-          hasRightBtn={true}
-          centerText={title}
-          leftBtnPressed={backPressed}
-          rightBtnPressed={nextPressed}
-        />
+    <SafeAreaView style={styles.content}>
+      <Header
+        hasLeftBtn={true}
+        hasCenterText={true}
+        hasRightBtn={true}
+        centerText={title}
+        leftBtnPressed={backPressed}
+        rightBtnPressed={nextPressed}
+      />
+      <KeyboardAvoidingView
+        style={styles.content}
+        behavior={Platform.OS === 'ios' ? 'padding' : null}
+      >
+        <ScrollView style={styles.content}>
+          <View style={styles.body}>
+            <Text type={TextType.HEADER_1} style={{ alignSelf: 'center' }}>
+              SlamShut Details
+            </Text>
+            <View style={styles.spacer} />
+            <View>
+              <Text style={styles.text}>Does the SlamShut exist?</Text>
+              <View style={styles.optionContainer}>
+                <OptionalButton
+                  options={['Yes', 'No']}
+                  actions={[
+                    () => {
+                      handleInputChange(`SlamShut${stream}Exists`, true);
+                     
+                    },
+                    () => {
+                      handleInputChange(`SlamShut${stream}Exists`, false);
+                      
+                    },
+                  ]}
+                  value={
+                    streams[`SlamShut${stream}Exists`]=== null
+                      ? null
+                      : streams[`SlamShut${stream}Exists`]
+                      ? 'Yes'
+                      : 'No'
+                  }
+                />
+              </View>
+            </View>
 
-        <View style={styles.card}>
-          <TextInputWithTitle
-            title="Manufacturer"
-            value={manufacturer}
-            onChangeText={setManufacturer}
-            placeholder="Enter manufacturer"
-          />
+            {streams[`SlamShut${stream}Exists`] && (
+              <>
+                <View style={styles.border}>
+                  <View style={styles.row}>
+                    <View
+                      style={{
+                        width: width * 0.45,
+                        alignSelf: 'flex-end',
+                      }}
+                    >
+                      <Text>SlamShut Serial Number</Text>
+                      <View style={styles.spacer2} />
+                      <View style={{ ...styles.row, width: width * 0.35 }}>
+                        <TextInput
+                          onChangeText={(txt) => {
+                            const withSpacesAllowed = txt.toUpperCase();
+                            const formattedText = withSpacesAllowed.replace(
+                              /[^A-Z0-9]+/g,
+                              ''
+                            );
+                            handleInputChange(
+                              `SlamShutSerialNumber${stream}`,
+                              formattedText
+                            );
+                          }}
+                          style={{
+                            ...styles.input,
+                            width: width * 0.25,
+                            alignSelf: 'flex-end',
+                          }}
+                          value={streams[`SlamShutSerialNumber${stream}`]}
+                        />
+                      </View>
+                    </View>
+                  </View>
 
-          <TextInputWithTitle
-            title="Serial Number"
-            value={serialNumber}
-            onChangeText={setSerialNumber}
-            placeholder="Enter serial number"
-          />
+                  <View
+                    style={{
+                      ...styles.row,
+                      justifyContent: 'flex-start',
+                      marginTop: 16,
+                    }}
+                  >
+                    <View style={{ width: width * 0.45 }}>
+                      <EcomDropDown
+                        width={width * 0.35}
+                        value={streams[`SlamShutSize${stream}`]}
+                        valueList={SIZE_LIST}
+                        placeholder="Select size"
+                        onChange={(item) =>
+                          handleInputChange(`SlamShutSize${stream}`, item.value)
+                        }
+                      />
+                    </View>
+                  </View>
 
-          <EcomDropDown
-            value={size}
-            valueList={sizeOptions}
-            placeholder="Select Size"
-            onChange={(selectedItem) => setSize(selectedItem.value)}
-          />
-        </View>
+                  <View style={styles.spacer} />
+                  <View
+                    style={{
+                      flexDirection: 'Column',
+                    }}
+                  >
+                    <View style={{ flex: 1 }}>
+                      <TextInputWithTitle
+                        style={{ width: '100%' }}
+                        title={'Manufacturer'}
+                        value={streams[`SlamShutManufacturer${stream}`]}
+                        onChangeText={(txt) => {
+                          handleInputChange(`SlamShutManufacturer${stream}`, txt);
+                        }}
+                      />
+                    </View>
+                    <View style={styles.spacer} />
+                    <View style={{ flex: 1 }}>
+                      <TextInputWithTitle
+                        style={{ width: '100%' }}
+                        title={'Notes'}
+                        value={streams[`SlamShutNotes${stream}`]}
+                        onChangeText={(txt) => {
+                          handleInputChange(`SlamShutNotes${stream}`, txt);
+                        }}
+                      />
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.spacer} />
 
-        <ImagePickerButton
-          onImageSelected={setImageUri}
-        />
-
-        {imageUri && (
-          <Image
-            source={{ uri: imageUri }}
-            style={styles.image}
-            resizeMode="contain"
-          />
-        )}
-      </ScrollView>
+                <View style={styles.imagePickerContainer}>
+                  <View style={styles.body}>
+                    <Text type="caption" style={styles.text}>
+                      SlamShut photo
+                    </Text>
+                    <ImagePickerButton
+                      onImageSelected={handlePhotoSelected}
+                      currentImage={selectedImage?.uri}
+                    />
+                    {selectedImage?.uri && (
+                      <Image
+                        source={{ uri: selectedImage?.uri }}
+                        style={styles.image}
+                      />
+                    )}
+                  </View>
+                </View>
+              </>
+            )}
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  image: {
+    height: height * 0.25, // Adjust the multiplier to fit your design needs
   },
   content: {
-    padding: 16,
+    flex: 1,
   },
-  card: {
-    padding: 16,
-    backgroundColor: PrimaryColors.White,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.23,
-    shadowRadius: 2.62,
-    elevation: 4,
-    marginBottom: 20,
+  body: {
+    marginHorizontal: width * 0.05,
   },
-  image: {
-    height: 200,
-    marginTop: 16,
+  border: {
+    borderWidth: 1,
+    borderColor: PrimaryColors.Black,
+    padding: height * 0.02, // Adjust the multiplier to fit your design needs
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+  },
+  buttonContainer: {
+    width: width * 0.4,
+    alignSelf: 'center',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+  },
+  button: {
+    width: width * 0.2,
+  },
+  divider: {
+    width: '100%',
+    height: 1,
+    backgroundColor: 'black',
+  },
+  headerCell: {
+    textAlign: 'center',
+    borderWidth: 1,
+    borderBottomWidth: 0,
+    borderColor: PrimaryColors.Black,
+    minHeight: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cell: {
+    flex: 1,
+    textAlign: 'center',
+    borderWidth: 1,
+    borderBottomWidth: 0,
+    borderTopWidth: 0,
+    borderColor: PrimaryColors.Black,
+    minHeight: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  optionContainer: {
+    width: width * 0.25, // Adjusted for responsiveness
+    marginVertical: height * 0.01, // Adjusted based on screen height
+    alignSelf: 'flex-start',
+  },
+  spacer: {
+    height: height * 0.02, // Adjusted based on screen height
+  },
+  spacer2: {
+    height: height * 0.01, // Adjusted based on screen height
+  },
+  closeButtonContainer: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+  },
+  closeButtonIcon: {
+    width: 20,
+    height: 20,
+    // Add any additional styles you need for the close icon
   },
 });
-
-export default SlamshutPage;
+export default withUniqueKey(SlamShutPage);

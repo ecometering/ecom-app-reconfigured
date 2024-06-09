@@ -1,32 +1,38 @@
-import React, { useState } from 'react';
 import {
-  Alert,
   Image,
-  SafeAreaView,
+  View,
   ScrollView,
   StyleSheet,
-  View,
   Dimensions,
+  SafeAreaView,
 } from 'react-native';
+import React, { useState } from 'react';
+import { useRoute } from '@react-navigation/native';
+
+// Components
 import Text from '../../components/Text';
-import { TextInputWithTitle } from '../../components/TextInput';
 import Header from '../../components/Header';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import OptionalButton from '../../components/OptionButton';
 import { useAppContext } from '../../context/AppContext';
-import EcomHelper from '../../utils/ecomHelper';
+import OptionalButton from '../../components/OptionButton';
+import { TextInputWithTitle } from '../../components/TextInput';
 import ImagePickerButton from '../../components/ImagePickerButton';
+
+// Utils and Constants
+
+import EcomHelper from '../../utils/ecomHelper';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 
 const { width, height } = Dimensions.get('window');
 
 function SiteQuestionsPage() {
-  const navigation = useNavigation();
-  const route = useRoute();
-  const { jobType, jobID, setSiteQuestions, siteQuestions, photos, savePhoto } =
-    useAppContext();
   const { params } = useRoute();
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
+
+  const { jobID, setSiteQuestions, siteQuestions, photos, savePhoto } =
+    useAppContext();
   const { title, photoKey } = params;
   const existingPhoto = photos[photoKey];
+
   const [selectedImage, setSelectedImage] = useState(
     existingPhoto?.uri || null
   );
@@ -53,7 +59,6 @@ function SiteQuestionsPage() {
       ...prevDetails,
       [name]: value,
     }));
-    console.log('SiteQuestionsPage handleInputChange invoked.', siteQuestions);
   };
   const handlePhotoSelected = (uri) => {
     setSelectedImage(uri);
@@ -63,13 +68,10 @@ function SiteQuestionsPage() {
   };
   const backPressed = () => {
     saveToDatabase();
-    navigation.goBack();
+    goToPreviousStep();
   };
 
   const nextPressed = () => {
-    console.log('nextPressed invoked.');
-
-    // Individual validation checks with specific messages
     if (siteQuestions?.isSafe === null) {
       EcomHelper.showInfoMessage(
         'Please indicate if the meter location is safe.'
@@ -113,21 +115,7 @@ function SiteQuestionsPage() {
       return;
     }
     saveToDatabase();
-    // Continue with conditional navigation based on jobType and conditions
-    handleNavigationBasedOnConditions();
-  };
-
-  const handleNavigationBasedOnConditions = () => {
-    if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
-      navigation.navigate('StandardPage', { fromPage: 'SiteQuestionsPage' });
-      console.log('Navigating to StandardPage');
-    } else if (!siteQuestions?.isCarryOut) {
-      navigation.navigate('RebookPage', { fromPage: 'SiteQuestionsPage' });
-      console.log('Navigating to RebookPage');
-    } else {
-      // Continue with conditional navigation based on jobType
-      navigation.navigate('JobTypeNavigator');
-    }
+    goToNextStep();
   };
 
   return (

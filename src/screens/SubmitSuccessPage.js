@@ -16,11 +16,14 @@ import moment from 'moment';
 import Header from '../components/Header';
 import { useAuth } from '../context/AuthContext';
 import { useSQLiteContext } from 'expo-sqlite/next';
+import { useProgressNavigation } from '../context/ExampleFlowRouteProvider';
 
 const SubmitSuccessPage = () => {
   const appContext = useContext(AppContext);
+  const { jobStatus } = appContext;
   const { authState, RefreshAccessToken } = useAuth();
   const navigation = useNavigation();
+  const { goToPreviousStep } = useProgressNavigation();
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -67,8 +70,6 @@ const SubmitSuccessPage = () => {
   async function sendData(jobData) {
     const body = {
       data: jobData,
-      // TODO: when no longer needed by the api remove this line
-      // engineer_id: 1,
     };
     try {
       axios
@@ -146,7 +147,6 @@ const SubmitSuccessPage = () => {
     axios
       .post('https://test.ecomdata.co.uk/api/upload-photos/', formData, {
         headers: {
-          Authorization: `Bearer ${authState.token}`,
           'Content-Type': 'multipart/form-data', // Axios sets this automatically, but specifying just in case
         },
       })
@@ -218,7 +218,7 @@ const SubmitSuccessPage = () => {
     <SafeAreaView style={styles.container}>
       <Header
         hasLeftBtn={true}
-        leftBtnPressed={() => navigation.goBack()}
+        leftBtnPressed={() => goToPreviousStep()}
         hasCenterText={true}
         centerText="Submit Job"
       />
@@ -226,8 +226,15 @@ const SubmitSuccessPage = () => {
         <Text>Submit the job</Text>
         {isLoading ? (
           <ActivityIndicator size="large" />
-        ) : (
+        ) : jobStatus === 'In Progress' ? (
           <Button title="Send" onPress={fetchAndUploadJobData} />
+        ) : (
+          <Button
+            title="Return to Home"
+            onPress={() => {
+              navigation.navigate('Home');
+            }}
+          />
         )}
       </View>
     </SafeAreaView>

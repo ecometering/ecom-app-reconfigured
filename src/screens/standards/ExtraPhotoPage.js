@@ -9,18 +9,22 @@ import {
   Text,
 } from 'react-native';
 import Header from '../../components/Header';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 import TextInput from '../../components/TextInput';
 import OptionalButton from '../../components/OptionButton';
 import EcomHelper from '../../utils/ecomHelper';
 import { AppContext } from '../../context/AppContext';
 import ImagePickerButton from '../../components/ImagePickerButton';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import { ExtraPhotoPageRoute } from '../../utils/nagivation-routes/install-navigations';
+import withUniqueKey from '../../utils/renderNavigationWithUniqueKey';
 
 const { width, height } = Dimensions.get('window');
 
-export default function ExtraPhotoPage() {
+const ExtraPhotoPage = () => {
   const route = useRoute();
-  const navigation = useNavigation();
+  const { goToPreviousStep, pushNavigation, goToNextStep } =
+    useProgressNavigation();
   const { photoNumber, title } = route.params;
   const appContext = useContext(AppContext);
   const standardDetails = appContext.standardDetails;
@@ -81,12 +85,15 @@ export default function ExtraPhotoPage() {
     setExtraComment('');
 
     if (addMorePhotos) {
-      navigation.push('ExtraPhotoPage', {
+      const nextPhotoScreen = ExtraPhotoPageRoute({
         photoNumber: photoNumber + 1,
+        photoKey: `extraPhotos_${photoNumber + 1}`,
         title: `Extra Photos ${photoNumber + 1}`,
       });
+
+      pushNavigation(nextPhotoScreen);
     } else {
-      navigation.navigate('SubmitSuccessPage');
+      goToNextStep();
     }
   };
 
@@ -98,7 +105,7 @@ export default function ExtraPhotoPage() {
           hasCenterText={true}
           hasRightBtn={true}
           centerText={title}
-          leftBtnPressed={() => navigation.goBack()}
+          leftBtnPressed={() => goToPreviousStep()}
           rightBtnPressed={handleSubmit}
         />
 
@@ -154,7 +161,7 @@ export default function ExtraPhotoPage() {
       </SafeAreaView>
     </ScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   scrollView: {
@@ -188,3 +195,5 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 });
+
+export default withUniqueKey(ExtraPhotoPage);

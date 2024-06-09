@@ -9,10 +9,12 @@ import JobCard from '../components/JobCard';
 // Utils
 import { loadJob } from '../utils/loadJob';
 import { getDatabaseJob } from '../utils/database'; // Importing required functions
+import { useProgressNavigation } from '../context/ExampleFlowRouteProvider';
 
 const CompletedJobsTable = () => {
   const [jobs, setJobs] = useState([]);
   const navigation = useNavigation();
+  const { startFlow } = useProgressNavigation();
 
   useEffect(() => {
     fetchData();
@@ -25,6 +27,7 @@ const CompletedJobsTable = () => {
   const handleRowClick = async (jobId) => {
     try {
       const jobData = await loadJob(jobId);
+      startFlow(jobData.jobType);
       navigation.navigate('SiteDetailsPage', { jobData });
     } catch (error) {
       console.error('Error loading job:', error);

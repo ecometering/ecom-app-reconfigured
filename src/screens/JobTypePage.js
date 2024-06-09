@@ -1,23 +1,32 @@
-import React, { useContext, useState } from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
   View,
   Modal,
+  ScrollView,
+  StyleSheet,
+  SafeAreaView,
   TouchableOpacity,
 } from 'react-native';
+import React, { useContext, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+
+// Utils and Constants
 import { height, unitH } from '../utils/constant';
 import { PrimaryColors } from '../theme/colors';
-import { EcomPressable as Button } from '../components/ImageButton';
+import { useSQLiteContext } from 'expo-sqlite/next';
+
+// Components
 import Text from '../components/Text';
-import { useNavigation } from '@react-navigation/native';
-import { AppContext } from '../context/AppContext';
 import Header from '../components/Header';
-import { addOrUpdateJobData } from '../utils/database';
+import { EcomPressable as Button } from '../components/ImageButton';
+
+// Context
+import { AppContext } from '../context/AppContext';
+import { useProgressNavigation } from '../context/ExampleFlowRouteProvider';
 
 function JobTypePage() {
+  const db = useSQLiteContext();
   const navigation = useNavigation();
+  const { startFlow } = useProgressNavigation();
   const { jobStarted, resetContext } = useContext(AppContext);
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -25,6 +34,15 @@ function JobTypePage() {
 
   const setJobTypeAndNavigate = async (jobType) => {
     if (jobStarted) {
+      await db
+        .runAsync('SELECT name FROM sqlite_master WHERE type="table" AND name NOT LIKE "sqlite_%"')
+        .then((result) => {
+          console.log('Tables:', result);
+        })
+        .catch((error) => {
+          console.error('Error getting tables:', error);
+        });
+        
       // Show modal if a job is already started
       setSelectedJobType(jobType);
       setModalVisible(true);
@@ -34,8 +52,8 @@ function JobTypePage() {
   };
 
   const proceedWithJobType = async (jobType) => {
-    console.log(`Setting job type to: ${jobType} and navigating.`);
     try {
+      // TODO: set app context here instead of in SiteDetailsPage
       const jobId = `JOB-${Date.now()}`;
       const jobData = {
         jobType: jobType,
@@ -43,10 +61,13 @@ function JobTypePage() {
         jobStatus: 'in progress',
         progress: 0,
       };
-      console.log(`Job type ${jobType} saved successfully.`);
-      navigation.navigate('SiteDetailsPage', {
-        totalPages: 9,
-        currentPage: 1,
+
+      // this is where we set the navigation flow and get the first screen details
+      const navigationDetails = startFlow(jobType);
+
+      // here we pass the screen information for the flow
+      navigation.navigate(navigationDetails.screen, {
+        ...navigationDetails.params,
         jobId: jobId,
         jobType: jobType,
       });

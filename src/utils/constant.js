@@ -48,6 +48,28 @@ export const PULSE_VALUE = [
   {label: '100', value: 100},
   {label: '1000', value: 1000},
 ];
+export const SIZE_LIST = 
+[
+  { label: '1/4"', value: '1/4' },
+  { label: '1/2"', value: '1/2' },
+  { label: '3/4"', value: '3/4' },
+  { label: '1"', value: '1' },
+  { label: '1 1/4"', value: '1 1/4' },
+  { label: '1 1/2"', value: '1 1/2' },
+  { label: '2"', value: '2' },
+  {label:'2 1/2"',value:'2 1/2"' },
+  { label: '3"', value: '3' },
+  { label: '4"', value: '4' },
+  { label: '6"', value: '6' },
+  { label: '8"', value: '8' },
+  { label: '10"', value: '10' },
+  { label: '12"', value: '12' },
+  { label: '14"', value: '14' },
+  { label: '16"', value: '16' },
+  { label: '20"', value: '20' },
+  // ... Add other sizes here
+];
+
 
 export const PAYMENT_TYPE_CHOICES = [
   {label: 'Credit', value: 1},

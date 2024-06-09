@@ -11,57 +11,58 @@ import {
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import moment from 'moment'; // For handling dates
-import { openDatabase } from '../../utils/database';
 import Header from '../../components/Header';
 import { AppContext } from '../../context/AppContext';
-import { useNavigation } from '@react-navigation/native';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import { useSQLiteContext } from 'expo-sqlite/next';
 const { width } = Dimensions.get('window');
 
 const RebookPage = () => {
-  const navigation = useNavigation();
+  db = useSQLiteContext();  
   const appContext = useContext(AppContext);
-  const [canRebookToday, setCanRebookToday] = useState(null);
-  const [rebookReason, setRebookReason] = useState('');
-  const [selectedDate, setSelectedDate] = useState('');
-  const jobID = appContext.jobID;
+  const { rebook, jobID,setRebook  } = appContext;
+  const handleInputChange = (key, value) => {
+    setRebook((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+    console.log('Rebook', rebook);
+  };
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
   const twoWeeksFromNow = moment().add(14, 'days').format('YYYY-MM-DD');
   // const minDate = moment().add(1, 'days').format('YYYY-MM-DD');
 
-  const updateRebookDetails = async () => {
-    const db = await openDatabase();
-
-    // Create a JSON object with all details
-    const rebookDetailsJSON = JSON.stringify({
-      canRebookToday,
-      selectedDate: canRebookToday ? selectedDate : null,
-      rebookReason: canRebookToday ? null : rebookReason,
-    });
-
-    db.transaction((tx) => {
-      // Update the database with the JSON object
-      tx.executeSql(
-        'UPDATE Jobs SET rebook = ? WHERE id = ?',
-        [rebookDetailsJSON, jobID],
-        (_, results) => {
-          console.log('Rebook details updated successfully', results);
-        },
-        (tx, error) => {
-          console.log('Failed to update rebook details', error);
-        }
-      );
-    });
+  const saveToDatabase = async () => {
+    const rebookDetailsJson = JSON.stringify(rebook);
+    console.log("message:292 rebook values:", rebookDetailsJson);
+    try {
+      await db.runAsync('UPDATE Jobs SET rebook = ? WHERE id = ?', [
+        rebookDetailsJson,
+        jobID,
+      ]);
+    } catch (error) {
+      console.error('Error saving streams to database:', error);
+    }
   };
+    // Create a JSON object with all details
+   
   const handleConfirmRebook = () => {
-    if (canRebookToday === false) {
-      updateRebookDetails().then(() => {
-        navigation.navigate('SubmitSuccessPage');
+    if (rebook.rebookToday === null) {
+      Alert.alert('Please state if the job can be rebooked today.');
+      return;
+    }
+
+    if (rebook.rebookToday === false) {
+      saveToDatabase.then(() => {
+        goToNextStep();
       });
       return;
     }
+
     Alert.alert(
       'Confirm Rebook Date',
-      `Are you sure you want to rebook for ${selectedDate}?`,
+      `Are you sure you want to rebook for ${rebook.selectedDate}?`,
       [
         {
           text: 'Cancel',
@@ -70,9 +71,9 @@ const RebookPage = () => {
         {
           text: 'OK',
           onPress: () => {
-            console.log('Rebook Confirmed for:', selectedDate);
-            updateRebookDetails().then(() => {
-              navigation.navigate('SubmitSuccessPage');
+            console.log('Rebook Confirmed for:', rebook.selectedDate);
+            saveToDatabase.then(() => {
+              goToNextStep();
             });
           },
         },
@@ -81,7 +82,7 @@ const RebookPage = () => {
   };
 
   const handleGoBack = () => {
-    navigation.goBack();
+    goToPreviousStep();
   };
 
   return (
@@ -97,18 +98,18 @@ const RebookPage = () => {
       <View style={styles.container}>
         <Text style={styles.question}>Can job be rebooked today?</Text>
         <View style={styles.optionsContainer}>
-          <Button title="Yes" onPress={() => setCanRebookToday(true)} />
-          <Button title="No" onPress={() => setCanRebookToday(false)} />
+          <Button title="Yes" onPress={() =>handleInputChange('rebookToday',true)} />
+          <Button title="No" onPress={() => handleInputChange('rebookToday',false)} />
         </View>
 
-        {canRebookToday === true && (
+        {rebook.rebookToday === true && (
           <Calendar
             minDate={twoWeeksFromNow}
             onDayPress={(day) => {
-              setSelectedDate(day.dateString);
+              handleInputChange("selectedDate",day.dateString)
             }}
             markedDates={{
-              [selectedDate]: {
+              [rebook.selectedDate]: {
                 selected: true,
                 disableTouchEvent: true,
                 selectedColor: 'blue',
@@ -119,11 +120,11 @@ const RebookPage = () => {
           />
         )}
 
-        {canRebookToday === false && (
+        {rebook.rebookToday === false && (
           <TextInput
             style={styles.input}
-            onChangeText={setRebookReason}
-            value={rebookReason}
+            onChangeText={(txt) => {handleInputChange("rebookReason",txt)}}
+            value={rebook.rebookReason}
             placeholder="Why can't it be rebooked?"
           />
         )}

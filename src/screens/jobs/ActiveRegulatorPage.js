@@ -1,121 +1,356 @@
+import { useSQLiteContext } from 'expo-sqlite/next';
+import * as ExpoImagePicker from 'expo-image-picker';
+import { useRoute } from '@react-navigation/native';
+import React, {
+  createRef,
+  useState,
+  useContext,
+} from 'react';
+import {
+  View,
+  Image,
+  Alert,
+  ScrollView,
+  Platform,
+  StyleSheet,
+  Dimensions,
+  SafeAreaView,
+  KeyboardAvoidingView,
+} from 'react-native';
 
-import useState from 'react';
-import { View, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
-import TextInputWithTitle, { InputRowWithTitle } from '../../components/TextInput'; // Adjust path as needed
-import EcomDropDown from '../../components/DropDown'
+// Components
+import TextInput, {
+  InputRowWithTitle,
+  TextInputWithTitle,
+} from '../../components/TextInput';
+import Text from '../../components/Text';
+import Header from '../../components/Header';
+import EcomDropDown from '../../components/DropDown';
+import OptionalButton from '../../components/OptionButton';
 import ImagePickerButton from '../../components/ImagePickerButton';
-import { PrimaryColors } from '../../theme/colors'; // Adjust path as needed
-import Header from "../../components/Header";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { openDatabase,addOrUpdateJobData } from '../../utils/database';
-
+import { SIZE_LIST } from '../../utils/constant';
+// Context & Utils
+import EcomHelper from '../../utils/ecomHelper';
+import { TextType } from '../../theme/typography';
+import { PrimaryColors } from '../../theme/colors';
+import { AppContext } from '../../context/AppContext';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import withUniqueKey from '../../utils/renderNavigationWithUniqueKey';
+const { width, height } = Dimensions.get('window');
 
 const ActiveRegulatorPage = () => {
-  const [manufacturer, setManufacturer] = useState('');
-  const [serialNumber, setSerialNumber] = useState('');
-  const [size, setSize] = useState('');
-  const [imageUri, setImageUri] = useState('');
-  const navigation = useNavigation();
   const route = useRoute();
-  // Dummy sizes for the dropdown
-  const sizeOptions = [
-    { label: 'Small', value: 'small' },
-    { label: 'Medium', value: 'medium' },
-    { label: 'Large', value: 'large' },
-  ];
-  const details = {
-    manufacturer,
-    serialNumber,
-    size,
+  const db = useSQLiteContext();
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
+  const { jobID, photos, savePhoto, streams, setStreams, streamNumber } = useContext(AppContext);
+
+  const { title, stream, photoKey } = route.params;
+  const existingPhoto = photos && photoKey ? photos[photoKey] : null;
+
+  const [selectedImage, setSelectedImage] = useState(existingPhoto || {});
+
+  const handleInputChange = (name, value) => {
+    setStreams((prevDetails) => ({
+      ...prevDetails,
+      [name]: value,
+    }));
+    console.log('message: 303, streams: ', streams);
   };
-  
-  const imageData = {
-    imageUri,
+
+  const handlePhotoSelected = (uri) => {
+    setSelectedImage({ title, photoKey, uri });
   };
-  
+
+  const saveToDatabase = async () => {
+    const photosJson = JSON.stringify(photos);
+    const streamsJson = JSON.stringify(streams);
+    try {
+      await db
+        .runAsync(
+          'UPDATE Jobs SET photos = ?, streams = ? WHERE id = ?',
+          [photosJson, streamsJson, jobID]
+        )
+        .then((result) => {
+          console.log('photos saved to database:', result);
+        });
+    } catch (error) {
+      console.log('Error saving photos to database:', error);
+    }
+  };
+
   const backPressed = () => {
-    console.log("Back button pressed");
-
-
-    navigation.goBack();
+    saveToDatabase();
+    if (selectedImage.uri) savePhoto(photoKey, selectedImage);
+    
+    goToPreviousStep();
   };
 
   const nextPressed = async () => {
-    console.log("Next button pressed");
-
-    try {
-      // Save the data using the route title as an identifier
-      await saveStreamData(route.params.title, streamData);
-      console.log("Data saved successfully. Navigating to next screen.");
-    } catch (error) {
-      console.error("Failed to save data:", error);
-      // Optionally handle the error, e.g., show an alert to the user
+    if (streams[`activeRegulator${stream}Exists`] === null) {
+      EcomHelper.showInfoMessage('Please select if the active Regulator exists');
+      return;
     }
   
-    // Proceed to navigate after saving
+    if (streams[`activeRegulator${stream}Exists`]) {
+      if (!selectedImage?.uri) {
+        EcomHelper.showInfoMessage('Please choose an image');
+        return;
+      }
+      if (!streams[`activeRegulatorSerialNumber${stream}`]) {
+        EcomHelper.showInfoMessage('Please input the active Regulator Serial Number.');
+        return;
+      }
+      if (!streams[`activeRegulatorSize${stream}`]) {
+        EcomHelper.showInfoMessage('Please select the active Regulator Size.');
+        return;
+      }
+      if (!streams[`activeRegulatorManufacturer${stream}`]) {
+        EcomHelper.showInfoMessage('Please input the active Regulator Manufacturer.');
+        return;
+      }
+     
+    }
   
-    console.log("Navigating to next screen:", nextScreen);
-    navigation.navigate(nextScreen);
+    await saveToDatabase();
+  
+    if (selectedImage.uri) savePhoto(photoKey, selectedImage);
+  
+    goToNextStep();
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.content}>
+    <SafeAreaView style={styles.content}>
       <Header
-          hasLeftBtn={true}
-          hasCenterText={true}
-          hasRightBtn={true}
-          centerText={title}
-          leftBtnPressed={backPressed}
-          rightBtnPressed={nextPressed}
-        />
-       <View style={styles.card}>
-          <TextInputWithTitle
-            title="Manufacturer"
-            value={manufacturer}
-            onChangeText={setManufacturer}
-            placeholder="Enter manufacturer"
-          />
-          <TextInputWithTitle
-            title="Serial Number"
-            value={serialNumber}
-            onChangeText={setSerialNumber}
-            placeholder="Enter serial number"
-          />
-          <EcomDropDown
-            value={size}
-            valueList={sizeOptions}
-            placeholder="Select Size"
-            onChange={(selectedItem) => setSize(selectedItem.value)}
-          />
-        </View>
-        <ImagePickerButton
-          onImageSelected={setImageUri}
-        />
-        {/* Additional content can be added here */}
-      </ScrollView>
+        hasLeftBtn={true}
+        hasCenterText={true}
+        hasRightBtn={true}
+        centerText={title}
+        leftBtnPressed={backPressed}
+        rightBtnPressed={nextPressed}
+      />
+      <KeyboardAvoidingView
+        style={styles.content}
+        behavior={Platform.OS === 'ios' ? 'padding' : null}
+      >
+        <ScrollView style={styles.content}>
+          <View style={styles.body}>
+            <Text type={TextType.HEADER_1} style={{ alignSelf: 'center' }}>
+              Active Regulator Details
+            </Text>
+            <View style={styles.spacer} />
+            <View>
+              <Text style={styles.text}>Does the active regulator exist?</Text>
+              <View style={styles.optionContainer}>
+                <OptionalButton
+                  options={['Yes', 'No']}
+                  actions={[
+                    () => {
+                      handleInputChange(`activeRegulator${stream}Exists`, true);
+                     
+                    },
+                    () => {
+                      handleInputChange(`activeRegulator${stream}Exists`, false);
+                     
+                    },
+                  ]}
+                  value={
+                    streams[`activeRegulator${stream}Exists`] === null
+                      ? null
+                      : streams[`activeRegulator${stream}Exists`]
+                      ? 'Yes'
+                      : 'No'
+                  }
+                />
+              </View>
+            </View>
+
+            {streams[`activeRegulator${stream}Exists`] && (
+              <>
+                <View style={styles.border}>
+                  <View style={styles.row}>
+                    <View
+                      style={{
+                        width: width * 0.45,
+                        alignSelf: 'flex-end',
+                      }}
+                    >
+                      <Text>active Regulator Serial Number</Text>
+                      <View style={styles.spacer2} />
+                      <View style={{ ...styles.row, width: width * 0.35 }}>
+                        <TextInput
+                          onChangeText={(txt) => {
+                            const withSpacesAllowed = txt.toUpperCase();
+                            const formattedText = withSpacesAllowed.replace(
+                              /[^A-Z0-9]+/g,
+                              ''
+                            );
+                            handleInputChange(
+                              `activeRegulatorSerialNumber${stream}`,
+                              formattedText
+                            );
+                          }}
+                          style={{
+                            ...styles.input,
+                            width: width * 0.25,
+                            alignSelf: 'flex-end',
+                          }}
+                          value={streams[`activeRegulatorSerialNumber${stream}`]}
+                        />
+                      </View>
+                    </View>
+                  </View>
+
+                  <View
+                    style={{
+                      ...styles.row,
+                      justifyContent: 'flex-start',
+                      marginTop: 16,
+                    }}
+                  >
+                    <View style={{ width: width * 0.45 }}>
+                      <EcomDropDown
+                        width={width * 0.35}
+                        value={streams[`activeRegulatorSize${stream}`]}
+                        valueList={SIZE_LIST}
+                        placeholder="Select size"
+                        onChange={(item) =>
+                          handleInputChange(`activeRegulatorSize${stream}`, item.value)
+                        }
+                      />
+                    </View>
+                  </View>
+
+                  <View style={styles.spacer} />
+                  <View
+                    style={{
+                      flexDirection: 'Column',
+                    }}
+                  >
+                    <View style={{ flex: 1 }}>
+                      <TextInputWithTitle
+                        style={{ width: '100%' }}
+                        title={'Manufacturer'}
+                        value={streams[`activeRegulatorManufacturer${stream}`]}
+                        onChangeText={(txt) => {
+                          handleInputChange(`activeRegulatorManufacturer${stream}`, txt);
+                        }}
+                      />
+                    </View>
+                    <View style={styles.spacer} />
+                    <View style={{ flex: 1 }}>
+                      <TextInputWithTitle
+                        style={{ width: '100%' }}
+                        title={'Notes'}
+                        value={streams[`activeRegulatorNotes${stream}`]}
+                        onChangeText={(txt) => {
+                          handleInputChange(`activeRegulatorNotes${stream}`, txt);
+                        }}
+                      />
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.spacer} />
+
+                <View style={styles.imagePickerContainer}>
+                  <View style={styles.body}>
+                    <Text type="caption" style={styles.text}>
+                      active Regulator photo
+                    </Text>
+                    <ImagePickerButton
+                      onImageSelected={handlePhotoSelected}
+                      currentImage={selectedImage?.uri}
+                    />
+                    {selectedImage?.uri && (
+                      <Image
+                        source={{ uri: selectedImage?.uri }}
+                        style={styles.image}
+                      />
+                    )}
+                  </View>
+                </View>
+              </>
+            )}
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  image: {
+    height: height * 0.25, // Adjust the multiplier to fit your design needs
   },
   content: {
-    padding: 16,
+    flex: 1,
   },
-  card: {
-    padding: 16,
-    backgroundColor: PrimaryColors.White,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.23,
-    shadowRadius: 2.62,
-    elevation: 4,
-    marginBottom: 20, // Space between card and ImagePickerButton
+  body: {
+    marginHorizontal: width * 0.05,
+  },
+  border: {
+    borderWidth: 1,
+    borderColor: PrimaryColors.Black,
+    padding: height * 0.02, // Adjust the multiplier to fit your design needs
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+  },
+  buttonContainer: {
+    width: width * 0.4,
+    alignSelf: 'center',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+  },
+  button: {
+    width: width * 0.2,
+  },
+  divider: {
+    width: '100%',
+    height: 1,
+    backgroundColor: 'black',
+  },
+  headerCell: {
+    textAlign: 'center',
+    borderWidth: 1,
+    borderBottomWidth: 0,
+    borderColor: PrimaryColors.Black,
+    minHeight: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cell: {
+    flex: 1,
+    textAlign: 'center',
+    borderWidth: 1,
+    borderBottomWidth: 0,
+    borderTopWidth: 0,
+    borderColor: PrimaryColors.Black,
+    minHeight: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  optionContainer: {
+    width: width * 0.25, // Adjusted for responsiveness
+    marginVertical: height * 0.01, // Adjusted based on screen height
+    alignSelf: 'flex-start',
+  },
+  spacer: {
+    height: height * 0.02, // Adjusted based on screen height
+  },
+  spacer2: {
+    height: height * 0.01, // Adjusted based on screen height
+  },
+  closeButtonContainer: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+  },
+  closeButtonIcon: {
+    width: 20,
+    height: 20,
+    // Add any additional styles you need for the close icon
   },
 });
-
-export default ActiveRegulatorPage;
+export default withUniqueKey(ActiveRegulatorPage);

@@ -1,30 +1,42 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView, StyleSheet, Alert, FlatList, Text } from 'react-native';
-
 // Components
 import Header from '../components/Header';
 import JobCard from '../components/JobCard';
-
 // Utils
-import { loadJob } from '../utils/loadJob';
-import { openDatabase, getDatabaseJob } from '../utils/database';
+import LoadJob from '../utils/loadJob';
+import { useProgressNavigation } from '../context/ExampleFlowRouteProvider';
+import { useSQLiteContext } from 'expo-sqlite/next';
+import { AppContext } from '../context/AppContext';
 
 const JobsTable = ({ route }) => {
+  const db = useSQLiteContext();
+  const appContext = useContext(AppContext);
   const [jobs, setJobs] = useState([]);
   const navigation = useNavigation();
+  const { startFlow } = useProgressNavigation();
 
   useEffect(() => {
     fetchData();
   }, [route?.params]);
 
   const fetchData = async () => {
-    await getDatabaseJob(setJobs, 'In Progress');
+    try {
+      const result = await db.getAllAsync(
+        'SELECT * FROM jobs WHERE jobStatus = ?',
+        ['In Progress']
+      );
+      setJobs(result);
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+    }
   };
 
   const handleRowClick = async (jobId) => {
     try {
-      const jobData = await loadJob(jobId);
+      const jobData = await LoadJob(db, appContext, jobId);
+      startFlow(jobData.jobType);
       navigation.navigate('SiteDetailsPage', { jobData });
     } catch (error) {
       console.error('Error loading job:', error);
@@ -33,25 +45,20 @@ const JobsTable = ({ route }) => {
   };
 
   const handleDeleteJob = async (jobId) => {
-    const db = await openDatabase();
     Alert.alert('Delete Job', 'Are you sure you want to delete this job?', [
       { text: 'Cancel' },
       {
         text: 'Yes',
         onPress: async () => {
-          db.transaction((tx) => {
-            tx.executeSql(
-              'DELETE FROM Jobs WHERE id = ?',
-              [jobId],
-              () => {
-                console.log('Record deleted successfully');
-                fetchData();
-              },
-              (error) => {
-                console.error('Error deleting record', error);
-              }
-            );
-          });
+          try {
+            await db.transaction(async (tx) => {
+              await tx.executeSql('DELETE FROM Jobs WHERE id = ?', [jobId]);
+            });
+            console.log('Record deleted successfully');
+            fetchData();
+          } catch (error) {
+            console.error('Error deleting record', error);
+          }
         },
       },
     ]);
@@ -91,6 +98,7 @@ const JobsTable = ({ route }) => {
     </SafeAreaView>
   );
 };
+
 const styles = StyleSheet.create({
   body: {
     flex: 1,

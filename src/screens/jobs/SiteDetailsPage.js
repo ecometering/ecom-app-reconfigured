@@ -19,6 +19,7 @@ import { PrimaryColors } from '../../theme/colors';
 import EcomHelper from '../../utils/ecomHelper';
 import moment from 'moment';
 import { useSQLiteContext } from 'expo-sqlite/next';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 const ukPostCodeRegex = /^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i;
 const phoneNumberRegex =
   /^(?:(0\d{4})\s?\d{3}\s?\d{3}|(07\d{3})\s?\d{3}\s?\d{3}|(01\d{1,2})\s?\d{3}\s?\d{3,4}|(02\d{1,2})\s?\d{3}\s?\d{4})$/;
@@ -29,6 +30,7 @@ function SiteDetailsPage() {
   const route = useRoute();
   const params = route.params;
   const appContext = useContext(AppContext);
+  const { goToNextStep } = useProgressNavigation();
   const {
     jobType,
     siteDetails,
@@ -36,53 +38,59 @@ function SiteDetailsPage() {
     setJobStarted,
     jobID,
     setJobID,
+    setJobStatus,
+    jobStatus,
   } = appContext;
+
   const db = useSQLiteContext();
 
-  useEffect(() => {
-    if (params?.jobData) {
-      appContext.setJobdata(params.jobData);
-      // jobData is not used anywhere as the info is outside the jobData state
-      // TODO: this can be handled better by re-designing the data structure
-      appContext.setSiteDetails(
-        params.jobData.siteDetails && JSON.parse(params.jobData.siteDetails)
-      );
-      appContext.setSiteQuestions(
-        params.jobData.siteQuestions && JSON.parse(params.jobData.siteQuestions)
-      );
-      appContext.setPhotos(
-        params.jobData.photos && JSON.parse(params.jobData.photos)
-      );
-      appContext.setCorrectorDetails(
-        params.jobData.correctorDetails &&
-          JSON.parse(params.jobData.correctorDetails)
-      );
-      appContext.setMeterDetails(
-        params.jobData.meterDetails && JSON.parse(params.jobData.meterDetails)
-      );
-      appContext.setSiteQuestions(
-        params.jobData.siteQuestions && JSON.parse(params.jobData.siteQuestions)
-      );
-      appContext.setStandardDetails(
-        params.jobData.standards && JSON.parse(params.jobData.standards)
-      );
-      appContext.setJobType(params.jobData.jobType);
-      appContext.setJobID(params.jobData.id);
-      appContext.setJobStarted(true);
-      appContext.setStreamValue(
-        params.jobData.streamValue && JSON.parse(params.jobData.streamValue)
-      );
-      appContext.setStreamNumber(
-        params.jobData.streamValue &&
-          JSON.parse(params.jobData.streamValue).length
-      );
-    }
+  // useEffect(() => {
+  //   if (params?.jobData) {
+  //     appContext.setJobdata(params.jobData);
+  //     // jobData is not used anywhere as the info is outside the jobData state
+  //     // TODO: this can be handled better by re-designing the data structure
+  //     appContext.setSiteDetails(
+  //       params.jobData.siteDetails && JSON.parse(params.jobData.siteDetails)
+  //     );
+  //     appContext.setSiteQuestions(
+  //       params.jobData.siteQuestions && JSON.parse(params.jobData.siteQuestions)
+  //     );
+  //     appContext.setPhotos(
+  //       params.jobData.photos && JSON.parse(params.jobData.photos)
+  //     );
+  //     appContext.setCorrectorDetails(
+  //       params.jobData.correctorDetails &&
+  //         JSON.parse(params.jobData.correctorDetails)
+  //     );
+  //     appContext.setMeterDetails(
+  //       params.jobData.meterDetails && JSON.parse(params.jobData.meterDetails)
+  //     );
+  //     appContext.setSiteQuestions(
+  //       params.jobData.siteQuestions && JSON.parse(params.jobData.siteQuestions)
+  //     );
+  //     appContext.setStandardDetails(
+  //       params.jobData.standards && JSON.parse(params.jobData.standards)
+  //     );
 
-    if (params?.jobType) {
-      appContext.setJobTypes(params.jobType);
-    }
-  }, [params]);
+  //     appContext.setJobType(params.jobData.jobType);
+  //     appContext.setJobID(params.jobData.id);
+  //     appContext.setJobStarted(true);
+  //     appContext.setStreamValue(
+  //       params.jobData.streamValue && JSON.parse(params.jobData.streamValue)
+  //     );
+  //     appContext.setStreamNumber(
+  //       params.jobData.streamValue &&
+  //         JSON.parse(params.jobData.streamValue).length
+  //     );
+  //   }
 
+  //  
+  // });
+useEffect(() => {
+  if (params?.jobType) {
+         appContext.setJobTypes(params.jobType);
+   }
+}, [params]);
   const handleInputChange = (name, value) => {
     setSiteDetails((prevDetails) => ({
       ...prevDetails,
@@ -109,14 +117,13 @@ function SiteDetailsPage() {
           [jobType, mprn, postcode, startDate, jobStatus, siteDetailsJSON]
         )
         .then((result) => {
-          console.log('Site details saved to database:', result);
           setJobID(params?.jobData?.id ?? result.lastInsertRowId);
-          console.log('jobID', jobID);
         });
     } catch (error) {
       console.error('Error saving site details to database:', error);
     }
   };
+
   const backPressed = () => {
     appContext.setSiteDetails(siteDetails);
     if (siteDetails !== null) {
@@ -191,10 +198,12 @@ function SiteDetailsPage() {
 
     appContext.setSiteDetails(siteDetails);
 
-    await saveSiteDetailsToDatabase();
-    console.log('siteDetails', siteDetails);
-
-    navigation.navigate('SitePhotoPage');
+    if (!jobID) {
+      const jobStatus = 'In Progress'; // Define the job status here
+  setJobStatus(jobStatus);
+      await saveSiteDetailsToDatabase();
+    }
+    goToNextStep();
   };
 
   return (
@@ -320,7 +329,7 @@ function SiteDetailsPage() {
                   valueList={[
                     { _index: 1, label: 'Mr', value: 'Mr' },
                     { _index: 2, label: 'Mrs', value: 'Mrs' },
-                    { _index: 3, label: 'Ms', value: 'Ms' },
+                    { _index: 3, label: 'Miss', value: 'Miss' },
                     { _index: 4, label: 'Dr', value: 'Dr' },
                   ]}
                   placeholder={' Title'}

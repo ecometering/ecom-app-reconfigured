@@ -42,7 +42,7 @@ import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 const alphanumericRegex = /^[a-zA-Z0-9]*$/;
 const { width, height } = Dimensions.get('window');
 
-function MeterDetailsPage() {
+function MeterDetailsTwoPage() {
   const route = useRoute();
   const camera = useRef(null);
   const db = useSQLiteContext();
@@ -51,7 +51,7 @@ function MeterDetailsPage() {
   const isIos = Platform.OS === 'ios';
   const { title } = route.params;
   const diaphragmMeterTypes = ['1', '2', '4'];
-  const { jobType, meterDetails, setMeterDetails, jobID } =
+  const { jobType, MeterDetailsTwo, setMeterDetailsTwo, jobID } =
     useContext(AppContext);
 
   // Local states
@@ -62,8 +62,8 @@ function MeterDetailsPage() {
   const [meterModelCodes, setMeterModelCodes] = useState([]);
   const [meterTypes, setMeterTypes] = useState([]);
   const [isModal, setIsModal] = useState(false);
-  const [localMeterDetails, setLocalMeterDetails] = useState(
-    meterDetails ?? {}
+  const [localMeterDetailsTwo, setLocalMeterDetailsTwo] = useState(
+    MeterDetailsTwo ?? {}
   );
 
   // TODO: this is a hack to prevent memory leaks for now until we find a better way implement this
@@ -77,34 +77,25 @@ function MeterDetailsPage() {
   }, []);
 
   useEffect(() => {
-    if (!localMeterDetails.uom) {
+    if (!localMeterDetailsTwo.uom) {
       handleInputChange('uom', {
         _index: 1,
         label: 'Standard Cubic Meters per hour',
         value: 2,
       });
     }
-    if (!localMeterDetails.pulseValue) {
+    if (!localMeterDetailsTwo.pulseValue) {
       handleInputChange('pulseValue', { _index: 0, label: '1', value: 1 });
     }
-    if (!localMeterDetails.status) {
-      if (['Install', 'Survey', 'Maintenance'].includes(jobType)) {
-        handleInputChange('status', {
-          _index: 2,
-          data: 'LI',
-          label: 'Live',
-          value: 3,
-        });
-      } else if (['Exchange', 'Warrant', 'Removal'].includes(jobType)) {
-        handleInputChange('status', {
-          _index: 12,
-          data: 'RE',
-          label: 'Removed',
-          value: 13,
-        });
-      }
+    if (!localMeterDetailsTwo.status) {
+      handleInputChange('status', {
+        _index: 2,
+        data: 'LI',
+        label: 'Live',
+        value: 3,
+      });
     }
-    if (!localMeterDetails.mechanism) {
+    if (!localMeterDetailsTwo.mechanism) {
       handleInputChange('mechanism', { _index: 0, label: 'Credit', value: 1 });
     }
   }, []);
@@ -115,19 +106,19 @@ function MeterDetailsPage() {
     }
   }, [
     getMeterTypes,
-    localMeterDetails?.meterType,
-    localMeterDetails?.manufacturer,
+    localMeterDetailsTwo?.meterType,
+    localMeterDetailsTwo?.manufacturer,
   ]);
 
   useEffect(() => {
     if (isMounted.current) {
       if (
-        localMeterDetails?.meterType &&
-        localMeterDetails.meterType.value !== undefined
+        localMeterDetailsTwo?.meterType &&
+        localMeterDetailsTwo.meterType.value !== undefined
       ) {
         console.log(
           'Fetching meter manufacturers for meter type:',
-          localMeterDetails?.meterType
+          localMeterDetailsTwo?.meterType
         );
         getMeterManufacturers();
       } else {
@@ -135,24 +126,24 @@ function MeterDetailsPage() {
         setMeterModelCodes([]);
       }
     }
-  }, [getMeterManufacturers, localMeterDetails?.meterType?.value]);
+  }, [getMeterManufacturers, localMeterDetailsTwo?.meterType?.value]);
 
   useEffect(() => {
     if (isMounted.current) {
       if (
-        localMeterDetails?.manufacturer &&
-        localMeterDetails.manufacturer.value !== undefined
+        localMeterDetailsTwo?.manufacturer &&
+        localMeterDetailsTwo.manufacturer.value !== undefined
       ) {
         console.log(
           'Fetching meter model codes for manufacturer:',
-          localMeterDetails?.manufacturer
+          localMeterDetailsTwo?.manufacturer
         );
         getMeterModelCodes();
       } else {
         setMeterModelCodes([]);
       }
     }
-  }, [getMeterModelCodes, localMeterDetails?.manufacturer]);
+  }, [getMeterModelCodes, localMeterDetailsTwo?.manufacturer]);
 
   const handleMeterTypeChange = (item) => {
     handleInputChange('meterType', item);
@@ -162,23 +153,23 @@ function MeterDetailsPage() {
   };
 
   const saveToDatabase = async () => {
-    const meterDetailsJson = JSON.stringify(localMeterDetails);
+    const MeterDetailsTwoJson = JSON.stringify(localMeterDetailsTwo);
     try {
       await db
-        .runAsync('UPDATE Jobs SET meterDetails = ? WHERE id = ?', [
-          meterDetailsJson,
+        .runAsync('UPDATE Jobs SET MeterDetailsTwo = ? WHERE id = ?', [
+          MeterDetailsTwoJson,
           jobID,
         ])
         .then((result) => {
-          console.log('meterDetails saved to database:', result);
+          console.log('MeterDetailsTwo saved to database:', result);
         });
     } catch (error) {
-      console.log('Error saving meterDetails to database:', error);
+      console.log('Error saving MeterDetailsTwo to database:', error);
     }
   };
 
   const handleInputChange = (name, value) => {
-    setLocalMeterDetails((prevDetails) => {
+    setLocalMeterDetailsTwo((prevDetails) => {
       return {
         ...prevDetails,
         [name]: value,
@@ -187,7 +178,7 @@ function MeterDetailsPage() {
   };
 
   const handleMultipleInputChanges = (updates) => {
-    setMeterDetails((prevDetails) => ({
+    setMeterDetailsTwo((prevDetails) => ({
       ...prevDetails,
       ...updates,
     }));
@@ -211,13 +202,13 @@ function MeterDetailsPage() {
   }, []);
 
   const getMeterModelCodes = useCallback(async () => {
-    const tableName = localMeterDetails?.meterType
-      ? tableNames[localMeterDetails.meterType.value]
+    const tableName = localMeterDetailsTwo?.meterType
+      ? tableNames[localMeterDetailsTwo.meterType.value]
       : null;
     if (tableName) {
       try {
         const query = `SELECT DISTINCT ModelCode FROM ${tableName} WHERE Manufacturer = ?`;
-        const params = [localMeterDetails.manufacturer?.value || '']; // Use localMeterDetails.manufacturer?.value
+        const params = [localMeterDetailsTwo.manufacturer?.value || '']; // Use localMeterDetailsTwo.manufacturer?.value
 
         const result = await db.getAllAsync(query, params);
 
@@ -234,13 +225,13 @@ function MeterDetailsPage() {
       }
     } else {
       console.log(
-        'localMeterDetails.meterType is false, not fetching model codes'
+        'localMeterDetailsTwo.meterType is false, not fetching model codes'
       );
     }
-  }, [localMeterDetails?.meterType, localMeterDetails?.manufacturer]);
+  }, [localMeterDetailsTwo?.meterType, localMeterDetailsTwo?.manufacturer]);
 
   const getMeterManufacturers = useCallback(async () => {
-    const meterType = localMeterDetails?.meterType?.value;
+    const meterType = localMeterDetailsTwo?.meterType?.value;
     const tableName = meterType && tableNames[meterType];
     if (tableName) {
       try {
@@ -265,59 +256,59 @@ function MeterDetailsPage() {
       }
     } else {
       console.log(
-        'localMeterDetails.meterType is falsy, setting manufacturers to empty array'
+        'localMeterDetailsTwo.meterType is falsy, setting manufacturers to empty array'
       );
       setMeterManufacturers([]);
     }
-  }, [localMeterDetails?.meterType]);
+  }, [localMeterDetailsTwo?.meterType]);
 
   const nextPressed = async () => {
-    if (localMeterDetails.location == null) {
+    if (localMeterDetailsTwo.location == null) {
       EcomHelper.showInfoMessage("Please Choose 'Meter Location'");
       return;
     }
-    if (localMeterDetails.model == null) {
+    if (localMeterDetailsTwo.model == null) {
       EcomHelper.showInfoMessage("Please Choose 'Meter Model'");
       return;
     }
-    if (localMeterDetails.manufacturer == null) {
+    if (localMeterDetailsTwo.manufacturer == null) {
       EcomHelper.showInfoMessage("Please Choose 'Meter Manufacturer'");
       return;
     }
-    if (localMeterDetails.uom == null) {
+    if (localMeterDetailsTwo.uom == null) {
       EcomHelper.showInfoMessage("Please Choose 'UOM'");
       return;
     }
-    if (localMeterDetails.meterType == null) {
+    if (localMeterDetailsTwo.meterType == null) {
       EcomHelper.showInfoMessage("Please Choose 'Meter Type'");
       return;
     }
     if (
-      localMeterDetails.havePulseValue &&
-      localMeterDetails.pulseValue == null
+      localMeterDetailsTwo.havePulseValue &&
+      localMeterDetailsTwo.pulseValue == null
     ) {
       EcomHelper.showInfoMessage("Please Choose 'Meter Pulse Value'");
       return;
     }
-    if (localMeterDetails.mechanism == null) {
+    if (localMeterDetailsTwo.mechanism == null) {
       EcomHelper.showInfoMessage("Please Choose 'Meter Mechanism'");
       return;
     }
-    if (localMeterDetails.pressureTier == null) {
+    if (localMeterDetailsTwo.pressureTier == null) {
       EcomHelper.showInfoMessage("Please Choose 'Metering Pressure Tier'");
       return;
     }
-    if (localMeterDetails.pressure == null) {
+    if (localMeterDetailsTwo.pressure == null) {
       EcomHelper.showInfoMessage("Please Input 'Pressure'");
       return;
     }
 
     let isDiaphragm =
-      localMeterDetails.meterType &&
-      [1, 2, 4].includes(localMeterDetails.meterType.value);
+      localMeterDetailsTwo.meterType &&
+      [1, 2, 4].includes(localMeterDetailsTwo.meterType.value);
     let isNotML =
-      localMeterDetails.pressureTier &&
-      [1, 4].includes(localMeterDetails.pressureTier.value);
+      localMeterDetailsTwo.pressureTier &&
+      [1, 4].includes(localMeterDetailsTwo.pressureTier.value);
     if (isDiaphragm && isNotML) {
       EcomHelper.showInfoMessage('Diagphragm Meter can only be LP or MP');
       return;
@@ -325,7 +316,7 @@ function MeterDetailsPage() {
 
     try {
       await saveToDatabase();
-      setMeterDetails(localMeterDetails);
+      setMeterDetailsTwo(localMeterDetailsTwo);
 
       goToNextStep();
     } catch (error) {}
@@ -333,7 +324,7 @@ function MeterDetailsPage() {
 
   const backPressed = async () => {
     await saveToDatabase();
-    setMeterDetails(localMeterDetails);
+    setMeterDetailsTwo(localMeterDetailsTwo);
     goToPreviousStep();
   };
 
@@ -367,7 +358,7 @@ function MeterDetailsPage() {
           <View style={styles.body}>
             <EcomDropDown
               width={width * 0.5}
-              value={localMeterDetails?.location}
+              value={localMeterDetailsTwo?.location}
               valueList={METER_POINT_LOCATION_CHOICES}
               placeholder={'Meter location'}
               onChange={(item) => {
@@ -380,7 +371,7 @@ function MeterDetailsPage() {
               <View style={{ flex: 0.5 }}>
                 <EcomDropDown
                   width={width * 0.5}
-                  value={localMeterDetails?.meterType}
+                  value={localMeterDetailsTwo?.meterType}
                   valueList={meterTypes}
                   placeholder="Select a Meter Type"
                   onChange={handleMeterTypeChange}
@@ -388,11 +379,11 @@ function MeterDetailsPage() {
               </View>
 
               <View style={{ flex: 0.5 }}>
-                {localMeterDetails.meterType &&
-                localMeterDetails.meterType.value === '7' ? (
+                {localMeterDetailsTwo.meterType &&
+                localMeterDetailsTwo.meterType.value === '7' ? (
                   <View style={{ flex: 1 }}>
                     <TextInput
-                      value={localMeterDetails.manufacturer}
+                      value={localMeterDetailsTwo.manufacturer}
                       onChangeText={(txt) =>
                         handleInputChange('manufacturer', txt)
                       }
@@ -403,7 +394,7 @@ function MeterDetailsPage() {
                 ) : (
                   <EcomDropDown
                     width={width * 1}
-                    value={localMeterDetails.manufacturer}
+                    value={localMeterDetailsTwo.manufacturer}
                     valueList={meterManufacturers}
                     placeholder="Select a Manufacturer"
                     onChange={(item) => handleInputChange('manufacturer', item)}
@@ -417,7 +408,7 @@ function MeterDetailsPage() {
                 <EcomDropDown
                   width={width * 0.35}
                   value={
-                    localMeterDetails.uom || {
+                    localMeterDetailsTwo.uom || {
                       _index: 1,
                       label: 'Standard Cubic Meters per hour',
                       value: 2,
@@ -432,10 +423,10 @@ function MeterDetailsPage() {
                 />
               </View>
               <View style={{ flex: 0.5 }}>
-                {localMeterDetails.meterType &&
-                localMeterDetails.meterType.value === '7' ? (
+                {localMeterDetailsTwo.meterType &&
+                localMeterDetailsTwo.meterType.value === '7' ? (
                   <TextInput
-                    value={localMeterDetails.model}
+                    value={localMeterDetailsTwo.model}
                     onChangeText={(txt) => handleInputChange('model', txt)}
                     placeholder="Enter Model Code"
                     style={styles.input}
@@ -443,7 +434,7 @@ function MeterDetailsPage() {
                 ) : (
                   <EcomDropDown
                     width={width * 0.5}
-                    value={localMeterDetails.model}
+                    value={localMeterDetailsTwo.model}
                     valueList={meterModelCodes}
                     placeholder="Select Model Code"
                     onChange={(item) => handleInputChange('model', item)}
@@ -470,9 +461,9 @@ function MeterDetailsPage() {
                       },
                     ]}
                     value={
-                      localMeterDetails.havePulseValue === null
+                      localMeterDetailsTwo.havePulseValue === null
                         ? null
-                        : localMeterDetails.havePulseValue
+                        : localMeterDetailsTwo.havePulseValue
                         ? 'Yes'
                         : 'No'
                     }
@@ -480,12 +471,12 @@ function MeterDetailsPage() {
                 </View>
               </View>
 
-              {localMeterDetails.havePulseValue === true ? (
+              {localMeterDetailsTwo.havePulseValue === true ? (
                 <View style={{ flex: 0.5 }}>
                   <EcomDropDown
                     width={width * 0.35}
                     value={
-                      localMeterDetails.pulseValue || {
+                      localMeterDetailsTwo.pulseValue || {
                         _index: 0,
                         label: '1',
                         value: 1,
@@ -509,7 +500,7 @@ function MeterDetailsPage() {
               <View style={{ flex: 0.5 }}>
                 <TextInputWithTitle
                   title={'Measuring capacity'}
-                  value={localMeterDetails.measuringCapacity}
+                  value={localMeterDetailsTwo.measuringCapacity}
                   onChangeText={(txt) => {
                     const numericValue = txt.replace(/[^0-9]/g, '');
                     handleInputChange('measuringCapacity', numericValue);
@@ -521,7 +512,7 @@ function MeterDetailsPage() {
               <View style={{ flex: 0.5 }}>
                 <EcomDropDown
                   width={width * 0.35}
-                  value={localMeterDetails.year}
+                  value={localMeterDetailsTwo.year}
                   valueList={EcomHelper.getYears(1901)}
                   placeholder={'Year of manufacturer'}
                   onChange={(item) => {
@@ -536,7 +527,7 @@ function MeterDetailsPage() {
             <View style={styles.row}>
               <View style={{ flex: 0.5 }}>
                 <EcomDropDown
-                  value={localMeterDetails.dialNumber}
+                  value={localMeterDetailsTwo.dialNumber}
                   valueList={NUMBER_OF_DIALS}
                   placeholder={'Number of dials'}
                   onChange={(item) => {
@@ -547,7 +538,7 @@ function MeterDetailsPage() {
               </View>
               <View style={{ flex: 0.5, marginTop: 8, marginLeft: 8 }}>
                 <TextInputWithTitle
-                  value={localMeterDetails.reading}
+                  value={localMeterDetailsTwo.reading}
                   title={'Meter read'}
                   onChangeText={(txt) => {
                     //validation
@@ -556,8 +547,8 @@ function MeterDetailsPage() {
                   }}
                   keyboardType="numeric"
                   maxLength={
-                    localMeterDetails.dialNumber
-                      ? parseInt(localMeterDetails.dialNumber.value)
+                    localMeterDetailsTwo.dialNumber
+                      ? parseInt(localMeterDetailsTwo.dialNumber.value)
                       : 0
                   }
                   style={[styles.input, { width: '100%' }]}
@@ -572,7 +563,7 @@ function MeterDetailsPage() {
                 <View style={{ height: 5 }} />
                 <View style={styles.row}>
                   <TextInput
-                    value={localMeterDetails.serialNumber}
+                    value={localMeterDetailsTwo.serialNumber}
                     onChangeText={(txt) => {
                       const withSpacesAllowed = txt.toUpperCase();
                       const formattedText = withSpacesAllowed.replace(
@@ -584,7 +575,7 @@ function MeterDetailsPage() {
                     style={{
                       ...styles.input,
                       fontSize: makeFontSmallerAsTextGrows(
-                        localMeterDetails.serialNumber
+                        localMeterDetailsTwo.serialNumber
                       ),
                     }}
                   />
@@ -598,7 +589,14 @@ function MeterDetailsPage() {
               <View style={{ flex: 0.5 }}>
                 <EcomDropDown
                   width={'35%'}
-                  value={localMeterDetails.status}
+                  value={
+                    localMeterDetailsTwo.status || {
+                      _index: 2,
+                      data: 'LI',
+                      label: 'Live',
+                      value: 3,
+                    }
+                  }
                   valueList={METER_POINT_STATUS_CHOICES}
                   placeholder={'Meter status'}
                   onChange={(item) => {
@@ -614,7 +612,7 @@ function MeterDetailsPage() {
               <View style={{ flex: 0.5 }}>
                 <EcomDropDown
                   value={
-                    localMeterDetails.mechanism || {
+                    localMeterDetailsTwo.mechanism || {
                       _index: 0,
                       label: 'Credit',
                       value: 1,
@@ -631,11 +629,11 @@ function MeterDetailsPage() {
               <View style={{ flex: 0.5 }}>
                 <EcomDropDown
                   width={'35%'}
-                  value={localMeterDetails.pressureTier}
+                  value={localMeterDetailsTwo.pressureTier}
                   valueList={
-                    localMeterDetails?.meterType &&
+                    localMeterDetailsTwo?.meterType &&
                     diaphragmMeterTypes.includes(
-                      localMeterDetails.meterType.value
+                      localMeterDetailsTwo.meterType.value
                     )
                       ? pressureTierList.filter(({ label }) =>
                           ['LP', 'MP'].includes(label)
@@ -663,7 +661,7 @@ function MeterDetailsPage() {
                   }}
                 >
                   <TextInput
-                    value={localMeterDetails.pressure}
+                    value={localMeterDetailsTwo.pressure}
                     onChangeText={(txt) => {
                       if (txt.length > 5) {
                         EcomHelper.showInfoMessage(
@@ -671,8 +669,7 @@ function MeterDetailsPage() {
                         );
                         return;
                       }
-                      const numericValue = txt.replace(/[^0-9]/g, '');
-                      handleInputChange('pressure', numericValue);
+                      handleInputChange('pressure', txt);
                     }}
                     keyboardType="numeric"
                     style={{
@@ -754,4 +751,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MeterDetailsPage;
+export default MeterDetailsTwoPage;

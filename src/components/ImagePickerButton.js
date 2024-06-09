@@ -1,18 +1,14 @@
-// Import necessary libraries
 import React from 'react';
 import { Alert, Button } from 'react-native';
 import * as ExpoImagePicker from 'expo-image-picker';
 import * as MediaLibrary from 'expo-media-library';
-import RNFS from 'react-native-fs'; // Import react-native-fs
+import RNFS from 'react-native-fs';
 
-// Reusable Image Picker Button Component
 const ImagePickerButton = ({ onImageSelected }) => {
   const copyFileToPermanentStorage = async (tempUri) => {
     try {
       const filename = tempUri.split('/').pop();
-      // Construct the permanent path
       const permanentUri = `${RNFS.DocumentDirectoryPath}/${filename}`;
-      // Copy the file to the new location
       await RNFS.copyFile(tempUri, permanentUri);
 
       const accessibleUri = permanentUri.startsWith('file://')
@@ -23,47 +19,42 @@ const ImagePickerButton = ({ onImageSelected }) => {
       return accessibleUri;
     } catch (error) {
       console.error('Error copying file:', error);
-      throw error; // Rethrow or handle the error appropriately
+      throw error;
     }
   };
 
-  const requestPermissions = async () => {
-    try {
-      const cameraPermission =
+  const checkAndRequestPermissions = async () => {
+    const cameraPermission = await ExpoImagePicker.getCameraPermissionsAsync();
+    const mediaLibraryPermission = await MediaLibrary.getPermissionsAsync();
+
+    if (
+      cameraPermission.status !== 'granted' ||
+      mediaLibraryPermission.status !== 'granted'
+    ) {
+      const newCameraPermission =
         await ExpoImagePicker.requestCameraPermissionsAsync();
-      const mediaLibraryPermission =
+      const newMediaLibraryPermission =
         await MediaLibrary.requestPermissionsAsync();
 
-      if (
-        cameraPermission.status === 'granted' &&
-        mediaLibraryPermission.status === 'granted'
-      ) {
-        return true;
-      } else {
-        Alert.alert(
-          'Permissions required',
-          'Permissions to access camera and media library are required!'
-        );
-        return false;
-      }
-    } catch (error) {
-      console.error('Error requesting permissions:', error);
-      Alert.alert('Permissions Error', 'Failed to request permissions.');
-      return false;
+      return (
+        newCameraPermission.status === 'granted' &&
+        newMediaLibraryPermission.status === 'granted'
+      );
     }
+    return true;
   };
 
   const handleImagePicker = () => {
     Alert.alert('Choose Image', 'How would you like to choose the image?', [
       { text: 'Cancel', style: 'cancel' },
-      { text: 'Choose from Gallery', onPress: () => chooseFromGallery() },
-      { text: 'Take Photo', onPress: () => takePhoto() },
+      { text: 'Choose from Gallery', onPress: chooseFromGallery },
+      { text: 'Take Photo', onPress: takePhoto },
     ]);
   };
 
   const takePhoto = async () => {
     try {
-      if (await requestPermissions()) {
+      if (await checkAndRequestPermissions()) {
         let result = await ExpoImagePicker.launchCameraAsync({
           mediaTypes: ExpoImagePicker.MediaTypeOptions.Images,
           quality: 1,
@@ -71,7 +62,6 @@ const ImagePickerButton = ({ onImageSelected }) => {
 
         if (!result.canceled && result.assets && result.assets.length > 0) {
           console.log('Photo taken, attempting to save to gallery...');
-          // Here's where we handle considerations for createAssetAsync
           const asset = await MediaLibrary.createAssetAsync(
             result.assets[0].uri
           );
@@ -80,8 +70,8 @@ const ImagePickerButton = ({ onImageSelected }) => {
           const permURI = await copyFileToPermanentStorage(
             result.assets[0].uri
           );
-          console.log('Photo saved to gallery:', permURI);
-          onImageSelected(permURI); // Pass the saved photo's URI
+          console.log('Photo saved to permanent storage:', permURI);
+          onImageSelected(permURI);
         }
       }
     } catch (error) {
@@ -92,7 +82,7 @@ const ImagePickerButton = ({ onImageSelected }) => {
 
   const chooseFromGallery = async () => {
     try {
-      if (await requestPermissions()) {
+      if (await checkAndRequestPermissions()) {
         const result = await ExpoImagePicker.launchImageLibraryAsync({
           mediaTypes: ExpoImagePicker.MediaTypeOptions.Images,
           quality: 1,
@@ -103,7 +93,7 @@ const ImagePickerButton = ({ onImageSelected }) => {
           const permURI = await copyFileToPermanentStorage(
             result.assets[0].uri
           );
-          console.log('Photo saved to gallery:', permURI);
+          console.log('Image saved to permanent storage:', permURI);
           onImageSelected(permURI);
         }
       }

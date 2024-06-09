@@ -17,14 +17,18 @@ import EcomDropDown from '../../components/DropDown';
 import TextInput, { TextInputWithTitle } from '../../components/TextInput';
 import { AppContext } from '../../context/AppContext';
 import EcomHelper from '../../utils/ecomHelper';
-
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import { useSQLiteContext } from 'expo-sqlite/next';
+import { SIZE_LIST } from '../../utils/constant';
 const isIos = Platform.OS === 'ios';
 const { width, height } = Dimensions.get('window');
 export default function EcvPage() {
+  const db = useSQLiteContext();
   const route = useRoute();
-  const { title, nextScreen } = route.params;
-  const { ecvDetails, setEcvDetails } = useContext(AppContext);
+  // const { title} = route.params;
+  const { ecvDetails, setEcvDetails,jobID } = useContext(AppContext);
   const navigation = useNavigation();
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
   const handleInputChange = (key, value) => {
     setEcvDetails((prev) => ({
@@ -33,7 +37,21 @@ export default function EcvPage() {
     }));
     console.log('ecvDetails', ecvDetails);
   };
-
+  const saveToDatabase = async () => {
+    const ecvJson = JSON.stringify(ecvDetails)
+    try {
+      await db 
+      .runAsync ( 
+        'UPDATE Jobs SET ecvDetails =? WHERE id = ?',
+        [ecvJson, jobID]
+      )
+      .then((result) => {
+        console.log('ecv Details saved to database:', result);
+      });
+  } catch (error) {
+    console.log('Error saving ecv details to database:', error);
+  }
+    };
   const nextPressed = async () => {
     const { type, height, size, dfkw, dfrkw } = ecvDetails;
 
@@ -58,12 +76,14 @@ export default function EcvPage() {
         'Distance from Rear Kiosk Wall is required.Please enter the Distance from Rear Kiosk Wall.'
       );
     } else {
-      navigation.navigate(nextScreen);
+      saveToDatabase();
+      goToNextStep();
     }
   };
 
   const backPressed = async () => {
-    navigation.goBack();
+    saveToDatabase();
+    goToPreviousStep();
   };
 
   return (
@@ -72,7 +92,7 @@ export default function EcvPage() {
         hasLeftBtn={true}
         hasCenterText={true}
         hasRightBtn={true}
-        centerText={title}
+        centerText={"ecv Details"}
         leftBtnPressed={backPressed}
         rightBtnPressed={nextPressed}
       />
@@ -104,7 +124,7 @@ export default function EcvPage() {
             <View style={styles.row}>
               <View style={{ flex: 0.5, marginTop: 8, marginLeft: 8 }}>
                 <TextInputWithTitle
-                  title="ECV height (cm)"
+                  title="ECV height (mm)"
                   value={ecvDetails.height}
                   onChangeText={(txt) => {
                     const numericValue = txt.replace(/[^0-9.]/g, '');
@@ -115,25 +135,25 @@ export default function EcvPage() {
                 />
               </View>
               <View style={{ flex: 0.5, marginTop: 8, marginLeft: 8 }}>
-                <TextInputWithTitle
-                  title="Size"
-                  value={ecvDetails.size}
-                  onChangeText={(txt) => {
-                    const withSpecialChars = txt.toUpperCase();
-                    const formattedText = withSpecialChars.replace(
-                      /[^A-Z0-9"/ ]+/g,
-                      ''
-                    );
-                    handleInputChange('size', formattedText);
-                  }}
-                  style={[styles.input, { width: '100%' }]}
-                />
+                
+                    
+                      <EcomDropDown
+                        width={width * 0.35}
+                        value={ecvDetails.size}
+                        valueList={SIZE_LIST}
+                        placeholder="Select size"
+                        onChange={(item) =>
+                          handleInputChange('size', item.value)
+                        }
+                      />
+                   
+                  
               </View>
             </View>
             <View style={styles.row}>
               <View style={{ flex: 0.5, marginTop: 8, marginLeft: 8 }}>
                 <TextInputWithTitle
-                  title="Distance from Kiosk wall (cm)"
+                  title="Distance from Kiosk wall (mm)"
                   value={ecvDetails.dfkw}
                   onChangeText={(txt) => {
                     const numericValue = txt.replace(/[^0-9.]/g, '');
@@ -145,7 +165,7 @@ export default function EcvPage() {
               </View>
               <View style={{ flex: 0.5, marginTop: 8, marginLeft: 8 }}>
                 <TextInputWithTitle
-                  title="Distance from  Rear Kiosk wall (cm)"
+                  title="Distance from  Rear Kiosk wall (mm)"
                   value={ecvDetails.dfrkw}
                   onChangeText={(txt) => {
                     const numericValue = txt.replace(/[^0-9.]/g, '');

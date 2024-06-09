@@ -32,7 +32,7 @@ import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 const alphanumericRegex = /^[a-zA-Z0-9]+$/;
 const { width, height } = Dimensions.get('window');
 
-export default function DataLoggerDetailsPage() {
+export default function DataLoggerDetailsTwoPage() {
   const route = useRoute();
   const camera = useRef(null);
   const db = useSQLiteContext();
@@ -42,8 +42,8 @@ export default function DataLoggerDetailsPage() {
     photos,
     jobType,
     savePhoto,
-    dataLoggerDetails,
-    setDataLoggerDetails,
+    dataLoggerDetailsTwo,
+    setDataLoggerDetailsTwo,
   } = useContext(AppContext);
 
   const { title, nextScreen, photoKey } = route.params;
@@ -51,12 +51,12 @@ export default function DataLoggerDetailsPage() {
 
   const [isModal, setIsModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState(existingPhoto || {});
-  const [localDataLoggerDetails, setLocalDataLoggerDetails] = useState(
+  const [localdataLoggerDetailsTwo, setLocaldataLoggerDetailsTwo] = useState(
     {
-      ...dataLoggerDetails,
-      isMountingBracket: dataLoggerDetails.isMountingBracket ?? false,
-      isAdapter: dataLoggerDetails.isAdapter ?? false,
-      isPulseSplitter: dataLoggerDetails.isPulseSplitter ?? false,
+      ...dataLoggerDetailsTwo,
+      isMountingBracket: dataLoggerDetailsTwo.isMountingBracket ?? false,
+      isAdapter: dataLoggerDetailsTwo.isAdapter ?? false,
+      isPulseSplitter: dataLoggerDetailsTwo.isPulseSplitter ?? false,
     } || {
       isMountingBracket: false,
       isAdapter: false,
@@ -65,7 +65,7 @@ export default function DataLoggerDetailsPage() {
   );
 
   const handleInputChange = (name, value) => {
-    setLocalDataLoggerDetails((prevDetails) => ({
+    setLocaldataLoggerDetailsTwo((prevDetails) => ({
       ...prevDetails,
       [name]: value,
     }));
@@ -78,11 +78,11 @@ export default function DataLoggerDetailsPage() {
 
   const saveToDatabase = async () => {
     const photosJson = JSON.stringify(photos);
-    const dataloggerJson = JSON.stringify(localDataLoggerDetails);
+    const dataloggerJson = JSON.stringify(localdataLoggerDetailsTwo);
     try {
       await db
         .runAsync(
-          'UPDATE Jobs SET photos = ?, dataloggerDetails = ? WHERE id = ?',
+          'UPDATE Jobs SET photos = ?, dataLoggerDetailsTwo = ? WHERE id = ?',
           [photosJson, dataloggerJson, jobID]
         )
         .then((result) => {
@@ -92,15 +92,15 @@ export default function DataLoggerDetailsPage() {
       console.log('Error saving photos to database:', error);
     }
   };
-  console.log('DataLoggerDetailsPage');
+  console.log('dataLoggerDetailsTwoPage');
 
   const backPressed = async () => {
     savePhoto(photoKey, selectedImage);
-    setDataLoggerDetails(localDataLoggerDetails);
+    setDataLoggerDetailsTwo(localdataLoggerDetailsTwo);
     await saveToDatabase();
     goToPreviousStep();
   };
-  console.log(localDataLoggerDetails);
+  console.log(localdataLoggerDetailsTwo);
 
   const nextPressed = async () => {
     if (!selectedImage?.uri) {
@@ -109,38 +109,38 @@ export default function DataLoggerDetailsPage() {
     }
 
     if (
-      !localDataLoggerDetails.serialNumber ||
-      localDataLoggerDetails.serialNumber === ''
+      !localdataLoggerDetailsTwo.serialNumber ||
+      localdataLoggerDetailsTwo.serialNumber === ''
     ) {
       EcomHelper.showInfoMessage('Please enter serial number');
       return;
     }
-    if (localDataLoggerDetails.isMountingBracket == null) {
+    if (localdataLoggerDetailsTwo.isMountingBracket == null) {
       EcomHelper.showInfoMessage('Please answer if mounting bracket was used');
       return;
     }
-    if (localDataLoggerDetails.isAdapter == null) {
+    if (localdataLoggerDetailsTwo.isAdapter == null) {
       EcomHelper.showInfoMessage('Please answer if adapter was used');
       return;
     }
-    if (localDataLoggerDetails.isPulseSplitter == null) {
+    if (localdataLoggerDetailsTwo.isPulseSplitter == null) {
       EcomHelper.showInfoMessage('Please answer if pulse splitter was used');
       return;
     }
-    if (localDataLoggerDetails.manufacturer == null) {
+    if (localdataLoggerDetailsTwo.manufacturer == null) {
       EcomHelper.showInfoMessage('Please choose manufacturer');
       return;
     }
-    if (localDataLoggerDetails.model == null) {
+    if (localdataLoggerDetailsTwo.model == null) {
       EcomHelper.showInfoMessage('Please choose model');
       return;
     }
-    if (localDataLoggerDetails.loggerOwner == null) {
+    if (localdataLoggerDetailsTwo.loggerOwner == null) {
       EcomHelper.showInfoMessage('Please choose Logger owner');
       return;
     }
     savePhoto(photoKey, selectedImage);
-    setDataLoggerDetails(localDataLoggerDetails);
+    setDataLoggerDetailsTwo(localdataLoggerDetailsTwo);
     await saveToDatabase();
     goToNextStep();
     return;
@@ -206,10 +206,10 @@ export default function DataLoggerDetailsPage() {
                         width: width * 0.25,
                         alignSelf: 'flex-end',
                         fontSize: makeFontSmallerAsTextGrows(
-                          localDataLoggerDetails.serialNumber
+                          localdataLoggerDetailsTwo.serialNumber
                         ),
                       }}
-                      value={localDataLoggerDetails.serialNumber}
+                      value={localdataLoggerDetailsTwo.serialNumber}
                     />
                     <Button title="📷" onPress={scanBarcode} />
                   </View>
@@ -228,9 +228,9 @@ export default function DataLoggerDetailsPage() {
                         },
                       ]}
                       value={
-                        localDataLoggerDetails.isMountingBracket == null
+                        localdataLoggerDetailsTwo.isMountingBracket == null
                           ? null
-                          : localDataLoggerDetails.isMountingBracket
+                          : localdataLoggerDetailsTwo.isMountingBracket
                           ? 'Yes'
                           : 'No'
                       }
@@ -254,9 +254,9 @@ export default function DataLoggerDetailsPage() {
                         },
                       ]}
                       value={
-                        localDataLoggerDetails.isAdapter === null
+                        localdataLoggerDetailsTwo.isAdapter === null
                           ? null
-                          : localDataLoggerDetails.isAdapter
+                          : localdataLoggerDetailsTwo.isAdapter
                           ? 'Yes'
                           : 'No'
                       }
@@ -277,9 +277,9 @@ export default function DataLoggerDetailsPage() {
                         },
                       ]}
                       value={
-                        localDataLoggerDetails.isPulseSplitter == null
+                        localdataLoggerDetailsTwo.isPulseSplitter == null
                           ? null
-                          : localDataLoggerDetails.isPulseSplitter
+                          : localdataLoggerDetailsTwo.isPulseSplitter
                           ? 'Yes'
                           : 'No'
                       }
@@ -304,7 +304,7 @@ export default function DataLoggerDetailsPage() {
                         width: width * 0.25,
                         alignSelf: 'flex-end',
                       }}
-                      value={localDataLoggerDetails.manufacturer}
+                      value={localdataLoggerDetailsTwo.manufacturer}
                     />
                   </View>
                 </View>
@@ -322,7 +322,7 @@ export default function DataLoggerDetailsPage() {
                         width: width * 0.25,
                         alignSelf: 'flex-end',
                       }}
-                      value={localDataLoggerDetails.model}
+                      value={localdataLoggerDetailsTwo.model}
                     />
                   </View>
                 </View>
@@ -342,7 +342,7 @@ export default function DataLoggerDetailsPage() {
                       width: width * 0.25,
                       alignSelf: 'flex-end',
                     }}
-                    value={localDataLoggerDetails.loggerOwner}
+                    value={localdataLoggerDetailsTwo.loggerOwner}
                   />
                 </View>
               </View>

@@ -1,33 +1,37 @@
-import React, { useContext, useState } from 'react';
 import {
-  Alert,
-  Button,
-  Image,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
   View,
+  Image,
+  StyleSheet,
   Dimensions,
+  ScrollView,
+  SafeAreaView,
 } from 'react-native';
-import Header from '../../components/Header';
+import React, { useContext, useState } from 'react';
+
+// Components
 import Text from '../../components/Text';
+import Header from '../../components/Header';
 import TextInput from '../../components/TextInput';
 import ImagePickerButton from '../../components/ImagePickerButton'; // Adjust this path as necessary
-import { useNavigation } from '@react-navigation/native';
-import { TextType } from '../../theme/typography';
+
+// Context
 import { AppContext } from '../../context/AppContext';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+
+// Utils
+import { TextType } from '../../theme/typography';
 import EcomHelper from '../../utils/ecomHelper';
 
 const { width, height } = Dimensions.get('window'); // Use Dimensions to get width and height
 
 export default function RiddorReportPage() {
-  const navigation = useNavigation();
   const appContext = useContext(AppContext);
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const standardDetails = appContext.standardDetails;
   const jobType = appContext.jobType;
   const jobID = appContext.jobID;
   const title = jobType === 'Install' ? 'New Meter Details' : jobType;
-  const confirmStandard = standardDetails?.confirmStandard;
+
   const [riddorImage, setRiddorImage] = useState(standardDetails?.riddorImage); // Renamed state
   const [notes, setNotes] = useState(standardDetails?.notes);
   const [riddorRef, setRiddorRef] = useState(standardDetails?.riddorRef);
@@ -46,7 +50,7 @@ export default function RiddorReportPage() {
       jobID,
     ]);
 
-    navigation.goBack();
+    goToPreviousStep();
   };
 
   const nextPressed = async () => {
@@ -87,11 +91,7 @@ export default function RiddorReportPage() {
       jobID,
     ]);
 
-    if (standardDetails.conformStandard === false) {
-      navigation.navigate('SnClientInfoPage');
-    } else {
-      navigation.navigate('CompositeLabelPhoto');
-    }
+    goToNextStep();
   };
 
   return (
@@ -133,7 +133,16 @@ export default function RiddorReportPage() {
             <Text>RIDDOR Reference</Text>
             <TextInput
               value={riddorRef}
-              onChangeText={(text) => setRiddorRef(text)}
+              onChangeText={(txt) => {
+                // Define the alphanumeric regular expression
+                const alphanumericRegex = /^[a-z0-9]+$/i;
+
+                // Capitalize the text
+                const formattedText = txt.toUpperCase();
+
+                // Check if the formatted text is alphanumeric
+                if (alphanumericRegex.test(formattedText)) 
+             setRiddorRef(formattedText)}}
               style={styles.input}
             />
           </View>

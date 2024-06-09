@@ -1,26 +1,28 @@
-import React, { useContext, useState } from 'react';
 import {
-  KeyboardAvoidingView,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
   View,
-  Dimensions,
+  Platform,
+  StyleSheet,
+  ScrollView,
+  SafeAreaView,
   TouchableHighlight,
+  KeyboardAvoidingView,
 } from 'react-native';
+import React, { useContext, useState,useEffect } from 'react';
+import { useRoute } from '@react-navigation/native';
+
+// Components
 import Text from '../../components/Text';
 import Header from '../../components/Header';
-import { useNavigation, useRoute } from '@react-navigation/native';
 import { TextType } from '../../theme/typography';
 import TextInput from '../../components/TextInput';
-import NumberInput from '../../components/NumberInput';
-import { AppContext } from '../../context/AppContext';
+
+// Context & Utils
 import EcomHelper from '../../utils/ecomHelper';
+import { AppContext } from '../../context/AppContext';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import { useSQLiteContext } from 'expo-sqlite/next';
 
-const { width, height } = Dimensions.get('window');
-
-const RepeatComponent = ({ title, onChangeText, value }) => {
+const RepeatComponent = ({ title, value, onChangeText }) => {
   return (
     <View style={styles.repeatComponentContainer}>
       <View style={styles.titleContainer}>
@@ -30,7 +32,7 @@ const RepeatComponent = ({ title, onChangeText, value }) => {
       </View>
       <View style={styles.inputContainer}>
         <TextInput
-          value={value}
+          value={String(value)} // Ensure the value is a string
           onChangeText={onChangeText}
           style={styles.input}
           keyboardType="numeric"
@@ -44,84 +46,66 @@ const RepeatComponent = ({ title, onChangeText, value }) => {
 };
 
 function StreamsSetSealDetailsPage() {
-  const navigation = useNavigation();
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const appContext = useContext(AppContext);
-  const [n, setN] = useState(appContext.streamNumber);
-
-  const [streamValue, setStreamValue] = useState(appContext.streamValue);
-  const jobType = appContext.jobType;
+  const { streams, jobID, setStreams,  } = appContext;
+  
+  const db = useSQLiteContext();
   const route = useRoute();
-  const { title, nextScreen, jobId } = route?.params ?? {};
+  const { title } = route?.params ?? {};
 
-  console.log('StreamsSetSealDetailsPage');
-
-  const saveToDatabase = async () => {
-    const streamDetailsJson = JSON.stringify(streamValue);
-
-    console.log({ streamDetailsJson });
-    try {
-      await db
-        .runAsync('UPDATE Jobs SET streams = ? WHERE id = ?', [
-          streamDetailsJson,
-          appContext.jobID,
-        ])
-        .then((result) => {
-          console.log('streams saved to database:', result);
-        });
-    } catch (error) {
-      console.log('Error saving streams to database:', error);
+  const handleInputChange = (key, value) => {
+    setStreams((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+    console.log('Streams', streams);
+  };
+  useEffect(() => {
+    if (isNaN(streams.Number)) {
+      handleInputChange(Number,0)
     }
+  }, [streams.Number]);
+  const saveToDatabase = async () => {
+    const streamDetailsJson = JSON.stringify(streams);
+    console.log("message:292 Stream values:", streams);
+    console.log("message:293 number of streams:", streams.Number);
+    try {
+      await db.runAsync('UPDATE Jobs SET streams = ? WHERE id = ?', [
+        streamDetailsJson,
+        jobID,
+      ]);
+    } catch (error) {
+      console.error('Error saving streams to database:', error);
+    }
+  };
+
+  const validateFields = () => {
+    if (streams.Number === 0) {
+      EcomHelper.showInfoMessage("Stream value can't be 0.");
+      return false;
+    }
+    for (let i = 1; i <= streams.Number; i++) {
+      if (
+        !streams[`slamShut${i}`] ||
+        !streams[`creepRelief${i}`] ||
+        !streams[`workingPressure${i}`]
+      ) {
+        EcomHelper.showInfoMessage('Please input the whole mbars');
+        return false;
+      }
+    }
+    return true;
   };
 
   const nextPressed = async () => {
-    console.log(streamValue);
-
-    if (n === 0) {
-      EcomHelper.showInfoMessage("Stream value can't be 0.");
-      return;
-    }
-    for (let i = 0; i < n; i++) {
-      let item = streamValue[i];
-      if (
-        item?.slamShut == null ||
-        item?.slamShut === '' ||
-        item?.creepRelief == null ||
-        item?.creepRelief === '' ||
-        item?.workingPressure == null ||
-        item?.workingPressure === ''
-      ) {
-        EcomHelper.showInfoMessage('Please input the whole mbars');
-        return;
-      }
-    }
+    if (!validateFields()) return;
     await saveToDatabase();
-    appContext.setStreamValue(streamValue);
-    appContext.setStreamNumber(n);
-
-    // TODO: navigate to next screen is undefined here so need to fix this
-    // provide required navigation screen name in nextScreen
-    navigation.navigate(nextScreen);
+    goToNextStep();
   };
 
   const backPressed = () => {
-    appContext.setStreamValue(streamValue);
-    appContext.setStreamNumber(n);
-
-    navigation.goBack();
-  };
-
-  const handleChangeValue = (newValue) => {
-    console.log('New value:======', newValue);
-    setN(newValue);
-  };
-
-  const handleFieldChange = (value, index, field) => {
-    const updatedStreamValue = [...streamValue];
-    updatedStreamValue[index] = {
-      ...updatedStreamValue[index],
-      [`${field}`]: value,
-    };
-    setStreamValue(updatedStreamValue);
+    goToPreviousStep();
   };
 
   return (
@@ -141,83 +125,55 @@ function StreamsSetSealDetailsPage() {
         >
           <View style={styles.body}>
             <Text type={TextType.CAPTION_2}>Streams Set and Seal Details</Text>
-
-            <View
-              style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}
-            >
+            <View style={styles.streamNumberContainer}>
               <Text type={TextType.CAPTION_2} style={styles.streamNumberText}>
                 {'Number of streams:'}
               </Text>
               <TouchableHighlight
                 style={styles.incDecrButton}
                 onPress={() => {
-                  if (n > 0) {
-                    setN((prev) => prev - 1);
-                  }
-
-                  // remove last stream value if n is decreased
-                  if (streamValue.length >= n) {
-                    const updatedStreamValue = [...streamValue];
-                    updatedStreamValue.pop();
-                    setStreamValue(updatedStreamValue);
+                  if (streams.Number > 0) {
+                    handleInputChange('Number', Math.max(streams.Number - 1, 0));
                   }
                 }}
               >
                 <Text>-</Text>
               </TouchableHighlight>
-              <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{n}</Text>
+              <Text style={styles.streamNumber}>{streams.Number}</Text>
               <TouchableHighlight
                 style={styles.incDecrButton}
                 onPress={() => {
-                  setN((prev) => prev + 1);
+                  handleInputChange('Number', streams.Number + 1);
                 }}
               >
                 <Text>+</Text>
               </TouchableHighlight>
             </View>
 
-            {Array.from({ length: n }, (_, index) => (
-              <View style={styles.streamContainer}>
-                <Text type={TextType.CAPTION_2}>{`stream ${index + 1}`}</Text>
+            {Array.from({ length: streams.Number }, (_, index) => (
+              <View key={index} style={styles.streamContainer}>
+                <Text type={TextType.CAPTION_2}>{`Stream ${index + 1}`}</Text>
                 <View style={styles.section}>
                   <RepeatComponent
                     title={'Slam Shut'}
-                    value={streamValue[index]?.slamShut ?? 0}
-                    onChangeText={(v) => {
-                      if (v.length > 5) {
-                        EcomHelper.showInfoMessage(
-                          'Max length should be less than 5'
-                        );
-                        return;
-                      }
-                      handleFieldChange(v, index, 'slamShut');
-                    }}
+                    value={streams[`slamShut${index + 1}`] ?? ''}
+                    onChangeText={(value) =>
+                      handleInputChange(`slamShutValue${index + 1}`, value.replace(/[^0-9]/g, ''))
+                    }
                   />
                   <RepeatComponent
                     title={'Creep Relief'}
-                    value={streamValue[index]?.creepRelief ?? 0}
-                    onChangeText={(v) => {
-                      if (v.length > 5) {
-                        EcomHelper.showInfoMessage(
-                          'Max length should be less than 5'
-                        );
-                        return;
-                      }
-                      handleFieldChange(v, index, 'creepRelief');
-                    }}
+                    value={streams[`creepRelief${index + 1}`] ?? ''}
+                    onChangeText={(value) =>
+                      handleInputChange(`creepRelief${index + 1}`, value.replace(/[^0-9]/g, ''))
+                    }
                   />
                   <RepeatComponent
                     title={'Working Pressure'}
-                    value={streamValue[index]?.workingPressure ?? 0}
-                    onChangeText={(v) => {
-                      if (v.length > 5) {
-                        EcomHelper.showInfoMessage(
-                          'Max length should be less than 5'
-                        );
-                        return;
-                      }
-                      handleFieldChange(v, index, 'workingPressure');
-                    }}
+                    value={streams[`workingPressure${index + 1}`] ?? ''}
+                    onChangeText={(value) =>
+                      handleInputChange(`workingPressure${index + 1}`, value.replace(/[^0-9]/g, ''))
+                    }
                   />
                 </View>
               </View>
@@ -240,9 +196,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     gap: 20,
   },
-  streamNumberContainer: {},
+  streamNumberContainer: {
+    flexDirection: 'row',
+    gap: 10,
+    alignItems: 'center',
+  },
   streamNumberText: {
     textAlign: 'left',
+  },
+  streamNumber: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   streamContainer: {
     width: '100%',
@@ -288,9 +252,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    // elevate
     elevation: 2,
-    // shadow
     shadowColor: '#000',
     shadowOffset: {
       width: 0,

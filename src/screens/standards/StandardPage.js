@@ -1,68 +1,59 @@
-import React, { useContext, useState } from 'react';
 import {
-  Button,
-  Image,
-  KeyboardAvoidingView,
-  Modal,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
   View,
+  Image,
+  Modal,
+  Button,
+  StyleSheet,
   Dimensions,
+  ScrollView,
+  SafeAreaView,
+  KeyboardAvoidingView,
 } from 'react-native';
+import React, { useContext, useState } from 'react';
+import SignatureScreen from 'react-native-signature-canvas';
+
 import { isIos } from '../../utils/constant';
-import { useNavigation } from '@react-navigation/native';
-import Header from '../../components/Header';
+
+// Components
 import Text from '../../components/Text';
+import Header from '../../components/Header';
 import OptionalButton from '../../components/OptionButton';
-import TextInput, { TextInputWithTitle } from '../../components/TextInput';
+import { TextInputWithTitle } from '../../components/TextInput';
+
+// Context
 import { AppContext } from '../../context/AppContext';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+
+// Utils
 import EcomHelper from '../../utils/ecomHelper';
 import { PrimaryColors } from '../../theme/colors';
-import SignatureScreen from 'react-native-signature-canvas';
 
 const { width, height } = Dimensions.get('window');
 function StandardPage() {
-  const navigation = useNavigation();
   const appContext = useContext(AppContext);
-  const jobType = appContext.jobType;
-  const { standardDetails, meterDetails, jobID } = appContext;
-  const title = 'Standard Details';
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
-  const [testPassed, setTestPassed] = useState(standardDetails?.testPassed);
-  const [conformStandard, setconformStandard] = useState(
-    standardDetails?.conformStandard
-  );
-  const [riddorReportable, setRiddorReportable] = useState(
+  const title = 'Standard Details';
+  const { standardDetails, meterDetails, jobID, setStandardDetails,jobType } =
+    appContext;
+
+  const riddorReportable =
     standardDetails?.riddorReportable == null
       ? meterDetails?.isStandard
-      : standardDetails?.riddorReportable
-  );
-  const [useOutlet, setUseOutlet] = useState(standardDetails?.useOutlet);
-  const [pressure, setPressure] = useState(standardDetails?.pressure);
-  const [conformText, setconformText] = useState(standardDetails?.conformText);
-  const [signature, setSignature] = useState(standardDetails?.signature);
+      : standardDetails?.riddorReportable;
+
   const [isModal, setIsModal] = useState(false);
 
   const handleOK = (signature) => {
     const base64String = signature.replace('data:image/png;base64,', '');
-    setSignature(base64String);
-    console.log(base64String);
+    setStandardDetails((curState) => ({
+      ...curState,
+      signature: base64String,
+    }));
     setIsModal(false);
   };
 
   const nextPressed = async () => {
-    const standards = {
-      ...standardDetails,
-      testPassed: testPassed,
-      conformStandard: conformStandard,
-      riddorReportable: riddorReportable,
-      useOutlet: useOutlet,
-      pressure: pressure,
-      conformText: conformText,
-      signature,
-    };
-
     const meterDetailsUpdate = {
       ...meterDetails,
       isStandard: riddorReportable,
@@ -71,19 +62,19 @@ function StandardPage() {
     // console.log('Meter Details before JSON:', meterDetailsUpdate);
 
     try {
-      if (conformStandard == null) {
+      if (standardDetails?.conformStandard == null) {
         EcomHelper.showInfoMessage(
           'Please answer if the network service/ECV conform to standards'
         );
         return;
       }
 
-      if (pressure == null) {
+      if (standardDetails?.pressure == null) {
         EcomHelper.showInfoMessage('Please set inlet pressure');
         return;
       }
 
-      if (signature == null) {
+      if (standardDetails?.signature == null) {
         EcomHelper.showInfoMessage('Please enter signature');
         return;
       }
@@ -92,20 +83,20 @@ function StandardPage() {
         return;
       }
       if (meterDetails?.isMeter) {
-        if (testPassed == null) {
-          EcomHelper.showInfoMessage('Please answer if tightness test passed');
-          return;
-        }
-
-        if (useOutlet == null) {
-          EcomHelper.showInfoMessage('Please answer if Outlet kit is used');
-          return;
+        if (jobType === 'Install' || jobType === 'Exchange') {
+          if (standardDetails?.testPassed == null) {
+            EcomHelper.showInfoMessage('Please answer if tightness test passed');
+            return;
+          }
+          if (standardDetails?.useOutlet == null) {
+            EcomHelper.showInfoMessage('Please answer if Outlet kit is used');
+            return;
+          }
         }
       }
 
-      appContext.setStandardDetails(standards);
       await db.runAsync('UPDATE Jobs SET standards = ? WHERE id = ?', [
-        JSON.stringify(standards),
+        JSON.stringify(),
         jobID,
       ]);
 
@@ -116,15 +107,8 @@ function StandardPage() {
         jobID,
       ]);
 
-      if (riddorReportable === true) {
-        navigation.navigate('RiddorReportPage');
-      } else {
-        if (conformStandard === false) {
-          navigation.navigate('SnClientInfoPage');
-        } else {
-          navigation.navigate('CompositeLabelPhoto');
-        }
-      }
+      setStandardDetails(standardDetails);
+      goToNextStep();
     } catch (error) {
       console.error('Error updating job details:', error);
       EcomHelper.showInfoMessage(
@@ -134,18 +118,7 @@ function StandardPage() {
   };
 
   const backPressed = () => {
-    appContext.setStandardDetails({
-      ...standardDetails,
-      testPassed: testPassed,
-      conformStandard: conformStandard,
-      riddorReportable: riddorReportable,
-      useOutlet: useOutlet,
-      pressure: pressure,
-      conformText: conformText,
-      signature,
-    });
-
-    navigation.goBack();
+    goToPreviousStep();
   };
 
   return (
@@ -172,16 +145,22 @@ function StandardPage() {
                 options={['Yes', 'No']}
                 actions={[
                   () => {
-                    setconformStandard(true);
+                    setStandardDetails((curState) => ({
+                      ...curState,
+                      conformStandard: true,
+                    }));
                   },
                   () => {
-                    setconformStandard(false);
+                    setStandardDetails((curState) => ({
+                      ...curState,
+                      conformStandard: false,
+                    }));
                   },
                 ]}
                 value={
-                  conformStandard == null
+                  standardDetails?.conformStandard == null
                     ? null
-                    : conformStandard
+                    : standardDetails?.conformStandard
                     ? 'Yes'
                     : 'No'
                 }
@@ -194,10 +173,16 @@ function StandardPage() {
                 options={['Yes', 'No']}
                 actions={[
                   () => {
-                    setRiddorReportable(true);
+                    setStandardDetails((curState) => ({
+                      ...curState,
+                      riddorReportable: true,
+                    }));
                   },
                   () => {
-                    setRiddorReportable(false);
+                    setStandardDetails((curState) => ({
+                      ...curState,
+                      riddorReportable: false,
+                    }));
                   },
                 ]}
                 value={
@@ -211,32 +196,121 @@ function StandardPage() {
             </View>
             <View style={styles.spacer} />
             <View style={styles.container}>
-              {meterDetails?.isMeter && (
+            {jobType !=="Survey" && (
+              <>
+                  <View style={styles.spacer} />
+            <Text>Any Additional materials used</Text>
+            <View style={styles.optionContainer}>
+              <OptionalButton
+                options={['Yes', 'No']}
+                actions={[
+                  () => {
+                    setStandardDetails((curState) => ({
+                      ...curState,
+                      additionalMaterials: true,
+                    }));
+                  },
+                  () => {
+                    setStandardDetails((curState) => ({
+                      ...curState,
+                      additionalMaterials: false,
+                    }));
+                  },
+                ]}
+                value={
+                  standardDetails?.additionalMaterials == null
+                    ? null
+                    : standardDetails?.additionalMaterials
+                    ? 'Yes'
+                    : 'No'
+                }
+              />
+            </View>
+            <View style={styles.spacer} />
+            <Text>Any chatterBox installed</Text>
+            <View style={styles.optionContainer}>
+              <OptionalButton
+                options={['Yes', 'No']}
+                actions={[
+                  () => {
+                    setStandardDetails((curState) => ({
+                      ...curState,
+                      chatterbox: true,
+                    }));
+                  },
+                  () => {
+                    setStandardDetails((curState) => ({
+                      ...curState,
+                      chatterbox: false,
+                    }));
+                  },
+                ]}
+                value={
+                  standardDetails?.chatterbox == null
+                    ? null
+                    : standardDetails?.chatterbox
+                    ? 'Yes'
+                    : 'No'
+                }
+              />
+            </View>
+              
+              </>
+            )}
+            </View>
+            <View style={styles.spacer} />
+            <View style={styles.container}>
+              {meterDetails?.isMeter  && (jobType === 'Install' || jobType === 'Exchange') && (
                 <>
-                  <Text>Outlet kit be used</Text>
+                  <Text>Outlet kit been used</Text>
                   <View style={styles.optionContainer}>
                     <OptionalButton
                       options={['Yes', 'No']}
                       actions={[
-                        () => setUseOutlet(true),
-                        () => setUseOutlet(false),
+                        () =>
+                          setStandardDetails((curState) => ({
+                            ...curState,
+                            useOutlet: true,
+                          })),
+                        () =>
+                          setStandardDetails((curState) => ({
+                            ...curState,
+                            useOutlet: false,
+                          })),
                       ]}
                       value={
-                        useOutlet == null ? null : useOutlet ? 'Yes' : 'No'
+                        standardDetails?.useOutlet == null
+                          ? null
+                          : standardDetails?.useOutlet
+                          ? 'Yes'
+                          : 'No'
                       }
                     />
                   </View>
+              
                   <View style={styles.spacer} />
                   <Text>Tightness test passed</Text>
                   <View style={styles.optionContainer}>
                     <OptionalButton
                       options={['Yes', 'No']}
                       actions={[
-                        () => setTestPassed(true),
-                        () => setTestPassed(false),
+                        () =>
+                          setStandardDetails((curState) => ({
+                            ...curState,
+                            testPassed: true,
+                          })),
+                        () =>
+                          setStandardDetails((curState) => ({
+                            ...curState,
+                            testPassed: false,
+                          })),
                       ]}
                       value={
-                        testPassed == null ? null : testPassed ? 'Yes' : 'No'
+                        standardDetails?.testPassed == null
+                          ? null
+                          : standardDetails?.testPassed
+                          ? 'Yes'
+                          : 'No'
                       }
                     />
                   </View>
@@ -248,10 +322,13 @@ function StandardPage() {
             <TextInputWithTitle
               title={'Inlet Pressure'}
               width={'100%'}
-              value={pressure}
+              value={standardDetails?.pressure}
               onChange={(event) => {
                 // its sendign native event with numeric keyboard
-                setPressure(event.nativeEvent.text);
+                setStandardDetails((curState) => ({
+                  ...curState,
+                  pressure: event.nativeEvent.text,
+                }));
               }}
               keyboardType="numeric"
             />
@@ -259,9 +336,12 @@ function StandardPage() {
             <View style={styles.spacer} />
             <TextInputWithTitle
               title={'Notes'}
-              value={conformText}
+              value={standardDetails?.conformText}
               onChangeText={(text) => {
-                setconformText(text);
+                setStandardDetails((curState) => ({
+                  ...curState,
+                  conformText: text,
+                }));
               }}
               style={{
                 ...styles.input,
@@ -284,9 +364,11 @@ function StandardPage() {
                 }}
               />
               <View style={styles.spacer} />
-              {signature && (
+              {standardDetails?.signature && (
                 <Image
-                  source={{ uri: `data:image/png;base64,${signature}` }}
+                  source={{
+                    uri: `data:image/png;base64,${standardDetails?.signature}`,
+                  }}
                   style={styles.signImage}
                 />
               )}
