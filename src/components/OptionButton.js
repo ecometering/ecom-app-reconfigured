@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   },
   button: {
     padding: 5,
-    width: 50,
+    Minwidth: 50,
     alignItems: 'center',
     justifyContent: 'center',
     // borderWidth: 1,
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   },
   selectedButton: {
     padding: 5,
-    width: 50,
+    minWidth: 50,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,

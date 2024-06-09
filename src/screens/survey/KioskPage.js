@@ -30,7 +30,7 @@ export default function KioskPage() {
   const db = useSQLiteContext();
   const route = useRoute();
   const { title} = route.params;
-  const { kioskDetails, setKioskDetails } = useContext(AppContext);
+  const { kioskDetails, setKioskDetails,jobID } = useContext(AppContext);
   const navigation = useNavigation();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const handleInputChange = (key, value) => {
@@ -46,7 +46,7 @@ export default function KioskPage() {
       await db 
       .runAsync ( 
         'UPDATE Jobs SET kioskDetails =? WHERE id = ?',
-        [kioskJson, job.id]
+        [kioskJson, jobID]
       )
       .then((result) => {
         console.log('Kiosk Details saved to database:', result);
@@ -355,7 +355,7 @@ export default function KioskPage() {
             <View style={styles.row}>
               <View style={styles.inputContainer}>
                 <TextInputWithTitle
-                  title="Height (cm)"
+                  title="Height (mm)"
                   value={kioskDetails.height}
                   onChangeText={(txt) => {
                     const numericValue = txt.replace(/[^0-9.]/g, "");
@@ -367,7 +367,7 @@ export default function KioskPage() {
               </View>
               <View style={styles.inputContainer}>
                 <TextInputWithTitle
-                  title="Width (cm)"
+                  title="Width (mm)"
                   value={kioskDetails.width}
                   onChangeText={(txt) => {
                     const numericValue = txt.replace(/[^0-9.]/g, "");
@@ -379,7 +379,7 @@ export default function KioskPage() {
               </View>
               <View style={styles.inputContainer}>
                 <TextInputWithTitle
-                  title="Length (cm)"
+                  title="Length (mm)"
                   value={kioskDetails.length}
                   onChangeText={(txt) => {
                     const numericValue = txt.replace(/[^0-9.]/g, "");

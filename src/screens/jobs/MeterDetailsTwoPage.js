@@ -49,7 +49,7 @@ function MeterDetailsTwoPage() {
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
   const isIos = Platform.OS === 'ios';
-  const { title, nextScreen } = route.params;
+  const { title } = route.params;
   const diaphragmMeterTypes = ['1', '2', '4'];
   const { jobType, MeterDetailsTwo, setMeterDetailsTwo, jobID } =
     useContext(AppContext);

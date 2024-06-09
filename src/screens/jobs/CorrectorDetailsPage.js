@@ -64,7 +64,7 @@ export default function CorrectorDetailsPage() {
     setCorrectorDetails,
   } = useContext(AppContext);
 
-  const { title, nextScreen, photoKey } = route.params;
+  const { title,  photoKey } = route.params;
   const existingPhoto = photos && photoKey ? photos[photoKey] : null;
 
   const [models, setModels] = useState([]);
@@ -386,7 +386,7 @@ export default function CorrectorDetailsPage() {
 
 const styles = StyleSheet.create({
   image: {
-    height: height * 0.25, // Adjust the multiplier to fit your design needs
+    height: height * 0.2, // Adjusted for smaller screens
   },
   content: {
     flex: 1,
@@ -397,21 +397,23 @@ const styles = StyleSheet.create({
   border: {
     borderWidth: 1,
     borderColor: PrimaryColors.Black,
-    padding: height * 0.02, // Adjust the multiplier to fit your design needs
+    padding: height * 0.015, // Adjusted for smaller screens
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
+    flexWrap: 'wrap', // Added to wrap elements on smaller screens
   },
   buttonContainer: {
-    width: width * 0.4,
+    width: width * 0.8, // Adjusted for smaller screens
     alignSelf: 'center',
     justifyContent: 'space-between',
     flexDirection: 'row',
+    flexWrap: 'wrap', // Added to wrap elements on smaller screens
   },
   button: {
-    width: width * 0.2,
+    width: width * 0.35, // Adjusted for smaller screens
   },
   divider: {
     width: '100%',
@@ -426,6 +428,7 @@ const styles = StyleSheet.create({
     minHeight: 40,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 5, // Added for smaller screens
   },
   cell: {
     flex: 1,
@@ -437,17 +440,18 @@ const styles = StyleSheet.create({
     minHeight: 40,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 5, // Added for smaller screens
   },
   optionContainer: {
-    width: width * 0.25, // Adjusted for responsiveness
-    marginVertical: height * 0.01, // Adjusted based on screen height
+    width: width * 0.4, // Adjusted for smaller screens
+    marginVertical: height * 0.005, // Adjusted for smaller screens
     alignSelf: 'flex-start',
   },
   spacer: {
-    height: height * 0.02, // Adjusted based on screen height
+    height: height * 0.01, // Adjusted for smaller screens
   },
   spacer2: {
-    height: height * 0.01, // Adjusted based on screen height
+    height: height * 0.005, // Adjusted for smaller screens
   },
   closeButtonContainer: {
     position: 'absolute',

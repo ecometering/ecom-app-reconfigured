@@ -3,13 +3,16 @@ import FilterPage from '../screens/jobs/FilterPage';
 import SlamshutPage from '../screens/jobs/SlamshutPage';
 import RegulatorPage from '../screens/jobs/RegulatorPage';
 import WaferCheckPage from '../screens/jobs/WaferCheckPage';
-import ChatterBoxPage from '../screens/jobs/ChatterBoxPage';
+import ChatterBoxDetailsPage from '../screens/jobs/ChatterBoxPage';
 import MeterDetailsPage from '../screens/jobs/MeterDetailsPage';
+import MeterDetailsTwoPage from '../screens/jobs/MeterDetailsTwoPage';
 import GenericPhotoPage from '../screens/jobs/GenericPhotoPage';
 import ActiveRegulatorPage from '../screens/jobs/ActiveRegulatorPage';
 import ReliefRegulatorPage from '../screens/jobs/ReliefRegulatorPage';
 import CorrectorDetailsPage from '../screens/jobs/CorrectorDetailsPage';
+import CorrectorDetailsTwoPage from '../screens/jobs/CorrectorDetailsTwoPage';
 import DataLoggerDetailsPage from '../screens/jobs/DataLoggerDetailsPage';
+import DataLoggerDetailsTwoPage from '../screens/jobs/DataLoggerDetailsTwoPage';
 import AssetTypeSelectionPage from '../screens/jobs/AssetTypeSelectionPage';
 import AdditionalMaterialPage from '../screens/jobs/AdditionalMaterialPage';
 import StreamsSetSealDetailsPage from '../screens/jobs/StreamsSetSealDetailsPage';
@@ -30,6 +33,11 @@ export const unitedFlowNavigators = [
   {
     name: 'MeterDetails',
     component: MeterDetailsPage,
+    initialParams: { title: 'New Meter Details' },
+  },
+  {
+    name: 'MeterDetailsTwo',
+    component: MeterDetailsTwoPage,
     initialParams: { title: 'New Meter Details' },
   },
   {
@@ -57,6 +65,14 @@ export const unitedFlowNavigators = [
     },
   },
   {
+    name: 'ExistingMeterDataBadge',
+    component: GenericPhotoPage,
+    initialParams: {
+      title: 'Existing Meter data badge',
+      photoKey: 'ExistingMeterDataBadge',
+    },
+  },
+  {
     name: 'MeterIndex',
     component: GenericPhotoPage,
     initialParams: {
@@ -73,6 +89,22 @@ export const unitedFlowNavigators = [
     },
   },
   {
+    name: 'ExistingMeterIndex',
+    component: GenericPhotoPage,
+    initialParams: {
+      title: 'Existing Meter index',
+      photoKey: 'ExistingMeterIndex',
+    },
+  },
+  {
+    name: 'ExistingMeterPhoto',
+    component: GenericPhotoPage,
+    initialParams: {
+      title: 'Existing Meter photo',
+      photoKey: 'ExistingMeterPhoto',
+    },
+  },
+  {
     name: 'CorrectorDetails',
     component: CorrectorDetailsPage,
     initialParams: {
@@ -81,8 +113,24 @@ export const unitedFlowNavigators = [
     },
   },
   {
+    name: 'CorrectorDetailsTwo',
+    component: CorrectorDetailsTwoPage,
+    initialParams: {
+      title: 'New Corrector installed',
+      photoKey: 'installedCorrector',
+    },
+  },
+  {
     name: 'DataLoggerDetails',
     component: DataLoggerDetailsPage,
+    initialParams: {
+      title: 'New AMR installed',
+      photoKey: 'installedAMR',
+    },
+  },
+  {
+    name: 'DataLoggerDetailsTwo',
+    component: DataLoggerDetailsTwoPage,
     initialParams: {
       title: 'New AMR installed',
       photoKey: 'installedAMR',
@@ -122,7 +170,9 @@ export const unitedFlowNavigators = [
     component: WaferCheckPage,
     initialParams: { title: 'Wafer Check' },
   },
-  { name: 'Regulator', component: RegulatorPage },
+  { name: 'Regulator', component: RegulatorPage,
+  initialParams: {title:"regulator"},
+   },
   {
     name: 'RegulatorPhotoPage',
     component: GenericPhotoPage,
@@ -131,7 +181,12 @@ export const unitedFlowNavigators = [
       photoKey: 'RegulatorPhotoPage',
     },
   },
-  { name: 'ChatterBox', component: ChatterBoxPage },
+  { name: 'ChatterBox', component: ChatterBoxDetailsPage,
+  initialParams: {
+  title:'ChatterBox',
+  photoKey:'ChatterBoxPhoto'
+  }
+   },
   { name: 'AdditionalMaterial', component: AdditionalMaterialPage },
   { name: 'MaintenanceQuestions', component: MaintenanceQuestionsPage },
   {

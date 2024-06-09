@@ -87,7 +87,8 @@ function HomePage() {
           >
             <Text style={styles.buttonTxt}>Completed Job</Text>
           </Button>
-        
+          
+
           <TouchableOpacity
             onPress={OnLogout}
             style={{

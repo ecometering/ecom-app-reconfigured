@@ -20,6 +20,7 @@ import { useProgressNavigation } from '../context/ExampleFlowRouteProvider';
 
 const SubmitSuccessPage = () => {
   const appContext = useContext(AppContext);
+  const { jobStatus } = appContext;
   const { authState, RefreshAccessToken } = useAuth();
   const navigation = useNavigation();
   const { goToPreviousStep } = useProgressNavigation();
@@ -69,8 +70,6 @@ const SubmitSuccessPage = () => {
   async function sendData(jobData) {
     const body = {
       data: jobData,
-      // TODO: when no longer needed by the api remove this line
-      // engineer_id: 1,
     };
     try {
       axios
@@ -227,8 +226,15 @@ const SubmitSuccessPage = () => {
         <Text>Submit the job</Text>
         {isLoading ? (
           <ActivityIndicator size="large" />
-        ) : (
+        ) : jobStatus === 'In Progress' ? (
           <Button title="Send" onPress={fetchAndUploadJobData} />
+        ) : (
+          <Button
+            title="Return to Home"
+            onPress={() => {
+              navigation.navigate('Home');
+            }}
+          />
         )}
       </View>
     </SafeAreaView>

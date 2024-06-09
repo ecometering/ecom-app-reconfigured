@@ -181,20 +181,24 @@ export const SurveyExistingCorrectorDetails = [
     diversions: (state) => {
       const { meterDetails } = state || {};
       const { pressureTier } = meterDetails || {};
-
+    
       const isAmr = meterDetails?.isAmr;
       const isMeter = meterDetails?.isMeter;
-
+    
       if (isAmr) {
         return SurveyExistingDataLoggerDetails;
-      } else if (isMeter) {
-        if (pressureTier === 'MP') {
+      }
+      
+      if (isMeter) {
+        if (pressureTier === 'LP' || pressureTier?.label === 'LP') {
+          return SurveyStandardPage;
+        } else {
           return SurveyStreamsSetSealDetailsPage;
         }
-      } else {
-        return SurveyStandardPage;
       }
-    },
+    
+      return SurveyStandardPage;
+    }
   },
 ];
 
@@ -206,20 +210,20 @@ export const SurveyExistingDataLoggerDetails = [
     },
     diversions: (state) => {
       const { meterDetails } = state || {};
-
+    
       const pressureTier = meterDetails?.pressureTier?.label;
       const isMeter = meterDetails?.isMeter;
-
+    
       if (isMeter) {
-        if (pressureTier === 'MP') {
-          return SurveyStreamsSetSealDetailsPage;
-        } else {
+        if (pressureTier === 'LP') {
           return SurveyStandardPage;
+        } else {
+          return SurveyStreamsSetSealDetailsPage;
         }
-      } else {
-        return SurveyStandardPage;
       }
-    },
+    
+      return SurveyStandardPage;
+    }
   },
 ];
 
@@ -236,30 +240,39 @@ export const InstancesForStreamFlow = ({ state }) => {
           screen: 'StreamFilterPage',
           params: {
             title: `Filter Page ${stream}`,
+            stream:stream ,
+            photoKey:`Filter${stream}Photo`
           },
         },
         {
           screen: 'StreamSlamshutPage',
           params: {
             title: `Slamshut Page ${stream}`,
+            photoKey:`SlamShut${stream}Photo`,
           },
         },
         {
           screen: 'StreamActiveRegulatorPage',
           params: {
             title: `Active Regulator Page ${stream}`,
+            photoKey:`ActiveRegulator${stream}Photo`,
+
           },
         },
         {
           screen: 'StreamReliefRegulatorPage',
           params: {
             title: `Relief Regulator Page ${stream}`,
+            photoKey:`ReliefRegulator${stream}Photo`,
+
           },
         },
         {
           screen: 'StreamWaferCheckPage',
           params: {
             title: `Wafer Check Page ${stream}`,
+            photoKey:`WaferCheck${stream}Photo`,
+
           },
         },
       ];
@@ -276,23 +289,12 @@ export const SurveyStreamsSetSealDetailsPage = [
     },
     diversions: (state) => {
       const streamFlows = InstancesForStreamFlow({ state });
-      return [...streamFlows, ...RegulatorPage];
+      return [...streamFlows, ...SurveyStandardPage];
     },
   },
 ];
 
-export const RegulatorPage = [
-  {
-    screen: 'Regulator',
-  },
-  {
-    screen: 'ChatterBox',
-  },
-  {
-    screen: 'AdditionalMaterial',
-  },
-  ...SurveyStandardPage,
-];
+
 
 export const SurveyExistingMeterIndex = [
   {
@@ -311,23 +313,28 @@ export const SurveyExistingMeterIndex = [
 
     diversions: (state) => {
       const { meterDetails } = state || {};
-      const { meterType, pressureTier } = meterDetails || {};
+      const { pressureTier } = meterDetails || {};
       const isCorrector = meterDetails?.isCorrector;
       const isAmr = meterDetails?.isAmr;
       const isMeter = meterDetails?.isMeter;
+    
+     
       if (isCorrector) {
         return SurveyExistingCorrectorDetails;
       }
+    
       if (isAmr) {
         return SurveyExistingDataLoggerDetails;
-      } else if (isMeter) {
-        if (pressureTier === 'MP') {
-          return SurveyStreamsSetSealDetailsPage;
-        }
-      } else {
-        return SurveyStandardPage;
       }
-    },
+    
+      if (isMeter) {
+        if (pressureTier === 'LP' || pressureTier?.label === 'LP') {
+          return SurveyStandardPage;
+        }
+      }
+    
+      return SurveyStreamsSetSealDetailsPage;
+    }
   },
 ];
 

@@ -99,6 +99,10 @@ export const RiddorReportPage = [
 export const AssetTypeSelectionPage = [
   {
     screen: 'AssetTypeSelectionPage',
+
+    params: {
+      title: 'Assets being removed',
+    },
     diversions: (state) => {
       const { meterDetails } = state || {};
       if (meterDetails?.isMeter) {
@@ -120,13 +124,64 @@ export const RebookPage = [
 ];
 
 // Site Questions Alternative Flows
+export const chatterBoxPage =[
+  {
+    screen: 'chatterBox',
+    diversions: (state) => {
+      const { standardDetails } = state;
+      const { riddorReportable, conformStandard } = standardDetails;
+   
+      
+    if (riddorReportable === true) {
+      return RiddorReportPage;
+    } else {
+      if (conformStandard === false) {
+        return SnClientInfoPage;
+      } else {
+        return CompositeLabelPhoto;
+      }
+    }}
+  },
+
+]
+
+export const AdditionalMaterialsPage =[
+  {
+    screen: 'AdditionalMaterials',
+    diversions: (state) => {
+      const { standardDetails } = state;
+      const { riddorReportable, conformStandard,chatterbox, } = standardDetails;
+    if (chatterbox === true) {
+      return chatterBoxPage}
+    else {
+      
+    if (riddorReportable === true) {
+      return RiddorReportPage;
+    } else {
+      if (conformStandard === false) {
+        return SnClientInfoPage;
+      } else {
+        return CompositeLabelPhoto;
+      }
+    }}
+  },
+}
+]
+// Site Questions Alternative Flows
 export const RemovedStandardPage = [
   {
     screen: 'StandardPage',
     diversions: (state) => {
       const { standardDetails } = state;
-      const { riddorReportable, conformStandard } = standardDetails;
-
+      const { riddorReportable, conformStandard,chatterbox,additionalMaterials } = standardDetails;
+     if (additionalMaterials === true) {
+          return AdditionalMaterialsPage;
+        }
+        else{ 
+          if (chatterbox === true) {
+        return chatterBoxPage}
+      else {
+        
       if (riddorReportable === true) {
         return RiddorReportPage;
       } else {
@@ -135,7 +190,7 @@ export const RemovedStandardPage = [
         } else {
           return CompositeLabelPhoto;
         }
-      }
+      }}}
     },
   },
 ];
@@ -171,9 +226,9 @@ export const RemovedCorrectorDetails = [
 
       if (meterDetails?.isAmr) {
         return RemovedDataLoggerDetails;
-      } else {
-        return RemovedStandardPage;
       }
+        return RemovedStandardPage;
+      
     },
   },
 ];
@@ -185,11 +240,8 @@ export const RemovedDataLoggerDetails = [
       title: 'Removed AMR',
       photoKey: 'RemovedAMR',
     },
-    diversions: (state) => {
-      // TODO: this logic is not found in the original code but no diversion is found
-      // if not diversion needed then add this to the array as next page
-      return RemovedStandardPage;
-    },
+    ...RemovedStandardPage,
+    
   },
 ];
 
@@ -220,13 +272,14 @@ export const RemovedMeterIndex = [
       const isAmr = meterDetails?.isAmr;
       const isCorrector = meterDetails?.isCorrector;
 
-      if (isCorrector === true) {
+      if (isCorrector) {
         return RemovedCorrectorDetails;
-      } else if (isAmr) {
-        return RemovedDataLoggerDetails;
-      } else {
-        return RemovedStandardPage;
       }
+      if (isAmr) {
+        return RemovedDataLoggerDetails;
+      } 
+      return RemovedStandardPage;
+      
     },
   },
 ];
@@ -242,22 +295,3 @@ export const RemovedMeterDataBadge = [
   ...RemovedMeterIndex,
 ];
 
-// TODO: Nothing navigates to this page
-export const AdditionalMaterial = [
-  {
-    name: 'AdditionalMaterial',
-    params: {
-      title: 'Additional Material',
-    },
-    diversions: (state) => {
-      // TODO: define dataLogger
-      const datalogger = true;
-      if (datalogger) {
-        return RemovedDataLoggerDetails; // Navigate to DataLogger if true
-        // Use setAndSeal logic if meter is present
-      } else {
-        return RemovedStandardPage; // Fallback to StandardsNavigation
-      }
-    },
-  },
-];

@@ -1,143 +1,127 @@
+import { useSQLiteContext } from 'expo-sqlite/next';
+import { useRoute } from '@react-navigation/native';
 import React, { useContext, useRef, useState } from 'react';
 import {
-  Alert,
-  Button,
+  View,
   Image,
-  KeyboardAvoidingView,
+  Button,
   Platform,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
-  View,
   Dimensions,
+  SafeAreaView,
+  KeyboardAvoidingView,
 } from 'react-native';
+
+// Components
 import Text from '../../components/Text';
 import Header from '../../components/Header';
-import { useNavigation } from '@react-navigation/native';
 import TextInput from '../../components/TextInput';
-import EcomHelper from '../../utils/ecomHelper';
-import { AppContext } from '../../context/AppContext';
+import OptionalButton from '../../components/OptionButton';
 import BarcodeScanner from '../../components/BarcodeScanner';
 import ImagePickerButton from '../../components/ImagePickerButton';
+
+// Context and Helpers
+import EcomHelper from '../../utils/ecomHelper';
+import { TextType } from '../../theme/typography';
+import { PrimaryColors } from '../../theme/colors';
+import { AppContext } from '../../context/AppContext';
 import { makeFontSmallerAsTextGrows } from '../../utils/styles';
 import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
-const { width, height } = Dimensions.get('window');
+
 const alphanumericRegex = /^[a-zA-Z0-9]+$/;
+const { width, height } = Dimensions.get('window');
 
-function ChatterBoxPage() {
-  const navigation = useNavigation();
-  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
-  const appContext = useContext(AppContext);
-  const jobType = appContext.jobType;
-  const title = jobType === 'Install' ? 'New Meter Details' : jobType;
-  const regulatorDetails = appContext.regulatorDetails;
+export default function ChatterBoxDetailsPage() {
+  const route = useRoute();
   const camera = useRef(null);
+  const db = useSQLiteContext();
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
+  const {
+    jobID,
+    photos,
+    jobType,
+    savePhoto,
+    chatterBoxDetails,
+    setChatterBoxDetails,
+  } = useContext(AppContext);
+
+  const { title, nextScreen, photoKey } = route.params;
+  const existingPhoto = photos && photoKey ? photos[photoKey] : null;
+
   const [isModal, setIsModal] = useState(false);
-  const [serialNumber, setSerialNumber] = useState(
-    regulatorDetails?.chatterSerialNumber
-  );
-  const [manufacturer, setManufacturer] = useState(
-    regulatorDetails?.chatterManufacturer
-  );
-  const [chatterBoxImage, setchatterBoxImage] = useState(
-    regulatorDetails?.chatterImage
-  );
-  const [model, setModel] = useState(regulatorDetails?.chatterModel);
+  const [selectedImage, setSelectedImage] = useState(existingPhoto || {});
+  const [localChatterBoxDetails, setlocalChatterBoxDetails] = useState({} );
 
-  const updateChatterBoxDetails = async () => {
-    // Open the database connection
-    const db = await openDatabase();
-    // Assuming jobId is available in your component's state or context
-    const jobId = appContext.jobId;
-
-    // Serialize the photo details if you're storing images as part of the chatter box details
-    const photoDetails = {
-      title: 'ChatterBox Image',
-      uri: chatterBoxImage,
-      photoKey: 'chatterBoxImage',
-    };
-    const photoDetailsJSON = JSON.stringify(photoDetails);
-
-    // Fetch existing photos JSON from the database, append new photo details, and update
-    const existingPhotosJSON = await fetchPhotosJSON(db, jobId);
-    const updatedPhotosJSON = appendPhotoDetail(
-      existingPhotosJSON,
-      photoDetailsJSON
-    );
-
-    // Serialize all chatter box details into a JSON string
-    const chatterBoxDetailsJSON = JSON.stringify({
-      manufacturer,
-      model,
-      serialNumber,
-      imageUri: chatterBoxImage,
-    });
-
-    // Execute the SQL transaction to update the chatter box details and photos for the given jobId
-    db.transaction((tx) => {
-      tx.executeSql(
-        'UPDATE Jobs SET chatterBoxDetails = ?, photos = ? WHERE id = ?',
-        [chatterBoxDetailsJSON, updatedPhotosJSON, jobId],
-        (_, result) => {
-          console.log('Chatter box details updated successfully');
-          // Optionally, navigate away or update UI to reflect the changes
-          navigation.navigate('standardPage'); // Adjust navigation as needed
-        },
-        (_, error) => {
-          console.error(
-            'Error updating chatter box details in database:',
-            error
-          );
-        }
-      );
-    });
+  const handleInputChange = (name, value) => {
+    setlocalChatterBoxDetails((prevDetails) => ({
+      ...prevDetails,
+      [name]: value,
+    }));
   };
 
+  const handlePhotoSelected = (uri) => {
+    setSelectedImage({ title, photoKey, uri });
+    console.log('Photo saved:', { title, photoKey, uri });
+  };
+
+  const saveToDatabase = async () => {
+    const photosJson = JSON.stringify(photos);
+    const chatterBoxJson = JSON.stringify(localChatterBoxDetails);
+    try {
+      await db
+        .runAsync(
+          'UPDATE Jobs SET photos = ?, chatterboxDetails = ? WHERE id = ?',
+          [photosJson, chatterBoxJson, jobID]
+        )
+        .then((result) => {
+          console.log('photos saved to database:', result);
+        });
+    } catch (error) {
+      console.log('Error saving photos to database:', error);
+    }
+  };
+  console.log('chatterBoxDetailsPage');
+
+  const backPressed = async () => {
+    savePhoto(photoKey, selectedImage);
+    setChatterBoxDetails(localChatterBoxDetails);
+    await saveToDatabase();
+    goToPreviousStep();
+  };
+  console.log(localChatterBoxDetails);
+
   const nextPressed = async () => {
-    if (!chatterBoxImage) {
+    if (!selectedImage?.uri) {
       EcomHelper.showInfoMessage('Please choose image');
       return;
     }
 
-    try {
-      const response = await fetch(chatterBoxImage);
-      const blob = await response.blob();
-      appContext.setBlobs((prev) => [...prev, blob]);
-    } catch (err) {
-      console.log(err);
+    if (
+      !localChatterBoxDetails.serialNumber ||
+      localChatterBoxDetails.serialNumber === ''
+    ) {
+      EcomHelper.showInfoMessage('Please enter serial number');
+      return;
     }
-    if (!manufacturer) {
+  
+    if (localChatterBoxDetails.manufacturer == null) {
       EcomHelper.showInfoMessage('Please choose manufacturer');
       return;
     }
-    if (!serialNumber) {
-      EcomHelper.showInfoMessage('Please choose serial number');
-      return;
-    }
-    if (!model) {
+    if (localChatterBoxDetails.model == null) {
       EcomHelper.showInfoMessage('Please choose model');
       return;
     }
-
-    appContext.setRegulatorDetails({
-      ...regulatorDetails,
-      chatterManufacturer: manufacturer,
-      chatterSerialNumber: serialNumber,
-      chatterModel: model,
-      chatterImage: chatterBoxImage,
-    });
-
+    if (localChatterBoxDetails.loggerOwner == null) {
+      EcomHelper.showInfoMessage('Please choose Logger owner');
+      return;
+    }
+    savePhoto(photoKey, selectedImage);
+    setChatterBoxDetails(localChatterBoxDetails);
+    await saveToDatabase();
     goToNextStep();
-  };
-  const backPressed = () => {
-    appContext.setRegulatorDetails({
-      ...regulatorDetails,
-      chatterManufacturer: manufacturer,
-      chatterSerialNumber: serialNumber,
-      chatterModel: model,
-      chatterImage: chatterBoxImage,
-    });
-    goToPreviousStep();
+    return;
   };
 
   const scanBarcode = () => {
@@ -145,10 +129,10 @@ function ChatterBoxPage() {
   };
 
   const readSerialNumber = (codes) => {
-    EcomHelper.showInfoMessage(codes.data);
-    console.log(codes);
     setIsModal(false);
-    setSerialNumber(codes.data);
+    if (codes && codes.data) {
+      handleInputChange('serialNumber', codes.data.toString());
+    }
   };
 
   return (
@@ -167,79 +151,127 @@ function ChatterBoxPage() {
       >
         <ScrollView style={styles.content}>
           <View style={styles.body}>
-            <View style={styles.row}>
+            <Text type={TextType.HEADER_1} style={{ alignSelf: 'center' }}>
+              {title}
+            </Text>
+            <View style={styles.spacer} />
+            <View style={styles.border}>
+              <View style={styles.row}>
+                <View
+                  style={{
+                    width: width * 0.45,
+                    alignSelf: 'flex-end',
+                  }}
+                >
+                  <Text>chatter box Serial Number</Text>
+                  <View style={styles.spacer2} />
+                  <View style={{ ...styles.row, width: width * 0.35 }}>
+                    <TextInput
+                      onChangeText={(txt) => {
+                        // Define the alphanumeric regular expression
+                        const alphanumericRegex = /^[a-z0-9]+$/i;
+
+                        // Capitalize the text
+                        const formattedText = txt.toUpperCase();
+
+                        // Check if the formatted text is alphanumeric
+                        if (alphanumericRegex.test(formattedText)) {
+                          handleInputChange('serialNumber', formattedText);
+                        }
+                      }}
+                      style={{
+                        ...styles.input,
+                        width: width * 0.25,
+                        alignSelf: 'flex-end',
+                        fontSize: makeFontSmallerAsTextGrows(
+                          localChatterBoxDetails.serialNumber
+                        ),
+                      }}
+                      value={localChatterBoxDetails.serialNumber}
+                    />
+                    <Button title="📷" onPress={scanBarcode} />
+                  </View>
+                </View>
+              </View>
+              <View style={styles.spacer} />
+              <View style={{ ...styles.row, justifyContent: 'flex-start' }}>
+                <View style={{ width: width * 0.45 }}>
+                  <View style={styles.spacer2} />
+                  <Text>Manufacturer</Text>
+                  <View style={styles.spacer2} />
+                  <View style={{ ...styles.row, width: width * 0.35 }}>
+                    <TextInput
+                      onChangeText={(txt) => {
+                        handleInputChange('manufacturer', txt);
+                      }}
+                      style={{
+                        ...styles.input,
+                        width: width * 0.25,
+                        alignSelf: 'flex-end',
+                      }}
+                      value={localChatterBoxDetails.manufacturer}
+                    />
+                  </View>
+                </View>
+                <View style={{ width: width * 0.45 }}>
+                  <View style={styles.spacer2} />
+                  <Text>Model</Text>
+                  <View style={styles.spacer2} />
+                  <View style={{ ...styles.row, width: width * 0.35 }}>
+                    <TextInput
+                      onChangeText={(txt) => {
+                        handleInputChange('model', txt);
+                      }}
+                      style={{
+                        ...styles.input,
+                        width: width * 0.25,
+                        alignSelf: 'flex-end',
+                      }}
+                      value={localChatterBoxDetails.model}
+                    />
+                  </View>
+                </View>
+              </View>
+              <View style={styles.spacer} />
               <View style={{ width: width * 0.4 }}>
                 <View style={styles.spacer2} />
-                <Text>Chatterbox Manufacturer</Text>
-                <View style={styles.spacer2} />
-                <TextInput
-                  value={manufacturer}
-                  onChangeText={(txt) => {
-                    if (alphanumericRegex.test(txt)) setManufacturer(txt);
-                  }}
-                  style={styles.input}
-                />
-              </View>
-              <View style={{ width: width * 0.4, alignItems: 'flex-start' }}>
-                <Text>Chatterbox model</Text>
-                <View style={styles.spacer2} />
-                <TextInput
-                  value={model}
-                  onChangeText={(txt) => {
-                    if (alphanumericRegex.test(txt)) setModel(txt);
-                  }}
-                  style={styles.input}
-                />
-              </View>
-            </View>
-            <View style={styles.spacer} />
-            <View style={styles.spacer} />
-            <View style={styles.row}>
-              <View
-                style={{
-                  width: width * 0.45,
-                  alignSelf: 'flex-end',
-                }}
-              >
-                <Text>ChatterBox serial Number</Text>
+                <Text> owner</Text>
                 <View style={styles.spacer2} />
                 <View style={{ ...styles.row, width: width * 0.35 }}>
                   <TextInput
                     onChangeText={(txt) => {
-                      if (alphanumericRegex.test(txt)) setSerialNumber(txt);
+                      handleInputChange('loggerOwner', txt);
                     }}
                     style={{
+                      ...styles.input,
                       width: width * 0.25,
-                      // as serial number can be long, we can adjust the font size
-                      fontSize: makeFontSmallerAsTextGrows(serialNumber),
                       alignSelf: 'flex-end',
                     }}
-                    value={serialNumber}
+                    value={localChatterBoxDetails.loggerOwner}
                   />
-                  <Button title="📷" onPress={scanBarcode} />
                 </View>
               </View>
             </View>
             <View style={styles.spacer} />
-            <View style={styles.spacer} />
-            <View style={styles.spacer} />
-
-            <Text>{'Chatter Box Image'}</Text>
-            <View style={styles.spacer} />
-            {chatterBoxImage && (
-              <Image
-                source={{ uri: chatterBoxImage }}
-                style={styles.image}
-                resizeMode="contain"
-              />
-            )}
-            <View style={styles.row}>
-              <ImagePickerButton
-                onImageSelected={(uri) => setchatterBoxImage(uri)}
-              />
+            <View style={styles.imagePickerContainer}>
+              <View style={styles.body}>
+                <Text type="caption" style={styles.text}>
+                  chatterbox photo
+                </Text>
+                <ImagePickerButton
+                  onImageSelected={handlePhotoSelected}
+                  currentImage={selectedImage?.uri}
+                />
+                {selectedImage?.uri && (
+                  <Image
+                    source={{ uri: selectedImage?.uri }}
+                    style={styles.image}
+                  />
+                )}
+              </View>
             </View>
-            <View style={styles.spacer} />
           </View>
+
           {isModal && (
             <BarcodeScanner
               setIsModal={setIsModal}
@@ -254,34 +286,69 @@ function ChatterBoxPage() {
 }
 
 const styles = StyleSheet.create({
+  image: {
+    height: height * 0.25, // Example: Adjust the factor according to your needs
+  },
   content: {
     flex: 1,
   },
   body: {
     marginHorizontal: width * 0.05,
   },
+  border: {
+    borderWidth: 1,
+    borderColor: PrimaryColors.Black,
+    padding: height * 0.02, // Adjusted from unitH to use a percentage of the screen height
+  },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
   },
-  input: {
-    width: width * 0.35, // Example adjustment
+  buttonContainer: {
+    width: width * 0.4,
+    alignSelf: 'center',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+  },
+  button: {
+    width: width * 0.2,
+  },
+  divider: {
+    width: '100%',
+    height: 1,
+    backgroundColor: 'black',
+  },
+  headerCell: {
+    textAlign: 'center',
+    borderWidth: 1,
+    borderBottomWidth: 0,
+    borderColor: PrimaryColors.Black,
+    minHeight: height * 0.05, // Adjusted
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cell: {
+    flex: 1,
+    textAlign: 'center',
+    borderWidth: 1,
+    borderBottomWidth: 0,
+    borderTopWidth: 0,
+    borderColor: PrimaryColors.Black,
+    minHeight: height * 0.05, // Adjusted
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   optionContainer: {
+    width: width * 0.25, // Adjusted
+    marginVertical: height * 0.01, // Adjusted
     alignSelf: 'flex-start',
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-  },
-  camera: {
-    flex: 1,
-    width: '100%',
   },
   spacer: {
-    height: height * 0.02, // Example adjustment based on height
+    height: height * 0.02, // Adjusted
   },
   spacer2: {
-    height: height * 0.01, // Example adjustment based on height
+    height: height * 0.01, // Adjusted
   },
   closeButtonContainer: {
     position: 'absolute',
@@ -291,10 +358,6 @@ const styles = StyleSheet.create({
   closeButtonIcon: {
     width: 20,
     height: 20,
-  },
-  image: {
-    height: height * 0.25, // Adjusted to use height for responsiveness
+    // Other styles for the close icon
   },
 });
-
-export default ChatterBoxPage;

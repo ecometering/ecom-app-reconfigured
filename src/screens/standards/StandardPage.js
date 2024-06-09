@@ -34,7 +34,7 @@ function StandardPage() {
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
   const title = 'Standard Details';
-  const { standardDetails, meterDetails, jobID, setStandardDetails } =
+  const { standardDetails, meterDetails, jobID, setStandardDetails,jobType } =
     appContext;
 
   const riddorReportable =
@@ -83,14 +83,15 @@ function StandardPage() {
         return;
       }
       if (meterDetails?.isMeter) {
-        if (standardDetails?.testPassed == null) {
-          EcomHelper.showInfoMessage('Please answer if tightness test passed');
-          return;
-        }
-
-        if (standardDetails?.useOutlet == null) {
-          EcomHelper.showInfoMessage('Please answer if Outlet kit is used');
-          return;
+        if (jobType === 'Install' || jobType === 'Exchange') {
+          if (standardDetails?.testPassed == null) {
+            EcomHelper.showInfoMessage('Please answer if tightness test passed');
+            return;
+          }
+          if (standardDetails?.useOutlet == null) {
+            EcomHelper.showInfoMessage('Please answer if Outlet kit is used');
+            return;
+          }
         }
       }
 
@@ -195,33 +196,8 @@ function StandardPage() {
             </View>
             <View style={styles.spacer} />
             <View style={styles.container}>
-              {meterDetails?.isMeter && (
-                <>
-                  <Text>Outlet kit been used</Text>
-                  <View style={styles.optionContainer}>
-                    <OptionalButton
-                      options={['Yes', 'No']}
-                      actions={[
-                        () =>
-                          setStandardDetails((curState) => ({
-                            ...curState,
-                            useOutlet: true,
-                          })),
-                        () =>
-                          setStandardDetails((curState) => ({
-                            ...curState,
-                            useOutlet: false,
-                          })),
-                      ]}
-                      value={
-                        standardDetails?.useOutlet == null
-                          ? null
-                          : standardDetails?.useOutlet
-                          ? 'Yes'
-                          : 'No'
-                      }
-                    />
-                  </View>
+            {jobType !=="Survey" && (
+              <>
                   <View style={styles.spacer} />
             <Text>Any Additional materials used</Text>
             <View style={styles.optionContainer}>
@@ -251,7 +227,7 @@ function StandardPage() {
               />
             </View>
             <View style={styles.spacer} />
-            <Text>Any chattterBox installed</Text>
+            <Text>Any chatterBox installed</Text>
             <View style={styles.optionContainer}>
               <OptionalButton
                 options={['Yes', 'No']}
@@ -278,6 +254,40 @@ function StandardPage() {
                 }
               />
             </View>
+              
+              </>
+            )}
+            </View>
+            <View style={styles.spacer} />
+            <View style={styles.container}>
+              {meterDetails?.isMeter  && (jobType === 'Install' || jobType === 'Exchange') && (
+                <>
+                  <Text>Outlet kit been used</Text>
+                  <View style={styles.optionContainer}>
+                    <OptionalButton
+                      options={['Yes', 'No']}
+                      actions={[
+                        () =>
+                          setStandardDetails((curState) => ({
+                            ...curState,
+                            useOutlet: true,
+                          })),
+                        () =>
+                          setStandardDetails((curState) => ({
+                            ...curState,
+                            useOutlet: false,
+                          })),
+                      ]}
+                      value={
+                        standardDetails?.useOutlet == null
+                          ? null
+                          : standardDetails?.useOutlet
+                          ? 'Yes'
+                          : 'No'
+                      }
+                    />
+                  </View>
+              
                   <View style={styles.spacer} />
                   <Text>Tightness test passed</Text>
                   <View style={styles.optionContainer}>

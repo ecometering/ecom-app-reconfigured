@@ -49,7 +49,7 @@ function MeterDetailsPage() {
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
   const isIos = Platform.OS === 'ios';
-  const { title, nextScreen } = route.params;
+  const { title } = route.params;
   const diaphragmMeterTypes = ['1', '2', '4'];
   const { jobType, meterDetails, setMeterDetails, jobID } =
     useContext(AppContext);
@@ -88,12 +88,21 @@ function MeterDetailsPage() {
       handleInputChange('pulseValue', { _index: 0, label: '1', value: 1 });
     }
     if (!localMeterDetails.status) {
-      handleInputChange('status', {
-        _index: 2,
-        data: 'LI',
-        label: 'Live',
-        value: 3,
-      });
+      if (['Install', 'Survey', 'Maintenance'].includes(jobType)) {
+        handleInputChange('status', {
+          _index: 2,
+          data: 'LI',
+          label: 'Live',
+          value: 3,
+        });
+      } else if (['Exchange', 'Warrant', 'Removal'].includes(jobType)) {
+        handleInputChange('status', {
+          _index: 12,
+          data: 'RE',
+          label: 'Removed',
+          value: 13,
+        });
+      }
     }
     if (!localMeterDetails.mechanism) {
       handleInputChange('mechanism', { _index: 0, label: 'Credit', value: 1 });
@@ -589,14 +598,7 @@ function MeterDetailsPage() {
               <View style={{ flex: 0.5 }}>
                 <EcomDropDown
                   width={'35%'}
-                  value={
-                    localMeterDetails.status || {
-                      _index: 2,
-                      data: 'LI',
-                      label: 'Live',
-                      value: 3,
-                    }
-                  }
+                  value={localMeterDetails.status}
                   valueList={METER_POINT_STATUS_CHOICES}
                   placeholder={'Meter status'}
                   onChange={(item) => {
@@ -669,7 +671,8 @@ function MeterDetailsPage() {
                         );
                         return;
                       }
-                      handleInputChange('pressure', txt);
+                      const numericValue = txt.replace(/[^0-9]/g, '');
+                      handleInputChange('pressure', numericValue);
                     }}
                     keyboardType="numeric"
                     style={{

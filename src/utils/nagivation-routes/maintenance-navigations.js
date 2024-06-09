@@ -1,3 +1,5 @@
+import { RegulatorPage } from "./install-navigations";
+
 export const MaintenanceNavigation = [
   {
     screen: 'SiteDetailsPage',
@@ -51,12 +53,111 @@ export const ExtraPhotoPageRoute = (
   },
 ];
 
+export const chatterBoxPage =[
+  {
+    screen: 'chatterBox',
+    diversions: (state) => {
+      const { standardDetails } = state;
+      const { riddorReportable, conformStandard } = standardDetails;
+   
+      
+    if (riddorReportable === true) {
+      return RiddorReportPage;
+    } else {
+      if (conformStandard === false) {
+        return SnClientInfoPage;
+      } else {
+        return CompositeLabelPhoto;
+      }
+    }}
+  },
+
+]
+
+export const AdditionalMaterialsPage =[
+  {
+    screen: 'AdditionalMaterials',
+    diversions: (state) => {
+      const { standardDetails } = state;
+      const { riddorReportable, conformStandard,chatterbox, } = standardDetails;
+    if (chatterbox === true) {
+      return chatterBoxPage}
+    else {
+      
+    if (riddorReportable === true) {
+      return RiddorReportPage;
+    } else {
+      if (conformStandard === false) {
+        return SnClientInfoPage;
+      } else {
+        return CompositeLabelPhoto;
+      }
+    }}
+  },
+}
+]
+export const MaintenanceExistingMeterIndex = [
+  {
+    screen: 'MeterIndex',
+    params: {
+      title: 'Existing Meter index',
+      photoKey: 'ExistingMeterIndex',
+    },
+  },
+  {
+    screen: 'MeterPhoto',
+    params: {
+      title: 'Existing Meter Photo',
+      photoKey: 'ExistingMeterPhoto',
+    },
+
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+      const { pressureTier } = meterDetails || {};
+      const isCorrector = meterDetails?.isCorrector;
+      const isAmr = meterDetails?.isAmr;
+      const isMeter = meterDetails?.isMeter;
+      if (isCorrector) {
+        return MaintenanceExistingCorrectorDetails;
+      }
+      if (isAmr) {
+        return MaintenanceExistingDataLoggerDetails;
+      } 
+      if (isMeter) {
+        if (pressureTier === 'LP' || pressureTier?.label === 'LP') {
+          return RegulatorPage;
+        }
+      } 
+     
+       return StreamsSetSealDetailsPage;
+    },
+  },
+];
+export const MaintenanceExistingMeterDataBadge = [
+  {
+    screen: 'MeterDataBadge',
+    params: {
+      title: 'Existing Meter data badge',
+      photoKey: 'ExistingMeterDataBadge',
+    },
+  },
+  ...MaintenanceExistingMeterIndex,
+];
+// Site Questions Alternative Flows
 export const MaintenanceStandardPage = [
   {
     screen: 'StandardPage',
     diversions: (state) => {
       const { standardDetails } = state;
-      const { riddorReportable, conformStandard } = standardDetails;
+      const { riddorReportable, conformStandard,chatterbox,additionalMaterials } = standardDetails;
+     if (additionalMaterials === true) {
+          return AdditionalMaterialsPage;
+        }
+        else{ 
+          if (chatterbox === true) {
+        return chatterBoxPage}
+      else {
+        
       if (riddorReportable === true) {
         return RiddorReportPage;
       } else {
@@ -65,7 +166,7 @@ export const MaintenanceStandardPage = [
         } else {
           return CompositeLabelPhoto;
         }
-      }
+      }}}
     },
   },
 ];
@@ -146,13 +247,21 @@ export const MaintenanceExistingMeterDetails = [
     },
   },
   {
-    screen: 'ExistingEcvToMov',
+    screen: 'ExistingEcvPhoto',
     params: {
-      title: 'New ECV to MOV',
+      title: 'Existing ECV to MOV',
       photoKey: 'ExistingEcvToMov',
     },
     diversions: (state) => {
-      // TODO: no logic found in the original code
+      const { meterDetails } = state || {};
+
+      const Type = meterDetails?.meterType.value;
+
+      if (!['1', '2', '4'].includes(Type)) {
+        return MaintenanceExistingMeterDataBadge;
+      } else {
+        return MaintenanceExistingMeterIndex;
+      }
     },
   },
 ];
@@ -165,13 +274,24 @@ export const MaintenanceExistingCorrectorDetails = [
     },
     diversions: (state) => {
       const { meterDetails } = state || {};
-      if (meterDetails?.isAmr) {
-        return MaintenanceExistingCorrectorDetails;
-      } else if (meterDetails?.isMeter) {
-        return MaintenanceStreamsSetSealDetailsPage;
-      } else {
-        return MaintenanceQuestionsPage;
+      const { pressureTier } = meterDetails || {};
+    
+      const isAmr = meterDetails?.isAmr;
+      const isMeter = meterDetails?.isMeter;
+    
+
+      if (isAmr) {
+        return MaintenanceExistingDataLoggerDetails;
       }
+      if (isMeter) {
+        if (pressureTier === 'LP' || pressureTier?.label === 'LP') {
+        return RegulatorPage;
+        } else {  
+          return StreamsSetSealDetailsPage;
+        }
+      } 
+        return MaintenanceQuestionsPage;
+      
     },
   },
 ];
@@ -183,23 +303,22 @@ export const MaintenanceExistingDataLoggerDetails = [
       title: 'Existing AMR installed',
     },
     diversions: (state) => {
-      const { meterDetails } = state || {};
+    
 
-      const Type = meterDetails?.meterType?.value;
+      const { meterDetails } = state || {};
       const pressureTier = meterDetails?.pressureTier?.label;
       const isMeter = meterDetails?.isMeter;
-
+     
       if (isMeter) {
-        if (
-          ((Type === '1' || Type === '2' || Type === '4') &&
-            pressureTier === 'MP') ||
-          (Type !== '1' && Type !== '2' && Type !== '4')
-        ) {
-          return MaintenanceStreamsSetSealDetailsPage;
-        }
-      } else {
+        if (pressureTier === 'LP') {
+          
+           return MaintenanceQuestionsPage;
+        }else {
+         return StreamsSetSealDetailsPage;
+      } }
+     
         return MaintenanceQuestionsPage;
-      }
+      
     },
   },
 ];
@@ -209,52 +328,60 @@ export const InstancesForStreamFlow = ({ state }) => {
   // Redux might be a better option
   const { streamNumber } = state || {};
 
-  return Array.from(
-    { length: streamNumber },
-    (_, index) => index + 1
-  ).reduce((acc, stream) => {
-    return [
-      ...acc,
-      {
-        screen: 'StreamFilterPage',
-        params: {
-          title: `Filter Page ${stream}`,
+  return Array.from({ length: streamNumber }, (_, index) => index + 1).reduce(
+    (acc, stream) => {
+      return [
+        ...acc,
+        {
+          screen: 'StreamFilterPage',
+          params: {
+            title: `Filter Page ${stream}`,
+            stream:stream ,
+            photoKey:`Filter${stream}Photo`
+          },
         },
-      },
-      {
-        screen: 'StreamSlamshutPage',
-        params: {
-          title: `Slamshut Page ${stream}`,
+        {
+          screen: 'StreamSlamshutPage',
+          params: {
+            title: `Slamshut Page ${stream}`,
+            photoKey:`SlamShut${stream}Photo`,
+          },
         },
-      },
-      {
-        screen: 'StreamActiveRegulatorPage',
-        params: {
-          title: `Active Regulator Page ${stream}`,
+        {
+          screen: 'StreamActiveRegulatorPage',
+          params: {
+            title: `Active Regulator Page ${stream}`,
+            photoKey:`ActiveRegulator${stream}Photo`,
+
+          },
         },
-      },
-      {
-        screen: 'StreamReliefRegulatorPage',
-        params: {
-          title: `Relief Regulator Page ${stream}`,
+        {
+          screen: 'StreamReliefRegulatorPage',
+          params: {
+            title: `Relief Regulator Page ${stream}`,
+            photoKey:`ReliefRegulator${stream}Photo`,
+
+          },
         },
-      },
-      {
-        screen: 'StreamWaferCheckPage',
-        params: {
-          title: `Wafer Check Page ${stream}`,
+        {
+          screen: 'StreamWaferCheckPage',
+          params: {
+            title: `Wafer Check Page ${stream}`,
+            photoKey:`WaferCheck${stream}Photo`,
+
+          },
         },
-      },
-    ];
-  }, []);
+      ];
+    },
+    []
+  );
 };
 
-export const MaintenanceStreamsSetSealDetailsPage = [
+export const StreamsSetSealDetailsPage = [
   {
     screen: 'StreamsSetSealDetails',
     params: {
       title: 'Streams Set Seal Details',
-      nextScreen: 'FilterPage-1',
     },
     diversions: (state) => {
       const streamFlows = InstancesForStreamFlow({ state });
@@ -273,16 +400,11 @@ export const MaintenanceQuestionsPage = [
   {
     screen: 'RegulatorPhotoPage',
     params: {
-      title: 'New Regulator photo',
+      title: 'Existing Regulator photo',
       photoKey: 'RegulatorPhotoPage',
     },
   },
-  {
-    screen: 'ChatterBox',
-  },
-  {
-    screen: 'AdditionalMaterial',
-  },
+
 
   ...MaintenanceStandardPage,
 ];

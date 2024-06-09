@@ -32,7 +32,7 @@ import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 const alphanumericRegex = /^[a-zA-Z0-9]+$/;
 const { width, height } = Dimensions.get('window');
 
-export default function dataLoggerDetailsTwoPage() {
+export default function DataLoggerDetailsTwoPage() {
   const route = useRoute();
   const camera = useRef(null);
   const db = useSQLiteContext();
@@ -43,7 +43,7 @@ export default function dataLoggerDetailsTwoPage() {
     jobType,
     savePhoto,
     dataLoggerDetailsTwo,
-    setdataLoggerDetailsTwo,
+    setDataLoggerDetailsTwo,
   } = useContext(AppContext);
 
   const { title, nextScreen, photoKey } = route.params;
@@ -96,7 +96,7 @@ export default function dataLoggerDetailsTwoPage() {
 
   const backPressed = async () => {
     savePhoto(photoKey, selectedImage);
-    setdataLoggerDetailsTwo(localdataLoggerDetailsTwo);
+    setDataLoggerDetailsTwo(localdataLoggerDetailsTwo);
     await saveToDatabase();
     goToPreviousStep();
   };
@@ -140,7 +140,7 @@ export default function dataLoggerDetailsTwoPage() {
       return;
     }
     savePhoto(photoKey, selectedImage);
-    setdataLoggerDetailsTwo(localdataLoggerDetailsTwo);
+    setDataLoggerDetailsTwo(localdataLoggerDetailsTwo);
     await saveToDatabase();
     goToNextStep();
     return;

@@ -50,14 +50,68 @@ export const ExtraPhotoPageRoute = (
     params,
   },
 ];
+export const chatterBoxPage =[
+  {
+    screen: 'ChatterBox',
+    params: {
+      title: 'Installed chatter box',
+      photoKey: 'InstalledChatterBox',
+    },
+    diversions: (state) => {
+      const { standardDetails } = state;
+      const { riddorReportable, conformStandard } = standardDetails;
+   
+      
+    if (riddorReportable) {
+      return RiddorReportPage;
+    } else {
+      if (!conformStandard) {
+        return SnClientInfoPage;
+      } else {
+        return CompositeLabelPhoto;
+      }
+    }}
+  },
 
+]
+
+export const AdditionalMaterialsPage =[
+  {
+    screen: 'AdditionalMaterial',
+    diversions: (state) => {
+      const { standardDetails } = state;
+      const { riddorReportable, conformStandard,chatterbox, } = standardDetails;
+    if (chatterbox === true) {
+      return chatterBoxPage}
+    else {
+      
+    if (riddorReportable === true) {
+      return RiddorReportPage;
+    } else {
+      if (conformStandard === false) {
+        return SnClientInfoPage;
+      } else {
+        return CompositeLabelPhoto;
+      }
+    }}
+  },
+}
+]
 // Site Questions Alternative Flows
 export const StandardPage = [
   {
     screen: 'StandardPage',
     diversions: (state) => {
       const { standardDetails } = state;
-      const { riddorReportable, conformStandard } = standardDetails;
+      const { riddorReportable, conformStandard,chatterbox,additionalMaterials } = standardDetails;
+     if (additionalMaterials === true) {
+          return AdditionalMaterialsPage;
+        }
+        else{ 
+          if (chatterbox === true) {
+        return chatterBoxPage}
+      else {
+        
       if (riddorReportable === true) {
         return RiddorReportPage;
       } else {
@@ -66,7 +120,7 @@ export const StandardPage = [
         } else {
           return CompositeLabelPhoto;
         }
-      }
+      }}}
     },
   },
 ];
@@ -182,22 +236,18 @@ export const CorrectorDetailsPage = [
     diversions: (state) => {
       const { meterDetails } = state || {};
       const { pressureTier } = meterDetails || {};
-      const Type = meterDetails?.meterType.value;
       const isAmr = meterDetails?.isAmr;
       const isMeter = meterDetails?.isMeter;
 
       if (isAmr) {
         return DataLoggerDetailsPage;
-      } else if (isMeter) {
-        if (
-          ((Type === '1' || Type === '2' || Type === '4') &&
-            pressureTier === 'MP') ||
-          (Type !== '1' && Type !== '2' && Type !== '4')
-        ) {
-          return StreamsSetSealDetailsPage;
+      } 
+      if (isMeter) {
+        if (pressureTier === 'LP' || pressureTier?.label === 'LP') {
+          return RegulatorPage;
         }
       } else {
-        return StandardPage;
+        return StreamsSetSealDetailsPage;
       }
     },
   },
@@ -213,25 +263,19 @@ export const DataLoggerDetailsPage = [
     diversions: (state) => {
       const { meterDetails } = state || {};
 
-      const Type = meterDetails?.meterType?.value;
       const pressureTier = meterDetails?.pressureTier?.label;
       const isMeter = meterDetails?.isMeter;
 
       if (isMeter) {
-        if (
-          ((Type === '1' || Type === '2' || Type === '4') &&
-            pressureTier === 'MP') ||
-          (Type !== '1' && Type !== '2' && Type !== '4')
-        ) {
+        if (pressureTier === 'LP') {
+          return RegulatorPage;
+        }else {
           return StreamsSetSealDetailsPage;
-        } else {
-          return StandardPage;
         }
-      } else {
-        return StandardPage;
-      }
-    },
+    }
+    return StandardPage;
   },
+},
 ];
 
 // export const MeterDetails Alternative Flows
@@ -251,25 +295,23 @@ export const MeterIndexPage = [
     },
     diversions: (state) => {
       const { meterDetails } = state || {};
-
+      const isMeter = meterDetails?.isMeter;
       const isAmr = meterDetails?.isAmr;
-      const Type = meterDetails?.meterType.value;
       const isCorrector = meterDetails?.isCorrector;
       const pressureTier = meterDetails?.pressureTier.label;
 
-      if (isCorrector === true) {
+      if (isCorrector) {
         return CorrectorDetailsPage;
-      } else if (isAmr) {
+      } 
+      if (isAmr) {
         return DataLoggerDetailsPage;
-      } else if (
-        ((Type === '1' || Type === '2' || Type === '4') &&
-          pressureTier === 'MP') ||
-        (Type !== '1' && Type !== '2' && Type !== '4')
-      ) {
-        return StreamsSetSealDetailsPage;
-      } else {
-        return StandardPage;
       }
+      if (isMeter) {
+        if (pressureTier === 'LP' || pressureTier?.label === 'LP') {
+        return RegulatorPage;
+        }
+      }
+      return StreamsSetSealDetailsPage;
     },
   },
 ];
@@ -290,45 +332,55 @@ export const InstancesForStreamFlow = ({ state }) => {
   // Redux might be a better option
   const { streamNumber } = state || {};
 
-  return Array.from(
-    { length: streamNumber },
-    (_, index) => index + 1
-  ).reduce((acc, stream) => {
-    return [
-      ...acc,
-      {
-        screen: 'StreamFilterPage',
-        params: {
-          title: `Filter Page ${stream}`,
+  return Array.from({ length: streamNumber }, (_, index) => index + 1).reduce(
+    (acc, stream) => {
+      return [
+        ...acc,
+        {
+          screen: 'StreamFilterPage',
+          params: {
+            title: `Filter Page ${stream}`,
+            stream:stream ,
+            photoKey:`Filter${stream}Photo`
+          },
         },
-      },
-      {
-        screen: 'StreamSlamshutPage',
-        params: {
-          title: `Slamshut Page ${stream}`,
+        {
+          screen: 'StreamSlamshutPage',
+          params: {
+            title: `Slamshut Page ${stream}`,
+            photoKey:`SlamShut${stream}Photo`,
+          },
         },
-      },
-      {
-        screen: 'StreamActiveRegulatorPage',
-        params: {
-          title: `Active Regulator Page ${stream}`,
+        {
+          screen: 'StreamActiveRegulatorPage',
+          params: {
+            title: `Active Regulator Page ${stream}`,
+            photoKey:`ActiveRegulator${stream}Photo`,
+
+          },
         },
-      },
-      {
-        screen: 'StreamReliefRegulatorPage',
-        params: {
-          title: `Relief Regulator Page ${stream}`,
+        {
+          screen: 'StreamReliefRegulatorPage',
+          params: {
+            title: `Relief Regulator Page ${stream}`,
+            photoKey:`ReliefRegulator${stream}Photo`,
+
+          },
         },
-      },
-      {
-        screen: 'StreamWaferCheckPage',
-        params: {
-          title: `Wafer Check Page ${stream}`,
+        {
+          screen: 'StreamWaferCheckPage',
+          params: {
+            title: `Wafer Check Page ${stream}`,
+            photoKey:`WaferCheck${stream}Photo`,
+
+          },
         },
-      },
-    ];
-  }, []);
+      ];
+    },
+    []
+  );
 };
+
 
 export const StreamsSetSealDetailsPage = [
   {
@@ -337,9 +389,7 @@ export const StreamsSetSealDetailsPage = [
       title: 'Streams Set Seal Details',
     },
     diversions: (state) => {
-      console.log({ state: state.streamNumber });
       const streamFlows = InstancesForStreamFlow({ state });
-      console.log({ streamFlows });
       return [...streamFlows, ...RegulatorPage];
     },
   },
@@ -356,11 +406,6 @@ export const RegulatorPage = [
       photoKey: 'RegulatorPhotoPage',
     },
   },
-  {
-    screen: 'ChatterBox',
-  },
-  {
-    screen: 'AdditionalMaterial',
-  },
+ 
   ...StandardPage,
 ];

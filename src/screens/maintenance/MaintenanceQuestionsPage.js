@@ -20,8 +20,9 @@ import { TextType } from '../../theme/typography';
 import { width, unitH } from '../../utils/constant';
 import { AppContext } from '../../context/AppContext';
 import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
-
+import { useSQLiteContext } from 'expo-sqlite/next';
 function MaintenanceQuestionsPage() {
+  const db = useSQLiteContext(); 
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const appContext = useContext(AppContext);
   const maintenanceDetails = appContext.maintenanceDetails;
@@ -36,11 +37,24 @@ function MaintenanceQuestionsPage() {
     maintenanceDetails?.isClearPipes
   );
   const [notes, setNotes] = useState(maintenanceDetails?.notes);
-  const [signature, setSignature] = useState(maintenanceDetails?.signature);
   const [isConfirm, setIsConfirm] = useState(maintenanceDetails?.isConfirm);
 
   console.log('MaintenanceQuestionsPaqge');
-
+  const saveToDatabase = async () => {
+    const maintenanceJson = JSON.stringify(maintenanceDetails);
+    try {
+      await db
+        .runAsync(
+          'UPDATE Jobs SET  maintenanceQuestions = ? WHERE id = ?',
+          [ maintenanceJson, jobID]
+        )
+        .then((result) => {
+          console.log('maintenance saved to database:', result);
+        });
+    } catch (error) {
+      console.log('Error saving maintenance to database:', error);
+    }
+  };
   const nextPressed = () => {
     if (isRisky == null) {
       EcomHelper.showInfoMessage(
@@ -258,17 +272,7 @@ function MaintenanceQuestionsPage() {
               />
             </View>
             <View style={styles.spacer} />
-            <View style={{ marginHorizontal: 20 }}>
-              <TextInputWithTitle
-                title={'Signature'}
-                onChangeText={(e) => {
-                  setSignature(e);
-                }}
-                style={{ backgroundColor: 'white' }}
-                value={signature}
-              />
-            </View>
-            <View style={styles.spacer} />
+          
             <View style={styles.optionContainer}>
               <Text
                 type={TextType.CAPTION_2}

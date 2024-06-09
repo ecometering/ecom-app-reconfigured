@@ -7,8 +7,8 @@ import {
   TouchableHighlight,
   KeyboardAvoidingView,
 } from 'react-native';
-import React, { useContext, useState } from 'react';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import React, { useContext, useState,useEffect } from 'react';
+import { useRoute } from '@react-navigation/native';
 
 // Components
 import Text from '../../components/Text';
@@ -20,6 +20,7 @@ import TextInput from '../../components/TextInput';
 import EcomHelper from '../../utils/ecomHelper';
 import { AppContext } from '../../context/AppContext';
 import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import { useSQLiteContext } from 'expo-sqlite/next';
 
 const RepeatComponent = ({ title, value, onChangeText }) => {
   return (
@@ -47,46 +48,48 @@ const RepeatComponent = ({ title, value, onChangeText }) => {
 function StreamsSetSealDetailsPage() {
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const appContext = useContext(AppContext);
-  const [n, setN] = useState(appContext.streamNumber ?? 0);
-  const [streamValues, setStreamValues] = useState(appContext.streamValue ?? []);
-
+  const { streams, jobID, setStreams,  } = appContext;
+  
+  const db = useSQLiteContext();
   const route = useRoute();
   const { title } = route?.params ?? {};
 
+  const handleInputChange = (key, value) => {
+    setStreams((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+    console.log('Streams', streams);
+  };
+  useEffect(() => {
+    if (isNaN(streams.Number)) {
+      handleInputChange(Number,0)
+    }
+  }, [streams.Number]);
   const saveToDatabase = async () => {
-    const streamDetailsJson = JSON.stringify(streamValues);
-    console.log("message:292 Stream values:",streamValues)
-    console.log("messgae:293 number of streams:",appContext.streamNumber)
+    const streamDetailsJson = JSON.stringify(streams);
+    console.log("message:292 Stream values:", streams);
+    console.log("message:293 number of streams:", streams.Number);
     try {
       await db.runAsync('UPDATE Jobs SET streams = ? WHERE id = ?', [
         streamDetailsJson,
-        appContext.jobID,
+        jobID,
       ]);
     } catch (error) {
       console.error('Error saving streams to database:', error);
     }
   };
 
-  const handleInputChange = (index, field, value) => {
-    const updatedStreamValues = [...streamValues];
-    updatedStreamValues[index] = {
-      ...updatedStreamValues[index],
-      [field]: value ? Number(value) : null,
-    };
-    setStreamValues(updatedStreamValues);
-  };
-
   const validateFields = () => {
-    if (n === 0) {
+    if (streams.Number === 0) {
       EcomHelper.showInfoMessage("Stream value can't be 0.");
       return false;
     }
-    for (let i = 0; i < n; i++) {
-      const item = streamValues[i];
+    for (let i = 1; i <= streams.Number; i++) {
       if (
-        !item?.slamShut ||
-        !item?.creepRelief ||
-        !item?.workingPressure
+        !streams[`slamShut${i}`] ||
+        !streams[`creepRelief${i}`] ||
+        !streams[`workingPressure${i}`]
       ) {
         EcomHelper.showInfoMessage('Please input the whole mbars');
         return false;
@@ -98,15 +101,10 @@ function StreamsSetSealDetailsPage() {
   const nextPressed = async () => {
     if (!validateFields()) return;
     await saveToDatabase();
-    appContext.setStreamValue(streamValues);
-    appContext.setStreamNumber(n);
-    console.log("Message 295 n",n)
     goToNextStep();
   };
 
   const backPressed = () => {
-    appContext.setStreamValue(streamValues);
-    appContext.setStreamNumber(n);
     goToPreviousStep();
   };
 
@@ -134,51 +132,47 @@ function StreamsSetSealDetailsPage() {
               <TouchableHighlight
                 style={styles.incDecrButton}
                 onPress={() => {
-                  if (n > 0) {
-                    setN(n - 1);
-                    appContext.setStreamNumber(n - 1);
-                    setStreamValues(streamValues.slice(0, -1));
+                  if (streams.Number > 0) {
+                    handleInputChange('Number', Math.max(streams.Number - 1, 0));
                   }
                 }}
               >
                 <Text>-</Text>
               </TouchableHighlight>
-              <Text style={styles.streamNumber}>{n}</Text>
+              <Text style={styles.streamNumber}>{streams.Number}</Text>
               <TouchableHighlight
                 style={styles.incDecrButton}
                 onPress={() => {
-                  setN(n + 1);
-                  appContext.setStreamNumber(n + 1);
-                  setStreamValues([...streamValues, {}]);
+                  handleInputChange('Number', streams.Number + 1);
                 }}
               >
                 <Text>+</Text>
               </TouchableHighlight>
             </View>
 
-            {Array.from({ length: n }, (_, index) => (
+            {Array.from({ length: streams.Number }, (_, index) => (
               <View key={index} style={styles.streamContainer}>
                 <Text type={TextType.CAPTION_2}>{`Stream ${index + 1}`}</Text>
                 <View style={styles.section}>
                   <RepeatComponent
                     title={'Slam Shut'}
-                    value={streamValues[index]?.slamShut ?? ''}
+                    value={streams[`slamShut${index + 1}`] ?? ''}
                     onChangeText={(value) =>
-                      handleInputChange(index, 'slamShut', value.replace(/[^0-9]/g, ''))
+                      handleInputChange(`slamShutValue${index + 1}`, value.replace(/[^0-9]/g, ''))
                     }
                   />
                   <RepeatComponent
                     title={'Creep Relief'}
-                    value={streamValues[index]?.creepRelief ?? ''}
+                    value={streams[`creepRelief${index + 1}`] ?? ''}
                     onChangeText={(value) =>
-                      handleInputChange(index, 'creepRelief', value.replace(/[^0-9]/g, ''))
+                      handleInputChange(`creepRelief${index + 1}`, value.replace(/[^0-9]/g, ''))
                     }
                   />
                   <RepeatComponent
                     title={'Working Pressure'}
-                    value={streamValues[index]?.workingPressure ?? ''}
+                    value={streams[`workingPressure${index + 1}`] ?? ''}
                     onChangeText={(value) =>
-                      handleInputChange(index, 'workingPressure', value.replace(/[^0-9]/g, ''))
+                      handleInputChange(`workingPressure${index + 1}`, value.replace(/[^0-9]/g, ''))
                     }
                   />
                 </View>

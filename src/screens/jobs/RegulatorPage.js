@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useRef, useState,createRef } from 'react';
 import {
   Button,
   KeyboardAvoidingView,
@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import Text from '../../components/Text';
 import Header from '../../components/Header';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation,useRoute } from '@react-navigation/native';
 import TextInput from '../../components/TextInput';
 import OptionalButton from '../../components/OptionButton';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -22,156 +22,96 @@ import BarcodeScanner from '../../components/BarcodeScanner';
 import { openDatabase } from '../../utils/database';
 import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 import EcomDropDown from '../../components/DropDown';
-
+import { SIZE_LIST } from '../../utils/constant';
+import { TextType } from '../../theme/typography';
+import { useSQLiteContext } from 'expo-sqlite/next';
 const alphanumericRegex = /^[a-zA-Z0-9]+$/;
 
 const { width, height } = Dimensions.get('window');
 
 function RegulatorPage() {
   const navigation = useNavigation();
+  const route = useRoute();
+  const db = useSQLiteContext();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
-  const appContext = useContext(AppContext);
-  const jobType = appContext.jobType;
-  const title = jobType === 'Install' ? 'New Meter Details' : jobType;
-  const regulatorDetails = appContext.regulatorDetails;
+  const camera = createRef(null);
 
-  const camera = useRef(null);
-  const [serialNumber, setSerialNumber] = useState(
-    regulatorDetails?.serialNumber
-  );
-  const [manufacturer, setManufacturer] = useState(''); // State for Manufacturer
-  const [model, setModel] = useState(''); // State for Model
-  const [size, setSize] = useState(null); // State for Size
-  const [isModal, setIsModal] = useState(false);
-  const [date, setDate] = useState(new Date());
-  const [isSealedRegulator, setIsSealedRegulator] = useState(
-    regulatorDetails?.isSealedRegulator
-  );
-  const [isPurged, setIsPurged] = useState(regulatorDetails?.isPurged);
-  const [isLabelled, setIsLabelled] = useState(regulatorDetails?.isLabelled);
-  const [isVentilation, setIsVentilation] = useState(
-    regulatorDetails?.isVentilation
-  );
-  const [isChatBox, setIsChatBox] = useState(regulatorDetails?.isChatBox);
-  const [serialNoExist, setSerialNoExist] = useState(
-    regulatorDetails?.serialNoExist
-  );
-  const [isAdditionalMaterial, setIsAdditionalMaterial] = useState(
-    regulatorDetails?.isAdditionalMaterial
-  );
-  const [isNewLogger, setIsNewLogger] = useState(regulatorDetails?.isNewLogger);
+  const { title } = route.params;
+  const {regulatorDetails, setRegulatorDetails,jobID}=useContext(AppContext);
+ 
 
-  const updateRegulatorDetails = async () => {
-    const { jobId } = appContext; // Assuming appContext provides the jobId
+  const readSerialNumber = (codes) => {
+    setIsModal(false);
+    if (codes && codes.data) {
+      handleInputChange('serialNumber', codes.data.toString());
+    }
+  };
+  const saveToDatabase = async () => {
+    const regulatorDetailsJson = JSON.stringify(regulatorDetails);
+    try {
+      await db
+        .runAsync('UPDATE Jobs SET regulatorDetails = ? WHERE id = ?', [
+          regulatorDetailsJson,
+          jobID,
+        ])
+        .then((result) => {
+          console.log('regulatorDetails saved to database:', result);
+        });
+    } catch (error) {
+      console.log('Error saving regulatorDetails to database:', error);
+    }
+  };
 
-    // JSONify regulator details
-    const regulatorDetailsJSON = JSON.stringify({
-      serialNumber,
-      manufacturer,
-      model,
-      size,
-      date: moment(date).format('YYYY-MM-DD'), // Formatting date to string
-      isSealedRegulator,
-      isPurged,
-      isLabelled,
-      isVentilation,
-      isChatBox,
-      serialNoExist,
-      isAdditionalMaterial,
-      isNewLogger,
-    });
-
-    const db = await openDatabase();
-
-    // Update the database with the new details
-    db.transaction((tx) => {
-      tx.executeSql(
-        'UPDATE JobDetails SET regulatorDetails = ? WHERE jobId = ?',
-        [regulatorDetailsJSON, jobId],
-        () => {
-          console.log('Regulator details updated successfully');
-          // Optionally navigate away or update state
-        },
-        (txObj, error) =>
-          console.error('Error updating regulator details:', error)
-      );
+  const handleInputChange = (name, value) => {
+    setRegulatorDetails((prevDetails) => {
+      return {
+        ...prevDetails,
+        [name]: value,
+      };
     });
   };
+
+  const [isModal, setIsModal] = useState(false);
+ 
   const nextPressed = () => {
     // validate
-    if (serialNoExist && (serialNumber == null || serialNumber === '')) {
-      EcomHelper.showInfoMessage('Please scan regulator SN');
+    if (regulatorDetails.serialNoExist && (regulatorDetails.serialNumber == null || serialNumber === '')) {
+      EcomHelper.showInfoMessage('Please enter or scan regulator Serial number');
       return;
     }
-    if (serialNoExist === null) {
+    if (regulatorDetails.serialNoExist === null) {
       EcomHelper.showInfoMessage('Please answer if serial no exist');
       return;
     }
-    if (isSealedRegulator == null) {
+    if (regulatorDetails.isSealedRegulator == null) {
       EcomHelper.showInfoMessage('Please answer if regulator was sealed');
       return;
     }
-    if (isPurged == null) {
+    if (regulatorDetails.isPurged == null) {
       EcomHelper.showInfoMessage(
-        'Please answer if new meter, customer appliances and pipe work been purged and relit satisfactory including a visual inspection'
+        'Please answer if new meter, customer appliances and pipe work been purged and relit satisfactorily including a visual inspection'
       );
       return;
     }
-    if (isLabelled == null) {
+    if (regulatorDetails.isLabelled == null) {
       EcomHelper.showInfoMessage(
         'Please answer if installation was correctly labelled'
       );
       return;
     }
-    if (isVentilation == null) {
+    if (regulatorDetails.isVentilation == null) {
       EcomHelper.showInfoMessage(
         'Please answer if there is a purpose made ventilation'
       );
       return;
     }
-    if (isChatBox == null) {
-      EcomHelper.showInfoMessage(
-        'Please answer if new chatter box has been installed'
-      );
-      return;
-    }
-    if (isAdditionalMaterial == null) {
-      EcomHelper.showInfoMessage(
-        'Please answer if there is any additional materials'
-      );
-      return;
-    }
 
-    appContext.setRegulatorDetails({
-      ...regulatorDetails,
-      serialNumber: serialNumber,
-      date: date,
-      isSealedRegulator: isSealedRegulator,
-      isPurged: isPurged,
-      isLabelled: isLabelled,
-      isVentilation: isVentilation,
-      isChatBox: isChatBox,
-      isAdditionalMaterial: isAdditionalMaterial,
-      isNewLogger: isNewLogger,
-      serialNoExist: serialNoExist,
-    });
+    saveToDatabase();// Update the details in the database before navigating away
     goToNextStep();
   };
 
   const backPressed = () => {
-    appContext.setRegulatorDetails({
-      ...regulatorDetails,
-      serialNumber: serialNumber,
-      date: date,
-      isSealedRegulator: isSealedRegulator,
-      isPurged: isPurged,
-      isLabelled: isLabelled,
-      isVentilation: isVentilation,
-      isChatBox: isChatBox,
-      isAdditionalMaterial: isAdditionalMaterial,
-      isNewLogger: isNewLogger,
-      serialNoExist: serialNoExist,
-    });
+    saveToDatabase();
     goToPreviousStep();
   };
 
@@ -179,19 +119,7 @@ function RegulatorPage() {
     setIsModal(true);
   };
 
-  const barcodeRecognized = (codes) => {
-    EcomHelper.showInfoMessage(codes.data);
-    console.log(codes);
-    setIsModal(false);
-    setSerialNumber(codes.data);
-  };
-
-  const handleDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    const convertedDateTime = moment(selectedDate).format('MM/DD/YYYY');
-    setDate(convertedDateTime);
-    console.log(convertedDateTime);
-  };
+  
 
   const RepeatedComponent = ({ title, action1, action2, value }) => {
     return (
@@ -223,26 +151,83 @@ function RegulatorPage() {
       >
         <ScrollView style={styles.content}>
           <View style={styles.body}>
-            {/* ... other UI components */}
+            {/* Optional Question for Serial Number */}
+           
+            <View style={{ gap: 10 }}>
+                <Text type={TextType.CAPTION_2}>
+                  {'Does the serial number exist? *'}
+                </Text>
+                <OptionalButton
+                  options={['Yes', 'No']}
+                  actions={[
+                    () => handleInputChange('serialNoExist', true),
+                    () => handleInputChange('serialNoExist', false),
+                  ]}
+                  value={
+                    regulatorDetails.serialNoExist === null
+                      ? null
+                      : regulatorDetails.serialNoExist
+                      ? 'Yes'
+                      : 'No'
+                  }
+                />
+              </View>
+            {/* Conditionally render Serial Number input if serialNoExist is true */}
+            {regulatorDetails.serialNoExist && (
+             <View
+             style={{
+               width: '100%', // Full width of the parent container
+               alignSelf: 'flex-start',
+             }}
+           >
+             <Text>Regulator Serial Number</Text>
+             <View style={styles.spacer2} />
+             <View style={{ ...styles.row, width: '100%' }}>
+               <TextInput
+                 onChangeText={(txt) => {
+                   const withSpacesAllowed = txt.toUpperCase();
+                   const formattedText = withSpacesAllowed.replace(/[^A-Z0-9 ]+/g, '');
+                   handleInputChange('serialNumber', formattedText);
+                 }}
+                 style={{
+                   ...styles.input,
+                   flex: 1, // Allow the TextInput to take up the remaining space
+                   alignSelf: 'flex-start',
+                 }}
+                 value={regulatorDetails.serialNumber}
+               />
+               <Button
+                 title="📷"
+                 onPress={scanBarcode}
+                 style={{ width: '5%' }} // Fixed width for the button
+               />
+             </View>
+           </View>
+           
+            )}
 
+            {/* Manufacturer and Model */}
             <View style={styles.row}>
-              {/* Manufacturer Text Input */}
               <View style={{ width: width * 0.45 }}>
                 <Text>Manufacturer</Text>
                 <TextInput
                   style={styles.input}
-                  value={manufacturer}
-                  onChangeText={setManufacturer}
+                  value={regulatorDetails.manufacturer}
+                  onChangeText={(txt) => {
+                    const filteredText = txt.replace(/[^a-zA-Z ]/g, '');
+                    handleInputChange('manufacturer', filteredText);
+                  }}
                 />
               </View>
-
-              {/* Model Text Input */}
               <View style={{ width: width * 0.45 }}>
                 <Text>Model</Text>
                 <TextInput
                   style={styles.input}
-                  value={model}
-                  onChangeText={setModel}
+                  value={regulatorDetails.model}
+                  onChangeText={(txt) => {
+                    const filteredText = txt.replace(/[^a-zA-Z ]/g, '');
+                    handleInputChange('model', filteredText);
+                  }}
                 />
               </View>
             </View>
@@ -254,36 +239,135 @@ function RegulatorPage() {
               <Text>Size</Text>
               <EcomDropDown
                 width={width * 0.35}
-                value={size}
-                valueList={[
-                  { label: '1/4"', value: '1/4' },
-                  { label: '1/2"', value: '1/2' },
-                  { label: '3/4"', value: '3/4' },
-                  { label: '1"', value: '1' },
-                  { label: '1 1/4"', value: '1 1/4' },
-                  { label: '1 1/2"', value: '1 1/2' },
-                  { label: '2"', value: '2' },
-                  { label: '3"', value: '3' },
-                  { label: '4"', value: '4' },
-                  { label: '6"', value: '6' },
-                  { label: '8"', value: '8' },
-                  { label: '10"', value: '10' },
-                  { label: '12"', value: '12' },
-                  { label: '16"', value: '16' },
-                  { label: '20"', value: '20' },
-                  // ... Add other sizes here
-                ]}
+                value={regulatorDetails.size}
+                valueList={SIZE_LIST}
                 placeholder={'Select Size'}
                 onChange={(item) => {
-                  console.log(item);
-                  setSize(item.value);
+                  handleInputChange('size',item)
                 }}
               />
             </View>
 
-            {/* ... other UI components */}
+            <View style={styles.spacer} />
+
+           
+
+            <View style={styles.spacer} />
+
+            
+            <View style={{ gap: 10 }}>
+                <Text type={TextType.CAPTION_2}>
+                  {'Is the regulator sealed? *'}
+                </Text>
+                <OptionalButton
+                  options={['Yes', 'No']}
+                  actions={[
+                    () => handleInputChange('IsSealedRegulator', true),
+                    () => handleInputChange('IsSealedRegulator', false),
+                  ]}
+                  value={
+                    regulatorDetails.IsSealedRegulator === null
+                      ? null
+                      : regulatorDetails.IsSealedRegulator
+                      ? 'Yes'
+                      : 'No'
+                  }
+                />
+              </View>
+            <View style={styles.optionContainer}>
+        
+        <View style={styles.spacer2} />
+        
+   
+      </View>
+      <View style={{ gap: 10 }}>
+                <Text type={TextType.CAPTION_2}>
+                  {'Is the regulator Threaded or flanged? *'}
+                </Text>
+                <OptionalButton
+                  options={['Threaded', 'Flanged']}
+                  actions={[
+                    () => handleInputChange('ConnectionType', true),
+                    () => handleInputChange('ConnectionType', false),
+                  ]}
+                  value={
+                    regulatorDetails.ConnectionType === null
+                      ? null
+                      : regulatorDetails.ConnectionType
+                      ? 'Threaded'
+                      : 'Flanged'
+                  }
+                />
+              </View>
+         
+             <View style={{ gap: 10 }}>
+                <Text type={TextType.CAPTION_2}>
+                  {'Has the new meter, customer appliances and pipe work been purged and relit satisfactorily including a visual inspection? *'}
+                </Text>
+                <OptionalButton
+                  options={['Yes', 'No']}
+                  actions={[
+                    () => handleInputChange('isPurged', true),
+                    () => handleInputChange('isPurged', false),
+                  ]}
+                  value={
+                    regulatorDetails.isPurged === null
+                      ? null
+                      : regulatorDetails.isPurged
+                      ? 'Yes'
+                      : 'No'
+                  }
+                />
+              </View>
+            
+             <View style={{ gap: 10 }}>
+                <Text type={TextType.CAPTION_2}>
+                  {'Is the installation correctly labelled? *'}
+                </Text>
+                <OptionalButton
+                  options={['Yes', 'No']}
+                  actions={[
+                    () => handleInputChange('isLabelled', true),
+                    () => handleInputChange('isLabelled', false),
+                  ]}
+                  value={
+                    regulatorDetails.isLabelled === null
+                      ? null
+                      : regulatorDetails.isLabelled
+                      ? 'Yes'
+                      : 'No'
+                  }
+                />
+              </View>
+           
+             <View style={{ gap: 10 }}>
+                <Text type={TextType.CAPTION_2}>
+                  {'Is there a purpose made ventilation? *'}
+                </Text>
+                <OptionalButton
+                  options={['Yes', 'No']}
+                  actions={[
+                    () => handleInputChange('isVentilation', true),
+                    () => handleInputChange('isVentilation', false),
+                  ]}
+                  value={
+                    regulatorDetails.isVentilation === null
+                      ? null
+                      : regulatorDetails.isVentilation
+                      ? 'Yes'
+                      : 'No'
+                  }
+                />
+              </View>
+           
+            {isModal && (
+            <BarcodeScanner
+              setIsModal={setIsModal}
+              cameraRef={camera}
+              barcodeRecognized={readSerialNumber}
+            />
+          )}
           </View>
-          {/* ... other UI components */}
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

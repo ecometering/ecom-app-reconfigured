@@ -17,49 +17,47 @@ import { EcomPressable as Button } from '../../components/ImageButton';
 import { AppContext } from '../../context/AppContext';
 import EcomHelper from '../../utils/ecomHelper';
 import { openDatabase } from '../../utils/database';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import { useSQLiteContext } from 'expo-sqlite/next';
+
 
 function AdditionalMaterialPage() {
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const appContext = useContext(AppContext);
-  const regulatorDetails = appContext.regulatorDetails;
+  const { jobType, additionalMaterials,SetAdditionalMaterials, jobID } =
+  useContext(AppContext);
   const [category, setCategory] = useState('');
   const [item, setItem] = useState('');
   const [quantity, setQuantity] = useState(0);
   const [materials, setMaterials] = useState([]);
+  const db = useSQLiteContext();
 
-  const jobType = appContext.jobType;
-  const title = jobType === 'Install' ? 'New Meter Details' : jobType;
 
-  const saveAdditionalMaterialsToDatabase = async () => {
-    console.log('creating job');
-    const db = await openDatabase();
-    console.log('Db status:', db);
+  
 
-    const additionalMaterials = JSON.stringify(materials);
+    const saveToDatabase = async () => {
+     const additionalMaterialsJSON = JSON.stringify(materials);
+      try {
+        await db
+          .runAsync('UPDATE Jobs SET additionalMaterials = ? WHERE id = ?', [
+            additionalMaterialsJSON,
+            jobID,
+          ])
+          .then((result) => {
+            console.log('meterDetails saved to database:', result);
+          });
+      } catch (error) {
+        console.log('Error saving meterDetails to database:', error);
+      }
+    };
 
-    db.transaction((tx) => {
-      tx.executeSql(
-        `UPDATE Jobs SET additionalMaterials=?, progress=? WHERE id=?`,
-        [additionalMaterials, progress, jobId],
-        (_, result) => {
-          console.log(
-            'Site details and progress updated in database. Generated ID:',
-            result.insertId
-          );
-          // Pass the result.insertId as JobId parameter to the next navigation call
-          goToNextStep();
-        },
-        (_, error) =>
-          console.log('Error updating site details in database:', error)
-      );
-    });
-  };
   const nextPressed = () => {
     if (materials.length === 0) {
       EcomHelper.showInfoMessage('Please add materials');
       return;
     }
-    saveAdditionalMaterialsToDatabase();
+    saveToDatabase();
+    goToNextStep();
   };
   const backPressed = () => {
     appContext.setRegulatorDetails({
@@ -164,7 +162,7 @@ function AdditionalMaterialPage() {
         hasLeftBtn={true}
         hasCenterText={true}
         hasRightBtn={true}
-        centerText={title}
+        centerText={"Additonal Materials"}
         leftBtnPressed={backPressed}
         rightBtnPressed={nextPressed}
       />

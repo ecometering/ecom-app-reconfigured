@@ -18,8 +18,9 @@ const AppContextProvider = (props) => {
   const [jobType, setJobType] = useState(null);
   const [jobDetails, setJobDetails] = useState(null);
   const [jobStarted, setJobStarted] = useState(false);
+  const [jobStatus,setJobStatus]=useState(null);
   const [photos, setPhotos] = useState({});
-
+const [streams,setStreams]=useState({});
   const savePhoto = async (photoKey, photoDetails) => {
     setPhotos((prevPhotos) => ({
       ...prevPhotos,
@@ -74,21 +75,30 @@ const AppContextProvider = (props) => {
     isFitted: false,
     isStandard: false,
   });
-
+const [rebook,setRebook] =useState({});
   const [meterDetails, setMeterDetails] = useState({});
   const [kioskDetails, setKioskDetails] = useState({});
   const [ecvDetails, setEcvDetails] = useState({});
   const [movDetails, setMovDetails] = useState({});
-  const [regulatorDetails, setRegulatorDetails] = useState(null);
+  const [regulatorDetails, setRegulatorDetails] = useState({});
   const [standardDetails, setStandardDetails] = useState(null);
   const [ventDetails, setVentDetails] = useState({});
+  const [meterDetailsTwo, setMeterDetailsTwo] = useState({});
+  const [additionalMaterials,setAdditionalMaterials]=useState({});
   //.. removed
-  const [dataLoggerDetails, setDataLoggerDetails] = useState({
+  const [dataLoggerDetails, setDataLoggerDetails] = useState({});
+  useEffect(() => {
+    
+    if (jobType === "Install" || jobType === "Maintenance") {
+      setDataLoggerDetails({ loggerOwner: 'Eco Metering Solutions' });
+    } else {
+      setDataLoggerDetails({});
+    }
+  }, [jobType]);
+
+  const [dataLoggerDetailsTwo, setDataLoggerDetailsTwo] = useState({
     loggerOwner: 'Eco Metering Solutions',
   });
-  const [removedMeterDetails, setRemovedMeterDetails] = useState(null);
-  //.. warant
-  // ... Maintenance
   const [maintenanceDetails, setMaintenanceDetails] = useState(null);
 
   const [blobs, setBlobs] = useState([]);
@@ -120,13 +130,15 @@ const AppContextProvider = (props) => {
     uncorrected: '',
     corrected: '',
   });
-
+  const [chatterBoxDetails,setChatterBoxDetails]=useState({});
   const resetContext = () => {
+    setJobID(null);
     setJobType(null);
     setJobDetails(null);
     setJobStarted(false);
+    setChatterBoxDetails({});
     setPhotos({});
-    setJobID(null);
+    setStreams({});
     setHasStreamNumber(false);
     setStreamNumber(0);
     setStreamValue([]);
@@ -161,10 +173,42 @@ const AppContextProvider = (props) => {
       isFitted: false,
       isStandard: false,
     });
-    setMeterDetails(null);
+    setMeterDetails({});
+    setKioskDetails({});
+    setEcvDetails({});
+    setMovDetails({});
     setRegulatorDetails(null);
     setStandardDetails(null);
+    setVentDetails({});
+    setMeterDetailsTwo({});
+    setAdditionalMaterials({});
+    setDataLoggerDetails(
+      (jobType === "Install" || jobType === "Maintenance") 
+        ? { loggerOwner: 'Eco Metering Solutions' } 
+        : {}
+    );
+    setDataLoggerDetailsTwo({
+      loggerOwner: 'Eco Metering Solutions',
+    });
     setMaintenanceDetails(null);
+    setCorrectorDetails({
+      manufacturer: '',
+      model: '',
+      serialNumber: '',
+      isMountingBracket: null,
+      uncorrected: '',
+      corrected: '',
+    });
+    setCorrectorDetailsTwo({
+      manufacturer: '',
+      model: '',
+      serialNumber: '',
+      isMountingBracket: null,
+      uncorrected: '',
+      corrected: '',
+    });
+    setBlobs([]);
+    setUserLogged(false);
     setJobdata(null);
   };
 
@@ -172,27 +216,34 @@ const AppContextProvider = (props) => {
     resetContext,
     jobType,
     jobID,
+    jobStatus,
     jobDetails,
     siteQuestions,
     photos,
     dataLoggerDetails,
     correctorDetails,
+    chatterBoxDetails,
     correctorDetailsTwo,
     hasStreamNumber,
     jobData,
     streamNumber,
     streamValue,
     streamCounter,
+    streams,
     siteDetails,
     meterDetails,
+    meterDetailsTwo,
+    regulatorDetails,
+    dataLoggerDetailsTwo,
+    additionalMaterials,
     kioskDetails,
     ecvDetails,
     movDetails,
+    rebook,
     ventDetails,
     regulatorDetails,
     standardDetails,
     extraCounter,
-    removedMeterDetails,
     maintenanceDetails,
     setJobType,
     setJobDetails,
@@ -204,25 +255,31 @@ const AppContextProvider = (props) => {
     updatePhoto,
     setJobdata,
     setJobID,
+    setJobStatus,
     setMaintenanceDetails,
-    setRemovedMeterDetails,
     setExtraCounter,
+    setMeterDetailsTwo,
+    setAdditionalMaterials,
     setKioskDetails,
     setEcvDetails,
     setMovDetails,
     setDataLoggerDetails,
+    setDataLoggerDetailsTwo,
     setVentDetails,
     setStandardDetails,
     setRegulatorDetails,
     setMeterDetails,
     setSiteDetails,
     setCorrectorDetails,
+    setChatterBoxDetails,
     setCorrectorDetailsTwo,
     setHasStreamNumber,
     setStreamCounter,
     setStreamValue,
     setStreamNumber,
+    setStreams,
     setJobTypes,
+    setRebook,
     setJobStarted,
     blobs,
     setBlobs,

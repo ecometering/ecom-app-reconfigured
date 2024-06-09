@@ -24,15 +24,14 @@ const { width, height } = Dimensions.get('window');
 function GasSafeWarningPage() {
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const appContext = useContext(AppContext);
-  const jobType = appContext.jobType;
-  const title = jobType === 'Install' ? 'New Meter Details' : jobType;
-  const standardDetails = appContext.standardDetails;
+ const {jobID,photos,savePhoto,standardDetails} = appContext
+  const title = "Riddor Report"
+
+
 
   const [certificateReference, setCertificateReference] = useState(
     standardDetails?.certificateReference
   );
-  const [engineerId, setEngineerId] = useState(standardDetails?.engineerId);
-  const [jobNumber, setJobNumber] = useState(standardDetails?.jobNumber);
   const [emergencyService, setEmergencyService] = useState(
     standardDetails?.emergencyService
   );
@@ -71,8 +70,6 @@ function GasSafeWarningPage() {
     appContext.setStandardDetails({
       ...standardDetails,
       certificateReference: certificateReference,
-      engineerId: engineerId,
-      jobNumber: jobNumber,
       emergencyService: emergencyService,
       isPropertyRented: isPropertyRented,
       isCustomerAvailable: isCustomerAvailable,
@@ -88,15 +85,7 @@ function GasSafeWarningPage() {
       EcomHelper.showInfoMessage('Please enter Certificate Reference');
       return;
     }
-    if (engineerId == null) {
-      EcomHelper.showInfoMessage('Please enter Engineer ID');
-      return;
-    }
-    if (jobNumber == null) {
-      EcomHelper.showInfoMessage('Please enter Job Number');
-      return;
-    }
-    if (emergencyService == null) {
+        if (emergencyService == null) {
       EcomHelper.showInfoMessage(
         'Please enter Details of gas EmergencySErvice Provider RED'
       );
@@ -124,8 +113,6 @@ function GasSafeWarningPage() {
     const standards = {
       ...standardDetails,
       certificateReference: certificateReference,
-      engineerId: engineerId,
-      jobNumber: jobNumber,
       emergencyService: emergencyService,
       isPropertyRented: isPropertyRented,
       isCustomerAvailable: isCustomerAvailable,
@@ -166,26 +153,8 @@ function GasSafeWarningPage() {
             containerStyle={styles.inputContainer}
           />
           <View style={styles.spacer} />
-          <TextInputWithTitle
-            title={'Engineers ID'}
-            placeholder={''}
-            value={engineerId}
-            onChangeText={(txt) => {
-              setEngineerId(txt);
-            }}
-            containerStyle={styles.inputContainer}
-          />
-          <View style={styles.spacer} />
-          <TextInputWithTitle
-            title={'Job Number'}
-            placeholder={''}
-            value={jobNumber}
-            onChangeText={(txt) => {
-              setJobNumber(txt);
-            }}
-            containerStyle={styles.inputContainer}
-          />
-          <View style={styles.spacer} />
+         
+          
           <TextInputWithTitle
             title={'Details of gas EmergencyService Provider REF'}
             placeholder={''}
@@ -213,7 +182,7 @@ function GasSafeWarningPage() {
             >
               <Text>{'Is the property Rented?'}</Text>
               <View style={styles.spacer2} />
-              <View style={styles.optionContainer}>
+              <View style={styles.optionsContainer}>
                 <OptionalButton
                   options={['Yes', 'No']}
                   actions={[
@@ -247,7 +216,7 @@ function GasSafeWarningPage() {
             >
               <Text>{'Was Customer available on site'}</Text>
               <View style={styles.spacer2} />
-              <View style={styles.optionContainer}>
+              <View style={styles.optionsContainer}>
                 <OptionalButton
                   options={['Yes', 'No']}
                   actions={[

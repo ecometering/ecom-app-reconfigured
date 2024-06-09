@@ -12,6 +12,7 @@ import { useNavigation } from '@react-navigation/native';
 // Utils and Constants
 import { height, unitH } from '../utils/constant';
 import { PrimaryColors } from '../theme/colors';
+import { useSQLiteContext } from 'expo-sqlite/next';
 
 // Components
 import Text from '../components/Text';
@@ -23,6 +24,7 @@ import { AppContext } from '../context/AppContext';
 import { useProgressNavigation } from '../context/ExampleFlowRouteProvider';
 
 function JobTypePage() {
+  const db = useSQLiteContext();
   const navigation = useNavigation();
   const { startFlow } = useProgressNavigation();
   const { jobStarted, resetContext } = useContext(AppContext);
@@ -32,6 +34,15 @@ function JobTypePage() {
 
   const setJobTypeAndNavigate = async (jobType) => {
     if (jobStarted) {
+      await db
+        .runAsync('SELECT name FROM sqlite_master WHERE type="table" AND name NOT LIKE "sqlite_%"')
+        .then((result) => {
+          console.log('Tables:', result);
+        })
+        .catch((error) => {
+          console.error('Error getting tables:', error);
+        });
+        
       // Show modal if a job is already started
       setSelectedJobType(jobType);
       setModalVisible(true);

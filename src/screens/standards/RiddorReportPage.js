@@ -133,7 +133,16 @@ export default function RiddorReportPage() {
             <Text>RIDDOR Reference</Text>
             <TextInput
               value={riddorRef}
-              onChangeText={(text) => setRiddorRef(text)}
+              onChangeText={(txt) => {
+                // Define the alphanumeric regular expression
+                const alphanumericRegex = /^[a-z0-9]+$/i;
+
+                // Capitalize the text
+                const formattedText = txt.toUpperCase();
+
+                // Check if the formatted text is alphanumeric
+                if (alphanumericRegex.test(formattedText)) 
+             setRiddorRef(formattedText)}}
               style={styles.input}
             />
           </View>

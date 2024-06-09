@@ -19,7 +19,7 @@ import { AppContext } from '../../context/AppContext';
 import EcomHelper from '../../utils/ecomHelper';
 import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 import { useSQLiteContext } from 'expo-sqlite/next';
-
+import { SIZE_LIST } from '../../utils/constant';
 
 const isIos = Platform.OS === 'ios';
 const { width, height } = Dimensions.get('window');
@@ -27,7 +27,7 @@ export default function MovPage() {
   const db = useSQLiteContext();
   const route = useRoute();
   const { title} = route.params;
-  const { movDetails, setMovDetails } = useContext(AppContext);
+  const { movDetails, setMovDetails,jobID } = useContext(AppContext);
   const navigation = useNavigation();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
@@ -45,7 +45,7 @@ export default function MovPage() {
       await db 
       .runAsync ( 
         'UPDATE Jobs SET movDetails =? WHERE id = ?',
-        [movJson, job.id]
+        [movJson, jobID]
       )
       .then((result) => {
         console.log('mov Details saved to database:', result);
@@ -127,7 +127,7 @@ export default function MovPage() {
             <View style={styles.row}>
               <View style={{ flex: 0.5, marginTop: 8, marginLeft: 8 }}>
                 <TextInputWithTitle
-                  title="Mov height (cm)"
+                  title="Mov height (mm)"
                   value={movDetails.height}
                   onChangeText={(txt) => {
                     const numericValue = txt.replace(/[^0-9.]/g, '');
@@ -138,25 +138,25 @@ export default function MovPage() {
                 />
               </View>
               <View style={{ flex: 0.5, marginTop: 8, marginLeft: 8 }}>
-                <TextInputWithTitle
-                  title="Size"
-                  value={movDetails.size}
-                  onChangeText={(txt) => {
-                    const withSpecialChars = txt.toUpperCase();
-                    const formattedText = withSpecialChars.replace(
-                      /[^A-Z0-9"/ ]+/g,
-                      ''
-                    );
-                    handleInputChange('size', formattedText);
-                  }}
-                  style={[styles.input, { width: '100%' }]}
-                />
+                
+                    
+                      <EcomDropDown
+                        width={width * 0.35}
+                        value={movDetails.size}
+                        valueList={SIZE_LIST}
+                        placeholder="Select size"
+                        onChange={(item) =>
+                          handleInputChange('size', item.value)
+                        }
+                      />
+                   
+                  
               </View>
             </View>
             <View style={styles.row}>
               <View style={{ flex: 0.5, marginTop: 8, marginLeft: 8 }}>
                 <TextInputWithTitle
-                  title="Distance from Kiosk wall (cm)"
+                  title="Distance from Kiosk wall (mm)"
                   value={movDetails.dfkw}
                   onChangeText={(txt) => {
                     const numericValue = txt.replace(/[^0-9.]/g, '');
@@ -168,7 +168,7 @@ export default function MovPage() {
               </View>
               <View style={{ flex: 0.5, marginTop: 8, marginLeft: 8 }}>
                 <TextInputWithTitle
-                  title="Distance from  Rear Kiosk wall (cm)"
+                  title="Distance from  Rear Kiosk wall (mm)"
                   value={movDetails.dfrkw}
                   onChangeText={(txt) => {
                     const numericValue = txt.replace(/[^0-9.]/g, '');
