@@ -150,10 +150,7 @@ export const MaintenanceStandardPage = [
     diversions: (state) => {
       const { standardDetails } = state;
       const { riddorReportable, conformStandard,chatterbox,additionalMaterials } = standardDetails;
-     if (additionalMaterials === true) {
-          return AdditionalMaterialsPage;
-        }
-        else{ 
+    
           if (chatterbox === true) {
         return chatterBoxPage}
       else {
@@ -168,7 +165,7 @@ export const MaintenanceStandardPage = [
         }
       }}}
     },
-  },
+ 
 ];
 
 export const RiddorReportPage = [
@@ -326,9 +323,9 @@ export const MaintenanceExistingDataLoggerDetails = [
 export const InstancesForStreamFlow = ({ state }) => {
   // TODO: sort context switch
   // Redux might be a better option
-  const { streamNumber } = state || {};
+  const { streams } = state || {};
 
-  return Array.from({ length: streamNumber }, (_, index) => index + 1).reduce(
+  return Array.from({ length: streams.Number }, (_, index) => index + 1).reduce(
     (acc, stream) => {
       return [
         ...acc,

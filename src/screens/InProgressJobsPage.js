@@ -12,10 +12,12 @@ import { AppContext } from '../context/AppContext';
 
 const JobsTable = ({ route }) => {
   const db = useSQLiteContext();
-  const appContext = useContext(AppContext);
   const [jobs, setJobs] = useState([]);
   const navigation = useNavigation();
   const { startFlow } = useProgressNavigation();
+  const appContext = useContext(AppContext);
+  const { SetJobStarted, resetContext } = appContext;
+
 
   useEffect(() => {
     fetchData();
@@ -51,13 +53,12 @@ const JobsTable = ({ route }) => {
         text: 'Yes',
         onPress: async () => {
           try {
-            await db.transaction(async (tx) => {
-              await tx.executeSql('DELETE FROM Jobs WHERE id = ?', [jobId]);
-            });
+            await db.runAsync('DELETE FROM Jobs WHERE id = ?', [jobId]);
+            resetContext();
             console.log('Record deleted successfully');
-            fetchData();
+            
           } catch (error) {
-            console.error('Error deleting record', error);
+            console.error('Error fetching jobs:', error);
           }
         },
       },

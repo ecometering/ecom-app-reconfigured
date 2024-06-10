@@ -5,6 +5,8 @@ import {
   Dimensions,
   ScrollView,
   SafeAreaView,
+  Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import React, { useContext, useState } from 'react';
 
@@ -96,6 +98,9 @@ export default function RiddorReportPage() {
 
   return (
     <ScrollView style={styles.scrollView}>
+      <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : null}>
       <SafeAreaView style={styles.safeAreaView}>
         <Header
           hasLeftBtn={true}
@@ -148,6 +153,7 @@ export default function RiddorReportPage() {
           </View>
         </View>
       </SafeAreaView>
+      </KeyboardAvoidingView>
     </ScrollView>
   );
 }

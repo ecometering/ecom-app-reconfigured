@@ -51,7 +51,7 @@ function MeterDetailsTwoPage() {
   const isIos = Platform.OS === 'ios';
   const { title } = route.params;
   const diaphragmMeterTypes = ['1', '2', '4'];
-  const { jobType, MeterDetailsTwo, setMeterDetailsTwo, jobID } =
+  const { jobType, meterDetailsTwo, setMeterDetailsTwo, jobID } =
     useContext(AppContext);
 
   // Local states
@@ -63,7 +63,7 @@ function MeterDetailsTwoPage() {
   const [meterTypes, setMeterTypes] = useState([]);
   const [isModal, setIsModal] = useState(false);
   const [localMeterDetailsTwo, setLocalMeterDetailsTwo] = useState(
-    MeterDetailsTwo ?? {}
+    meterDetailsTwo ?? {}
   );
 
   // TODO: this is a hack to prevent memory leaks for now until we find a better way implement this

@@ -2,14 +2,12 @@ import { useSQLiteContext } from 'expo-sqlite/next';
 import * as ExpoImagePicker from 'expo-image-picker';
 import { useRoute } from '@react-navigation/native';
 import React, {
-  createRef,
   useState,
   useContext,
 } from 'react';
 import {
   View,
   Image,
-  Alert,
   ScrollView,
   Platform,
   StyleSheet,
@@ -20,7 +18,6 @@ import {
 
 // Components
 import TextInput, {
-  InputRowWithTitle,
   TextInputWithTitle,
 } from '../../components/TextInput';
 import Text from '../../components/Text';
@@ -38,11 +35,11 @@ import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 import withUniqueKey from '../../utils/renderNavigationWithUniqueKey';
 const { width, height } = Dimensions.get('window');
 
-const  ReliefRegulatorPage= () => {
+const ReliefRegulatorPage = () => {
   const route = useRoute();
   const db = useSQLiteContext();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
-  const { jobID, photos, savePhoto, streams, setStreams, streamNumber } = useContext(AppContext);
+  const { jobID, photos, savePhoto, streams, setStreams } = useContext(AppContext);
 
   const { title, stream, photoKey } = route.params;
   const existingPhoto = photos && photoKey ? photos[photoKey] : null;
@@ -81,40 +78,39 @@ const  ReliefRegulatorPage= () => {
   const backPressed = () => {
     saveToDatabase();
     if (selectedImage.uri) savePhoto(photoKey, selectedImage);
-    
+
     goToPreviousStep();
   };
 
   const nextPressed = async () => {
-    if (streams[`ReliefRegulator${stream}Exists`] === null) {
-      EcomHelper.showInfoMessage('Please select if the relief Regulator exists');
+    if (streams[`reliefRegulator${stream}Exists`] === undefined) {
+      EcomHelper.showInfoMessage('Please select if the relief regulator exists');
       return;
     }
-  
-    if (streams[`ReliefRegulator${stream}Exists`]) {
+
+    if (streams[`reliefRegulator${stream}Exists`]) {
       if (!selectedImage?.uri) {
         EcomHelper.showInfoMessage('Please choose an image');
         return;
       }
       if (!streams[`reliefRegulatorSerialNumber${stream}`]) {
-        EcomHelper.showInfoMessage('Please input the relief Regulator Serial Number.');
+        EcomHelper.showInfoMessage('Please input the relief regulator serial number.');
         return;
       }
       if (!streams[`reliefRegulatorSize${stream}`]) {
-        EcomHelper.showInfoMessage('Please select the relief Regulator Size.');
+        EcomHelper.showInfoMessage('Please select the relief regulator size.');
         return;
       }
       if (!streams[`reliefRegulatorManufacturer${stream}`]) {
-        EcomHelper.showInfoMessage('Please input the relief Regulator Manufacturer.');
+        EcomHelper.showInfoMessage('Please input the relief regulator manufacturer.');
         return;
       }
-     
     }
-  
+
     await saveToDatabase();
-  
+
     if (selectedImage.uri) savePhoto(photoKey, selectedImage);
-  
+
     goToNextStep();
   };
 
@@ -135,7 +131,7 @@ const  ReliefRegulatorPage= () => {
         <ScrollView style={styles.content}>
           <View style={styles.body}>
             <Text type={TextType.HEADER_1} style={{ alignSelf: 'center' }}>
-              relief Regulator Details
+              Relief Regulator Details
             </Text>
             <View style={styles.spacer} />
             <View>
@@ -146,17 +142,15 @@ const  ReliefRegulatorPage= () => {
                   actions={[
                     () => {
                       handleInputChange(`reliefRegulator${stream}Exists`, true);
-                     
                     },
                     () => {
                       handleInputChange(`reliefRegulator${stream}Exists`, false);
-                    
                     },
                   ]}
                   value={
-                    streams[`ReliefRegulator${stream}Exists`] === null
+                    streams[`reliefRegulator${stream}Exists`] === undefined
                       ? null
-                      : streams[`ReliefRegulator${stream}Exists`]
+                      : streams[`reliefRegulator${stream}Exists`]
                       ? 'Yes'
                       : 'No'
                   }
@@ -164,7 +158,7 @@ const  ReliefRegulatorPage= () => {
               </View>
             </View>
 
-            {streams[`ReliefRegulator${stream}Exists`] && (
+            {streams[`reliefRegulator${stream}Exists`] && (
               <>
                 <View style={styles.border}>
                   <View style={styles.row}>
@@ -174,7 +168,7 @@ const  ReliefRegulatorPage= () => {
                         alignSelf: 'flex-end',
                       }}
                     >
-                      <Text>relief Regulator Serial Number</Text>
+                      <Text>Relief Regulator Serial Number</Text>
                       <View style={styles.spacer2} />
                       <View style={{ ...styles.row, width: width * 0.35 }}>
                         <TextInput
@@ -254,7 +248,7 @@ const  ReliefRegulatorPage= () => {
                 <View style={styles.imagePickerContainer}>
                   <View style={styles.body}>
                     <Text type="caption" style={styles.text}>
-                      relief Regulator photo
+                      Relief Regulator photo
                     </Text>
                     <ImagePickerButton
                       onImageSelected={handlePhotoSelected}
@@ -353,4 +347,5 @@ const styles = StyleSheet.create({
     // Add any additional styles you need for the close icon
   },
 });
+
 export default withUniqueKey(ReliefRegulatorPage);

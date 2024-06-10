@@ -33,7 +33,7 @@ export const SiteQuestionsPage = [
     diversions: (state) => {
       const { siteQuestions } = state;
       if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
-        return WarrantStandardPage;
+        return RemovedStandardPage;
       } else if (!siteQuestions?.isCarryOut) {
         return RebookPage;
       } else {
@@ -185,10 +185,7 @@ export const RemovedStandardPage = [
     diversions: (state) => {
       const { standardDetails } = state;
       const { riddorReportable, conformStandard,chatterbox,additionalMaterials } = standardDetails;
-     if (additionalMaterials === true) {
-          return AdditionalMaterialsPage;
-        }
-        else{ 
+      
           if (chatterbox === true) {
         return chatterBoxPage}
       else {
@@ -203,7 +200,6 @@ export const RemovedStandardPage = [
         }
       }}}
     },
-  },
 ];
 
 export const RemovedMeterDetails = [
@@ -251,9 +247,10 @@ export const RemovedDataLoggerDetails = [
       title: 'Removed AMR',
       photoKey: 'RemovedAMR',
     },
-    ...RemovedStandardPage,
+    
     
   },
+  ...RemovedStandardPage,
 ];
 
 export const RemovedMeterIndex = [

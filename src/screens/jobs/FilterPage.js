@@ -38,11 +38,11 @@ import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 import withUniqueKey from '../../utils/renderNavigationWithUniqueKey';
 const { width, height } = Dimensions.get('window');
 
-const FilterPage=() => {
+const FilterPage = () => {
   const route = useRoute();
   const db = useSQLiteContext();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
-  const { jobID, photos, savePhoto, streams, setStreams,  } = useContext(AppContext);
+  const { jobID, photos, savePhoto, streams, setStreams } = useContext(AppContext);
 
   const { title, stream, photoKey } = route.params;
   const existingPhoto = photos && photoKey ? photos[photoKey] : null;
@@ -81,17 +81,17 @@ const FilterPage=() => {
   const backPressed = () => {
     saveToDatabase();
     if (selectedImage.uri) savePhoto(photoKey, selectedImage);
-    
+
     goToPreviousStep();
   };
 
   const nextPressed = async () => {
-    if (streams[`Filter${stream}Exists`] === null) {
+    if (streams[`filter${stream}Exists`] === null) {
       EcomHelper.showInfoMessage('Please select if the filter exists');
       return;
     }
-  
-    if (streams[`Filter${stream}Exists`]) {
+
+    if (streams[`filter${stream}Exists`]) {
       if (!selectedImage?.uri) {
         EcomHelper.showInfoMessage('Please choose an image');
         return;
@@ -108,16 +108,14 @@ const FilterPage=() => {
         EcomHelper.showInfoMessage('Please input the Filter Manufacturer.');
         return;
       }
-     
     }
-  
+
     await saveToDatabase();
-  
+
     if (selectedImage.uri) savePhoto(photoKey, selectedImage);
-  
+
     goToNextStep();
   };
-
 
   return (
     <SafeAreaView style={styles.content}>
@@ -147,17 +145,15 @@ const FilterPage=() => {
                   actions={[
                     () => {
                       handleInputChange(`filter${stream}Exists`, true);
-                    
                     },
                     () => {
                       handleInputChange(`filter${stream}Exists`, false);
-               
                     },
                   ]}
                   value={
-                    streams[`Filter${stream}Exists`] === null
+                    streams[`filter${stream}Exists`] === undefined
                       ? null
-                      : streams[`Filter${stream}Exists`]
+                      : streams[`filter${stream}Exists`]
                       ? 'Yes'
                       : 'No'
                   }
@@ -165,7 +161,7 @@ const FilterPage=() => {
               </View>
             </View>
 
-            {streams[`Filter${stream}Exists`] && (
+            {streams[`filter${stream}Exists`] && (
               <>
                 <View style={styles.border}>
                   <View style={styles.row}>
@@ -276,7 +272,7 @@ const FilterPage=() => {
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   image: {
@@ -354,4 +350,5 @@ const styles = StyleSheet.create({
     // Add any additional styles you need for the close icon
   },
 });
+
 export default withUniqueKey(FilterPage);

@@ -15,7 +15,6 @@ import axios from 'axios';
 import moment from 'moment';
 import Header from '../components/Header';
 import { useAuth } from '../context/AuthContext';
-import { useSQLiteContext } from 'expo-sqlite/next';
 import { useProgressNavigation } from '../context/ExampleFlowRouteProvider';
 
 const SubmitSuccessPage = () => {
@@ -25,194 +24,182 @@ const SubmitSuccessPage = () => {
   const navigation = useNavigation();
   const { goToPreviousStep } = useProgressNavigation();
   const [isLoading, setLoading] = useState(false);
+  const [currentJobStatus, setCurrentJobStatus] = useState(jobStatus);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     setLoading(false);
-  }, []);
+    setCurrentJobStatus(jobStatus);
+  }, [jobStatus]);
 
   const getCurrentDateTime = () => {
     return moment().format('YYYY-MM-DD HH:mm');
   };
 
-  async function fetchAndUploadJobData() {
-    setLoading(true);
-
+  const fetchJobData = async () => {
     try {
       const db = await openDatabase();
-
-      db?.transaction((tx) => {
-        tx.executeSql(
-          'SELECT * FROM Jobs WHERE id = ?',
-          [appContext?.jobID],
-          async (_, { rows: { _array } }) => {
-            if (_array.length > 0) {
-              const jobData = JSON.stringify(_array[0]);
-              await sendData(jobData);
-            } else {
-              Alert.alert('Error', 'No job data found.');
-              setLoading(false);
+      return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+          tx.executeSql(
+            'SELECT * FROM Jobs WHERE id = ?',
+            [appContext?.jobID],
+            (_, { rows: { _array } }) => {
+              if (_array.length > 0) {
+                resolve(JSON.stringify(_array[0]));
+              } else {
+                reject('No job data found.');
+              }
+            },
+            (error) => {
+              console.error('Error fetching job data:', error);
+              reject('Failed to fetch job data.');
             }
-          },
-          (error) => {
-            console.error('SQL error:', error);
-            setLoading(false);
-            Alert.alert('Database Error', 'Failed to fetch job data.');
-          }
-        );
+          );
+        });
       });
     } catch (error) {
-      console.error('Database error:', error);
-      setLoading(false);
-      Alert.alert('Database Error', 'Failed to open database.');
+      console.error('Error opening database:', error);
+      throw new Error('Failed to open database.');
     }
-  }
+  };
 
-  async function sendData(jobData) {
+  const uploadJobData = async (jobData) => {
     const body = {
       data: jobData,
     };
+
     try {
-      axios
-        .post('https://test.ecomdata.co.uk/api/incoming-jobs/', body)
-        .then((response) => {
-          console.log('Job data uploaded:', response.data);
-          uploadPhotos(response.data.job_id)
-            .then(() => {
-              updateJobStatus();
-            })
-            .catch((error) => {
-              console.error('Photo upload error:', error);
-              Alert.alert('Photo Upload Error', 'Failed to upload photos.');
-              setLoading(false);
-            });
-        })
-        .catch(async (error) => {
-          if (error?.response?.status === 401) {
-            console.log('Token expired, refreshing token...');
-            await RefreshAccessToken();
-            sendData(jobData);
-          }
-          console.error('Upload error:', error);
-          setLoading(false);
-          Alert.alert(
-            'Upload Error',
-            `Upload failed with status: ${error?.response?.status}`
-          );
-        });
+      const response = await axios.post(
+        'https://test.ecomdata.co.uk/api/incoming-jobs/',
+        body
+      );
+      console.log('Job data uploaded:', response.data);
+      return response.data;
     } catch (error) {
+      if (error?.response?.status === 401) {
+        console.log('Token expired, refreshing token...');
+        await RefreshAccessToken();
+        return uploadJobData(jobData);
+      }
       console.error('Upload error:', error);
-      setLoading(false);
-      Alert.alert('Upload Error', 'Failed to upload job data.');
+      throw new Error(`Upload failed with status: ${error?.response?.status}`);
     }
-  }
+  };
 
-  async function uploadPhotos(job_id) {
+  const uploadPhotos = async (photos, extras, job_id) => {
     console.log('Uploading photos...');
-    const photos =
-      (appContext.photos && Object.values(appContext.photos)) || [];
 
-    // Parse and Add extra photos to the list
-    const extraPhotos =
-      appContext?.standardDetails?.extras?.length > 0
-        ? appContext.standardDetails.extras
-            .filter((extra) => extra.extraPhoto) // Filter out items where extraPhoto is falsy (null, undefined, '', etc.)
-            .map((extra) => ({
-              photoKey: 'OtherPhoto',
-              description: extra.extraComment,
-              uri: extra.extraPhoto,
-            }))
-        : [];
+    const allPhotos = [
+      ...(photos ? Object.values(photos) : []),
+      ...(extras
+        ? extras.filter((extra) => extra.extraPhoto).map((extra) => ({
+            photoKey: 'OtherPhoto',
+            description: extra.extraComment,
+            uri: extra.extraPhoto,
+          }))
+        : []),
+    ];
 
-    [...photos, ...extraPhotos].forEach((photo) => {
-      uploadResource(photo, job_id);
-    });
-  }
+    const uploadPromises = allPhotos.map((photo) => uploadResource(photo, job_id));
 
-  const uploadResource = (photo, job_id) => {
+    try {
+      await Promise.all(uploadPromises);
+      console.log('All photos uploaded successfully.');
+    } catch (error) {
+      console.error('Error uploading photos:', error);
+      throw new Error('Failed to upload photos.');
+    }
+  };
+
+  const uploadResource = async (photo, job_id) => {
     if (!photo.uri) {
-      console.error({ photo });
-      console.error('Photo URI is empty');
+      console.error('Photo URI is empty:', photo);
       return;
     }
+
     const formData = new FormData();
     formData.append('photo_type', photo.photoKey);
     formData.append('job_id', job_id);
-    formData.append('description', photo.description);
+    formData.append('description', photo.description || '');
     formData.append('photo', {
-      uri: photo.uri.replace('file://', ''), // Adjust the URI if necessary
+      uri: photo.uri.replace('file://', ''),
       type: 'image/jpeg',
       name: `${photo.photoKey}.jpg`,
     });
 
-    axios
-      .post('https://test.ecomdata.co.uk/api/upload-photos/', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data', // Axios sets this automatically, but specifying just in case
-        },
-      })
-      .then((response) => {
-        console.log('Upload successful:', response.data);
-      })
-      .catch((error) => {
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          console.error('Photo upload error:', error.response.data);
-          Alert.alert(
-            'Photo Upload Error',
-            `Failed to upload photo. Status: ${error.response.status}. Detail: ${error.response.data}`
-          );
-        } else if (error.request) {
-          // The request was made but no response was received
-          console.error(
-            'Photo upload error: No response received',
-            error.request
-          );
-          Alert.alert(
-            'Photo Upload Error',
-            'No response received from server.'
-          );
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.error('Photo upload error:', error.message);
-          Alert.alert('Photo Upload Error', error.message);
+    try {
+      const response = await axios.post(
+        'https://test.ecomdata.co.uk/api/upload-photos/',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         }
-      });
+      );
+      console.log('Upload successful:', response.data);
+    } catch (error) {
+      console.error('Photo upload error:', error.response?.data || error.message);
+      throw new Error(
+        `Failed to upload photo. Status: ${error.response?.status}. Detail: ${error.response?.data || error.message}`
+      );
+    }
   };
 
-  async function updateJobStatus() {
+  const updateJobStatus = async () => {
     const db = await openDatabase();
     const endDate = getCurrentDateTime();
 
-    db.transaction((tx) => {
-      tx.executeSql(
-        'UPDATE Jobs SET jobStatus = ?, endDate = ? WHERE id = ?',
-        ['Completed', endDate, appContext?.jobID],
-        () => {
-          Alert.alert(
-            'Upload Complete',
-            'Job and photos uploaded successfully.',
-            [
-              {
-                text: 'OK',
-                onPress: () => {
-                  // Clear job data and navigate to home
-                  appContext.resetContext();
-                  setLoading(false);
-                  navigation.navigate('Home');
-                },
-              },
-            ]
+    try {
+      await new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+          tx.executeSql(
+            'UPDATE Jobs SET jobStatus = ?, endDate = ? WHERE id = ?',
+            ['Completed', endDate, appContext?.jobID],
+            () => {
+              resolve();
+            },
+            (error) => {
+              console.error('Error updating job status:', error);
+              reject('Failed to update job status.');
+            }
           );
+        });
+      });
+
+      Alert.alert('Upload Complete', 'Job and photos uploaded successfully.', [
+        {
+          text: 'OK',
+          onPress: () => {
+            appContext.resetContext();
+            setLoading(false);
+            navigation.navigate('Home');
+          },
         },
-        (error) => {
-          console.error('SQL error:', error);
-          Alert.alert('Database Error', 'Failed to update job status.');
-          setLoading(false);
-        }
-      );
-    });
-  }
+      ]);
+    } catch (error) {
+      console.error('Error updating job status:', error);
+      setError('Failed to update job status. Please try again.');
+      setLoading(false);
+    }
+  };
+
+  const handleJobSubmission = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const jobData = await fetchJobData();
+      const uploadedJobData = await uploadJobData(jobData);
+      await uploadPhotos(appContext.photos, appContext.standardDetails.extras, uploadedJobData.job_id);
+      await updateJobStatus();
+    } catch (error) {
+      console.error('Error during job submission:', error);
+      setError('An error occurred during job submission. Please try again.');
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -226,16 +213,17 @@ const SubmitSuccessPage = () => {
         <Text>Submit the job</Text>
         {isLoading ? (
           <ActivityIndicator size="large" />
-        ) : jobStatus === 'In Progress' ? (
-          <Button title="Send" onPress={fetchAndUploadJobData} />
-        ) : (
+        ) : currentJobStatus === 'Completed' ? (
           <Button
             title="Return to Home"
             onPress={() => {
               navigation.navigate('Home');
             }}
           />
+        ) : (
+          <Button title="Send" onPress={handleJobSubmission} />
         )}
+        {error && <Text style={styles.error}>{error}</Text>}
       </View>
     </SafeAreaView>
   );
@@ -247,6 +235,10 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
+  },
+  error: {
+    color: 'red',
+    marginTop: 10,
   },
 });
 

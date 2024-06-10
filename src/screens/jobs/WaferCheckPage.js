@@ -155,7 +155,7 @@ const  WaferCheckPage =() => {
                     },
                   ]}
                   value={
-                    streams[`waferCheck${stream}Exists`] === null
+                    streams[`waferCheck${stream}Exists`] === undefined
                       ? null
                       : streams[`waferCheck${stream}Exists`]
                       ? 'Yes'

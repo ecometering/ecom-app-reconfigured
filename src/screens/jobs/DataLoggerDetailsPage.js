@@ -141,7 +141,7 @@ export default function DataLoggerDetailsPage() {
     }
     savePhoto(photoKey, selectedImage);
     setDataLoggerDetails(localDataLoggerDetails);
-    await saveToDatabase();
+    saveToDatabase();
     goToNextStep();
     return;
   };

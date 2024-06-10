@@ -34,15 +34,7 @@ function JobTypePage() {
 
   const setJobTypeAndNavigate = async (jobType) => {
     if (jobStarted) {
-      await db
-        .runAsync('SELECT name FROM sqlite_master WHERE type="table" AND name NOT LIKE "sqlite_%"')
-        .then((result) => {
-          console.log('Tables:', result);
-        })
-        .catch((error) => {
-          console.error('Error getting tables:', error);
-        });
-        
+      
       // Show modal if a job is already started
       setSelectedJobType(jobType);
       setModalVisible(true);
@@ -58,7 +50,7 @@ function JobTypePage() {
       const jobData = {
         jobType: jobType,
         startDate: new Date().toISOString(),
-        jobStatus: 'in progress',
+        jobStatus: 'In Progress',
         progress: 0,
       };
 

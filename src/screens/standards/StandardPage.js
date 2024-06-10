@@ -23,7 +23,7 @@ import { TextInputWithTitle } from '../../components/TextInput';
 // Context
 import { AppContext } from '../../context/AppContext';
 import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
-
+import { useSQLiteContext } from 'expo-sqlite/next';
 // Utils
 import EcomHelper from '../../utils/ecomHelper';
 import { PrimaryColors } from '../../theme/colors';
@@ -37,13 +37,9 @@ function StandardPage() {
   const { standardDetails, meterDetails, jobID, setStandardDetails,jobType } =
     appContext;
 
-  const riddorReportable =
-    standardDetails?.riddorReportable == null
-      ? meterDetails?.isStandard
-      : standardDetails?.riddorReportable;
 
   const [isModal, setIsModal] = useState(false);
-
+  const db = useSQLiteContext();
   const handleOK = (signature) => {
     const base64String = signature.replace('data:image/png;base64,', '');
     setStandardDetails((curState) => ({
@@ -52,12 +48,31 @@ function StandardPage() {
     }));
     setIsModal(false);
   };
+  const handleInputChange = (name, value) => {
+    setStandardDetails((prevDetails) => ({
+      ...prevDetails,
+      [name]: value,
+    }));
+  };
 
+  const saveToDatabase = async () => {
+    const standardsJson = JSON.stringify(standardDetails)
+    
+    try {
+      await db
+        .runAsync(
+          'UPDATE Jobs SET standards = ? WHERE id = ?',
+          [standardsJson, jobID]
+        )
+        .then((result) => {
+          console.log('standards saved to database:', result);
+        });
+    } catch (error) {
+      console.log('Error saving standards to database:', error);
+    }
+  };
   const nextPressed = async () => {
-    const meterDetailsUpdate = {
-      ...meterDetails,
-      isStandard: riddorReportable,
-    };
+    
     // console.log('Standard Details before JSON:', standards);
     // console.log('Meter Details before JSON:', meterDetailsUpdate);
 
@@ -69,46 +84,40 @@ function StandardPage() {
         return;
       }
 
-      if (standardDetails?.pressure == null) {
+      if (standardDetails?.pressure === null) {
         EcomHelper.showInfoMessage('Please set inlet pressure');
         return;
       }
 
-      if (standardDetails?.signature == null) {
+      if (standardDetails?.signature === null) {
         EcomHelper.showInfoMessage('Please enter signature');
         return;
       }
-      if (riddorReportable == null) {
+      if (standardDetails?.riddorReportable === null) {
         EcomHelper.showInfoMessage('Please answer if RIDDOR reportable');
         return;
       }
       if (meterDetails?.isMeter) {
         if (jobType === 'Install' || jobType === 'Exchange') {
-          if (standardDetails?.testPassed == null) {
+          if (standardDetails?.testPassed === null) {
             EcomHelper.showInfoMessage('Please answer if tightness test passed');
             return;
           }
-          if (standardDetails?.useOutlet == null) {
+          if (standardDetails?.useOutlet === null) {
             EcomHelper.showInfoMessage('Please answer if Outlet kit is used');
             return;
           }
         }
       }
+    saveToDatabase();
+    goToNextStep();
 
-      await db.runAsync('UPDATE Jobs SET standards = ? WHERE id = ?', [
-        JSON.stringify(),
-        jobID,
-      ]);
+      
 
-      appContext.setMeterDetails(meterDetailsUpdate);
+      
 
-      await db.runAsync('UPDATE Jobs SET meterDetails = ? WHERE id = ?', [
-        JSON.stringify(meterDetailsUpdate),
-        jobID,
-      ]);
-
-      setStandardDetails(standardDetails);
-      goToNextStep();
+      
+     
     } catch (error) {
       console.error('Error updating job details:', error);
       EcomHelper.showInfoMessage(
@@ -118,6 +127,7 @@ function StandardPage() {
   };
 
   const backPressed = () => {
+    saveToDatabase();
     goToPreviousStep();
   };
 
@@ -145,20 +155,14 @@ function StandardPage() {
                 options={['Yes', 'No']}
                 actions={[
                   () => {
-                    setStandardDetails((curState) => ({
-                      ...curState,
-                      conformStandard: true,
-                    }));
+                   handleInputChange('conformStandard',true)
                   },
                   () => {
-                    setStandardDetails((curState) => ({
-                      ...curState,
-                      conformStandard: false,
-                    }));
+                    handleInputChange('conformStandard',false)
                   },
                 ]}
                 value={
-                  standardDetails?.conformStandard == null
+                  standardDetails?.conformStandard == undefined
                     ? null
                     : standardDetails?.conformStandard
                     ? 'Yes'
@@ -173,22 +177,17 @@ function StandardPage() {
                 options={['Yes', 'No']}
                 actions={[
                   () => {
-                    setStandardDetails((curState) => ({
-                      ...curState,
-                      riddorReportable: true,
-                    }));
+                    handleInputChange("riddorReportable",true);
                   },
                   () => {
-                    setStandardDetails((curState) => ({
-                      ...curState,
-                      riddorReportable: false,
-                    }));
+                    handleInputChange("riddorReportable",false);
+
                   },
                 ]}
                 value={
-                  riddorReportable == null
+                  standardDetails?.riddorReportable == undefined
                     ? null
-                    : riddorReportable
+                    : standardDetails?.riddorReportable
                     ? 'Yes'
                     : 'No'
                 }
@@ -205,20 +204,14 @@ function StandardPage() {
                 options={['Yes', 'No']}
                 actions={[
                   () => {
-                    setStandardDetails((curState) => ({
-                      ...curState,
-                      additionalMaterials: true,
-                    }));
+                   handleInputChange('additionalMaterials',true)
                   },
                   () => {
-                    setStandardDetails((curState) => ({
-                      ...curState,
-                      additionalMaterials: false,
-                    }));
+                    handleInputChange('additionalMaterials',false)
                   },
                 ]}
                 value={
-                  standardDetails?.additionalMaterials == null
+                  standardDetails?.additionalMaterials == undefined
                     ? null
                     : standardDetails?.additionalMaterials
                     ? 'Yes'
@@ -233,20 +226,14 @@ function StandardPage() {
                 options={['Yes', 'No']}
                 actions={[
                   () => {
-                    setStandardDetails((curState) => ({
-                      ...curState,
-                      chatterbox: true,
-                    }));
+                    handleInputChange('chatterbox',true)
                   },
                   () => {
-                    setStandardDetails((curState) => ({
-                      ...curState,
-                      chatterbox: false,
-                    }));
+                    handleInputChange('chatterbox',false)
                   },
                 ]}
                 value={
-                  standardDetails?.chatterbox == null
+                  standardDetails?.chatterbox == undefined
                     ? null
                     : standardDetails?.chatterbox
                     ? 'Yes'
@@ -267,19 +254,16 @@ function StandardPage() {
                     <OptionalButton
                       options={['Yes', 'No']}
                       actions={[
-                        () =>
-                          setStandardDetails((curState) => ({
-                            ...curState,
-                            useOutlet: true,
-                          })),
-                        () =>
-                          setStandardDetails((curState) => ({
-                            ...curState,
-                            useOutlet: false,
-                          })),
+                        () =>{
+                          
+                        handleInputChange('useOutlet',true);
+                        },
+                        () =>{
+                          handleInputChange('useOutlet',false)
+                        }
                       ]}
                       value={
-                        standardDetails?.useOutlet == null
+                        standardDetails?.useOutlet == undefined
                           ? null
                           : standardDetails?.useOutlet
                           ? 'Yes'
@@ -294,19 +278,13 @@ function StandardPage() {
                     <OptionalButton
                       options={['Yes', 'No']}
                       actions={[
+                        () =>{
+                          handleInputChange('testPassed',true);},
                         () =>
-                          setStandardDetails((curState) => ({
-                            ...curState,
-                            testPassed: true,
-                          })),
-                        () =>
-                          setStandardDetails((curState) => ({
-                            ...curState,
-                            testPassed: false,
-                          })),
+                         { handleInputChange('testPassed',false)},
                       ]}
                       value={
-                        standardDetails?.testPassed == null
+                        standardDetails?.testPassed == undefined
                           ? null
                           : standardDetails?.testPassed
                           ? 'Yes'
@@ -323,25 +301,22 @@ function StandardPage() {
               title={'Inlet Pressure'}
               width={'100%'}
               value={standardDetails?.pressure}
-              onChange={(event) => {
-                // its sendign native event with numeric keyboard
-                setStandardDetails((curState) => ({
-                  ...curState,
-                  pressure: event.nativeEvent.text,
-                }));
+              placeholder={''}
+              onChangeText={(txt) => {
+                const filteredText = txt.replace(/[^0-9]/g, '');
+                handleInputChange('pressure',filteredText)
+                
               }}
               keyboardType="numeric"
             />
 
             <View style={styles.spacer} />
             <TextInputWithTitle
-              title={'Notes'}
+               title={jobType === "Survey" ? 'Notes' : 'Notes/additional materials'}
+              placeholder={''}
               value={standardDetails?.conformText}
               onChangeText={(text) => {
-                setStandardDetails((curState) => ({
-                  ...curState,
-                  conformText: text,
-                }));
+                handleInputChange('conformText',text)
               }}
               style={{
                 ...styles.input,

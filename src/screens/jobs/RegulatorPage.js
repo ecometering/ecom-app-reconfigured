@@ -75,7 +75,7 @@ function RegulatorPage() {
  
   const nextPressed = () => {
     // validate
-    if (regulatorDetails.serialNoExist && (regulatorDetails.serialNumber == null || serialNumber === '')) {
+    if (regulatorDetails.serialNoExist && (regulatorDetails.serialNumber == null || regulatorDetails.serialNumber === '')) {
       EcomHelper.showInfoMessage('Please enter or scan regulator Serial number');
       return;
     }
@@ -83,23 +83,23 @@ function RegulatorPage() {
       EcomHelper.showInfoMessage('Please answer if serial no exist');
       return;
     }
-    if (regulatorDetails.isSealedRegulator == null) {
+    if (regulatorDetails.isSealedRegulator === null) {
       EcomHelper.showInfoMessage('Please answer if regulator was sealed');
       return;
     }
-    if (regulatorDetails.isPurged == null) {
+    if (regulatorDetails.isPurged === null) {
       EcomHelper.showInfoMessage(
         'Please answer if new meter, customer appliances and pipe work been purged and relit satisfactorily including a visual inspection'
       );
       return;
     }
-    if (regulatorDetails.isLabelled == null) {
+    if (regulatorDetails.isLabelled === null) {
       EcomHelper.showInfoMessage(
         'Please answer if installation was correctly labelled'
       );
       return;
     }
-    if (regulatorDetails.isVentilation == null) {
+    if (regulatorDetails.isVentilation === null) {
       EcomHelper.showInfoMessage(
         'Please answer if there is a purpose made ventilation'
       );
@@ -164,7 +164,7 @@ function RegulatorPage() {
                     () => handleInputChange('serialNoExist', false),
                   ]}
                   value={
-                    regulatorDetails.serialNoExist === null
+                    regulatorDetails.serialNoExist === undefined
                       ? null
                       : regulatorDetails.serialNoExist
                       ? 'Yes'

@@ -51,7 +51,7 @@ export default function DataLoggerDetailsTwoPage() {
 
   const [isModal, setIsModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState(existingPhoto || {});
-  const [localdataLoggerDetailsTwo, setLocaldataLoggerDetailsTwo] = useState(
+  const [localDataLoggerDetailsTwo, setLocalDataLoggerDetailsTwo] = useState(
     {
       ...dataLoggerDetailsTwo,
       isMountingBracket: dataLoggerDetailsTwo.isMountingBracket ?? false,
@@ -65,7 +65,7 @@ export default function DataLoggerDetailsTwoPage() {
   );
 
   const handleInputChange = (name, value) => {
-    setLocaldataLoggerDetailsTwo((prevDetails) => ({
+    setLocalDataLoggerDetailsTwo((prevDetails) => ({
       ...prevDetails,
       [name]: value,
     }));
@@ -78,7 +78,7 @@ export default function DataLoggerDetailsTwoPage() {
 
   const saveToDatabase = async () => {
     const photosJson = JSON.stringify(photos);
-    const dataloggerJson = JSON.stringify(localdataLoggerDetailsTwo);
+    const dataloggerJson = JSON.stringify(localDataLoggerDetailsTwo);
     try {
       await db
         .runAsync(
@@ -86,7 +86,7 @@ export default function DataLoggerDetailsTwoPage() {
           [photosJson, dataloggerJson, jobID]
         )
         .then((result) => {
-          console.log('photos saved to database:', result);
+          console.log('message:5446 photos saved to database:', result);
         });
     } catch (error) {
       console.log('Error saving photos to database:', error);
@@ -96,11 +96,11 @@ export default function DataLoggerDetailsTwoPage() {
 
   const backPressed = async () => {
     savePhoto(photoKey, selectedImage);
-    setDataLoggerDetailsTwo(localdataLoggerDetailsTwo);
+    setDataLoggerDetailsTwo(localDataLoggerDetailsTwo);
     await saveToDatabase();
     goToPreviousStep();
   };
-  console.log(localdataLoggerDetailsTwo);
+  console.log(localDataLoggerDetailsTwo);
 
   const nextPressed = async () => {
     if (!selectedImage?.uri) {
@@ -109,38 +109,38 @@ export default function DataLoggerDetailsTwoPage() {
     }
 
     if (
-      !localdataLoggerDetailsTwo.serialNumber ||
-      localdataLoggerDetailsTwo.serialNumber === ''
+      !localDataLoggerDetailsTwo.serialNumber ||
+      localDataLoggerDetailsTwo.serialNumber === ''
     ) {
       EcomHelper.showInfoMessage('Please enter serial number');
       return;
     }
-    if (localdataLoggerDetailsTwo.isMountingBracket == null) {
+    if (localDataLoggerDetailsTwo.isMountingBracket == null) {
       EcomHelper.showInfoMessage('Please answer if mounting bracket was used');
       return;
     }
-    if (localdataLoggerDetailsTwo.isAdapter == null) {
+    if (localDataLoggerDetailsTwo.isAdapter == null) {
       EcomHelper.showInfoMessage('Please answer if adapter was used');
       return;
     }
-    if (localdataLoggerDetailsTwo.isPulseSplitter == null) {
+    if (localDataLoggerDetailsTwo.isPulseSplitter == null) {
       EcomHelper.showInfoMessage('Please answer if pulse splitter was used');
       return;
     }
-    if (localdataLoggerDetailsTwo.manufacturer == null) {
+    if (localDataLoggerDetailsTwo.manufacturer == null) {
       EcomHelper.showInfoMessage('Please choose manufacturer');
       return;
     }
-    if (localdataLoggerDetailsTwo.model == null) {
+    if (localDataLoggerDetailsTwo.model == null) {
       EcomHelper.showInfoMessage('Please choose model');
       return;
     }
-    if (localdataLoggerDetailsTwo.loggerOwner == null) {
+    if (localDataLoggerDetailsTwo.loggerOwner == null) {
       EcomHelper.showInfoMessage('Please choose Logger owner');
       return;
     }
     savePhoto(photoKey, selectedImage);
-    setDataLoggerDetailsTwo(localdataLoggerDetailsTwo);
+    setDataLoggerDetailsTwo(localDataLoggerDetailsTwo);
     await saveToDatabase();
     goToNextStep();
     return;
@@ -206,10 +206,10 @@ export default function DataLoggerDetailsTwoPage() {
                         width: width * 0.25,
                         alignSelf: 'flex-end',
                         fontSize: makeFontSmallerAsTextGrows(
-                          localdataLoggerDetailsTwo.serialNumber
+                          localDataLoggerDetailsTwo.serialNumber
                         ),
                       }}
-                      value={localdataLoggerDetailsTwo.serialNumber}
+                      value={localDataLoggerDetailsTwo.serialNumber}
                     />
                     <Button title="📷" onPress={scanBarcode} />
                   </View>
@@ -228,9 +228,9 @@ export default function DataLoggerDetailsTwoPage() {
                         },
                       ]}
                       value={
-                        localdataLoggerDetailsTwo.isMountingBracket == null
+                        localDataLoggerDetailsTwo.isMountingBracket == null
                           ? null
-                          : localdataLoggerDetailsTwo.isMountingBracket
+                          : localDataLoggerDetailsTwo.isMountingBracket
                           ? 'Yes'
                           : 'No'
                       }
@@ -254,9 +254,9 @@ export default function DataLoggerDetailsTwoPage() {
                         },
                       ]}
                       value={
-                        localdataLoggerDetailsTwo.isAdapter === null
+                        localDataLoggerDetailsTwo.isAdapter === null
                           ? null
-                          : localdataLoggerDetailsTwo.isAdapter
+                          : localDataLoggerDetailsTwo.isAdapter
                           ? 'Yes'
                           : 'No'
                       }
@@ -277,9 +277,9 @@ export default function DataLoggerDetailsTwoPage() {
                         },
                       ]}
                       value={
-                        localdataLoggerDetailsTwo.isPulseSplitter == null
+                        localDataLoggerDetailsTwo.isPulseSplitter == null
                           ? null
-                          : localdataLoggerDetailsTwo.isPulseSplitter
+                          : localDataLoggerDetailsTwo.isPulseSplitter
                           ? 'Yes'
                           : 'No'
                       }
@@ -304,7 +304,7 @@ export default function DataLoggerDetailsTwoPage() {
                         width: width * 0.25,
                         alignSelf: 'flex-end',
                       }}
-                      value={localdataLoggerDetailsTwo.manufacturer}
+                      value={localDataLoggerDetailsTwo.manufacturer}
                     />
                   </View>
                 </View>
@@ -322,7 +322,7 @@ export default function DataLoggerDetailsTwoPage() {
                         width: width * 0.25,
                         alignSelf: 'flex-end',
                       }}
-                      value={localdataLoggerDetailsTwo.model}
+                      value={localDataLoggerDetailsTwo.model}
                     />
                   </View>
                 </View>
@@ -342,7 +342,7 @@ export default function DataLoggerDetailsTwoPage() {
                       width: width * 0.25,
                       alignSelf: 'flex-end',
                     }}
-                    value={localdataLoggerDetailsTwo.loggerOwner}
+                    value={localDataLoggerDetailsTwo.loggerOwner}
                   />
                 </View>
               </View>

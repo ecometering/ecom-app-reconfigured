@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   FlatList,
   KeyboardAvoidingView,
@@ -24,19 +24,25 @@ import { useSQLiteContext } from 'expo-sqlite/next';
 function AdditionalMaterialPage() {
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const appContext = useContext(AppContext);
-  const { jobType, additionalMaterials,SetAdditionalMaterials, jobID } =
+  const {  additionalMaterials,setAdditionalMaterials, jobID } =
   useContext(AppContext);
-  const [category, setCategory] = useState('');
-  const [item, setItem] = useState('');
+  const [category, setCategory] = useState([]);
+  const [item, setItem] = useState([]);
   const [quantity, setQuantity] = useState(0);
   const [materials, setMaterials] = useState([]);
   const db = useSQLiteContext();
 
+  const handleInputChange = (name, value) => {
+    setAdditionalMaterials((prevDetails) => ({
+      ...prevDetails,
+      [name]: value,
+    }));
+  };
 
   
 
     const saveToDatabase = async () => {
-     const additionalMaterialsJSON = JSON.stringify(materials);
+     const additionalMaterialsJSON = JSON.stringify(additionalMaterials);
       try {
         await db
           .runAsync('UPDATE Jobs SET additionalMaterials = ? WHERE id = ?', [
@@ -44,13 +50,49 @@ function AdditionalMaterialPage() {
             jobID,
           ])
           .then((result) => {
-            console.log('meterDetails saved to database:', result);
+            console.log('additional Materials saved to database:', result);
           });
       } catch (error) {
-        console.log('Error saving meterDetails to database:', error);
+        console.log('Error saving Additional Materials to database:', error);
       }
     };
-
+    // async function getMaterialCategories() {
+    //   try {
+    //     const query = `SELECT DISTINCT "category" FROM materials`;
+    //     const result = await db.getAllAsync(query);
+    //     setCategory(
+    //       result
+    //         .map((item) => ({
+    //           label: item.category,
+    //           value: item.category,
+    //         }))
+    //         .sort((a, b) => a.label.localeCompare(b.label))
+    //     );
+    //     console.log('Material Categories:', result);
+    //     return result;
+    //   } catch (error) {
+    //     console.log('Error getting Material Categories:', error);
+    //   }
+    // }
+    
+    // async function getMaterialCodes(category) { // Added category as a parameter
+    //   try {
+    //     const query = `SELECT DISTINCT "code" FROM materials WHERE category = '${category}'`; // Fixed typo in 'category'
+    //     const result = await db.getAllAsync(query);
+    //     setCategory(
+    //       result
+    //         .map((item) => ({
+    //           label: item.code, // Assuming you want to set the material codes here
+    //           value: item.code,
+    //         }))
+    //         .sort((a, b) => a.label.localeCompare(b.label))
+    //     );
+    //     console.log('Material Codes:', result);
+    //     return result;
+    //   } catch (error) {
+    //     console.log('Error getting Material Codes:', error);
+    //   }
+    // }
   const nextPressed = () => {
     if (materials.length === 0) {
       EcomHelper.showInfoMessage('Please add materials');
@@ -60,10 +102,8 @@ function AdditionalMaterialPage() {
     goToNextStep();
   };
   const backPressed = () => {
-    appContext.setRegulatorDetails({
-      ...regulatorDetails,
-      materials: materials,
-    });
+    
+    saveToDatabase();
     goToPreviousStep();
   };
 
@@ -156,6 +196,16 @@ function AdditionalMaterialPage() {
     );
   };
 
+  // useEffect(() => {
+  //   getMaterialCategories();
+  
+  // },[db]);
+  // useEffect(() => {
+  //   if (category){
+  //     getMaterialCodes();
+
+  //   }
+  // },[db, category])
   return (
     <SafeAreaView style={styles.content}>
       <Header

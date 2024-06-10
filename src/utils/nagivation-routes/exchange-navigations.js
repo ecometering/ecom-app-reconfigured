@@ -75,7 +75,7 @@ export const chatterBoxPage =[
 
 export const AdditionalMaterialsPage =[
   {
-    screen: 'AdditionalMaterials',
+    screen: 'AdditionalMaterial',
     diversions: (state) => {
       const { standardDetails } = state;
       const { riddorReportable, conformStandard,chatterbox, } = standardDetails;
@@ -102,10 +102,7 @@ export const ExchangeStandardPage = [
     diversions: (state) => {
       const { standardDetails } = state;
       const { riddorReportable, conformStandard,chatterbox,additionalMaterials } = standardDetails;
-     if (additionalMaterials === true) {
-          return AdditionalMaterialsPage;
-        }
-        else{ 
+     
           if (chatterbox === true) {
         return chatterBoxPage}
       else {
@@ -120,7 +117,7 @@ export const ExchangeStandardPage = [
         }
       }}}
     },
-  },
+  
 ];
 
 export const RebookPage = [
@@ -438,9 +435,9 @@ export const ExistingCorrectorDetails = [
 export const InstancesForStreamFlow = ({ state }) => {
   // TODO: sort context switch
   // Redux might be a better option
-  const { streamNumber } = state || {};
+  const { streams } = state || {};
 
-  return Array.from({ length: streamNumber }, (_, index) => index + 1).reduce(
+  return Array.from({ length: streams.Number }, (_, index) => index + 1).reduce(
     (acc, stream) => {
       return [
         ...acc,
@@ -456,6 +453,7 @@ export const InstancesForStreamFlow = ({ state }) => {
           screen: 'StreamSlamshutPage',
           params: {
             title: `Slamshut Page ${stream}`,
+            stream:stream ,
             photoKey:`SlamShut${stream}Photo`,
           },
         },
@@ -463,6 +461,7 @@ export const InstancesForStreamFlow = ({ state }) => {
           screen: 'StreamActiveRegulatorPage',
           params: {
             title: `Active Regulator Page ${stream}`,
+            stream:stream ,
             photoKey:`ActiveRegulator${stream}Photo`,
 
           },
@@ -471,6 +470,7 @@ export const InstancesForStreamFlow = ({ state }) => {
           screen: 'StreamReliefRegulatorPage',
           params: {
             title: `Relief Regulator Page ${stream}`,
+            stream:stream ,
             photoKey:`ReliefRegulator${stream}Photo`,
 
           },
@@ -479,6 +479,7 @@ export const InstancesForStreamFlow = ({ state }) => {
           screen: 'StreamWaferCheckPage',
           params: {
             title: `Wafer Check Page ${stream}`,
+            stream:stream ,
             photoKey:`WaferCheck${stream}Photo`,
 
           },
@@ -488,6 +489,7 @@ export const InstancesForStreamFlow = ({ state }) => {
     []
   );
 };
+
 
 
 export const ExchangeStreamsSetSealDetailsPage = [

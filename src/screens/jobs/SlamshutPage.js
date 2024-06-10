@@ -154,7 +154,7 @@ const SlamShutPage= () => {
                     },
                   ]}
                   value={
-                    streams[`SlamShut${stream}Exists`]=== null
+                    streams[`SlamShut${stream}Exists`]=== undefined
                       ? null
                       : streams[`SlamShut${stream}Exists`]
                       ? 'Yes'

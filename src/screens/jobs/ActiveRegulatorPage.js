@@ -154,7 +154,7 @@ const ActiveRegulatorPage = () => {
                     },
                   ]}
                   value={
-                    streams[`activeRegulator${stream}Exists`] === null
+                    streams[`activeRegulator${stream}Exists`] === undefined
                       ? null
                       : streams[`activeRegulator${stream}Exists`]
                       ? 'Yes'

@@ -174,23 +174,25 @@ export const RemovedStandardPage = [
     diversions: (state) => {
       const { standardDetails } = state;
       const { riddorReportable, conformStandard,chatterbox,additionalMaterials } = standardDetails;
-     if (additionalMaterials === true) {
-          return AdditionalMaterialsPage;
-        }
-        else{ 
-          if (chatterbox === true) {
-        return chatterBoxPage}
-      else {
-        
+      
+
+      // Check for chatterbox next
+      if (chatterbox === true) {
+        return chatterBoxPage;
+      }
+
+      // Check for riddorReportable
       if (riddorReportable === true) {
         return RiddorReportPage;
-      } else {
-        if (conformStandard === false) {
-          return SnClientInfoPage;
-        } else {
-          return CompositeLabelPhoto;
-        }
-      }}}
+      }
+
+      // Check for conformStandard
+      if (conformStandard === false) {
+        return SnClientInfoPage;
+      }
+
+      // Default return if none of the above conditions are met
+      return CompositeLabelPhoto;
     },
   },
 ];
@@ -240,9 +242,11 @@ export const RemovedDataLoggerDetails = [
       title: 'Removed AMR',
       photoKey: 'RemovedAMR',
     },
-    ...RemovedStandardPage,
     
-  },
+   
+    
+  }, 
+  ...RemovedStandardPage,
 ];
 
 export const RemovedMeterIndex = [

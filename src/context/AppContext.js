@@ -81,7 +81,7 @@ const [rebook,setRebook] =useState({});
   const [ecvDetails, setEcvDetails] = useState({});
   const [movDetails, setMovDetails] = useState({});
   const [regulatorDetails, setRegulatorDetails] = useState({});
-  const [standardDetails, setStandardDetails] = useState(null);
+  const [standardDetails, setStandardDetails] = useState({});
   const [ventDetails, setVentDetails] = useState({});
   const [meterDetailsTwo, setMeterDetailsTwo] = useState({});
   const [additionalMaterials,setAdditionalMaterials]=useState({});
@@ -134,16 +134,6 @@ const [rebook,setRebook] =useState({});
   const resetContext = () => {
     setJobID(null);
     setJobType(null);
-    setJobDetails(null);
-    setJobStarted(false);
-    setChatterBoxDetails({});
-    setPhotos({});
-    setStreams({});
-    setHasStreamNumber(false);
-    setStreamNumber(0);
-    setStreamValue([]);
-    setStreamCounter(0);
-    setExtraCounter(0);
     setSiteDetails({
       mprn: '',
       companyName: '',
@@ -164,6 +154,9 @@ const [rebook,setRebook] =useState({});
       confirmContact: false,
       confirmWarrant: false,
     });
+    setJobStatus(null);
+    setJobDetails(null);
+    setJobStarted(false);
     setSiteQuestions({
       isSafe: false,
       isGeneric: false,
@@ -173,24 +166,10 @@ const [rebook,setRebook] =useState({});
       isFitted: false,
       isStandard: false,
     });
+     setMaintenanceDetails(null);
+     setPhotos({});
     setMeterDetails({});
-    setKioskDetails({});
-    setEcvDetails({});
-    setMovDetails({});
-    setRegulatorDetails(null);
-    setStandardDetails(null);
-    setVentDetails({});
     setMeterDetailsTwo({});
-    setAdditionalMaterials({});
-    setDataLoggerDetails(
-      (jobType === "Install" || jobType === "Maintenance") 
-        ? { loggerOwner: 'Eco Metering Solutions' } 
-        : {}
-    );
-    setDataLoggerDetailsTwo({
-      loggerOwner: 'Eco Metering Solutions',
-    });
-    setMaintenanceDetails(null);
     setCorrectorDetails({
       manufacturer: '',
       model: '',
@@ -206,7 +185,33 @@ const [rebook,setRebook] =useState({});
       isMountingBracket: null,
       uncorrected: '',
       corrected: '',
+    }); 
+    setDataLoggerDetails(
+      (jobType === "Install" || jobType === "Maintenance") 
+        ? { loggerOwner: 'Eco Metering Solutions' } 
+        : {}
+    );
+    setDataLoggerDetailsTwo({
+      loggerOwner: 'Eco Metering Solutions',
     });
+    setChatterBoxDetails({});
+  
+    setStreams({});
+    setRegulatorDetails({});
+    setAdditionalMaterials({});
+   
+    setKioskDetails({});
+    setEcvDetails({});
+    setMovDetails({});
+    setStandardDetails({});
+    setRebook({});
+    
+    setVentDetails({});
+    
+    
+   
+   
+    
     setBlobs([]);
     setUserLogged(false);
     setJobdata(null);

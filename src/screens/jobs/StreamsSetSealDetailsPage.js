@@ -7,7 +7,7 @@ import {
   TouchableHighlight,
   KeyboardAvoidingView,
 } from 'react-native';
-import React, { useContext, useState,useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useRoute } from '@react-navigation/native';
 
 // Components
@@ -48,7 +48,7 @@ const RepeatComponent = ({ title, value, onChangeText }) => {
 function StreamsSetSealDetailsPage() {
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const appContext = useContext(AppContext);
-  const { streams, jobID, setStreams,  } = appContext;
+  const { streams, jobID, setStreams } = appContext;
   
   const db = useSQLiteContext();
   const route = useRoute();
@@ -61,11 +61,13 @@ function StreamsSetSealDetailsPage() {
     }));
     console.log('Streams', streams);
   };
+
   useEffect(() => {
     if (isNaN(streams.Number)) {
-      handleInputChange(Number,0)
+      handleInputChange('Number', 0);
     }
   }, [streams.Number]);
+
   const saveToDatabase = async () => {
     const streamDetailsJson = JSON.stringify(streams);
     console.log("message:292 Stream values:", streams);
@@ -133,7 +135,7 @@ function StreamsSetSealDetailsPage() {
                 style={styles.incDecrButton}
                 onPress={() => {
                   if (streams.Number > 0) {
-                    handleInputChange('Number', Math.max(streams.Number - 1, 0));
+                    handleInputChange('Number', Math.max(Number(streams.Number) - 1, 0));
                   }
                 }}
               >
@@ -143,7 +145,7 @@ function StreamsSetSealDetailsPage() {
               <TouchableHighlight
                 style={styles.incDecrButton}
                 onPress={() => {
-                  handleInputChange('Number', streams.Number + 1);
+                  handleInputChange('Number', Number(streams.Number) + 1);
                 }}
               >
                 <Text>+</Text>
@@ -158,7 +160,7 @@ function StreamsSetSealDetailsPage() {
                     title={'Slam Shut'}
                     value={streams[`slamShut${index + 1}`] ?? ''}
                     onChangeText={(value) =>
-                      handleInputChange(`slamShutValue${index + 1}`, value.replace(/[^0-9]/g, ''))
+                      handleInputChange(`slamShut${index + 1}`, value.replace(/[^0-9]/g, ''))
                     }
                   />
                   <RepeatComponent

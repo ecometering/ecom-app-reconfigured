@@ -1,14 +1,11 @@
-import React, { useEffect, useContext } from 'react';
-import { StyleSheet } from 'react-native';
+import React, { useEffect,useState, useContext,Suspense } from 'react';
+import { StyleSheet,View,Text,ActivityIndicator } from 'react-native';
+import LoadingComponent from './src/components/LoadingComponent';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AppContextProvider, AppContext } from './src/context/AppContext';
 import MainNavigator from './src/navigation/MainNavigator';
-import {
-  createJobsTable,
-  getDatabaseTables,
-  openDatabase,
-  deleteDatabase,
-} from './src/utils/database';
+import { Asset } from 'expo-asset';
+import * as FileSystem from 'expo-file-system';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createStackNavigator } from '@react-navigation/stack';
 import Constants from 'expo-constants';
@@ -16,28 +13,21 @@ import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite/next';
 import { NavigationContainer } from '@react-navigation/native';
 
-const CheckFirstLaunch = async () => {
-  try {
-    const hasLaunched = await AsyncStorage.getItem('hasLaunched');
-    if (hasLaunched === null) {
-      console.log('First Launch');
-      deleteDatabase();
-      console.log('Database deleted');
-      await AsyncStorage.setItem('hasLaunched', 'true');
-      console.log('creating new database');
-      const db = await openDatabase();
-      console.log('Database created');
-      await createJobsTable(db);
-      const check = await getDatabaseTables(); // Fixed function call
-      console.log('DatabaseTables.', check);
-    } else {
-      console.log('App has been launched before.');
-    }
-  } catch (error) {
-    console.error('Error checking first launch: ', error);
-    throw error; // Improved error handling
+const loadDatabase =  async ()=> {
+  const dbName ="options.sqlite";
+  const dbAsset = require("./assets/options.sqlite");
+  const dbUri = Asset.fromModule(dbAsset).uri;
+  const dbFilePath = `${FileSystem.documentDirectory}SQLite/${dbName}`;
+  const fileInfo = await FileSystem.getInfoAsync(dbFilePath);
+
+  if (!fileInfo.exists) {
+    await FileSystem.makeDirectoryAsync(
+      `${FileSystem.documentDirectory}SQLite`, 
+      {intermediates: true, }
+    );
+    await FileSystem.downloadAsync(dbUri, dbFilePath);
   }
-};
+}
 
 const MainApp = () => {
   const { OnLogout } = useAuth();
@@ -55,7 +45,7 @@ const MainApp = () => {
   };
 
   useEffect(() => {
-    CheckFirstLaunch();
+    
     checkAppVersionAndUpdate();
   }, []);
 
@@ -63,11 +53,34 @@ const MainApp = () => {
 };
 
 export default function App() {
-  return (
+  const [dbLoaded,setDbLoaded]=useState<boolean>(false);
+  useEffect(()=>{
+    loadDatabase()
+    .then(()=>setDbLoaded(true))
+    .catch((e) => console.error(e));
+  },[]);
+  
+  if (!dbLoaded) 
+    return (
+      <View style={{ flex: 1 }}>
+          <LoadingComponent loadingText="Please wait, fetching data..." />
+          {/* You can use other instances with different texts */}
+        
+      </View>
+  );
+    return (
     <AuthProvider>
-      <SQLiteProvider databaseName="options.sqlite">
+      <Suspense
+      fallback ={
+        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+         <LoadingComponent loadingText="Please wait, fetching data..." />
+        </View>
+      }
+      >
+      <SQLiteProvider databaseName="options.sqlite" useSuspense >
         <MainApp />
       </SQLiteProvider>
+      </Suspense>
     </AuthProvider>
   );
 }

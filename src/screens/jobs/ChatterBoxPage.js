@@ -51,7 +51,7 @@ export default function ChatterBoxDetailsPage() {
 
   const [isModal, setIsModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState(existingPhoto || {});
-  const [localChatterBoxDetails, setlocalChatterBoxDetails] = useState({} );
+  const [localChatterBoxDetails, setlocalChatterBoxDetails] = useState(chatterBoxDetails ??{} );
 
   const handleInputChange = (name, value) => {
     setlocalChatterBoxDetails((prevDetails) => ({

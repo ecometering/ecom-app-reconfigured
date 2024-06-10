@@ -38,8 +38,8 @@ const ExtraPhotoPage = () => {
     const currentExtra = standardDetails?.extras?.find(
       (extra) => extra?.photoNumber === photoNumber
     );
-    //  get the current extra photo and comment if it exists
-    if (currentExtra && currentExtra?.extraPhoto) {
+    if (currentExtra) {
+      
       setHasExtraPhoto(true);
       setSelectedImage(currentExtra?.extraPhoto);
       setExtraComment(currentExtra?.extraComment);
@@ -62,7 +62,6 @@ const ExtraPhotoPage = () => {
     }
 
     const newExtra = { extraPhoto: selectedImage, extraComment, photoNumber };
-    // update the extras array with the new extra photo and comment
     const updatedExtras = [
       ...(standardDetails?.extras?.filter(
         (extra) => extra.photoNumber !== photoNumber
@@ -75,12 +74,15 @@ const ExtraPhotoPage = () => {
       extras: updatedExtras,
     };
 
-    appContext.setStandardDetails(standards);
+    // Deep clone the standards object to avoid circular references
+    const clonedStandards = JSON.parse(JSON.stringify(standards));
+
+    appContext.setStandardDetails(clonedStandards);
     await db.runAsync('UPDATE Jobs SET standards = ? WHERE id = ?', [
-      JSON.stringify(standards),
+      JSON.stringify(clonedStandards),
       appContext.jobID,
     ]);
-    // reset the form
+
     setSelectedImage(null);
     setExtraComment('');
 
@@ -117,8 +119,14 @@ const ExtraPhotoPage = () => {
                 <OptionalButton
                   options={['Yes', 'No']}
                   actions={[
-                    () => setHasExtraPhoto(true),
-                    () => setHasExtraPhoto(false),
+                    () => {
+                      console.log('Yes clicked for extra photo');
+                      setHasExtraPhoto(true);
+                    },
+                    () => {
+                      console.log('No clicked for extra photo');
+                      setHasExtraPhoto(false);
+                    },
                   ]}
                   value={hasExtraPhoto ? 'Yes' : 'No'}
                 />
@@ -149,8 +157,14 @@ const ExtraPhotoPage = () => {
                 <OptionalButton
                   options={['Yes', 'No']}
                   actions={[
-                    () => setAddMorePhotos(true),
-                    () => setAddMorePhotos(false),
+                    () => {
+                      console.log('Yes clicked for adding more photos');
+                      setAddMorePhotos(true);
+                    },
+                    () => {
+                      console.log('No clicked for adding more photos');
+                      setAddMorePhotos(false);
+                    },
                   ]}
                   value={addMorePhotos ? 'Yes' : 'No'}
                 />

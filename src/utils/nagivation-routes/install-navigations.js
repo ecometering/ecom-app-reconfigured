@@ -6,6 +6,7 @@ export const InstallNavigation = [
       currentPage: 1,
     },
   },
+
   {
     screen: 'SitePhotoPage',
     params: {
@@ -13,6 +14,7 @@ export const InstallNavigation = [
       photoKey: 'sitePhoto',
     },
   },
+
   {
     screen: 'SiteQuestionsPage',
     params: {
@@ -62,7 +64,7 @@ export const chatterBoxPage =[
       const { riddorReportable, conformStandard } = standardDetails;
    
       
-    if (riddorReportable) {
+    if (riddorReportable === true) {
       return RiddorReportPage;
     } else {
       if (!conformStandard) {
@@ -104,10 +106,7 @@ export const StandardPage = [
     diversions: (state) => {
       const { standardDetails } = state;
       const { riddorReportable, conformStandard,chatterbox,additionalMaterials } = standardDetails;
-     if (additionalMaterials === true) {
-          return AdditionalMaterialsPage;
-        }
-        else{ 
+      
           if (chatterbox === true) {
         return chatterBoxPage}
       else {
@@ -122,7 +121,7 @@ export const StandardPage = [
         }
       }}}
     },
-  },
+  
 ];
 
 export const RebookPage = [
@@ -235,19 +234,22 @@ export const CorrectorDetailsPage = [
     },
     diversions: (state) => {
       const { meterDetails } = state || {};
-      const { pressureTier } = meterDetails || {};
-      const isAmr = meterDetails?.isAmr;
+
+      const pressureTier = meterDetails?.pressureTier?.label;
       const isMeter = meterDetails?.isMeter;
+      const isAmr = meterDetails?.isAmr;
 
       if (isAmr) {
         return DataLoggerDetailsPage;
       } 
       if (isMeter) {
-        if (pressureTier === 'LP' || pressureTier?.label === 'LP') {
+        console.log("message:3944",pressureTier,pressureTier?.label)
+        
+        if (pressureTier === 'LP') {
           return RegulatorPage;
+        }else {
+          return StreamsSetSealDetailsPage;
         }
-      } else {
-        return StreamsSetSealDetailsPage;
       }
     },
   },
@@ -330,9 +332,9 @@ export const MeterDataBadgePage = [
 export const InstancesForStreamFlow = ({ state }) => {
   // TODO: sort context switch
   // Redux might be a better option
-  const { streamNumber } = state || {};
+  const { streams } = state || {};
 
-  return Array.from({ length: streamNumber }, (_, index) => index + 1).reduce(
+  return Array.from({ length: streams.Number }, (_, index) => index + 1).reduce(
     (acc, stream) => {
       return [
         ...acc,
@@ -348,6 +350,7 @@ export const InstancesForStreamFlow = ({ state }) => {
           screen: 'StreamSlamshutPage',
           params: {
             title: `Slamshut Page ${stream}`,
+            stream:stream ,
             photoKey:`SlamShut${stream}Photo`,
           },
         },
@@ -355,6 +358,7 @@ export const InstancesForStreamFlow = ({ state }) => {
           screen: 'StreamActiveRegulatorPage',
           params: {
             title: `Active Regulator Page ${stream}`,
+            stream:stream ,
             photoKey:`ActiveRegulator${stream}Photo`,
 
           },
@@ -363,6 +367,7 @@ export const InstancesForStreamFlow = ({ state }) => {
           screen: 'StreamReliefRegulatorPage',
           params: {
             title: `Relief Regulator Page ${stream}`,
+            stream:stream ,
             photoKey:`ReliefRegulator${stream}Photo`,
 
           },
@@ -371,6 +376,7 @@ export const InstancesForStreamFlow = ({ state }) => {
           screen: 'StreamWaferCheckPage',
           params: {
             title: `Wafer Check Page ${stream}`,
+            stream:stream ,
             photoKey:`WaferCheck${stream}Photo`,
 
           },

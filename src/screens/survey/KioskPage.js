@@ -57,40 +57,70 @@ export default function KioskPage() {
     };
 
 
-  const nextPressed = async () => {
-    const { type, condition, isWeatherResistant, isLockable, isVegitationFree, isStable, isFloodingFree, isExplosionReliefRoof, height, width, length, isAccessible, isSteps } = kioskDetails;
-  
-    if (!type) {
-      EcomHelper.showInfoMessage("Kiosk Type is required. Please enter the Kiosk Type.");
-    } else if (!condition) {
-      EcomHelper.showInfoMessage("Kiosk Condition is required. Please enter the Kiosk Condition.");
-    } else if (isWeatherResistant === null) {
-      EcomHelper.showInfoMessage("Is kiosk weather resistant? Please select an option.");
-    } else if (isLockable === null) {
-      EcomHelper.showInfoMessage("Is kiosk lockable? Please select an option.");
-    } else if (isVegitationFree === null) {
-      EcomHelper.showInfoMessage("Is kiosk free of vegetation, trees, etc.? Please select an option.");
-    } else if (isStable === null) {
-      EcomHelper.showInfoMessage("Is kiosk/housing stable? Please select an option.");
-    } else if (isFloodingFree === null) {
-      EcomHelper.showInfoMessage("Is kiosk free of flooding? Please select an option.");
-    } else if (isExplosionReliefRoof === null) {
-      EcomHelper.showInfoMessage("Is kiosk roof an explosion relief roof? Please select an option.");
-    } else if (!height) {
-      EcomHelper.showInfoMessage("Kiosk height is required. Please enter the kiosk height.");
-    } else if (!width) {
-      EcomHelper.showInfoMessage("Kiosk width is required. Please enter the kiosk width.");
-    } else if (!length) {
-      EcomHelper.showInfoMessage("Kiosk length is required. Please enter the kiosk length.");
-    } else if (isAccessible === null) {
-      EcomHelper.showInfoMessage("Is kiosk easily accessible? Please select an option.");
-    } else if (isSteps === null) {
-      EcomHelper.showInfoMessage("Are there steps leading up to the kiosk? Please select an option.");
-    } else {
+    const nextPressed = async () => {
+      const { exists, type, condition, isWeatherResistant, isLockable, isVegitationFree, isStable, isFloodingFree, isExplosionReliefRoof, height, width, length, isAccessible, isSteps } = kioskDetails;
+      if (exists === null) {
+        EcomHelper.showInfoMessage("Please enter if the Kiosk exists.");
+        return;
+      }
+      if (exists) {
+        if (!type) {
+          EcomHelper.showInfoMessage("Kiosk Type is required. Please enter the Kiosk Type.");
+          return;
+        }
+        if (!condition) {
+          EcomHelper.showInfoMessage("Kiosk Condition is required. Please enter the Kiosk Condition.");
+          return;
+        }
+        if (isWeatherResistant === null) {
+          EcomHelper.showInfoMessage("Is kiosk weather resistant? Please select an option.");
+          return;
+        }
+        if (isLockable === null) {
+          EcomHelper.showInfoMessage("Is kiosk lockable? Please select an option.");
+          return;
+        }
+        if (isVegitationFree === null) {
+          EcomHelper.showInfoMessage("Is kiosk free of vegetation, trees, etc.? Please select an option.");
+          return;
+        }
+        if (isStable === null) {
+          EcomHelper.showInfoMessage("Is kiosk/housing stable? Please select an option.");
+          return;
+        }
+        if (isFloodingFree === null) {
+          EcomHelper.showInfoMessage("Is kiosk free of flooding? Please select an option.");
+          return;
+        }
+        if (isExplosionReliefRoof === null) {
+          EcomHelper.showInfoMessage("Is kiosk roof an explosion relief roof? Please select an option.");
+          return;
+        }
+        if (!height) {
+          EcomHelper.showInfoMessage("Kiosk height is required. Please enter the kiosk height.");
+          return;
+        }
+        if (!width) {
+          EcomHelper.showInfoMessage("Kiosk width is required. Please enter the kiosk width.");
+          return;
+        }
+        if (!length) {
+          EcomHelper.showInfoMessage("Kiosk length is required. Please enter the kiosk length.");
+          return;
+        }
+        if (isAccessible === null) {
+          EcomHelper.showInfoMessage("Is kiosk easily accessible? Please select an option.");
+          return;
+        }
+        if (isSteps === null) {
+          EcomHelper.showInfoMessage("Are there steps leading up to the kiosk? Please select an option.");
+          return;
+        }
+      }
       saveToDatabase();
       goToNextStep();
-    }
-  };
+    };
+  
 
   const backPressed = async () => {
     saveToDatabase();
@@ -114,6 +144,32 @@ export default function KioskPage() {
       >
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
           <View style={styles.body}>
+          <View style={styles.spacer} />
+            <View>
+              <Text style={styles.text}>Does the kiosk exist?</Text>
+              <View style={styles.optionContainer}>
+                <OptionalButton
+                  options={['Yes', 'No']}
+                  actions={[
+                    () => {
+                      handleInputChange('exists', true);
+                    },
+                    () => {
+                      handleInputChange('exists', false);
+                    },
+                  ]}
+                  value={
+                    kioskDetails.exists === undefined
+                      ? null
+                      : kioskDetails.exists
+                      ? 'Yes'
+                      : 'No'
+                  }
+                />
+              </View>
+            </View>
+            {kioskDetails.exists &&(
+              <View>
             <View style={styles.row}>
               <View style={styles.inputContainer}>
                 <TextInputWithTitle
@@ -388,8 +444,11 @@ export default function KioskPage() {
                   keyboardType="numeric"
                   style={styles.input}
                 />
+                
+              </View>
               </View>
             </View>
+          )}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
