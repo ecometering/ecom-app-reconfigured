@@ -1,135 +1,108 @@
-import React, { useContext, useState } from 'react';
 import {
-  Dimensions,
-  Button,
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
   Text,
   View,
   Modal,
+  Image,
+  Button,
+  Platform,
+  StyleSheet,
+  ScrollView,
+  Dimensions,
+  SafeAreaView,
+  KeyboardAvoidingView,
 } from 'react-native';
-import Header from '../../components/Header';
-import { TextInputWithTitle } from '../../components/TextInput';
-import OptionalButton from '../../components/OptionButton';
+import React, { useContext, useState } from 'react';
 import SignatureScreen from 'react-native-signature-canvas';
-import { PrimaryColors } from '../../theme/colors';
+
+// Components
+import Header from '../../components/Header';
+import OptionalButton from '../../components/OptionButton';
+import { TextInputWithTitle } from '../../components/TextInput';
+
+// Context & Utils
 import EcomHelper from '../../utils/ecomHelper';
+import { PrimaryColors } from '../../theme/colors';
 import { AppContext } from '../../context/AppContext';
 import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+
 const { width, height } = Dimensions.get('window');
+
 function GasSafeWarningPage() {
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const appContext = useContext(AppContext);
- const {jobID,photos,savePhoto,standardDetails} = appContext
-  const title = "Riddor Report"
-
-
-
-  const [certificateReference, setCertificateReference] = useState(
-    standardDetails?.certificateReference
-  );
-  const [emergencyService, setEmergencyService] = useState(
-    standardDetails?.emergencyService
-  );
-  const [isPropertyRented, setIsPropertyRented] = useState(
-    standardDetails?.isPropertyRented
-  );
-  const [isCustomerAvailable, setIsCustomerAvailable] = useState(
-    standardDetails?.isCustomerAvailable
-  );
+  const { standardDetails } = appContext || {};
 
   const [isModal, setIsModal] = useState(false);
   const [isCustomerSign, setIsCustomerSign] = useState(true);
-  const [customerSign, setCustomerSign] = useState(
-    standardDetails?.customerSign
-  );
-  const [engineerSign, setEngineerSign] = useState(
-    standardDetails?.engineerSign
-  );
-
-  console.log('GasSafeWarningPage');
 
   const handleOK = (signature) => {
     const base64String = signature.replace('data:image/png;base64,', '');
-    console.log('isCustomerSign', isCustomerSign);
-    // Use the base64String as needed
+
     if (isCustomerSign) {
-      setCustomerSign(base64String);
+      appContext.setStandardDetails({
+        ...standardDetails,
+        customerSign: base64String,
+      });
     } else {
-      setEngineerSign(base64String);
+      appContext.setStandardDetails({
+        ...standardDetails,
+        engineerSign: base64String,
+      });
     }
-    console.log(base64String);
     setIsModal(false);
   };
 
   const backPressed = () => {
-    appContext.setStandardDetails({
-      ...standardDetails,
-      certificateReference: certificateReference,
-      emergencyService: emergencyService,
-      isPropertyRented: isPropertyRented,
-      isCustomerAvailable: isCustomerAvailable,
-      engineerSign: engineerSign,
-      customerSign: customerSign,
-    });
     goToPreviousStep();
   };
 
   const nextPressed = async () => {
-    // validate
-    if (certificateReference == null) {
+    if (standardDetails.certificateReference == null) {
       EcomHelper.showInfoMessage('Please enter Certificate Reference');
       return;
     }
-        if (emergencyService == null) {
+    if (standardDetails.emergencyService == null) {
       EcomHelper.showInfoMessage(
         'Please enter Details of gas EmergencySErvice Provider RED'
       );
       return;
     }
-    if (isPropertyRented == null) {
+    if (standardDetails.isPropertyRented == null) {
       EcomHelper.showInfoMessage('Please answer if the property is rented');
       return;
     }
-    if (isCustomerAvailable == null) {
+    if (standardDetails.isCustomerAvailable == null) {
       EcomHelper.showInfoMessage(
         'Please answer if Customer was available on site'
       );
       return;
     }
-    if (isCustomerAvailable && customerSign == null) {
+    if (
+      standardDetails.isCustomerAvailable &&
+      standardDetails.customerSign == null
+    ) {
       EcomHelper.showInfoMessage('Please check Customer Signature');
       return;
     }
-    if (engineerSign == null) {
+    if (standardDetails.engineerSign == null) {
       EcomHelper.showInfoMessage('Please check Engineer Signature');
       return;
     }
 
-    const standards = {
-      ...standardDetails,
-      certificateReference: certificateReference,
-      emergencyService: emergencyService,
-      isPropertyRented: isPropertyRented,
-      isCustomerAvailable: isCustomerAvailable,
-      engineerSign: engineerSign,
-      customerSign: customerSign,
-    };
-
-    appContext.setStandardDetails(standards);
     await db.runAsync('UPDATE Jobs SET standards = ? WHERE id = ?', [
-      JSON.stringify(standards),
+      JSON.stringify(standardDetails),
       appContext.jobID,
     ]);
 
     goToNextStep();
   };
+
   return (
-    <SafeAreaView style={styles.content}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+      }}
+    >
       <Header
         hasLeftBtn={true}
         hasCenterText={true}
@@ -139,64 +112,76 @@ function GasSafeWarningPage() {
         rightBtnPressed={nextPressed}
       />
       <KeyboardAvoidingView
-        style={[styles.content, { marginHorizontal: '5%' }]}
+        style={styles.content}
         behavior={Platform.OS === 'ios' ? 'padding' : null}
       >
-        <ScrollView style={styles.content}>
+        <ScrollView>
           <TextInputWithTitle
             title={'Certificate Reference'}
             placeholder={''}
             onChangeText={(txt) => {
-              setCertificateReference(txt);
+              appContext.setStandardDetails({
+                ...standardDetails,
+                certificateReference: txt,
+              });
             }}
-            value={certificateReference}
+            value={standardDetails?.certificateReference}
             containerStyle={styles.inputContainer}
           />
-          <View style={styles.spacer} />
-         
-          
+
           <TextInputWithTitle
             title={'Details of gas EmergencyService Provider REF'}
             placeholder={''}
             onChangeText={(txt) => {
-              setEmergencyService(txt);
+              appContext.setStandardDetails({
+                ...standardDetails,
+                emergencyService: txt,
+              });
             }}
-            value={emergencyService}
+            value={standardDetails?.emergencyService}
             containerStyle={styles.inputContainer}
           />
-          <View style={styles.spacer} />
-          <View style={styles.spacer} />
+
           <View
             style={{
-              marginHorizontal: width * 0.05, // Adjusted to create a gap between the sections
               flexDirection: 'row',
-              justifyContent: 'space-between',
+              flex: 2,
             }}
           >
             <View
               style={{
-                justifyContent: 'space-between',
-                height: height * 0.1,
-                width: width * 0.35, // Adjusted width to accommodate the spacer
+                flex: 1,
+                gap: 10,
               }}
             >
-              <Text>{'Is the property Rented?'}</Text>
-              <View style={styles.spacer2} />
+              <Text
+                style={{
+                  textAlign: 'center',
+                }}
+              >
+                {'Is the property Rented?'}
+              </Text>
               <View style={styles.optionsContainer}>
                 <OptionalButton
                   options={['Yes', 'No']}
                   actions={[
                     () => {
-                      setIsPropertyRented(true);
+                      appContext.setStandardDetails({
+                        ...standardDetails,
+                        isPropertyRented: true,
+                      });
                     },
                     () => {
-                      setIsPropertyRented(false);
+                      appContext.setStandardDetails({
+                        ...standardDetails,
+                        isPropertyRented: false,
+                      });
                     },
                   ]}
                   value={
-                    isPropertyRented == null
+                    appContext.isPropertyRented == null
                       ? null
-                      : isPropertyRented
+                      : appContext.isPropertyRented
                       ? 'Yes'
                       : 'No'
                   }
@@ -204,33 +189,40 @@ function GasSafeWarningPage() {
               </View>
             </View>
 
-            {/* Spacer View for the gap */}
-            <View style={{ width: 20 }}></View>
-
             <View
               style={{
-                justifyContent: 'space-between',
-                height: height * 0.1,
-                width: width * 0.35, // Adjusted width to match the first section
+                flex: 1,
+                gap: 10,
               }}
             >
-              <Text>{'Was Customer available on site'}</Text>
-              <View style={styles.spacer2} />
+              <Text
+                style={{
+                  textAlign: 'center',
+                }}
+              >
+                {'Was Customer available on site'}
+              </Text>
               <View style={styles.optionsContainer}>
                 <OptionalButton
                   options={['Yes', 'No']}
                   actions={[
                     () => {
-                      setIsCustomerAvailable(true);
+                      appContext.setStandardDetails({
+                        ...standardDetails,
+                        isCustomerAvailable: true,
+                      });
                     },
                     () => {
-                      setIsCustomerAvailable(false);
+                      appContext.setStandardDetails({
+                        ...standardDetails,
+                        isCustomerAvailable: false,
+                      });
                     },
                   ]}
                   value={
-                    isCustomerAvailable == null
+                    appContext.isCustomerAvailable == null
                       ? null
-                      : isCustomerAvailable
+                      : appContext.isCustomerAvailable
                       ? 'Yes'
                       : 'No'
                   }
@@ -239,9 +231,8 @@ function GasSafeWarningPage() {
             </View>
           </View>
 
-          <View style={styles.spacer} />
           <View style={styles.row}>
-            {isCustomerAvailable && (
+            {appContext.isCustomerAvailable && (
               <View>
                 <Button
                   title={'Customer Signature'}
@@ -250,10 +241,12 @@ function GasSafeWarningPage() {
                     setIsCustomerSign(true);
                   }}
                 />
-                <View style={styles.spacer2} />
-                {customerSign && (
+
+                {standardDetails.customerSign && (
                   <Image
-                    source={{ uri: `data:image/png;base64,${customerSign}` }}
+                    source={{
+                      uri: `data:image/png;base64,${standardDetails.customerSign}`,
+                    }}
                     style={styles.signImage}
                   />
                 )}
@@ -268,9 +261,11 @@ function GasSafeWarningPage() {
                   setIsCustomerSign(false);
                 }}
               />
-              <View style={styles.spacer2} />
+
               <Image
-                source={{ uri: `data:image/png;base64,${engineerSign}` }}
+                source={{
+                  uri: `data:image/png;base64,${standardDetails.engineerSign}`,
+                }}
                 style={styles.signImage}
               />
             </View>
@@ -315,6 +310,7 @@ function GasSafeWarningPage() {
 const styles = StyleSheet.create({
   content: {
     flex: 1,
+    padding: 20,
   },
   scrollView: {
     flex: 1,

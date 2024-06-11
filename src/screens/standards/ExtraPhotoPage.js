@@ -1,78 +1,59 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
+  View,
+  Text,
   Image,
-  SafeAreaView,
+  TextInput,
   ScrollView,
   StyleSheet,
-  View,
-  Dimensions,
-  Text,
+  SafeAreaView,
+  TouchableOpacity,
 } from 'react-native';
-import Header from '../../components/Header';
-import { useRoute } from '@react-navigation/native';
-import TextInput from '../../components/TextInput';
-import OptionalButton from '../../components/OptionButton';
-import EcomHelper from '../../utils/ecomHelper';
-import { AppContext } from '../../context/AppContext';
-import ImagePickerButton from '../../components/ImagePickerButton';
-import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
-import { ExtraPhotoPageRoute } from '../../utils/nagivation-routes/install-navigations';
-import withUniqueKey from '../../utils/renderNavigationWithUniqueKey';
 
-const { width, height } = Dimensions.get('window');
+// Components
+import Header from '../../components/Header';
+import ImagePickerButton from '../../components/ImagePickerButton';
+
+// Context & Utils
+import { AppContext } from '../../context/AppContext';
+import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
 
 const ExtraPhotoPage = () => {
-  const route = useRoute();
-  const { goToPreviousStep, pushNavigation, goToNextStep } =
-    useProgressNavigation();
-  const { photoNumber, title } = route.params;
   const appContext = useContext(AppContext);
-  const standardDetails = appContext.standardDetails;
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
+  const [photos, setPhotos] = useState([]);
+  const [activeSections, setActiveSections] = useState([]);
 
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [extraComment, setExtraComment] = useState('');
-  const [addMorePhotos, setAddMorePhotos] = useState(false);
-  const [hasExtraPhoto, setHasExtraPhoto] = useState(false);
+  const handleImageSelected = (newPhoto) => {
+    const updatedPhotos = [...photos, { uri: newPhoto }];
+    setPhotos(updatedPhotos);
+    setActiveSections([updatedPhotos.length - 1]);
+  };
 
-  useEffect(() => {
-    const currentExtra = standardDetails?.extras?.find(
-      (extra) => extra?.photoNumber === photoNumber
+  const handleRemovePhoto = (index) => {
+    const updatedPhotos = photos.filter((_, i) => i !== index);
+    setPhotos(updatedPhotos);
+    setActiveSections([]);
+  };
+
+  const toggleSection = (index) => {
+    setActiveSections((prevActiveSections) =>
+      prevActiveSections.includes(index) ? [] : [index]
     );
-    //  get the current extra photo and comment if it exists
-    if (currentExtra && currentExtra?.extraPhoto) {
-      setHasExtraPhoto(true);
-      setSelectedImage(currentExtra?.extraPhoto);
-      setExtraComment(currentExtra?.extraComment);
-    } else {
-      setSelectedImage(null);
-      setExtraComment('');
-    }
-  }, [photoNumber, standardDetails?.extras]);
+  };
 
   const handleSubmit = async () => {
-    if (hasExtraPhoto) {
-      if (!selectedImage) {
-        EcomHelper.showInfoMessage('Please add an extra photo');
-        return;
-      }
-      if (!extraComment) {
-        EcomHelper.showInfoMessage('Please provide comments on the photo');
-        return;
-      }
-    }
-
-    const newExtra = { extraPhoto: selectedImage, extraComment, photoNumber };
-    // update the extras array with the new extra photo and comment
-    const updatedExtras = [
-      ...(standardDetails?.extras?.filter(
-        (extra) => extra.photoNumber !== photoNumber
-      ) || []),
-      newExtra,
-    ];
+    const extraPhotos = photos.map((photo, index) => {
+      return {
+        photoNumber: index + 1,
+        extraPhoto: photo.uri,
+        extraComment: photo.extraComment,
+      };
+    });
 
     const standards = {
-      ...standardDetails,
-      extras: updatedExtras,
+      ...appContext.standardDetails,
+      extras: extraPhotos,
     };
 
     appContext.setStandardDetails(standards);
@@ -80,120 +61,108 @@ const ExtraPhotoPage = () => {
       JSON.stringify(standards),
       appContext.jobID,
     ]);
-    // reset the form
-    setSelectedImage(null);
-    setExtraComment('');
-
-    if (addMorePhotos) {
-      const nextPhotoScreen = ExtraPhotoPageRoute({
-        photoNumber: photoNumber + 1,
-        photoKey: `extraPhotos_${photoNumber + 1}`,
-        title: `Extra Photos ${photoNumber + 1}`,
-      });
-
-      pushNavigation(nextPhotoScreen);
-    } else {
-      goToNextStep();
-    }
+    goToNextStep();
   };
 
   return (
-    <ScrollView style={styles.scrollView}>
-      <SafeAreaView style={{ flex: 1 }}>
-        <Header
-          hasLeftBtn={true}
-          hasCenterText={true}
-          hasRightBtn={true}
-          centerText={title}
-          leftBtnPressed={() => goToPreviousStep()}
-          rightBtnPressed={handleSubmit}
-        />
+    <SafeAreaView
+      style={{
+        flex: 1,
+      }}
+    >
+      <Header
+        hasLeftBtn={true}
+        hasCenterText={true}
+        hasRightBtn={true}
+        centerText={'Extra Photos'}
+        leftBtnPressed={() => goToPreviousStep()}
+        rightBtnPressed={handleSubmit}
+      />
 
-        <View style={styles.body}>
-          {photoNumber === 0 && (
-            <View>
-              <Text style={styles.text}>Are any extra photos required?</Text>
-              <View style={styles.optionContainer}>
-                <OptionalButton
-                  options={['Yes', 'No']}
-                  actions={[
-                    () => setHasExtraPhoto(true),
-                    () => setHasExtraPhoto(false),
-                  ]}
-                  value={hasExtraPhoto ? 'Yes' : 'No'}
-                />
-              </View>
-            </View>
-          )}
-          {(hasExtraPhoto || photoNumber > 0) && (
-            <View>
-              <ImagePickerButton onImageSelected={setSelectedImage} />
-              {selectedImage && (
-                <Image
-                  source={{ uri: selectedImage }}
-                  style={styles.image}
-                  resizeMode="contain"
-                />
+      <ScrollView>
+        <View style={styles.container}>
+          {photos.map((photo, index) => (
+            <View key={index}>
+              <TouchableOpacity onPress={() => toggleSection(index)}>
+                <View style={styles.header}>
+                  <Text style={styles.headerText}>Photo {index + 1}</Text>
+                  <TouchableOpacity onPress={() => handleRemovePhoto(index)}>
+                    <Text style={styles.removeText}>Remove</Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+              {activeSections.includes(index) && (
+                <View style={styles.content}>
+                  <Image source={{ uri: photo.uri }} style={styles.image} />
+                  <TextInput
+                    style={styles.textInput}
+                    onChange={(event) => {
+                      const text = event.nativeEvent
+                        ? event.nativeEvent.text
+                        : event.target.value;
+                      setPhotos((prevPhotos) => {
+                        const updatedPhotos = [...prevPhotos];
+                        updatedPhotos[index].extraComment = text;
+                        return updatedPhotos;
+                      });
+                    }}
+                    value={photos[index].extraComment}
+                    multiline={true}
+                    numberOfLines={4}
+                    placeholder="Comment"
+                  />
+                </View>
               )}
-              <TextInput
-                value={extraComment}
-                onChangeText={setExtraComment}
-                multiline={true}
-                placeholder="Comments on photo"
-                style={styles.textInput}
-              />
-              <Text style={styles.text}>
-                Do you wish to add more job photos?
-              </Text>
-              <View style={styles.optionContainer}>
-                <OptionalButton
-                  options={['Yes', 'No']}
-                  actions={[
-                    () => setAddMorePhotos(true),
-                    () => setAddMorePhotos(false),
-                  ]}
-                  value={addMorePhotos ? 'Yes' : 'No'}
-                />
-              </View>
             </View>
-          )}
+          ))}
+          <Text style={styles.textLabel}>More extra phots?</Text>
+          <ImagePickerButton onImageSelected={handleImageSelected} />
         </View>
-      </SafeAreaView>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
+  container: {
+    padding: 10,
+    gap: 10,
   },
-  body: {
-    marginHorizontal: width * 0.05,
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  headerText: {
+    flex: 1,
+    fontSize: 16,
+  },
+  removeText: {
+    color: 'red',
+  },
+  content: {
+    padding: 10,
+    backgroundColor: '#f1f1f1',
   },
   image: {
-    width: width * 0.8,
-    height: height * 0.4,
-    alignSelf: 'center',
-    marginTop: 20,
+    width: '100%',
+    height: 200,
   },
   textInput: {
-    marginTop: 20,
-    padding: 10,
-    borderWidth: 1,
     borderColor: 'gray',
+    borderWidth: 1,
+    marginVertical: 10,
+    padding: 10,
+    minHeight: 100,
     borderRadius: 5,
-    height: 100,
-    textAlignVertical: 'top',
-    width: '100%',
   },
-  optionContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 20,
-  },
-  text: {
-    marginTop: 20,
+  textLabel: {
+    textAlign: 'center',
+    fontSize: 16,
   },
 });
 
-export default withUniqueKey(ExtraPhotoPage);
+export default ExtraPhotoPage;

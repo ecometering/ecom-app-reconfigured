@@ -20,8 +20,6 @@ import RebookPage from '../screens/jobs/RebookPage';
 // calendar imports
 import CalendarPage from '../screens/calendar/CalendarPage';
 import LoginPage from '../screens/LoginPage';
-import EcvPage from '../screens/survey/EcvPage';
-import KioskPage from '../screens/survey/KioskPage';
 
 //import standards inport from ../screens/standards
 import ExtraPhotoPage from '../screens/standards/ExtraPhotoPage';
