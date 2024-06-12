@@ -14,7 +14,7 @@ import Header from '../../components/Header';
 import Text from '../../components/Text';
 import ImagePickerButton from '../../components/ImagePickerButton';
 import { useSQLiteContext } from 'expo-sqlite/next';
-import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 const { width, height } = Dimensions.get('window');
 
 function GenericPhotoPage() {

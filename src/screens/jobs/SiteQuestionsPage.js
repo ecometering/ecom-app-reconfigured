@@ -20,7 +20,7 @@ import ImagePickerButton from '../../components/ImagePickerButton';
 // Utils and Constants
 
 import EcomHelper from '../../utils/ecomHelper';
-import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
 const { width, height } = Dimensions.get('window');
 

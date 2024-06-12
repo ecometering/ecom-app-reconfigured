@@ -6,7 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 // Context
 import { AppContext } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
-import { NavigationProvider } from '../context/ExampleFlowRouteProvider';
+import { NavigationProvider } from '../context/ProgressiveFlowRouteProvider';
 
 // import screens from "..screens"
 import CompletedJobsPage from '../screens/CompletedJobsPage';
@@ -20,8 +20,6 @@ import RebookPage from '../screens/jobs/RebookPage';
 // calendar imports
 import CalendarPage from '../screens/calendar/CalendarPage';
 import LoginPage from '../screens/LoginPage';
-import EcvPage from '../screens/survey/EcvPage';
-import KioskPage from '../screens/survey/KioskPage';
 
 //import standards inport from ../screens/standards
 import ExtraPhotoPage from '../screens/standards/ExtraPhotoPage';

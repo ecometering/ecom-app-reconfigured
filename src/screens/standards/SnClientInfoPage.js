@@ -19,7 +19,7 @@ import { PrimaryColors, Transparents } from '../../theme/colors';
 import { AppContext } from '../../context/AppContext';
 import EcomHelper from '../../utils/ecomHelper';
 import { EcomPressable as Button } from '../../components/ImageButton';
-import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
 function SnClientInfoPage() {
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();

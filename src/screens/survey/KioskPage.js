@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { TextType } from "../../theme/typography";
 import { PrimaryColors } from "../../theme/colors";
-import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Header from "../../components/Header";

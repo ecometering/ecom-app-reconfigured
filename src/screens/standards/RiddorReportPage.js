@@ -16,7 +16,7 @@ import ImagePickerButton from '../../components/ImagePickerButton'; // Adjust th
 
 // Context
 import { AppContext } from '../../context/AppContext';
-import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
 // Utils
 import { TextType } from '../../theme/typography';
