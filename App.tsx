@@ -41,7 +41,6 @@ const CheckFirstLaunch = async () => {
 
 const MainApp = () => {
   const { OnLogout } = useAuth();
-  const db = useSQLiteContext();
   const checkAppVersionAndUpdate = async () => {
     const storedVersion = await AsyncStorage.getItem('appVersion');
     const currentVersion = Constants.expoConfig.version;

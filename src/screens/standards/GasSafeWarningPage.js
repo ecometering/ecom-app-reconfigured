@@ -23,7 +23,7 @@ import { TextInputWithTitle } from '../../components/TextInput';
 import EcomHelper from '../../utils/ecomHelper';
 import { PrimaryColors } from '../../theme/colors';
 import { AppContext } from '../../context/AppContext';
-import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
 const { width, height } = Dimensions.get('window');
 

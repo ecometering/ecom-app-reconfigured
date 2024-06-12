@@ -21,7 +21,7 @@ import { unitH, width } from '../../utils/constant';
 
 // Context
 import { AppContext } from '../../context/AppContext';
-import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
 function AssetTypeSelectionPage() {
   const { goToPreviousStep, goToNextStep } = useProgressNavigation();

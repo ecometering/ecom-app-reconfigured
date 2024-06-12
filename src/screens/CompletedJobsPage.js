@@ -9,7 +9,7 @@ import JobCard from '../components/JobCard';
 // Utils
 import { loadJob } from '../utils/loadJob';
 import { getDatabaseJob } from '../utils/database'; // Importing required functions
-import { useProgressNavigation } from '../context/ExampleFlowRouteProvider';
+import { useProgressNavigation } from '../context/ProgressiveFlowRouteProvider';
 
 const CompletedJobsTable = () => {
   const [jobs, setJobs] = useState([]);

@@ -20,7 +20,7 @@ import EcomHelper from '../../utils/ecomHelper';
 import { AppContext } from '../../context/AppContext';
 import BarcodeScanner from '../../components/BarcodeScanner';
 import { openDatabase } from '../../utils/database';
-import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 import EcomDropDown from '../../components/DropDown';
 import { SIZE_LIST } from '../../utils/constant';
 import { TextType } from '../../theme/typography';

@@ -34,7 +34,7 @@ import EcomHelper from '../../utils/ecomHelper';
 import { TextType } from '../../theme/typography';
 import { PrimaryColors } from '../../theme/colors';
 import { AppContext } from '../../context/AppContext';
-import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 import withUniqueKey from '../../utils/renderNavigationWithUniqueKey';
 
 const { width, height } = Dimensions.get('window');

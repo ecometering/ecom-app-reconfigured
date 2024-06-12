@@ -58,7 +58,7 @@ export function NavigationProvider({ children }) {
   const startFlow = (newFlowType) => {
     setFlowType(newFlowType);
     setCurrentStepIndex(0);
-    return config[newFlowType][0];
+    return navigation.navigate(config[newFlowType][0].screen);
   };
 
   const pushNavigation = (flowUpdate) => {
