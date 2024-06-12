@@ -45,7 +45,7 @@ import {
   appendPhotoDetail,
 } from '../../utils/database';
 import { makeFontSmallerAsTextGrows } from '../../utils/styles';
-import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
 const alphanumericRegex = /^[a-zA-Z0-9]+$/;
 const { width, height } = Dimensions.get('window');

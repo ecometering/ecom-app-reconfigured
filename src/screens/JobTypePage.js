@@ -6,13 +6,12 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from 'react-native';
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 
 // Utils and Constants
 import { height, unitH } from '../utils/constant';
 import { PrimaryColors } from '../theme/colors';
-import { useSQLiteContext } from 'expo-sqlite/next';
 
 // Components
 import Text from '../components/Text';
@@ -20,59 +19,48 @@ import Header from '../components/Header';
 import { EcomPressable as Button } from '../components/ImageButton';
 
 // Context
-import { AppContext } from '../context/AppContext';
-import { useProgressNavigation } from '../context/ExampleFlowRouteProvider';
+import { useFormStateContext } from '../context/AppContext';
+import { useProgressNavigation } from '../context/ProgressiveFlowRouteProvider';
 
 function JobTypePage() {
-  const db = useSQLiteContext();
   const navigation = useNavigation();
   const { startFlow } = useProgressNavigation();
-  const { jobStarted, resetContext } = useContext(AppContext);
+  const { state, setState, setJobType, resetState } = useFormStateContext();
+  const { jobStarted } = state;
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedJobType, setSelectedJobType] = useState('');
 
-  const setJobTypeAndNavigate = async (jobType) => {
+  const handleJobTypeSelection = async (jobType) => {
     if (jobStarted) {
-      await db
-        .runAsync('SELECT name FROM sqlite_master WHERE type="table" AND name NOT LIKE "sqlite_%"')
-        .then((result) => {
-          console.log('Tables:', result);
-        })
-        .catch((error) => {
-          console.error('Error getting tables:', error);
-        });
-        
-      // Show modal if a job is already started
       setSelectedJobType(jobType);
       setModalVisible(true);
     } else {
-      await proceedWithJobType(jobType);
+      await startNewJob(jobType);
     }
   };
 
-  const proceedWithJobType = async (jobType) => {
+  const startNewJob = async (jobType) => {
     try {
-      // TODO: set app context here instead of in SiteDetailsPage
       const jobId = `JOB-${Date.now()}`;
       const jobData = {
-        jobType: jobType,
+        jobType,
+        jobId,
         startDate: new Date().toISOString(),
         jobStatus: 'in progress',
         progress: 0,
       };
 
-      // this is where we set the navigation flow and get the first screen details
-      const navigationDetails = startFlow(jobType);
+      setJobType(jobType);
+      setState((prevState) => ({
+        ...prevState,
+        jobStarted: true,
+        jobDetails: jobData,
+      }));
 
-      // here we pass the screen information for the flow
-      navigation.navigate(navigationDetails.screen, {
-        ...navigationDetails.params,
-        jobId: jobId,
-        jobType: jobType,
-      });
+      startFlow(jobType);
     } catch (error) {
-      console.error('Error setting job type and navigating:', error);
+      console.error('Error starting new job:', error);
     }
   };
 
@@ -95,7 +83,7 @@ function JobTypePage() {
           ].map((type, index) => (
             <View key={index} style={{ alignItems: 'center' }}>
               <Button
-                onPress={() => setJobTypeAndNavigate(type)}
+                onPress={() => handleJobTypeSelection(type)}
                 style={styles.button}
               >
                 <Text style={styles.buttonTxt}>{`Asset ${type}`}</Text>
@@ -119,9 +107,9 @@ function JobTypePage() {
               <TouchableOpacity
                 style={styles.modalButton}
                 onPress={() => {
-                  resetContext(); // Clear the context using the method defined in AppContext
+                  resetState();
                   setModalVisible(false);
-                  proceedWithJobType(selectedJobType);
+                  startNewJob(selectedJobType);
                 }}
               >
                 <Text style={styles.modalButtonText}>Yes</Text>
@@ -130,7 +118,7 @@ function JobTypePage() {
                 style={styles.modalButton}
                 onPress={() => {
                   setModalVisible(false);
-                  proceedWithJobType(selectedJobType);
+                  startNewJob(selectedJobType);
                 }}
               >
                 <Text style={styles.modalButtonText}>No</Text>

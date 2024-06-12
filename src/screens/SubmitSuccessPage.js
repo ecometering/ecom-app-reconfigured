@@ -16,7 +16,7 @@ import moment from 'moment';
 import Header from '../components/Header';
 import { useAuth } from '../context/AuthContext';
 import { useSQLiteContext } from 'expo-sqlite/next';
-import { useProgressNavigation } from '../context/ExampleFlowRouteProvider';
+import { useProgressNavigation } from '../context/ProgressiveFlowRouteProvider';
 
 const SubmitSuccessPage = () => {
   const appContext = useContext(AppContext);

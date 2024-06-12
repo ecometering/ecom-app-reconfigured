@@ -22,7 +22,7 @@ import { TextInputWithTitle } from '../../components/TextInput';
 
 // Context
 import { AppContext } from '../../context/AppContext';
-import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
 // Utils
 import EcomHelper from '../../utils/ecomHelper';

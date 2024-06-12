@@ -16,7 +16,7 @@ import ImagePickerButton from '../../components/ImagePickerButton';
 
 // Context & Utils
 import { AppContext } from '../../context/AppContext';
-import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
 const ExtraPhotoPage = () => {
   const appContext = useContext(AppContext);

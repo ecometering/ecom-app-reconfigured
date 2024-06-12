@@ -6,7 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 // Context
 import { AppContext } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
-import { NavigationProvider } from '../context/ExampleFlowRouteProvider';
+import { NavigationProvider } from '../context/ProgressiveFlowRouteProvider';
 
 // import screens from "..screens"
 import CompletedJobsPage from '../screens/CompletedJobsPage';

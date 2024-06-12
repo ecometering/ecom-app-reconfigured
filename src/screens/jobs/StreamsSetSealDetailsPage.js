@@ -19,7 +19,7 @@ import TextInput from '../../components/TextInput';
 // Context & Utils
 import EcomHelper from '../../utils/ecomHelper';
 import { AppContext } from '../../context/AppContext';
-import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 import { useSQLiteContext } from 'expo-sqlite/next';
 
 const RepeatComponent = ({ title, value, onChangeText }) => {
