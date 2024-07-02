@@ -111,7 +111,6 @@ function SnClientInfoPage() {
   const deleteEntry = (index) => {
     setTableData((currentData) => currentData.filter((_, i) => i !== index));
   };
-  console.log('SnClientInfoPage');
 
   return (
     <SafeAreaView style={styles.flex}>

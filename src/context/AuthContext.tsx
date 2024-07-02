@@ -3,20 +3,20 @@ import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
 interface AuthProps {
-  authState?: {
+  authState: {
     token: string | null;
     refreshToken: string | null;
     authenticated: boolean | null;
   };
-  RefreshAccessToken?: () => Promise<any>;
-  OnLogin?: (username: string, password: string) => Promise<any>;
-  OnLogout?: () => Promise<any>;
+  RefreshAccessToken: () => Promise<any>;
+  OnLogin: (username: string, password: string) => Promise<any>;
+  OnLogout: () => Promise<any>;
 }
 
 const TOKEN_KEY = 'token';
 const REFRESH_TOKEN_KEY = 'refresh_token';
 export const API_URL = 'https://test.ecomdata.co.uk/api';
-const AuthContext = createContext<AuthProps>({});
+const AuthContext = createContext<AuthProps>({} as AuthProps);
 
 export const useAuth = () => {
   return useContext(AuthContext);
@@ -29,45 +29,64 @@ export const AuthProvider = ({ children }: any) => {
     authenticated: boolean | null;
   }>({
     token: null,
-    authenticated: null,
     refreshToken: null,
+    authenticated: null,
   });
+
   useEffect(() => {
     const loadToken = async () => {
-      const token = await SecureStore.getItemAsync(TOKEN_KEY);
-      const refreshToken = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
-      console.log('stored token', token);
-      console.log('stored refreshToken', refreshToken);
+      try {
+        const token = await SecureStore.getItemAsync(TOKEN_KEY);
+        const refreshToken = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
 
-      if (token) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        setAuthState({
-          token: token,
-          refreshToken: refreshToken,
-          authenticated: true,
-        });
+        if (token && refreshToken) {
+          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          setAuthState({
+            token: token,
+            refreshToken: refreshToken,
+            authenticated: true,
+          });
+        }
+      } catch (error) {
+        console.error('Error accessing SecureStore:', error);
       }
     };
+
     loadToken();
-  }, []);
+
+    const setupInterceptors = () => {
+      axios.interceptors.response.use(
+        (response) => response,
+        async (error) => {
+          if (error.response && error.response.status === 401) {
+            const refreshed = await refresh();
+            if (!refreshed.error) {
+              error.config.headers[
+                'Authorization'
+              ] = `Bearer ${authState.token}`;
+              return axios(error.config);
+            }
+          }
+          return Promise.reject(error);
+        }
+      );
+    };
+
+    setupInterceptors();
+  }, [authState.token]);
+
   const login = async (username: string, password: string) => {
     try {
-      console.log('API url:', `${API_URL}/token`);
       const result = await axios.post(`${API_URL}/token/`, {
         username,
         password,
       });
 
-      console.log('file : AuthContext.tsx ~ line 31 ~ login ~ result', result);
       setAuthState({
         token: result.data.access,
         refreshToken: result.data.refresh,
         authenticated: true,
       });
-      console.log(
-        'file : AuthContext.tsx ~ line 34 ~ login ~ authState',
-        authState
-      );
 
       axios.defaults.headers.common[
         'Authorization'
@@ -77,59 +96,51 @@ export const AuthProvider = ({ children }: any) => {
       await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, result.data.refresh);
       return result;
     } catch (e) {
-      console.error('Login failed:', e); // Log high-level error
+      console.error('Login failed:', e);
+
       if (e.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
         console.error('Data:', e.response.data);
         console.error('Status:', e.response.status);
         console.error('Headers:', e.response.headers);
       } else if (e.request) {
-        // The request was made but no response was received
         console.error(
           'The request was made but no response was received',
           e.request
         );
       } else {
-        // Something happened in setting up the request that triggered an Error
         console.error('Error', e.message);
       }
-      console.error('Config:', e.config);
 
       return {
         error: true,
-        msg: e?.response?.data?.msg || 'An unknown error occurred',
+        msg:
+          e?.response?.data?.detail ||
+          'An unknown error occurred. Please try again later.',
       };
     }
   };
+
   const logout = async () => {
-    console.log('file : AuthContext.tsx ~ line 47 ~ logout ~ logout called');
-    await SecureStore.deleteItemAsync(TOKEN_KEY);
-    axios.defaults.headers.common['Authorization'] = '';
-    console.log(
-      'file : AuthContext.tsx ~ line 50 ~ logout ~ token removed',
-      authState.token
-    );
-    setAuthState({ token: null, refreshToken: null, authenticated: false });
-    console.log(
-      'file : AuthContext.tsx ~ line 52 ~ logout ~ authState',
-      authState
-    );
-    console.log(
-      'file : AuthContext.tsx ~ line 53 ~ logout ~ token removed',
-      authState.token
-    );
-  };
-  const refresh = async () => {
-    const refreshToken = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
-    console.log({ refreshToken });
     try {
-      console.log('API url:', `${API_URL}/token/refresh`);
+      await SecureStore.deleteItemAsync(TOKEN_KEY);
+      await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
+      delete axios.defaults.headers.common['Authorization'];
+
+      setAuthState({ token: null, refreshToken: null, authenticated: false });
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
+  const refresh = async () => {
+    try {
+      const refreshToken = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
+      if (!refreshToken) throw new Error('No refresh token available');
+
       const result = await axios.post(`${API_URL}/token/refresh/`, {
         refresh: refreshToken,
       });
 
-      console.log('Refresh result:', result.data.access);
       setAuthState((prevState) => ({
         ...prevState,
         token: result.data.access,
@@ -148,6 +159,7 @@ export const AuthProvider = ({ children }: any) => {
       return result;
     } catch (e) {
       console.error('Refresh failed:', e);
+
       if (e.response) {
         console.error('Data:', e.response.data);
         console.error('Status:', e.response.status);
@@ -160,11 +172,12 @@ export const AuthProvider = ({ children }: any) => {
       } else {
         console.error('Error', e.message);
       }
-      console.error('Config:', e.config);
 
       return {
         error: true,
-        msg: e?.response?.data?.msg || 'An unknown error occurred',
+        msg:
+          e?.response?.data?.detail ||
+          'An unknown error occurred. Please try again later.',
       };
     }
   };
@@ -173,7 +186,7 @@ export const AuthProvider = ({ children }: any) => {
     OnLogin: login,
     OnLogout: logout,
     authState,
-    RefreshAccessToken: refresh,
   };
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
