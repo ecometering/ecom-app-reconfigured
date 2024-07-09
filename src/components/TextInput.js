@@ -1,8 +1,8 @@
-import React, {forwardRef} from 'react';
-import {StyleSheet, TextInput as RNTextInput, View} from 'react-native';
-import {PrimaryColors} from '../theme/colors';
-import {unitH, useScreenDimensions } from '../utils/constant';
-import {TextStyles, TextType} from '../theme/typography';
+import React, { forwardRef } from 'react';
+import { StyleSheet, TextInput as RNTextInput, View } from 'react-native';
+import { PrimaryColors } from '../theme/colors';
+import { unitH, useScreenDimensions } from '../utils/constant';
+import { TextStyles, TextType } from '../theme/typography';
 import Text from './Text';
 // Import useState and useEffect for managing state and side effects
 import { useState, useEffect } from 'react';
@@ -15,7 +15,7 @@ const TextInput = forwardRef(
       <RNTextInput
         ref={ref}
         placeholderTextColor={placeholderTextColor || PrimaryColors.Gray}
-        onChangeText={text => {
+        onChangeText={(text) => {
           if (onChangeText) {
             onChangeText(text);
           }
@@ -24,33 +24,57 @@ const TextInput = forwardRef(
         {...otherProps}
       />
     );
-  },
+  }
 );
 
 export const TextInputWithTitle = forwardRef(
-  ({ title, placeholderTextColor, style, containerStyle, onChangeText, ...otherProps }, ref) => {
-    const { width } = useScreenDimensions(); // Dynamic screen dimensions
-    const dynamicStyle = { width: "100%"  }; // Example of dynamic width based on screen size
-
+  (
+    {
+      title,
+      placeholderTextColor,
+      style,
+      containerStyle,
+      onChangeText,
+      ...otherProps
+    },
+    ref
+  ) => {
     return (
-      <View style={[styles.container, containerStyle]}>
+      <View style={[containerStyle]}>
         <Text style={{ fontSize: 10 }}>{title}</Text>
         <View style={{ height: 5 }} />
         <TextInput
           ref={ref}
           placeholderTextColor={placeholderTextColor}
           onChangeText={onChangeText}
-          style={[dynamicStyle, style]} // Apply dynamic style here
+          style={{ width: '100%', borderRadius: 5, ...style }}
           {...otherProps}
         />
       </View>
     );
-  },
+  }
 );
 
 // Adjusted InputRowWithTitle to accept refs for each input
 export const InputRowWithTitle = forwardRef(
-  ({ title1, title2, placeholderTextColor, style, onChangeText1, onChangeText2, ref1, ref2,placeholder1,keyboardType1,keyboardType2,placeholder2, ...otherProps }, ref) => {
+  (
+    {
+      title1,
+      title2,
+      placeholderTextColor,
+      style,
+      onChangeText1,
+      onChangeText2,
+      ref1,
+      ref2,
+      placeholder1,
+      keyboardType1,
+      keyboardType2,
+      placeholder2,
+      ...otherProps
+    },
+    ref
+  ) => {
     const { width } = useScreenDimensions(); // Use the custom hook for dynamic dimensions
     const dynamicGap = width * 0.02;
 
@@ -64,7 +88,7 @@ export const InputRowWithTitle = forwardRef(
             style={style}
             ref={ref1}
             placeholder={placeholder1}
-            keyboardType={keyboardType1}// Pass ref to the first TextInputWithTitle
+            keyboardType={keyboardType1} // Pass ref to the first TextInputWithTitle
             {...otherProps}
           />
         </View>
@@ -82,13 +106,10 @@ export const InputRowWithTitle = forwardRef(
         </View>
       </View>
     );
-  },
+  }
 );
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'flex-start',
-  },
   textInput: {
     backgroundColor: PrimaryColors.White,
     borderRadius: 5,

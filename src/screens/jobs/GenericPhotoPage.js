@@ -7,7 +7,6 @@ import {
   Alert,
   StyleSheet,
   ScrollView,
-  Dimensions,
   SafeAreaView,
 } from 'react-native';
 
@@ -15,16 +14,15 @@ import Text from '../../components/Text';
 import Header from '../../components/Header';
 import ImagePickerButton from '../../components/ImagePickerButton';
 
-import { useAppContext } from '../../context/AppContext';
+import { useFormStateContext } from '../../context/AppContext';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
-
-const { width, height } = Dimensions.get('window');
 
 function GenericPhotoPage() {
   db = useSQLiteContext();
   const { params } = useRoute();
   const { title, photoKey } = params;
-  const { photos, savePhoto, jobID } = useAppContext();
+  const { state, setState } = useFormStateContext();
+  const { photos, jobID } = state;
   const existingPhoto = photos?.[photoKey];
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   // RN uses cache storeage when picking image from gallery
@@ -37,10 +35,15 @@ function GenericPhotoPage() {
 
   const handlePhotoSelected = (uri) => {
     setSelectedImage(uri);
-    savePhoto(photoKey, { title, photoKey, uri });
-    console.log('Photo saved:', { title, photoKey, uri });
-    console.log('photos:', photos);
+    setState((prevState) => ({
+      ...prevState,
+      photos: {
+        ...prevState.photos,
+        [photoKey]: { title, photoKey, uri },
+      },
+    }));
   };
+
   const savePhotoToDatabase = async () => {
     const photosJson = JSON.stringify(photos);
     try {
@@ -114,8 +117,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   image: {
-    width: width * 0.8,
-    height: height * 0.4,
+    width: '100%',
+    height: 400,
     marginTop: 20,
     resizeMode: 'contain',
   },

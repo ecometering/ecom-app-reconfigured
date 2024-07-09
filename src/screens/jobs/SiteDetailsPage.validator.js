@@ -1,16 +1,21 @@
 import {
   validateEmail,
-  validateMprn,
   validatePostCode,
   validatePhoneNumber,
   validateRequiredField,
-  validateWarrantConfirmation,
-  validateContactConfirmation,
 } from '../../utils/validation/validators';
 
 export const validateSiteDetails = (siteDetails, jobType) => {
   const validations = [
-    () => validateMprn(siteDetails.mprn),
+    () => validateRequiredField('MPRN', siteDetails.mprn, 'Please input MPRN'),
+    () =>
+      validateLength(
+        'MPRN',
+        siteDetails.mprn,
+        5,
+        15,
+        'MPRN should be between 5 and 15 digits'
+      ),
     () =>
       validateRequiredField(
         'Building Name',
@@ -41,14 +46,40 @@ export const validateSiteDetails = (siteDetails, jobType) => {
         siteDetails.postCode,
         'Please input Post Code'
       ),
-    () => validatePostCode(siteDetails.postCode),
-    () => validatePhoneNumber('phone number1', siteDetails.number1),
-    () => validatePhoneNumber('phone number2', siteDetails.number2),
-    () => validateEmail('email1', siteDetails.email1),
-    () => validateEmail('email2', siteDetails.email2),
-    () => validateContactConfirmation(siteDetails.confirmContact),
-
-    () => validateWarrantConfirmation(jobType, siteDetails.confirmWarrant),
+    () =>
+      validatePostCode(
+        'Post Code',
+        siteDetails.postCode,
+        'Invalid UK post code'
+      ),
+    () =>
+      validatePhoneNumber(
+        'phone number1',
+        siteDetails.number1,
+        'Invalid phone number: phone number1'
+      ),
+    () =>
+      validatePhoneNumber(
+        'phone number2',
+        siteDetails.number2,
+        'Invalid phone number: phone number2'
+      ),
+    () => validateEmail('email1', siteDetails.email1, 'Invalid email: email1'),
+    () => validateEmail('email2', siteDetails.email2, 'Invalid email: email2'),
+    () =>
+      validateBooleanField(
+        'all contact is correct',
+        siteDetails.confirmContact,
+        'Please make sure if all contact is correct'
+      ),
+    () =>
+      validateBooleanField(
+        'the warrant went ahead',
+        siteDetails.confirmWarrant,
+        jobType === 'Warrant'
+          ? 'Please confirm if the warrant went ahead'
+          : null
+      ),
   ];
 
   for (const validate of validations) {

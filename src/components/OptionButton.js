@@ -8,7 +8,7 @@ const OptionalButton = ({ options, actions, style, value }) => {
   const [selectedOption, setSelectedOption] = useState(value);
 
   useEffect(() => {
-    setSelectedOption(value)
+    setSelectedOption(value);
   }, [value]);
 
   const handleOptionPress = (option, action) => {
@@ -17,7 +17,7 @@ const OptionalButton = ({ options, actions, style, value }) => {
   };
 
   return (
-    <View style={{ ...styles.container }}>
+    <View style={styles.container}>
       {options.map((option, index) => (
         <Button
           key={index}
@@ -25,7 +25,8 @@ const OptionalButton = ({ options, actions, style, value }) => {
           style={[
             selectedOption === option ? styles.selectedButton : styles.button,
             style,
-          ]}>
+          ]}
+        >
           <Text>{option}</Text>
         </Button>
       ))}
@@ -36,15 +37,14 @@ const OptionalButton = ({ options, actions, style, value }) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
     backgroundColor: 'white',
+    borderRadius: 5,
   },
   button: {
-    padding: 5,
-    Minwidth: 50,
+    flex: 1,
+    padding: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    // borderWidth: 1,
     borderColor: 'black',
     shadowColor: 'black',
     shadowOpacity: 0.5,
@@ -52,13 +52,14 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
   },
   selectedButton: {
-    padding: 5,
-    minWidth: 50,
+    flex: 1,
+    padding: 10,
+    borderRadius: 5,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
     borderColor: 'black',
-    backgroundColor: PrimaryColors.Blue,
+    backgroundColor: PrimaryColors.Green,
     shadowColor: 'black',
     shadowOpacity: 0.5,
     shadowOffset: { width: 2, height: 2 },

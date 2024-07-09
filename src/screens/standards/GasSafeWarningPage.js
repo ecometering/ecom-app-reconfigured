@@ -126,7 +126,6 @@ function GasSafeWarningPage() {
               });
             }}
             value={standardDetails?.certificateReference}
-            containerStyle={styles.inputContainer}
           />
 
           <TextInputWithTitle
@@ -139,7 +138,6 @@ function GasSafeWarningPage() {
               });
             }}
             value={standardDetails?.emergencyService}
-            containerStyle={styles.inputContainer}
           />
 
           <View

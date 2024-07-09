@@ -140,7 +140,6 @@ function SnClientInfoPage() {
               onChangeText={(txt) => {
                 setType(txt);
               }}
-              containerStyle={styles.inputContainer}
             />
             <TextInputWithTitle
               title={'Location'}
@@ -149,7 +148,6 @@ function SnClientInfoPage() {
               onChangeText={(txt) => {
                 setLocation(txt);
               }}
-              containerStyle={styles.inputContainer}
             />
           </View>
 
@@ -162,7 +160,6 @@ function SnClientInfoPage() {
               onChangeText={(txt) => {
                 setMake(txt);
               }}
-              containerStyle={styles.inputContainer}
             />
             <TextInputWithTitle
               title={'Model'}
@@ -171,7 +168,6 @@ function SnClientInfoPage() {
               onChangeText={(txt) => {
                 setModel(txt);
               }}
-              containerStyle={styles.inputContainer}
             />
           </View>
 
@@ -189,7 +185,6 @@ function SnClientInfoPage() {
                     .replace(/[^A-Z0-9]/gi, '');
                   setSerialNumber(formattedText);
                 }}
-                containerStyle={styles.inputContainer}
               />
               <View style={styles.spacer} />
 
@@ -205,7 +200,6 @@ function SnClientInfoPage() {
                   value={remedial}
                   style={{ height: unitH * 60 }}
                   multiline={true}
-                  containerStyle={styles.inputContainer}
                 />
               </View>
             </View>
@@ -218,7 +212,6 @@ function SnClientInfoPage() {
               }}
               style={{ height: unitH * 150 }}
               multiline={true}
-              containerStyle={styles.inputContainer}
             />
           </View>
 

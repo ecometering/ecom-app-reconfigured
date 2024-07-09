@@ -112,7 +112,6 @@ function SiteDetailsPage() {
                 const limitedText = filteredText.slice(0, 15);
                 handleInputChange('mprn', limitedText);
               }}
-              style={styles.inputContainer}
               keyboardType="numeric"
             />
 
@@ -123,7 +122,6 @@ function SiteDetailsPage() {
                 const filteredText = txt.replace(/[^a-zA-Z0-9\s\-()&_'/]/g, '');
                 handleInputChange('companyName', filteredText);
               }}
-              style={styles.inputContainer}
             />
 
             <TextInputWithTitle
@@ -133,7 +131,6 @@ function SiteDetailsPage() {
                 const filteredText = txt.replace(/[^a-zA-Z0-9\s\-\(\)]/g, '');
                 handleInputChange('buildingName', filteredText);
               }}
-              style={styles.inputContainer}
             />
 
             <TextInputWithTitle
@@ -143,7 +140,6 @@ function SiteDetailsPage() {
                 const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, '');
                 handleInputChange('address1', filteredText);
               }}
-              style={styles.inputContainer}
             />
 
             <TextInputWithTitle
@@ -153,7 +149,6 @@ function SiteDetailsPage() {
                 const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, '');
                 handleInputChange('address2', filteredText);
               }}
-              style={styles.inputContainer}
             />
 
             <TextInputWithTitle
@@ -163,7 +158,6 @@ function SiteDetailsPage() {
                 const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, '');
                 handleInputChange('address3', filteredText);
               }}
-              style={styles.inputContainer}
             />
 
             <TextInputWithTitle
@@ -173,7 +167,6 @@ function SiteDetailsPage() {
                 const filteredText = txt.replace(/[^a-zA-Z]/g, '');
                 handleInputChange('town', filteredText);
               }}
-              style={styles.inputContainer}
             />
 
             <TextInputWithTitle
@@ -183,7 +176,6 @@ function SiteDetailsPage() {
                 const filteredText = txt.replace(/[^a-zA-Z ]/g, '');
                 handleInputChange('county', filteredText);
               }}
-              style={styles.inputContainer}
             />
 
             <TextInputWithTitle
@@ -195,7 +187,6 @@ function SiteDetailsPage() {
                   handleInputChange('postCode', filteredText.toUpperCase());
                 }
               }}
-              style={styles.inputContainer}
             />
 
             <View
@@ -223,7 +214,6 @@ function SiteDetailsPage() {
 
               <View style={{ flex: 1 }}>
                 <TextInputWithTitle
-                  style={styles.inputContainer}
                   title={'Site Contact'}
                   value={siteDetails.contact}
                   onChangeText={(txt) => {
@@ -244,7 +234,6 @@ function SiteDetailsPage() {
               >
                 <View style={{ flex: 0.5 }}>
                   <TextInputWithTitle
-                    style={styles.inputContainer}
                     title={'Phone Number 1'}
                     value={siteDetails.number1}
                     keyboardType="numeric" // Set keyboardType to numeric
@@ -256,7 +245,6 @@ function SiteDetailsPage() {
                 </View>
                 <View style={{ flex: 0.5 }}>
                   <TextInputWithTitle
-                    style={styles.inputContainer}
                     title={'Phone Number 2'}
                     value={siteDetails.number2}
                     keyboardType="numeric" // Set keyboardType to numeric
@@ -275,7 +263,6 @@ function SiteDetailsPage() {
               >
                 <View style={{ flex: 0.5 }}>
                   <TextInputWithTitle
-                    style={styles.inputContainer}
                     title={'Email Number 1'}
                     value={siteDetails.email1}
                     autoCapitalize="none"
@@ -286,7 +273,6 @@ function SiteDetailsPage() {
                 </View>
                 <View style={{ flex: 0.5 }}>
                   <TextInputWithTitle
-                    style={styles.inputContainer}
                     title={'Email Number 2'}
                     autoCapitalize="none"
                     value={siteDetails.email2}
@@ -306,7 +292,6 @@ function SiteDetailsPage() {
                 const filteredText = txt.replace(/[^a-zA-Z0-9\s@.]/g, '');
                 handleInputChange('instructions', filteredText);
               }}
-              style={styles.inputContainer}
             />
 
             <View style={{ marginBottom: 30, gap: 20 }}>

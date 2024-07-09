@@ -10,47 +10,50 @@ export const validateRequiredField = (field, value, message) => {
   return null;
 };
 
-export const validatePostCode = (value) => {
-  if (!ukPostCodeRegex.test(value)) {
-    return 'Not a valid UK post code';
+export const validateRegex = (field, value, regex, message) => {
+  if (!regex.test(value)) {
+    return message || `Invalid ${field}`;
   }
   return null;
 };
 
-export const validatePhoneNumber = (field, value) => {
-  if (value && !phoneNumberRegex.test(value)) {
-    return `Not a valid phone number: ${field}`;
+export const validateLength = (field, value, min, max, message) => {
+  if (value.length < min || value.length > max) {
+    return message || `${field} should be between ${min} and ${max} characters`;
   }
   return null;
 };
 
-export const validateEmail = (field, value) => {
-  if (value && !emailRegex.test(value)) {
-    return `Not a valid email: ${field}`;
-  }
-  return null;
+export const validateEmail = (field, value, message) => {
+  return validateRegex(
+    field,
+    value,
+    emailRegex,
+    message || `Invalid email: ${field}`
+  );
 };
 
-export const validateMprn = (value) => {
-  if (!value) {
-    return 'Please input MPRN';
-  }
-  if (value.length < 5 || value.length > 15) {
-    return 'MPRN should be 5 ~ 15 digits';
-  }
-  return null;
+export const validatePhoneNumber = (field, value, message) => {
+  return validateRegex(
+    field,
+    value,
+    phoneNumberRegex,
+    message || `Invalid phone number: ${field}`
+  );
 };
 
-export const validateContactConfirmation = (value) => {
-  if (!value) {
-    return 'Please make sure if all contact is correct';
-  }
-  return null;
+export const validatePostCode = (field, value, message) => {
+  return validateRegex(
+    field,
+    value,
+    ukPostCodeRegex,
+    message || `Invalid post code: ${field}`
+  );
 };
 
-export const validateWarrantConfirmation = (jobType, value) => {
-  if (jobType === 'Warrant' && value == null) {
-    return 'Please confirm if the warrant went ahead';
+export const validateBooleanField = (field, value, message) => {
+  if (value == null) {
+    return message || `Please answer if ${field}`;
   }
   return null;
 };
