@@ -7,6 +7,7 @@ export const useFormStateContext = () => useContext(AppContext);
 
 const AppContextProvider = ({ children }) => {
   const { state, setState, setJobType, resetState } = useJobState();
+  console.log('state', state);
 
   const providerValue = useMemo(
     () => ({ state, setState, setJobType, resetState }),

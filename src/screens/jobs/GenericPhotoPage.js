@@ -1,26 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useSQLiteContext } from 'expo-sqlite/next';
+import { useRoute } from '@react-navigation/native';
 import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Dimensions,
   View,
   Image,
   Alert,
+  StyleSheet,
+  ScrollView,
+  Dimensions,
+  SafeAreaView,
 } from 'react-native';
-import { useRoute } from '@react-navigation/native';
-import { useAppContext } from '../../context/AppContext';
-import Header from '../../components/Header';
+
 import Text from '../../components/Text';
+import Header from '../../components/Header';
 import ImagePickerButton from '../../components/ImagePickerButton';
-import { useSQLiteContext } from 'expo-sqlite/next';
+
+import { useAppContext } from '../../context/AppContext';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
+
 const { width, height } = Dimensions.get('window');
 
 function GenericPhotoPage() {
   db = useSQLiteContext();
   const { params } = useRoute();
-  const { title, photoKey, nextScreen } = params;
+  const { title, photoKey } = params;
   const { photos, savePhoto, jobID } = useAppContext();
   const existingPhoto = photos?.[photoKey];
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();

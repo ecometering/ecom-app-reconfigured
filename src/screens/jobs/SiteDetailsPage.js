@@ -1,100 +1,46 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import { TextType } from '../../theme/typography';
-import EcomDropDown from '../../components/DropDown';
-import Header from '../../components/Header';
-import OptionalButton from '../../components/OptionButton';
-import { TextInputWithTitle } from '../../components/TextInput';
-import { AppContext } from '../../context/AppContext';
-import { PrimaryColors } from '../../theme/colors';
-import EcomHelper from '../../utils/ecomHelper';
+import React from 'react';
 import moment from 'moment';
 import { useSQLiteContext } from 'expo-sqlite/next';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import {
+  View,
+  Text,
+  Platform,
+  StyleSheet,
+  ScrollView,
+  SafeAreaView,
+  KeyboardAvoidingView,
+} from 'react-native';
+
+import { TextType } from '../../theme/typography';
+import { PrimaryColors } from '../../theme/colors';
+
+import Header from '../../components/Header';
+import EcomDropDown from '../../components/DropDown';
+import OptionalButton from '../../components/OptionButton';
+import { TextInputWithTitle } from '../../components/TextInput';
+
+import { useFormStateContext } from '../../context/AppContext';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
-const ukPostCodeRegex = /^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i;
-const phoneNumberRegex =
-  /^(?:(0\d{4})\s?\d{3}\s?\d{3}|(07\d{3})\s?\d{3}\s?\d{3}|(01\d{1,2})\s?\d{3}\s?\d{3,4}|(02\d{1,2})\s?\d{3}\s?\d{4})$/;
-const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+import EcomHelper from '../../utils/ecomHelper';
+import { validateSiteDetails } from './SiteDetailsPage.validator';
 
 function SiteDetailsPage() {
   const navigation = useNavigation();
   const route = useRoute();
   const params = route.params;
-  const appContext = useContext(AppContext);
+
   const { goToNextStep } = useProgressNavigation();
-  const {
-    jobType,
-    siteDetails,
-    setSiteDetails,
-    setJobStarted,
-    jobID,
-    setJobID,
-    setJobStatus,
-    jobStatus,
-  } = appContext;
+  const { state, setState } = useFormStateContext();
+  const { jobType, siteDetails, jobID, setJobID } = state;
 
   const db = useSQLiteContext();
 
-  // useEffect(() => {
-  //   if (params?.jobData) {
-  //     appContext.setJobdata(params.jobData);
-  //     // jobData is not used anywhere as the info is outside the jobData state
-  //     // TODO: this can be handled better by re-designing the data structure
-  //     appContext.setSiteDetails(
-  //       params.jobData.siteDetails && JSON.parse(params.jobData.siteDetails)
-  //     );
-  //     appContext.setSiteQuestions(
-  //       params.jobData.siteQuestions && JSON.parse(params.jobData.siteQuestions)
-  //     );
-  //     appContext.setPhotos(
-  //       params.jobData.photos && JSON.parse(params.jobData.photos)
-  //     );
-  //     appContext.setCorrectorDetails(
-  //       params.jobData.correctorDetails &&
-  //         JSON.parse(params.jobData.correctorDetails)
-  //     );
-  //     appContext.setMeterDetails(
-  //       params.jobData.meterDetails && JSON.parse(params.jobData.meterDetails)
-  //     );
-  //     appContext.setSiteQuestions(
-  //       params.jobData.siteQuestions && JSON.parse(params.jobData.siteQuestions)
-  //     );
-  //     appContext.setStandardDetails(
-  //       params.jobData.standards && JSON.parse(params.jobData.standards)
-  //     );
-
-  //     appContext.setJobType(params.jobData.jobType);
-  //     appContext.setJobID(params.jobData.id);
-  //     appContext.setJobStarted(true);
-  //     appContext.setStreamValue(
-  //       params.jobData.streamValue && JSON.parse(params.jobData.streamValue)
-  //     );
-  //     appContext.setStreamNumber(
-  //       params.jobData.streamValue &&
-  //         JSON.parse(params.jobData.streamValue).length
-  //     );
-  //   }
-
-  //  
-  // });
-useEffect(() => {
-  if (params?.jobType) {
-         appContext.setJobTypes(params.jobType);
-   }
-}, [params]);
   const handleInputChange = (name, value) => {
-    setSiteDetails((prevDetails) => ({
+    setState((prevDetails) => ({
       ...prevDetails,
-      [name]: value,
+      siteDetails: { ...prevDetails.siteDetails, [name]: value },
     }));
   };
 
@@ -125,82 +71,18 @@ useEffect(() => {
   };
 
   const backPressed = () => {
-    appContext.setSiteDetails(siteDetails);
-    if (siteDetails !== null) {
-      setJobStarted(true);
-    }
     navigation.goBack();
   };
 
   const nextPressed = async () => {
-    if (siteDetails.buildingName === '') {
-      EcomHelper.showInfoMessage('Please input Building Name');
-      return;
-    }
-    if (siteDetails.address1 === '') {
-      EcomHelper.showInfoMessage('Please input Address1');
-      return;
-    }
-    if (siteDetails.town === '') {
-      EcomHelper.showInfoMessage('Please input Town/City');
-      return;
-    }
-    if (siteDetails.county === '') {
-      EcomHelper.showInfoMessage('Please input County');
-      return;
-    }
-    if (siteDetails.postCode === '') {
-      EcomHelper.showInfoMessage('Please input Post Code');
-      return;
-    }
-    if (!ukPostCodeRegex.test(siteDetails.postCode)) {
-      EcomHelper.showInfoMessage('Not a valid uk post code');
-      return;
-    }
-    if (siteDetails.number1 && !phoneNumberRegex.test(siteDetails.number1)) {
-      EcomHelper.showInfoMessage('Not a valid phone number: phone number1');
-      return;
-    }
+    const { isValid, message } = validateSiteDetails(siteDetails, jobType);
 
-    // Validate phone number2 if it is not empty
-    if (siteDetails.number2 && !phoneNumberRegex.test(siteDetails.number2)) {
-      EcomHelper.showInfoMessage('Not a valid phone number: phone number2');
+    if (!isValid) {
+      EcomHelper.showInfoMessage(message);
       return;
     }
-
-    // Validate email1 if it is not empty
-    if (siteDetails.email1 && !emailRegex.test(siteDetails.email1)) {
-      EcomHelper.showInfoMessage('Not a valid email: email1');
-      return;
-    }
-
-    // Validate email2 if it is not empty
-    if (siteDetails.email2 && !emailRegex.test(siteDetails.email2)) {
-      EcomHelper.showInfoMessage('Not a valid email: email2');
-      return;
-    }
-    if (!siteDetails.confirmContact) {
-      EcomHelper.showInfoMessage('Please make sure if all contact is correct');
-      return;
-    }
-    if (!siteDetails.mprn) {
-      EcomHelper.showInfoMessage('Please input MPRN');
-      return;
-    }
-    if (siteDetails.mprn?.length < 5) {
-      EcomHelper.showInfoMessage('MPRN should be 5 ~ 15 digits');
-      return;
-    }
-    if (siteDetails.confirmWarrant == null && jobType === 'Warrant') {
-      EcomHelper.showInfoMessage('Please confirm if the warrant went ahead');
-      return;
-    }
-
-    appContext.setSiteDetails(siteDetails);
 
     if (!jobID) {
-      const jobStatus = 'In Progress'; // Define the job status here
-  setJobStatus(jobStatus);
       await saveSiteDetailsToDatabase();
     }
     goToNextStep();

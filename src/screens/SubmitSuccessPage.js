@@ -14,7 +14,7 @@ import { openDatabase } from '../utils/database';
 import axios from 'axios';
 import moment from 'moment';
 import Header from '../components/Header';
-import { useProgressNavigation } from '../context/ExampleFlowRouteProvider';
+import { useProgressNavigation } from '../context/ProgressiveFlowRouteProvider';
 
 const SubmitSuccessPage = () => {
   const appContext = useContext(AppContext);
