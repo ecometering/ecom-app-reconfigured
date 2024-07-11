@@ -1,13 +1,12 @@
 import React, { forwardRef } from 'react';
 import { StyleSheet, TextInput as RNTextInput, View } from 'react-native';
-import { PrimaryColors } from '../theme/colors';
-import { unitH, useScreenDimensions } from '../utils/constant';
-import { TextStyles, TextType } from '../theme/typography';
-import Text from './Text';
-// Import useState and useEffect for managing state and side effects
-import { useState, useEffect } from 'react';
 
-// Custom hook for dynamic screen dimensions
+// Theme
+import { PrimaryColors } from '../theme/colors';
+import { TextStyles, TextType } from '../theme/typography';
+
+// Components
+import Text from './Text';
 
 const TextInput = forwardRef(
   ({ placeholderTextColor, style, onChangeText, ...otherProps }, ref) => {
@@ -55,32 +54,25 @@ export const TextInputWithTitle = forwardRef(
   }
 );
 
-// Adjusted InputRowWithTitle to accept refs for each input
 export const InputRowWithTitle = forwardRef(
-  (
-    {
-      title1,
-      title2,
-      placeholderTextColor,
-      style,
-      onChangeText1,
-      onChangeText2,
-      ref1,
-      ref2,
-      placeholder1,
-      keyboardType1,
-      keyboardType2,
-      placeholder2,
-      ...otherProps
-    },
-    ref
-  ) => {
-    const { width } = useScreenDimensions(); // Use the custom hook for dynamic dimensions
-    const dynamicGap = width * 0.02;
-
+  ({
+    title1,
+    title2,
+    placeholderTextColor,
+    style,
+    onChangeText1,
+    onChangeText2,
+    ref1,
+    ref2,
+    placeholder1,
+    keyboardType1,
+    keyboardType2,
+    placeholder2,
+    ...otherProps
+  }) => {
     return (
       <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-        <View style={{ flex: 1, marginRight: dynamicGap }}>
+        <View style={{ flex: 1 }}>
           <TextInputWithTitle
             title={title1}
             placeholderTextColor={placeholderTextColor}
@@ -88,7 +80,7 @@ export const InputRowWithTitle = forwardRef(
             style={style}
             ref={ref1}
             placeholder={placeholder1}
-            keyboardType={keyboardType1} // Pass ref to the first TextInputWithTitle
+            keyboardType={keyboardType1}
             {...otherProps}
           />
         </View>
@@ -111,12 +103,12 @@ export const InputRowWithTitle = forwardRef(
 
 const styles = StyleSheet.create({
   textInput: {
+    flex: 1,
     backgroundColor: PrimaryColors.White,
     borderRadius: 5,
     ...TextStyles[TextType.TEXTINPUT],
     borderColor: PrimaryColors.Black,
-    padding: 10, // Added padding for better text input visibility
-    // Height and width removed to allow dynamic styling
+    padding: 10,
   },
 });
 

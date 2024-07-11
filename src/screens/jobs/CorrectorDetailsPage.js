@@ -1,22 +1,13 @@
 import { useSQLiteContext } from 'expo-sqlite/next';
-import * as ExpoImagePicker from 'expo-image-picker';
 import { useRoute } from '@react-navigation/native';
-import React, {
-  useRef,
-  useState,
-  useEffect,
-  createRef,
-  useContext,
-} from 'react';
+import React, { useState, useEffect, createRef } from 'react';
 import {
   View,
   Image,
-  Alert,
   Button,
   Platform,
   ScrollView,
   StyleSheet,
-  Dimensions,
   SafeAreaView,
   KeyboardAvoidingView,
 } from 'react-native';
@@ -28,82 +19,38 @@ import EcomDropDown from '../../components/DropDown';
 import OptionalButton from '../../components/OptionButton';
 import BarcodeScanner from '../../components/BarcodeScanner';
 import ImagePickerButton from '../../components/ImagePickerButton';
-import TextInput, {
-  InputRowWithTitle,
-  TextInputWithTitle,
-} from '../../components/TextInput';
+import TextInput, { TextInputWithTitle } from '../../components/TextInput';
 
 // Context & Utils
 import EcomHelper from '../../utils/ecomHelper';
 import { tablename } from '../../utils/constant';
-import { TextType } from '../../theme/typography';
 import { PrimaryColors } from '../../theme/colors';
-import { AppContext } from '../../context/AppContext';
-import {
-  openDatabase,
-  fetchPhotosJSON,
-  appendPhotoDetail,
-} from '../../utils/database';
+import { useFormStateContext } from '../../context/AppContext';
 import { makeFontSmallerAsTextGrows } from '../../utils/styles';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
-
-const alphanumericRegex = /^[a-zA-Z0-9]+$/;
-const { width, height } = Dimensions.get('window');
+import { validateCorrectorDetails } from './CorrectorDetailsPage.valodator';
 
 export default function CorrectorDetailsPage() {
   const route = useRoute();
   const db = useSQLiteContext();
   const camera = createRef(null);
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
-  const {
-    jobID,
-    photos,
-    jobType,
-    savePhoto,
-    correctorDetails,
-    setCorrectorDetails,
-  } = useContext(AppContext);
+  const { state, setState } = useFormStateContext();
 
-  const { title,  photoKey } = route.params;
+  const { jobID, photos, correctorDetails } = state;
+
+  const { title, photoKey } = route.params;
   const existingPhoto = photos && photoKey ? photos[photoKey] : null;
 
-  const [models, setModels] = useState([]);
   const [isModal, setIsModal] = useState(false);
-  const [manufacturers, setManufacturers] = useState([]);
+
   const [correctorModelCodes, setCorrectorModelCodes] = useState([]);
-  const [localCorrectorDetails, setLocalCorrectorDetails] = useState(
-    correctorDetails ?? {}
-  );
   const [correctorManufacturers, setCorrectorManufacturers] = useState([]);
   const [selectedImage, setSelectedImage] = useState(existingPhoto || {});
 
-  const handleInputChange = (name, value) => {
-    setLocalCorrectorDetails((prevDetails) => ({
-      ...prevDetails,
-      [name]: value,
-    }));
-  };
-
-  const handlePhotoSelected = (uri) => {
-    setSelectedImage({ title, photoKey, uri });
-  };
-
-  const saveToDatabase = async () => {
-    const photosJson = JSON.stringify(photos);
-    const correctorJson = JSON.stringify(localCorrectorDetails);
-    try {
-      await db
-        .runAsync(
-          'UPDATE Jobs SET photos = ?, correctorDetails = ? WHERE id = ?',
-          [photosJson, correctorJson, jobID]
-        )
-        .then((result) => {
-          console.log('photos saved to database:', result);
-        });
-    } catch (error) {
-      console.log('Error saving photos to database:', error);
-    }
-  };
+  useEffect(() => {
+    getCorrectorManufacturers();
+  }, []);
 
   async function getCorrectorManufacturers() {
     try {
@@ -122,9 +69,9 @@ export default function CorrectorDetailsPage() {
     }
   }
 
-  async function getCorrectorModelCodes() {
+  async function getCorrectorModelCodes(manufacturer) {
     try {
-      const query = `SELECT DISTINCT "ModelCode" FROM ${tablename[9]} WHERE Manufacturer = '${localCorrectorDetails.manufacturer}'`;
+      const query = `SELECT DISTINCT "ModelCode" FROM ${tablename[9]} WHERE Manufacturer = '${manufacturer}'`;
       const result = await db.getAllAsync(query);
       setCorrectorModelCodes(
         result
@@ -138,68 +85,43 @@ export default function CorrectorDetailsPage() {
       console.error('SQL Error: ', err);
     }
   }
-  const backPressed = () => {
-    saveToDatabase();
-    if (selectedImage.uri) savePhoto(photoKey, selectedImage);
-    setCorrectorDetails(localCorrectorDetails);
-    goToPreviousStep();
-  };
 
-  const nextPressed = async () => {
-    if (!selectedImage?.uri) {
-      EcomHelper.showInfoMessage('Please choose image');
-      return;
-    }
-    if (
-      !localCorrectorDetails.serialNumber ||
-      localCorrectorDetails.serialNumber === ''
-    ) {
-      EcomHelper.showInfoMessage('Please enter serial number');
-      return;
-    }
-    if (localCorrectorDetails.isMountingBracket == null) {
-      EcomHelper.showInfoMessage('Please answer if mounting bracket was used');
-      return;
-    }
-    if (localCorrectorDetails.manufacturer == null) {
-      EcomHelper.showInfoMessage('Please choose manufacturer');
-      return;
-    }
-    if (localCorrectorDetails.model == null) {
-      EcomHelper.showInfoMessage('Please choose model');
-      return;
-    }
-    saveToDatabase();
-    if (selectedImage.uri) savePhoto(photoKey, selectedImage);
-    setCorrectorDetails(localCorrectorDetails);
-    goToNextStep();
-  };
-
-  useEffect(() => {
-    getCorrectorManufacturers();
-  }, [db]);
-
-  useEffect(() => {
-    if (localCorrectorDetails.manufacturer) {
-      getCorrectorModelCodes();
-    }
-  }, [db, localCorrectorDetails.manufacturer]);
-
-  const onManufacturerChange = async (item) => {
-    handleInputChange('manufacturer', item.value);
-    console.log('---------item', item);
+  const saveToDatabase = async () => {
+    const photosJson = JSON.stringify(photos);
+    const correctorJson = JSON.stringify(correctorDetails);
     try {
-      const modelsData = await fetchModelsForManufacturer('4', item.value); // Assuming item.value contains the manufacturer's identifier
-      console.log('corrector-----------', modelsData);
-      setCorrectorModelCodes(
-        modelsData.map((model, index) => ({
-          label: model.label,
-          value: model.value,
-        }))
-      );
+      await db
+        .runAsync(
+          'UPDATE Jobs SET photos = ?, correctorDetails = ? WHERE id = ?',
+          [photosJson, correctorJson, jobID]
+        )
+        .then((result) => {
+          console.log('photos saved to database:', result);
+        });
     } catch (error) {
-      console.error('Failed to fetch models for manufacturer:', error);
+      console.log('Error saving photos to database:', error);
     }
+  };
+
+  const handleInputChange = (name, value) => {
+    setState((prevState) => ({
+      ...prevState,
+      correctorDetails: {
+        ...prevState.correctorDetails,
+        [name]: value,
+      },
+    }));
+  };
+
+  const handlePhotoSelected = (uri) => {
+    setSelectedImage({ title, photoKey, uri });
+    setState((prevState) => ({
+      ...prevState,
+      photos: {
+        ...prevState.photos,
+        [photoKey]: { title, photoKey, uri },
+      },
+    }));
   };
 
   const scanBarcode = () => {
@@ -211,6 +133,26 @@ export default function CorrectorDetailsPage() {
     if (codes && codes.data) {
       handleInputChange('serialNumber', codes.data.toString());
     }
+  };
+
+  const backPressed = () => {
+    saveToDatabase();
+    goToPreviousStep();
+  };
+
+  const nextPressed = async () => {
+    const { isValid, message } = validateCorrectorDetails(
+      correctorDetails,
+      selectedImage
+    );
+
+    if (!isValid) {
+      EcomHelper.showInfoMessage(message);
+      return;
+    }
+
+    saveToDatabase();
+    goToNextStep();
   };
 
   return (
@@ -229,21 +171,11 @@ export default function CorrectorDetailsPage() {
       >
         <ScrollView style={styles.content}>
           <View style={styles.body}>
-            <Text type={TextType.HEADER_1} style={{ alignSelf: 'center' }}>
-              Corrector Details
-            </Text>
-            <View style={styles.spacer} />
             <View style={styles.border}>
               <View style={styles.row}>
-                <View
-                  style={{
-                    width: width * 0.45,
-                    alignSelf: 'flex-end',
-                  }}
-                >
+                <View style={{ flex: 1 }}>
                   <Text>Corrector Serial Number</Text>
-                  <View style={styles.spacer2} />
-                  <View style={{ ...styles.row, width: width * 0.35 }}>
+                  <View style={{ flex: 1, flexDirection: 'row' }}>
                     <TextInput
                       onChangeText={(txt) => {
                         const withSpacesAllowed = txt.toUpperCase();
@@ -255,102 +187,88 @@ export default function CorrectorDetailsPage() {
                       }}
                       style={{
                         ...styles.input,
-                        width: width * 0.25,
-                        alignSelf: 'flex-end',
                         fontSize: makeFontSmallerAsTextGrows(
-                          localCorrectorDetails.serialNumber
+                          correctorDetails.serialNumber
                         ),
                       }}
-                      value={localCorrectorDetails.serialNumber}
+                      value={correctorDetails.serialNumber}
                     />
                     <Button title="📷" onPress={scanBarcode} />
                   </View>
                 </View>
-                <View>
-                  <Text>{'Mounting bracket used?'}</Text>
-                  <View style={styles.optionContainer}>
-                    <OptionalButton
-                      options={['Yes', 'No']}
-                      actions={[
-                        () => {
-                          handleInputChange('isMountingBracket', true);
-                        },
-                        () => {
-                          handleInputChange('isMountingBracket', false);
-                        },
-                      ]}
-                      value={
-                        localCorrectorDetails.isMountingBracket == null
-                          ? null
-                          : localCorrectorDetails.isMountingBracket
-                          ? 'Yes'
-                          : 'No'
-                      }
-                    />
-                  </View>
+                <View style={{ flex: 1 }}>
+                  <Text>Mounting bracket used?</Text>
+                  <OptionalButton
+                    options={['Yes', 'No']}
+                    actions={[
+                      () => {
+                        handleInputChange('isMountingBracket', true);
+                      },
+                      () => {
+                        handleInputChange('isMountingBracket', false);
+                      },
+                    ]}
+                    value={
+                      correctorDetails.isMountingBracket == null
+                        ? null
+                        : correctorDetails.isMountingBracket
+                        ? 'Yes'
+                        : 'No'
+                    }
+                  />
                 </View>
               </View>
 
               <View
                 style={{
                   ...styles.row,
-                  justifyContent: 'flex-start',
-                  marginTop: 16,
                 }}
               >
-                <View style={{ width: width * 0.45 }}>
-                  <EcomDropDown
-                    width={width * 0.35}
-                    value={localCorrectorDetails.manufacturer}
-                    valueList={correctorManufacturers}
-                    placeholder="Select a Manufacturer"
-                    onChange={(item) =>
-                      handleInputChange('manufacturer', item.value)
-                    }
-                  />
-                </View>
+                <EcomDropDown
+                  value={correctorDetails.manufacturer}
+                  valueList={correctorManufacturers}
+                  placeholder="Select a Manufacturer"
+                  onChange={(item) => {
+                    handleInputChange('manufacturer', item.value);
+                    getCorrectorModelCodes(
+                      item.value === 'Select a Manufacturer' ? '' : item.value
+                    );
+                  }}
+                />
 
                 <EcomDropDown
-                  width={width * 0.35}
-                  value={localCorrectorDetails.model}
+                  value={correctorDetails.model}
                   valueList={correctorModelCodes}
                   placeholder="Select Model Code"
                   onChange={(item) => handleInputChange('model', item.value)}
                 />
               </View>
-              <View style={styles.spacer} />
-              <View
-                style={{
-                  flexDirection: 'row',
-                }}
-              >
-                <View style={{ flex: 0.5 }}>
+
+              <View style={styles.row}>
+                <View style={{ flex: 1 }}>
                   <TextInputWithTitle
-                    style={{ width: '100%' }}
                     title={'Uncorrected Reads'}
-                    value={localCorrectorDetails.uncorrected}
-                    keyboardType="numeric" // Set keyboardType to numeric
+                    value={correctorDetails.uncorrected}
+                    keyboardType="numeric"
                     onChangeText={(txt) => {
-                      const filteredText = txt.replace(/[^0-9.]/g, ''); // Allow only numbers and decimal points
+                      const filteredText = txt.replace(/[^0-9.]/g, '');
                       handleInputChange('uncorrected', filteredText);
                     }}
                   />
                 </View>
-                <View style={{ flex: 0.5 }}>
+                <View style={{ flex: 1 }}>
                   <TextInputWithTitle
-                    style={{ width: '100%' }}
                     title={'corrected Reads'}
-                    value={localCorrectorDetails.corrected}
-                    keyboardType="numeric" // Set keyboardType to numeric
+                    value={correctorDetails.corrected}
+                    keyboardType="numeric"
                     onChangeText={(txt) => {
-                      const filteredText = txt.replace(/[^0-9.]/g, ''); // Allow only numbers and decimal points
+                      const filteredText = txt.replace(/[^0-9.]/g, '');
                       handleInputChange('corrected', filteredText);
                     }}
                   />
                 </View>
               </View>
             </View>
-            <View style={styles.spacer} />
 
             <View style={styles.imagePickerContainer}>
               <View style={styles.body}>
@@ -386,40 +304,32 @@ export default function CorrectorDetailsPage() {
 
 const styles = StyleSheet.create({
   image: {
-    height: height * 0.2, // Adjusted for smaller screens
+    height: 400,
   },
   content: {
     flex: 1,
   },
   body: {
-    marginHorizontal: width * 0.05,
+    marginHorizontal: 10,
+    gap: 20,
   },
   border: {
     borderWidth: 1,
     borderColor: PrimaryColors.Black,
-    padding: height * 0.015, // Adjusted for smaller screens
+    padding: 10,
+    gap: 20,
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    flexWrap: 'wrap', // Added to wrap elements on smaller screens
+    gap: 10,
   },
   buttonContainer: {
-    width: width * 0.8, // Adjusted for smaller screens
     alignSelf: 'center',
     justifyContent: 'space-between',
     flexDirection: 'row',
     flexWrap: 'wrap', // Added to wrap elements on smaller screens
   },
-  button: {
-    width: width * 0.35, // Adjusted for smaller screens
-  },
-  divider: {
-    width: '100%',
-    height: 1,
-    backgroundColor: 'black',
-  },
+  button: {},
   headerCell: {
     textAlign: 'center',
     borderWidth: 1,
@@ -442,17 +352,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 5, // Added for smaller screens
   },
-  optionContainer: {
-    width: width * 0.4, // Adjusted for smaller screens
-    marginVertical: height * 0.005, // Adjusted for smaller screens
-    alignSelf: 'flex-start',
-  },
-  spacer: {
-    height: height * 0.01, // Adjusted for smaller screens
-  },
-  spacer2: {
-    height: height * 0.005, // Adjusted for smaller screens
-  },
+  optionContainer: {},
   closeButtonContainer: {
     position: 'absolute',
     top: 10,

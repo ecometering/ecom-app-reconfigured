@@ -1,5 +1,29 @@
 export const InstallNavigation = [
   {
+    screen: 'CorrectorDetails',
+    params: {
+      title: 'New Corrector installed',
+      photoKey: 'installedCorrector',
+    },
+    diversions: (state) => {
+      const { meterDetails } = state || {};
+      const { pressureTier } = meterDetails || {};
+      const isAmr = meterDetails?.isAmr;
+      const isMeter = meterDetails?.isMeter;
+
+      if (isAmr) {
+        return DataLoggerDetailsPage;
+      }
+      if (isMeter) {
+        if (pressureTier === 'LP' || pressureTier?.label === 'LP') {
+          return RegulatorPage;
+        }
+      } else {
+        return StreamsSetSealDetailsPage;
+      }
+    },
+  },
+  {
     screen: 'SiteDetailsPage',
     params: {
       totalPages: 9,

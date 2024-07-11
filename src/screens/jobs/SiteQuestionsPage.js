@@ -3,7 +3,6 @@ import {
   View,
   ScrollView,
   StyleSheet,
-  Dimensions,
   SafeAreaView,
 } from 'react-native';
 import React, { useState } from 'react';
@@ -20,8 +19,6 @@ import ImagePickerButton from '../../components/ImagePickerButton';
 import EcomHelper from '../../utils/ecomHelper';
 import { useFormStateContext } from '../../context/AppContext';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
-
-const { width, height } = Dimensions.get('window');
 
 function SiteQuestionsPage() {
   const { params } = useRoute();
