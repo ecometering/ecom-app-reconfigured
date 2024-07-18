@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -15,11 +15,14 @@ import Header from '../../components/Header';
 import ImagePickerButton from '../../components/ImagePickerButton';
 
 // Context & Utils
-import { AppContext } from '../../context/AppContext';
+import { useFormStateContext } from '../../context/AppContext';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
+import { useSQLiteContext } from 'expo-sqlite/next';
 
 const ExtraPhotoPage = () => {
-  const appContext = useContext(AppContext);
+  const db = useSQLiteContext();
+  const { state, setState } = useFormStateContext();
+
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const [photos, setPhotos] = useState([]);
   const [activeSections, setActiveSections] = useState([]);
@@ -42,7 +45,7 @@ const ExtraPhotoPage = () => {
     );
   };
 
-  const handleSubmit = async () => {
+  const handleDbUpdate = async () => {
     const extraPhotos = photos.map((photo, index) => {
       return {
         photoNumber: index + 1,
@@ -51,17 +54,27 @@ const ExtraPhotoPage = () => {
       };
     });
 
-    const standards = {
-      ...appContext.standardDetails,
-      extras: extraPhotos,
-    };
-
-    appContext.setStandardDetails(standards);
+    setState({
+      ...state,
+      standardDetails: {
+        ...state.standardDetails,
+        extraPhotos,
+      },
+    });
     await db.runAsync('UPDATE Jobs SET standards = ? WHERE id = ?', [
-      JSON.stringify(standards),
-      appContext.jobID,
+      JSON.stringify(state.standardDetails),
+      state.jobID,
     ]);
+  };
+
+  const handleSubmit = async () => {
+    handleDbUpdate();
     goToNextStep();
+  };
+
+  const handleGoBack = async () => {
+    handleDbUpdate();
+    goToPreviousStep();
   };
 
   return (
@@ -75,7 +88,7 @@ const ExtraPhotoPage = () => {
         hasCenterText={true}
         hasRightBtn={true}
         centerText={'Extra Photos'}
-        leftBtnPressed={() => goToPreviousStep()}
+        leftBtnPressed={handleGoBack}
         rightBtnPressed={handleSubmit}
       />
 

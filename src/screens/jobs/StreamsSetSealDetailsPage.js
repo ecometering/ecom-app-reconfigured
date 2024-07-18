@@ -7,7 +7,7 @@ import {
   TouchableHighlight,
   KeyboardAvoidingView,
 } from 'react-native';
-import React, { useContext, useState,useEffect } from 'react';
+import React from 'react';
 import { useRoute } from '@react-navigation/native';
 
 // Components
@@ -18,11 +18,12 @@ import TextInput from '../../components/TextInput';
 
 // Context & Utils
 import EcomHelper from '../../utils/ecomHelper';
-import { AppContext } from '../../context/AppContext';
-import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 import { useSQLiteContext } from 'expo-sqlite/next';
+import { useFormStateContext } from '../../context/AppContext';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
-const RepeatComponent = ({ title, value, onChangeText }) => {
+const StreamInputComponent = ({ title, value, onChangeText }) => {
+  console.log({ value });
   return (
     <View style={styles.repeatComponentContainer}>
       <View style={styles.titleContainer}>
@@ -32,7 +33,7 @@ const RepeatComponent = ({ title, value, onChangeText }) => {
       </View>
       <View style={styles.inputContainer}>
         <TextInput
-          value={String(value)} // Ensure the value is a string
+          value={String(value)}
           onChangeText={onChangeText}
           style={styles.input}
           keyboardType="numeric"
@@ -47,29 +48,25 @@ const RepeatComponent = ({ title, value, onChangeText }) => {
 
 function StreamsSetSealDetailsPage() {
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
-  const appContext = useContext(AppContext);
-  const { streams, jobID, setStreams,  } = appContext;
-  
+  const { state, setState } = useFormStateContext();
+  const { streams, jobID } = state;
+
   const db = useSQLiteContext();
   const route = useRoute();
   const { title } = route?.params ?? {};
 
   const handleInputChange = (key, value) => {
-    setStreams((prev) => ({
+    setState((prev) => ({
       ...prev,
-      [key]: value,
+      streams: {
+        ...prev.streams,
+        [key]: value,
+      },
     }));
-    console.log('Streams', streams);
   };
-  useEffect(() => {
-    if (isNaN(streams.Number)) {
-      handleInputChange(Number,0)
-    }
-  }, [streams.Number]);
+
   const saveToDatabase = async () => {
     const streamDetailsJson = JSON.stringify(streams);
-    console.log("message:292 Stream values:", streams);
-    console.log("message:293 number of streams:", streams.Number);
     try {
       await db.runAsync('UPDATE Jobs SET streams = ? WHERE id = ?', [
         streamDetailsJson,
@@ -118,9 +115,8 @@ function StreamsSetSealDetailsPage() {
         leftBtnPressed={backPressed}
         rightBtnPressed={nextPressed}
       />
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      <ScrollView>
         <KeyboardAvoidingView
-          style={styles.keyboardAvoidingView}
           behavior={Platform.OS === 'ios' ? 'padding' : null}
         >
           <View style={styles.body}>
@@ -133,17 +129,28 @@ function StreamsSetSealDetailsPage() {
                 style={styles.incDecrButton}
                 onPress={() => {
                   if (streams.Number > 0) {
-                    handleInputChange('Number', Math.max(streams.Number - 1, 0));
+                    // remvode the last stream details
+                    const newStreams = { ...streams };
+                    delete newStreams[`slamShut${streams.Number}`];
+                    delete newStreams[`creepRelief${streams.Number}`];
+                    delete newStreams[`workingPressure${streams.Number}`];
+                    setState((prev) => ({
+                      ...prev,
+                      streams: {
+                        ...newStreams,
+                        Number: streams.Number - 1,
+                      },
+                    }));
                   }
                 }}
               >
                 <Text>-</Text>
               </TouchableHighlight>
-              <Text style={styles.streamNumber}>{streams.Number}</Text>
+              <Text style={styles.streamNumber}>{streams?.Number || 0}</Text>
               <TouchableHighlight
                 style={styles.incDecrButton}
                 onPress={() => {
-                  handleInputChange('Number', streams.Number + 1);
+                  handleInputChange('Number', (streams.Number ?? 0) + 1);
                 }}
               >
                 <Text>+</Text>
@@ -154,31 +161,32 @@ function StreamsSetSealDetailsPage() {
               <View key={index} style={styles.streamContainer}>
                 <Text type={TextType.CAPTION_2}>{`Stream ${index + 1}`}</Text>
                 <View style={styles.section}>
-                  <RepeatComponent
-                    title={'Slam Shut'}
-                    value={streams[`slamShut${index + 1}`] ?? ''}
-                    onChangeText={(value) =>
-                      handleInputChange(`slamShutValue${index + 1}`, value.replace(/[^0-9]/g, ''))
-                    }
-                  />
-                  <RepeatComponent
-                    title={'Creep Relief'}
-                    value={streams[`creepRelief${index + 1}`] ?? ''}
-                    onChangeText={(value) =>
-                      handleInputChange(`creepRelief${index + 1}`, value.replace(/[^0-9]/g, ''))
-                    }
-                  />
-                  <RepeatComponent
-                    title={'Working Pressure'}
-                    value={streams[`workingPressure${index + 1}`] ?? ''}
-                    onChangeText={(value) =>
-                      handleInputChange(`workingPressure${index + 1}`, value.replace(/[^0-9]/g, ''))
-                    }
-                  />
+                  {[
+                    { key: `slamShut${index + 1}`, title: 'Slam Shut' },
+                    { key: `creepRelief${index + 1}`, title: 'Creep Relief' },
+                    {
+                      key: `workingPressure${index + 1}`,
+                      title: 'Working Pressure',
+                    },
+                  ].map((strem) => {
+                    console.log(strem.key);
+                    return (
+                      <StreamInputComponent
+                        key={strem.key}
+                        title={strem.title}
+                        value={streams[strem.key] ?? ''}
+                        onChangeText={(value) =>
+                          handleInputChange(
+                            strem.key,
+                            value.replace(/[^0-9]/g, '')
+                          )
+                        }
+                      />
+                    );
+                  })}
                 </View>
               </View>
             ))}
-            <View style={styles.spacer} />
           </View>
         </KeyboardAvoidingView>
       </ScrollView>
@@ -190,8 +198,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  scrollViewContent: {},
-  keyboardAvoidingView: {},
   body: {
     paddingHorizontal: 20,
     gap: 20,
@@ -241,9 +247,6 @@ const styles = StyleSheet.create({
   },
   mbarText: {
     marginTop: 5,
-  },
-  spacer: {
-    height: 20,
   },
   incDecrButton: {
     backgroundColor: 'white',

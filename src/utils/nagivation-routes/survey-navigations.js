@@ -19,7 +19,7 @@ export const SurveyNavigation = [
       title: 'Site Questions',
       photoKey: 'bypassPhoto',
     },
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { siteQuestions } = state;
       if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
         return SurveyStandardPage;
@@ -80,7 +80,7 @@ export const CompositeLabelPhoto = [
 export const RiddorReportPage = [
   {
     screen: 'RiddorReportPage',
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { standardDetails } = state;
       if (standardDetails.conformStandard === false) {
         return SnClientInfoPage;
@@ -105,7 +105,7 @@ export const SnClientInfoPage = [
 export const SurveyStandardPage = [
   {
     screen: 'StandardPage',
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { standardDetails } = state;
       const { riddorReportable, conformStandard } = standardDetails;
       if (riddorReportable === true) {
@@ -132,7 +132,7 @@ export const RebookPage = [
 export const AssetTypeSelectionPage = [
   {
     screen: 'AssetTypeSelectionPage',
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { meterDetails } = state || {};
       if (meterDetails?.isMeter) {
         return SurveyExistingMeterDetails;
@@ -158,7 +158,7 @@ export const SurveyExistingMeterDetails = [
       title: 'Existing ECV to MOV',
       photoKey: 'ExistingEcvToMov',
     },
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { meterDetails } = state || {};
 
       const Type = meterDetails?.meterType.value;
@@ -178,7 +178,7 @@ export const SurveyExistingCorrectorDetails = [
     params: {
       title: 'Existing Corrector installed',
     },
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { meterDetails } = state || {};
       const { pressureTier } = meterDetails || {};
     
@@ -208,7 +208,7 @@ export const SurveyExistingDataLoggerDetails = [
     params: {
       title: 'Existing AMR installed',
     },
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { meterDetails } = state || {};
     
       const pressureTier = meterDetails?.pressureTier?.label;
@@ -287,7 +287,7 @@ export const SurveyStreamsSetSealDetailsPage = [
     params: {
       title: 'Streams Set Seal Details',
     },
-    diversions: (state) => {
+    diversions: ({state}) => {
       const streamFlows = InstancesForStreamFlow({ state });
       return [...streamFlows, ...SurveyStandardPage];
     },
@@ -311,7 +311,7 @@ export const SurveyExistingMeterIndex = [
       photoKey: 'ExistingMeterPhoto',
     },
 
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { meterDetails } = state || {};
       const { pressureTier } = meterDetails || {};
       const isCorrector = meterDetails?.isCorrector;

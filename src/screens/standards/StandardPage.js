@@ -250,11 +250,7 @@ function StandardPage() {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalInnerContainer}>
-            <View
-              style={{
-                height: 350,
-              }}
-            >
+            <View style={{ height: 350 }}>
               <SignatureScreen
                 onOK={handleOK}
                 webStyle={`.m-signature-pad { ... }`}

@@ -21,7 +21,7 @@ export const MaintenanceNavigation = [
       title: 'Site Questions',
       photoKey: 'bypassPhoto',
     },
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { siteQuestions } = state;
       if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
         return MaintenanceStandardPage;
@@ -56,7 +56,7 @@ export const ExtraPhotoPageRoute = (
 export const chatterBoxPage =[
   {
     screen: 'chatterBox',
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { standardDetails } = state;
       const { riddorReportable, conformStandard } = standardDetails;
    
@@ -77,7 +77,7 @@ export const chatterBoxPage =[
 export const AdditionalMaterialsPage =[
   {
     screen: 'AdditionalMaterials',
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { standardDetails } = state;
       const { riddorReportable, conformStandard,chatterbox, } = standardDetails;
     if (chatterbox === true) {
@@ -111,7 +111,7 @@ export const MaintenanceExistingMeterIndex = [
       photoKey: 'ExistingMeterPhoto',
     },
 
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { meterDetails } = state || {};
       const { pressureTier } = meterDetails || {};
       const isCorrector = meterDetails?.isCorrector;
@@ -147,7 +147,7 @@ export const MaintenanceExistingMeterDataBadge = [
 export const MaintenanceStandardPage = [
   {
     screen: 'StandardPage',
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { standardDetails } = state;
       const { riddorReportable, conformStandard,chatterbox,additionalMaterials } = standardDetails;
      if (additionalMaterials === true) {
@@ -174,7 +174,7 @@ export const MaintenanceStandardPage = [
 export const RiddorReportPage = [
   {
     screen: 'RiddorReportPage',
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { standardDetails } = state;
       if (standardDetails.conformStandard === false) {
         return SnClientInfoPage;
@@ -225,7 +225,7 @@ export const RebookPage = [
 export const AssetTypeSelectionPage = [
   {
     screen: 'AssetTypeSelectionPage',
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { meterDetails } = state || {};
 
       if (meterDetails?.isMeter) {
@@ -252,7 +252,7 @@ export const MaintenanceExistingMeterDetails = [
       title: 'Existing ECV to MOV',
       photoKey: 'ExistingEcvToMov',
     },
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { meterDetails } = state || {};
 
       const Type = meterDetails?.meterType.value;
@@ -272,7 +272,7 @@ export const MaintenanceExistingCorrectorDetails = [
     params: {
       title: 'Existing Corrector installed',
     },
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { meterDetails } = state || {};
       const { pressureTier } = meterDetails || {};
     
@@ -302,7 +302,7 @@ export const MaintenanceExistingDataLoggerDetails = [
     params: {
       title: 'Existing AMR installed',
     },
-    diversions: (state) => {
+    diversions: ({state}) => {
     
 
       const { meterDetails } = state || {};
@@ -383,7 +383,7 @@ export const StreamsSetSealDetailsPage = [
     params: {
       title: 'Streams Set Seal Details',
     },
-    diversions: (state) => {
+    diversions: ({state}) => {
       const streamFlows = InstancesForStreamFlow({ state });
       return [...streamFlows, ...MaintenanceQuestionsPage];
     },

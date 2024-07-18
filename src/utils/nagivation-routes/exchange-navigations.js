@@ -19,7 +19,7 @@ export const ExchangeNavigation = [
       title: 'Site Questions',
       photoKey: 'bypassPhoto',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { siteQuestions } = state;
       if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
         return ExchangeStandardPage;
@@ -52,64 +52,13 @@ export const ExtraPhotoPageRoute = (
 ];
 
 // Site Questions Alternative Flows
-export const chatterBoxPage =[
+export const chatterBoxPage = [
   {
     screen: 'chatterBox',
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { standardDetails } = state;
       const { riddorReportable, conformStandard } = standardDetails;
-   
-      
-    if (riddorReportable === true) {
-      return RiddorReportPage;
-    } else {
-      if (conformStandard === false) {
-        return SnClientInfoPage;
-      } else {
-        return CompositeLabelPhoto;
-      }
-    }}
-  },
 
-]
-
-export const AdditionalMaterialsPage =[
-  {
-    screen: 'AdditionalMaterials',
-    diversions: (state) => {
-      const { standardDetails } = state;
-      const { riddorReportable, conformStandard,chatterbox, } = standardDetails;
-    if (chatterbox === true) {
-      return chatterBoxPage}
-    else {
-      
-    if (riddorReportable === true) {
-      return RiddorReportPage;
-    } else {
-      if (conformStandard === false) {
-        return SnClientInfoPage;
-      } else {
-        return CompositeLabelPhoto;
-      }
-    }}
-  },
-}
-]
-// Site Questions Alternative Flows
-export const ExchangeStandardPage = [
-  {
-    screen: 'StandardPage',
-    diversions: (state) => {
-      const { standardDetails } = state;
-      const { riddorReportable, conformStandard,chatterbox,additionalMaterials } = standardDetails;
-     if (additionalMaterials === true) {
-          return AdditionalMaterialsPage;
-        }
-        else{ 
-          if (chatterbox === true) {
-        return chatterBoxPage}
-      else {
-        
       if (riddorReportable === true) {
         return RiddorReportPage;
       } else {
@@ -118,7 +67,62 @@ export const ExchangeStandardPage = [
         } else {
           return CompositeLabelPhoto;
         }
-      }}}
+      }
+    },
+  },
+];
+
+export const AdditionalMaterialsPage = [
+  {
+    screen: 'AdditionalMaterials',
+    diversions: ({ state }) => {
+      const { standardDetails } = state;
+      const { riddorReportable, conformStandard, chatterbox } = standardDetails;
+      if (chatterbox === true) {
+        return chatterBoxPage;
+      } else {
+        if (riddorReportable === true) {
+          return RiddorReportPage;
+        } else {
+          if (conformStandard === false) {
+            return SnClientInfoPage;
+          } else {
+            return CompositeLabelPhoto;
+          }
+        }
+      }
+    },
+  },
+];
+// Site Questions Alternative Flows
+export const ExchangeStandardPage = [
+  {
+    screen: 'StandardPage',
+    diversions: ({ state }) => {
+      const { standardDetails } = state;
+      const {
+        riddorReportable,
+        conformStandard,
+        chatterbox,
+        additionalMaterials,
+      } = standardDetails;
+      if (additionalMaterials === true) {
+        return AdditionalMaterialsPage;
+      } else {
+        if (chatterbox === true) {
+          return chatterBoxPage;
+        } else {
+          if (riddorReportable === true) {
+            return RiddorReportPage;
+          } else {
+            if (conformStandard === false) {
+              return SnClientInfoPage;
+            } else {
+              return CompositeLabelPhoto;
+            }
+          }
+        }
+      }
     },
   },
 ];
@@ -134,7 +138,7 @@ export const RebookPage = [
 export const RiddorReportPage = [
   {
     screen: 'RiddorReportPage',
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { standardDetails } = state;
       if (standardDetails.conformStandard === false) {
         return SnClientInfoPage;
@@ -178,7 +182,7 @@ export const SnClientInfoPage = [
 export const AssetTypeSelectionPage = [
   {
     screen: 'AssetTypeSelectionPage',
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
       if (meterDetails?.isMeter) {
         return ExistingMeterDetails;
@@ -197,7 +201,7 @@ export const ExistingMeterDetails = [
     params: {
       title: 'Existing Meter Details',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
       const Type = meterDetails?.meterType.value;
 
@@ -223,7 +227,7 @@ export const InstalledMeterDetails = [
       title: 'ECV to MOV photo',
       photoKey: 'ecvToMovPhoto',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
       const Type = meterDetails?.meterType.value;
 
@@ -243,7 +247,7 @@ export const InstalledCorrectorDetails = [
       title: 'Installed Corrector Details',
       photoKey: 'InstalledCorrector',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
       const { pressureTier } = meterDetails || {};
 
@@ -252,10 +256,10 @@ export const InstalledCorrectorDetails = [
 
       if (isAmr) {
         return InstalledDataLoggerDetails;
-      } 
+      }
       if (isMeter) {
         if (pressureTier === 'LP' || pressureTier?.label === 'LP') {
-         return RegulatorPage; 
+          return RegulatorPage;
         }
       } else {
         return ExchangeStreamsSetSealDetailsPage;
@@ -271,22 +275,21 @@ export const InstalledDataLoggerDetails = [
       title: 'Installed AMR',
       photoKey: 'InstalledAMR',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
 
       const pressureTier = meterDetails?.pressureTier?.label;
-      
+
       const isMeter = meterDetails?.isMeter;
 
       if (isMeter) {
         if (pressureTier === 'LP') {
           return RegulatorPage;
-        }else {
+        } else {
           return ExchangeStreamsSetSealDetailsPage;
         }
-      } 
-        return ExchangeStandardPage;
-      
+      }
+      return ExchangeStandardPage;
     },
   },
 ];
@@ -305,7 +308,7 @@ export const InstalledMeterIndex = [
       title: 'Installed Meter Photo',
       photoKey: 'InstalledMeterPhoto',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
       const isMeter = meterDetails?.isMeter;
       const isAmr = meterDetails?.isAmr;
@@ -314,18 +317,16 @@ export const InstalledMeterIndex = [
 
       if (isCorrector) {
         return InstalledCorrectorDetails;
-      } 
+      }
       if (isAmr) {
         return InstalledDataLoggerDetails;
-        
-      } 
+      }
       if (isMeter) {
         if (pressureTier === 'LP' || pressureTier?.label === 'LP') {
-
           return RegulatorPage;
         }
       } else {
-        return ExchangeStreamsSetSealDetailsPage
+        return ExchangeStreamsSetSealDetailsPage;
       }
     },
   },
@@ -363,7 +364,7 @@ export const ExistingMeterIndex = [
       title: 'Ecv Photo',
       photoKey: 'EcvPhoto',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
 
       const isAmr = meterDetails?.isAmr;
@@ -374,9 +375,8 @@ export const ExistingMeterIndex = [
       }
       if (isAmr) {
         return ExistingDataLoggerDetails;
-      } 
-        return InstalledMeterDetails;
-      
+      }
+      return InstalledMeterDetails;
     },
   },
 ];
@@ -398,16 +398,15 @@ export const ExistingDataLoggerDetails = [
     params: {
       title: 'Existing DataLogger Details',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
       if (meterDetails?.isMeter) {
         return InstalledMeterDetails;
-      } 
+      }
       if (meterDetails?.isCorrector) {
         return InstalledCorrectorDetails;
-      } 
-        return InstalledDataLoggerDetails;
-      
+      }
+      return InstalledDataLoggerDetails;
     },
   },
 ];
@@ -418,19 +417,17 @@ export const ExistingCorrectorDetails = [
     params: {
       title: 'Existing Corrector Details',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state;
 
       if (meterDetails?.isAmr) {
         return ExistingDataLoggerDetails;
       }
-       if(meterDetails.isMeter){
+      if (meterDetails.isMeter) {
         return InstalledMeterDetails;
       }
-       
+
       return InstalledCorrectorDetails;
-        
-      
     },
   },
 ];
@@ -448,39 +445,36 @@ export const InstancesForStreamFlow = ({ state }) => {
           screen: 'StreamFilterPage',
           params: {
             title: `Filter Page ${stream}`,
-            stream:stream ,
-            photoKey:`Filter${stream}Photo`
+            stream: stream,
+            photoKey: `Filter${stream}Photo`,
           },
         },
         {
           screen: 'StreamSlamshutPage',
           params: {
             title: `Slamshut Page ${stream}`,
-            photoKey:`SlamShut${stream}Photo`,
+            photoKey: `SlamShut${stream}Photo`,
           },
         },
         {
           screen: 'StreamActiveRegulatorPage',
           params: {
             title: `Active Regulator Page ${stream}`,
-            photoKey:`ActiveRegulator${stream}Photo`,
-
+            photoKey: `ActiveRegulator${stream}Photo`,
           },
         },
         {
           screen: 'StreamReliefRegulatorPage',
           params: {
             title: `Relief Regulator Page ${stream}`,
-            photoKey:`ReliefRegulator${stream}Photo`,
-
+            photoKey: `ReliefRegulator${stream}Photo`,
           },
         },
         {
           screen: 'StreamWaferCheckPage',
           params: {
             title: `Wafer Check Page ${stream}`,
-            photoKey:`WaferCheck${stream}Photo`,
-
+            photoKey: `WaferCheck${stream}Photo`,
           },
         },
       ];
@@ -489,14 +483,13 @@ export const InstancesForStreamFlow = ({ state }) => {
   );
 };
 
-
 export const ExchangeStreamsSetSealDetailsPage = [
   {
     screen: 'StreamsSetSealDetails',
     params: {
       title: 'Streams Set Seal Details',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const streamFlows = InstancesForStreamFlow({ state });
       return [...streamFlows, ...RegulatorPage];
     },

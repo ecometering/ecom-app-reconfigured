@@ -12,7 +12,7 @@ export const WarrantNavigation = [
       title: 'Site Photo',
       photoKey: 'sitePhoto',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { siteDetails } = state;
       if (siteDetails?.confirmWarrant) {
         return SiteQuestionsPage;
@@ -30,7 +30,7 @@ export const SiteQuestionsPage = [
       title: 'Site Questions',
       photoKey: 'bypassPhoto',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { siteQuestions } = state;
       if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
         return WarrantStandardPage;
@@ -95,7 +95,7 @@ export const SnClientInfoPage = [
 export const RiddorReportPage = [
   {
     screen: 'RiddorReportPage',
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { standardDetails } = state;
       if (standardDetails.conformStandard === false) {
         return SnClientInfoPage;
@@ -114,7 +114,7 @@ export const AssetTypeSelectionPage = [
     params: {
       title: 'Assets being removed',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
       if (meterDetails?.isMeter) {
         return RemovedMeterDetails;
@@ -135,64 +135,13 @@ export const RebookPage = [
 ];
 
 // Site Questions Alternative Flows
-export const chatterBoxPage =[
+export const chatterBoxPage = [
   {
     screen: 'chatterBox',
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { standardDetails } = state;
       const { riddorReportable, conformStandard } = standardDetails;
-   
-      
-    if (riddorReportable === true) {
-      return RiddorReportPage;
-    } else {
-      if (conformStandard === false) {
-        return SnClientInfoPage;
-      } else {
-        return CompositeLabelPhoto;
-      }
-    }}
-  },
 
-]
-
-export const AdditionalMaterialsPage =[
-  {
-    screen: 'AdditionalMaterials',
-    diversions: (state) => {
-      const { standardDetails } = state;
-      const { riddorReportable, conformStandard,chatterbox, } = standardDetails;
-    if (chatterbox === true) {
-      return chatterBoxPage}
-    else {
-      
-    if (riddorReportable === true) {
-      return RiddorReportPage;
-    } else {
-      if (conformStandard === false) {
-        return SnClientInfoPage;
-      } else {
-        return CompositeLabelPhoto;
-      }
-    }}
-  },
-}
-]
-// Site Questions Alternative Flows
-export const RemovedStandardPage = [
-  {
-    screen: 'StandardPage',
-    diversions: (state) => {
-      const { standardDetails } = state;
-      const { riddorReportable, conformStandard,chatterbox,additionalMaterials } = standardDetails;
-     if (additionalMaterials === true) {
-          return AdditionalMaterialsPage;
-        }
-        else{ 
-          if (chatterbox === true) {
-        return chatterBoxPage}
-      else {
-        
       if (riddorReportable === true) {
         return RiddorReportPage;
       } else {
@@ -201,7 +150,62 @@ export const RemovedStandardPage = [
         } else {
           return CompositeLabelPhoto;
         }
-      }}}
+      }
+    },
+  },
+];
+
+export const AdditionalMaterialsPage = [
+  {
+    screen: 'AdditionalMaterials',
+    diversions: ({ state }) => {
+      const { standardDetails } = state;
+      const { riddorReportable, conformStandard, chatterbox } = standardDetails;
+      if (chatterbox === true) {
+        return chatterBoxPage;
+      } else {
+        if (riddorReportable === true) {
+          return RiddorReportPage;
+        } else {
+          if (conformStandard === false) {
+            return SnClientInfoPage;
+          } else {
+            return CompositeLabelPhoto;
+          }
+        }
+      }
+    },
+  },
+];
+// Site Questions Alternative Flows
+export const RemovedStandardPage = [
+  {
+    screen: 'StandardPage',
+    diversions: ({ state }) => {
+      const { standardDetails } = state;
+      const {
+        riddorReportable,
+        conformStandard,
+        chatterbox,
+        additionalMaterials,
+      } = standardDetails;
+      if (additionalMaterials === true) {
+        return AdditionalMaterialsPage;
+      } else {
+        if (chatterbox === true) {
+          return chatterBoxPage;
+        } else {
+          if (riddorReportable === true) {
+            return RiddorReportPage;
+          } else {
+            if (conformStandard === false) {
+              return SnClientInfoPage;
+            } else {
+              return CompositeLabelPhoto;
+            }
+          }
+        }
+      }
     },
   },
 ];
@@ -212,7 +216,7 @@ export const RemovedMeterDetails = [
     params: {
       title: 'Removed Meter Details',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
       const Type = meterDetails?.meterType.value;
 
@@ -232,14 +236,13 @@ export const RemovedCorrectorDetails = [
       title: 'Removed Corrector Details',
       photoKey: 'removedCorrector',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state;
 
       if (meterDetails?.isAmr) {
         return RemovedDataLoggerDetails;
       }
-        return RemovedStandardPage;
-      
+      return RemovedStandardPage;
     },
   },
 ];
@@ -252,7 +255,6 @@ export const RemovedDataLoggerDetails = [
       photoKey: 'RemovedAMR',
     },
     ...RemovedStandardPage,
-    
   },
 ];
 
@@ -277,7 +279,7 @@ export const RemovedMeterIndex = [
       title: 'Ecv Photo',
       photoKey: 'EcvPhoto',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
 
       const isAmr = meterDetails?.isAmr;
@@ -288,9 +290,8 @@ export const RemovedMeterIndex = [
       }
       if (isAmr) {
         return RemovedDataLoggerDetails;
-      } 
+      }
       return RemovedStandardPage;
-      
     },
   },
 ];
@@ -305,4 +306,3 @@ export const RemovedMeterDataBadge = [
   },
   ...RemovedMeterIndex,
 ];
-

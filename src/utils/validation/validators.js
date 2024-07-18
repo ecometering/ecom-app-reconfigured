@@ -4,21 +4,21 @@ const phoneNumberRegex =
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 export const validateRequiredField = (field, value, message) => {
-  if (!value || value.trim() === '') {
+  if (!value || (typeof value === 'string' && value.trim() === '')) {
     return message || `${field} is required`;
   }
   return null;
 };
 
 export const validateRegex = (field, value, regex, message) => {
-  if (!regex.test(value)) {
+  if (typeof value !== 'string' || !regex.test(value)) {
     return message || `Invalid ${field}`;
   }
   return null;
 };
 
 export const validateLength = (field, value, min, max, message) => {
-  if (value.length < min || value.length > max) {
+  if (typeof value !== 'string' || value.length < min || value.length > max) {
     return message || `${field} should be between ${min} and ${max} characters`;
   }
   return null;

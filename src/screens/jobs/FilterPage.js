@@ -1,64 +1,61 @@
-import { useSQLiteContext } from 'expo-sqlite/next';
-import * as ExpoImagePicker from 'expo-image-picker';
+import React from 'react';
 import { useRoute } from '@react-navigation/native';
-import React, {
-  createRef,
-  useState,
-  useContext,
-} from 'react';
+import { useSQLiteContext } from 'expo-sqlite/next';
 import {
   View,
   Image,
-  Alert,
   ScrollView,
   Platform,
   StyleSheet,
-  Dimensions,
   SafeAreaView,
   KeyboardAvoidingView,
 } from 'react-native';
 
 // Components
-import TextInput, {
-  InputRowWithTitle,
-  TextInputWithTitle,
-} from '../../components/TextInput';
 import Text from '../../components/Text';
 import Header from '../../components/Header';
 import EcomDropDown from '../../components/DropDown';
 import OptionalButton from '../../components/OptionButton';
 import ImagePickerButton from '../../components/ImagePickerButton';
-import { SIZE_LIST } from '../../utils/constant';
+import TextInput, { TextInputWithTitle } from '../../components/TextInput';
+
 // Context & Utils
 import EcomHelper from '../../utils/ecomHelper';
+import { SIZE_LIST } from '../../utils/constant';
 import { TextType } from '../../theme/typography';
-import { PrimaryColors } from '../../theme/colors';
-import { AppContext } from '../../context/AppContext';
-import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
+import { useFormStateContext } from '../../context/AppContext';
 import withUniqueKey from '../../utils/renderNavigationWithUniqueKey';
-const { width, height } = Dimensions.get('window');
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
+import { validateFilter } from './FilterPage.validator';
 
-const FilterPage=() => {
+const FilterPage = () => {
   const route = useRoute();
   const db = useSQLiteContext();
+  const { state, setState } = useFormStateContext();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
-  const { jobID, photos, savePhoto, streams, setStreams,  } = useContext(AppContext);
+  const { jobID, photos, streams } = state;
 
   const { title, stream, photoKey } = route.params;
   const existingPhoto = photos && photoKey ? photos[photoKey] : null;
 
-  const [selectedImage, setSelectedImage] = useState(existingPhoto || {});
-
   const handleInputChange = (name, value) => {
-    setStreams((prevDetails) => ({
-      ...prevDetails,
-      [name]: value,
+    setState((prev) => ({
+      ...prev,
+      streams: {
+        ...prev.streams,
+        [name]: value,
+      },
     }));
-    console.log('message: 303, streams: ', streams);
   };
 
   const handlePhotoSelected = (uri) => {
-    setSelectedImage({ title, photoKey, uri });
+    setState((prev) => ({
+      ...prev,
+      photos: {
+        ...prev.photos,
+        [photoKey]: { title, photoKey, uri },
+      },
+    }));
   };
 
   const saveToDatabase = async () => {
@@ -66,10 +63,11 @@ const FilterPage=() => {
     const streamsJson = JSON.stringify(streams);
     try {
       await db
-        .runAsync(
-          'UPDATE Jobs SET photos = ?, streams = ? WHERE id = ?',
-          [photosJson, streamsJson, jobID]
-        )
+        .runAsync('UPDATE Jobs SET photos = ?, streams = ? WHERE id = ?', [
+          photosJson,
+          streamsJson,
+          jobID,
+        ])
         .then((result) => {
           console.log('photos saved to database:', result);
         });
@@ -80,44 +78,20 @@ const FilterPage=() => {
 
   const backPressed = () => {
     saveToDatabase();
-    if (selectedImage.uri) savePhoto(photoKey, selectedImage);
-    
     goToPreviousStep();
   };
 
   const nextPressed = async () => {
-    if (streams[`Filter${stream}Exists`] === null) {
-      EcomHelper.showInfoMessage('Please select if the filter exists');
+    const { isValid, message } = validateFilter(streams, stream, existingPhoto);
+
+    if (!isValid) {
+      EcomHelper.showInfoMessage(message);
       return;
     }
-  
-    if (streams[`Filter${stream}Exists`]) {
-      if (!selectedImage?.uri) {
-        EcomHelper.showInfoMessage('Please choose an image');
-        return;
-      }
-      if (!streams[`filterSerialNumber${stream}`]) {
-        EcomHelper.showInfoMessage('Please input the Filter Serial Number.');
-        return;
-      }
-      if (!streams[`filterSize${stream}`]) {
-        EcomHelper.showInfoMessage('Please select the Filter Size.');
-        return;
-      }
-      if (!streams[`filterManufacturer${stream}`]) {
-        EcomHelper.showInfoMessage('Please input the Filter Manufacturer.');
-        return;
-      }
-     
-    }
-  
+
     await saveToDatabase();
-  
-    if (selectedImage.uri) savePhoto(photoKey, selectedImage);
-  
     goToNextStep();
   };
-
 
   return (
     <SafeAreaView style={styles.content}>
@@ -138,137 +112,81 @@ const FilterPage=() => {
             <Text type={TextType.HEADER_1} style={{ alignSelf: 'center' }}>
               Filter Details
             </Text>
-            <View style={styles.spacer} />
             <View>
               <Text style={styles.text}>Does the filter exist?</Text>
-              <View style={styles.optionContainer}>
-                <OptionalButton
-                  options={['Yes', 'No']}
-                  actions={[
-                    () => {
-                      handleInputChange(`filter${stream}Exists`, true);
-                    
-                    },
-                    () => {
-                      handleInputChange(`filter${stream}Exists`, false);
-               
-                    },
-                  ]}
-                  value={
-                    streams[`Filter${stream}Exists`] === null
-                      ? null
-                      : streams[`Filter${stream}Exists`]
-                      ? 'Yes'
-                      : 'No'
+              <OptionalButton
+                options={['Yes', 'No']}
+                actions={[
+                  () => {
+                    handleInputChange(`filter${stream}Exists`, true);
+                  },
+                  () => {
+                    handleInputChange(`filter${stream}Exists`, false);
+                  },
+                ]}
+                value={
+                  streams[`filter${stream}Exists`] === null
+                    ? null
+                    : streams[`filter${stream}Exists`]
+                    ? 'Yes'
+                    : 'No'
+                }
+              />
+            </View>
+            {streams[`filter${stream}Exists`] && (
+              <>
+                <View>
+                  <Text>Filter Serial Number</Text>
+                  <TextInput
+                    onChangeText={(txt) => {
+                      const withSpacesAllowed = txt.toUpperCase();
+                      const formattedText = withSpacesAllowed.replace(
+                        /[^A-Z0-9]+/g,
+                        ''
+                      );
+                      handleInputChange(
+                        `filterSerialNumber${stream}`,
+                        formattedText
+                      );
+                    }}
+                    value={streams[`filterSerialNumber${stream}`]}
+                  />
+                </View>
+                <EcomDropDown
+                  value={streams[`filterSize${stream}`]}
+                  valueList={SIZE_LIST}
+                  placeholder="Select size"
+                  onChange={(item) =>
+                    handleInputChange(`filterSize${stream}`, item.value)
                   }
                 />
-              </View>
-            </View>
-
-            {streams[`Filter${stream}Exists`] && (
-              <>
-                <View style={styles.border}>
-                  <View style={styles.row}>
-                    <View
-                      style={{
-                        width: width * 0.45,
-                        alignSelf: 'flex-end',
-                      }}
-                    >
-                      <Text>Filter Serial Number</Text>
-                      <View style={styles.spacer2} />
-                      <View style={{ ...styles.row, width: width * 0.35 }}>
-                        <TextInput
-                          onChangeText={(txt) => {
-                            const withSpacesAllowed = txt.toUpperCase();
-                            const formattedText = withSpacesAllowed.replace(
-                              /[^A-Z0-9]+/g,
-                              ''
-                            );
-                            handleInputChange(
-                              `filterSerialNumber${stream}`,
-                              formattedText
-                            );
-                          }}
-                          style={{
-                            ...styles.input,
-                            width: width * 0.25,
-                            alignSelf: 'flex-end',
-                          }}
-                          value={streams[`filterSerialNumber${stream}`]}
-                        />
-                      </View>
-                    </View>
-                  </View>
-
-                  <View
-                    style={{
-                      ...styles.row,
-                      justifyContent: 'flex-start',
-                      marginTop: 16,
-                    }}
-                  >
-                    <View style={{ width: width * 0.45 }}>
-                      <EcomDropDown
-                        width={width * 0.35}
-                        value={streams[`filterSize${stream}`]}
-                        valueList={SIZE_LIST}
-                        placeholder="Select size"
-                        onChange={(item) =>
-                          handleInputChange(`filterSize${stream}`, item.value)
-                        }
-                      />
-                    </View>
-                  </View>
-
-                  <View style={styles.spacer} />
-                  <View
-                    style={{
-                      flexDirection: 'Column',
-                    }}
-                  >
-                    <View style={{ flex: 1 }}>
-                      <TextInputWithTitle
-                        style={{ width: '100%' }}
-                        title={'Manufacturer'}
-                        value={streams[`filterManufacturer${stream}`]}
-                        onChangeText={(txt) => {
-                          handleInputChange(`filterManufacturer${stream}`, txt);
-                        }}
-                      />
-                    </View>
-                    <View style={styles.spacer} />
-                    <View style={{ flex: 1 }}>
-                      <TextInputWithTitle
-                        style={{ width: '100%' }}
-                        title={'Notes'}
-                        value={streams[`filterNotes${stream}`]}
-                        onChangeText={(txt) => {
-                          handleInputChange(`filterNotes${stream}`, txt);
-                        }}
-                      />
-                    </View>
-                  </View>
-                </View>
-                <View style={styles.spacer} />
-
-                <View style={styles.imagePickerContainer}>
-                  <View style={styles.body}>
-                    <Text type="caption" style={styles.text}>
-                      Filter photo
-                    </Text>
-                    <ImagePickerButton
-                      onImageSelected={handlePhotoSelected}
-                      currentImage={selectedImage?.uri}
-                    />
-                    {selectedImage?.uri && (
-                      <Image
-                        source={{ uri: selectedImage?.uri }}
-                        style={styles.image}
-                      />
-                    )}
-                  </View>
-                </View>
+                <TextInputWithTitle
+                  title={'Manufacturer'}
+                  value={streams[`filterManufacturer${stream}`]}
+                  onChangeText={(txt) => {
+                    handleInputChange(`filterManufacturer${stream}`, txt);
+                  }}
+                />
+                <TextInputWithTitle
+                  title={'Notes'}
+                  value={streams[`filterNotes${stream}`]}
+                  onChangeText={(txt) => {
+                    handleInputChange(`filterNotes${stream}`, txt);
+                  }}
+                />
+                <Text type="caption" style={styles.text}>
+                  Filter photo
+                </Text>
+                <ImagePickerButton
+                  onImageSelected={handlePhotoSelected}
+                  currentImage={existingPhoto?.uri}
+                />
+                {existingPhoto?.uri && (
+                  <Image
+                    source={{ uri: existingPhoto?.uri }}
+                    style={styles.image}
+                  />
+                )}
               </>
             )}
           </View>
@@ -276,82 +194,19 @@ const FilterPage=() => {
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   image: {
-    height: height * 0.25, // Adjust the multiplier to fit your design needs
+    height: 300,
+    width: '100%',
   },
   content: {
     flex: 1,
   },
   body: {
-    marginHorizontal: width * 0.05,
-  },
-  border: {
-    borderWidth: 1,
-    borderColor: PrimaryColors.Black,
-    padding: height * 0.02, // Adjust the multiplier to fit your design needs
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-  },
-  buttonContainer: {
-    width: width * 0.4,
-    alignSelf: 'center',
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-  },
-  button: {
-    width: width * 0.2,
-  },
-  divider: {
-    width: '100%',
-    height: 1,
-    backgroundColor: 'black',
-  },
-  headerCell: {
-    textAlign: 'center',
-    borderWidth: 1,
-    borderBottomWidth: 0,
-    borderColor: PrimaryColors.Black,
-    minHeight: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  cell: {
-    flex: 1,
-    textAlign: 'center',
-    borderWidth: 1,
-    borderBottomWidth: 0,
-    borderTopWidth: 0,
-    borderColor: PrimaryColors.Black,
-    minHeight: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  optionContainer: {
-    width: width * 0.25, // Adjusted for responsiveness
-    marginVertical: height * 0.01, // Adjusted based on screen height
-    alignSelf: 'flex-start',
-  },
-  spacer: {
-    height: height * 0.02, // Adjusted based on screen height
-  },
-  spacer2: {
-    height: height * 0.01, // Adjusted based on screen height
-  },
-  closeButtonContainer: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-  },
-  closeButtonIcon: {
-    width: 20,
-    height: 20,
-    // Add any additional styles you need for the close icon
+    padding: 10,
+    gap: 20,
   },
 });
 export default withUniqueKey(FilterPage);

@@ -19,7 +19,7 @@ export const RemovalNavigation = [
       title: 'Site Questions',
       photoKey: 'bypassPhoto',
     },
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { siteQuestions } = state;
       if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
         return RemovedStandardPage;
@@ -84,7 +84,7 @@ export const SnClientInfoPage = [
 export const RiddorReportPage = [
   {
     screen: 'RiddorReportPage',
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { standardDetails } = state;
       if (standardDetails.conformStandard === false) {
         return SnClientInfoPage;
@@ -103,7 +103,7 @@ export const AssetTypeSelectionPage = [
     params: {
       title: 'Assets being removed',
     },
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { meterDetails } = state || {};
       if (meterDetails?.isMeter) {
         return RemovedMeterDetails;
@@ -127,7 +127,7 @@ export const RebookPage = [
 export const chatterBoxPage =[
   {
     screen: 'chatterBox',
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { standardDetails } = state;
       const { riddorReportable, conformStandard } = standardDetails;
    
@@ -148,7 +148,7 @@ export const chatterBoxPage =[
 export const AdditionalMaterialsPage =[
   {
     screen: 'AdditionalMaterials',
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { standardDetails } = state;
       const { riddorReportable, conformStandard,chatterbox, } = standardDetails;
     if (chatterbox === true) {
@@ -171,7 +171,7 @@ export const AdditionalMaterialsPage =[
 export const RemovedStandardPage = [
   {
     screen: 'StandardPage',
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { standardDetails } = state;
       const { riddorReportable, conformStandard,chatterbox,additionalMaterials } = standardDetails;
      if (additionalMaterials === true) {
@@ -201,7 +201,7 @@ export const RemovedMeterDetails = [
     params: {
       title: 'Removed Meter Details',
     },
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { meterDetails } = state || {};
       const Type = meterDetails?.meterType.value;
 
@@ -221,7 +221,7 @@ export const RemovedCorrectorDetails = [
       title: 'Removed Corrector Details',
       photoKey: 'removedCorrector',
     },
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { meterDetails } = state;
 
       if (meterDetails?.isAmr) {
@@ -266,7 +266,7 @@ export const RemovedMeterIndex = [
       title: 'Ecv Photo',
       photoKey: 'EcvPhoto',
     },
-    diversions: (state) => {
+    diversions: ({state}) => {
       const { meterDetails } = state || {};
 
       const isAmr = meterDetails?.isAmr;
