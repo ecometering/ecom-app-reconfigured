@@ -10,6 +10,13 @@ export const validateRequiredField = (field, value, message) => {
   return null;
 };
 
+export const validateOptionalField = (fieldName, value, message) => {
+  if (value === undefined || value === null) {
+    return message || `${fieldName} is required.`;
+  }
+  return null;
+};
+
 export const validateRegex = (field, value, regex, message) => {
   if (typeof value !== 'string' || !regex.test(value)) {
     return message || `Invalid ${field}`;

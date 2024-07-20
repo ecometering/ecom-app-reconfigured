@@ -76,8 +76,8 @@ const FilterPage = () => {
     }
   };
 
-  const backPressed = () => {
-    saveToDatabase();
+  const backPressed = async () => {
+    await saveToDatabase();
     goToPreviousStep();
   };
 
@@ -209,4 +209,5 @@ const styles = StyleSheet.create({
     gap: 20,
   },
 });
+
 export default withUniqueKey(FilterPage);

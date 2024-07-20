@@ -135,8 +135,8 @@ export default function CorrectorDetailsPage() {
     }
   };
 
-  const backPressed = () => {
-    saveToDatabase();
+  const backPressed = async () => {
+    await saveToDatabase();
     goToPreviousStep();
   };
 
@@ -151,7 +151,7 @@ export default function CorrectorDetailsPage() {
       return;
     }
 
-    saveToDatabase();
+    await saveToDatabase();
     goToNextStep();
   };
 

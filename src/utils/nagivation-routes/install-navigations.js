@@ -1,15 +1,5 @@
 export const InstallNavigation = [
   {
-    screen: 'StreamsSetSealDetails',
-    params: {
-      title: 'Streams Set Seal Details',
-    },
-    diversions: ({ state }) => {
-      const streamFlows = InstancesForStreamFlow({ state });
-      return [...streamFlows];
-    },
-  },
-  {
     screen: 'SiteDetailsPage',
     params: {
       totalPages: 9,
@@ -357,34 +347,38 @@ export const InstancesForStreamFlow = ({ state }) => {
             photoKey: `Filter${stream}Photo`,
           },
         },
-        // {
-        //   screen: 'StreamSlamshutPage',
-        //   params: {
-        //     title: `Slamshut Page ${stream}`,
-        //     photoKey: `SlamShut${stream}Photo`,
-        //   },
-        // },
-        // {
-        //   screen: 'StreamActiveRegulatorPage',
-        //   params: {
-        //     title: `Active Regulator Page ${stream}`,
-        //     photoKey: `ActiveRegulator${stream}Photo`,
-        //   },
-        // },
-        // {
-        //   screen: 'StreamReliefRegulatorPage',
-        //   params: {
-        //     title: `Relief Regulator Page ${stream}`,
-        //     photoKey: `ReliefRegulator${stream}Photo`,
-        //   },
-        // },
-        // {
-        //   screen: 'StreamWaferCheckPage',
-        //   params: {
-        //     title: `Wafer Check Page ${stream}`,
-        //     photoKey: `WaferCheck${stream}Photo`,
-        //   },
-        // },
+        {
+          screen: 'StreamSlamshutPage',
+          params: {
+            title: `Slamshut Page ${stream}`,
+            stream: stream,
+            photoKey: `SlamShut${stream}Photo`,
+          },
+        },
+        {
+          screen: 'StreamActiveRegulatorPage',
+          params: {
+            title: `Active Regulator Page ${stream}`,
+            stream: stream,
+            photoKey: `ActiveRegulator${stream}Photo`,
+          },
+        },
+        {
+          screen: 'StreamReliefRegulatorPage',
+          params: {
+            title: `Relief Regulator Page ${stream}`,
+            stream: stream,
+            photoKey: `ReliefRegulator${stream}Photo`,
+          },
+        },
+        {
+          screen: 'StreamWaferCheckPage',
+          params: {
+            title: `Wafer Check Page ${stream}`,
+            stream: stream,
+            photoKey: `WaferCheck${stream}Photo`,
+          },
+        },
       ];
     },
     []

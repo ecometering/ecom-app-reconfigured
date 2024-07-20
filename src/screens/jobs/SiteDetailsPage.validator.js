@@ -1,5 +1,6 @@
 import {
   validateEmail,
+  validateLength,
   validatePostCode,
   validatePhoneNumber,
   validateRequiredField,

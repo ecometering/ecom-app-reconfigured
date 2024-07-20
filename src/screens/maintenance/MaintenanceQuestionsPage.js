@@ -1,5 +1,6 @@
-import React, { useContext, useState } from 'react';
+import React from 'react';
 import {
+  Text,
   View,
   Platform,
   ScrollView,
@@ -9,45 +10,42 @@ import {
 } from 'react-native';
 
 // Components
-import Text from '../../components/Text';
 import Header from '../../components/Header';
 import OptionalButton from '../../components/OptionButton';
 import { TextInputWithTitle } from '../../components/TextInput';
 
 // Context and Utils
 import EcomHelper from '../../utils/ecomHelper';
-import { TextType } from '../../theme/typography';
-import { width, unitH } from '../../utils/constant';
-import { AppContext } from '../../context/AppContext';
-import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 import { useSQLiteContext } from 'expo-sqlite/next';
-function MaintenanceQuestionsPage() {
-  const db = useSQLiteContext(); 
-  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
-  const appContext = useContext(AppContext);
-  const maintenanceDetails = appContext.maintenanceDetails;
-  const jobType = appContext.jobType;
-  const title = jobType === 'Install' ? 'New Meter Details' : jobType;
-  const [isRisky, setIsRisky] = useState(maintenanceDetails?.isRisky);
-  const [isCarryOut, setIsCarryOut] = useState(maintenanceDetails?.isCarryOut);
-  const [isFitted, setIsFitted] = useState(maintenanceDetails?.isFitted);
-  const [condition, setCondition] = useState(maintenanceDetails?.condition);
-  const [oilLevel, setOilLevel] = useState(maintenanceDetails?.oilLevel);
-  const [isClearPipes, setIsClearPipes] = useState(
-    maintenanceDetails?.isClearPipes
-  );
-  const [notes, setNotes] = useState(maintenanceDetails?.notes);
-  const [isConfirm, setIsConfirm] = useState(maintenanceDetails?.isConfirm);
+import { useFormStateContext } from '../../context/AppContext';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
-  console.log('MaintenanceQuestionsPaqge');
+function MaintenanceQuestionsPage() {
+  const db = useSQLiteContext();
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
+  const { state, setState } = useFormStateContext();
+  const { maintenanceDetails, jobType } = state;
+
+  const title = jobType === 'Install' ? 'New Meter Details' : jobType;
+
+  const handleInputChange = (key, value) => {
+    setState((prevState) => ({
+      ...prevState,
+      maintenanceDetails: {
+        ...prevState.maintenanceDetails,
+        [key]: value,
+      },
+    }));
+  };
+
   const saveToDatabase = async () => {
     const maintenanceJson = JSON.stringify(maintenanceDetails);
     try {
       await db
-        .runAsync(
-          'UPDATE Jobs SET  maintenanceQuestions = ? WHERE id = ?',
-          [ maintenanceJson, jobID]
-        )
+        .runAsync('UPDATE Jobs SET  maintenanceQuestions = ? WHERE id = ?', [
+          maintenanceJson,
+          jobID,
+        ])
         .then((result) => {
           console.log('maintenance saved to database:', result);
         });
@@ -55,46 +53,54 @@ function MaintenanceQuestionsPage() {
       console.log('Error saving maintenance to database:', error);
     }
   };
-  const nextPressed = () => {
-    if (isRisky == null) {
+
+  const nextPressed = async () => {
+    if (maintenanceDetails?.isRisky == null) {
       EcomHelper.showInfoMessage(
         'Please answer if job covered by the gneric risk assessment'
       );
       return;
     }
-    if (isCarryOut == null) {
+    if (maintenanceDetails?.isCarryOut == null) {
       EcomHelper.showInfoMessage('Please answer if job can be carried out');
       return;
     }
-    if (isFitted == null) {
+    if (maintenanceDetails?.isFitted == null) {
       EcomHelper.showInfoMessage('Please answer if By-pass fitted');
       return;
     }
-    if (condition == null) {
-      EcomHelper.showInfoMessage('Please choose Condition of meter housing');
+    if (maintenanceDetails?.condition == null) {
+      EcomHelper.showInfoMessage(
+        'Please choose maintenanceDetails?.condition of meter housing'
+      );
       return;
     }
-    if (oilLevel == null) {
+    if (maintenanceDetails?.oilLevel == null) {
       EcomHelper.showInfoMessage('Please choose Metal oil level');
       return;
     }
-    if (isClearPipes == null) {
+    if (maintenanceDetails?.isClearPipes == null) {
       EcomHelper.showInfoMessage('Please answer if vent pipes clear');
       return;
     }
-    if (notes == null) {
-      EcomHelper.showInfoMessage('Please enter engineer notes');
+    if (maintenanceDetails?.notes == null) {
+      EcomHelper.showInfoMessage(
+        'Please enter engineer maintenanceDetails?.notes'
+      );
       return;
     }
-    if (isConfirm == null) {
+    if (maintenanceDetails?.isConfirm == null) {
       EcomHelper.showInfoMessage(
         'Please answer if Customer Installation Pipework and appliances confirm to current standards'
       );
       return;
     }
+    await saveToDatabase();
     goToNextStep();
   };
-  const backPressed = () => {
+
+  const backPressed = async () => {
+    await saveToDatabase();
     goToPreviousStep();
   };
 
@@ -113,11 +119,9 @@ function MaintenanceQuestionsPage() {
         behavior={Platform.OS === 'ios' ? 'padding' : null}
       >
         <ScrollView style={styles.content}>
-          <View style={styles.spacer} />
-          <View style={styles.spacer} />
           <View style={styles.body}>
             <View style={styles.optionContainer}>
-              <Text type={TextType.CAPTION_2} style={styles.text}>
+              <Text style={styles.title}>
                 {'Is the job covered by the generic risk assessment'}
               </Text>
               <View style={styles.option}>
@@ -125,159 +129,152 @@ function MaintenanceQuestionsPage() {
                   options={['Yes', 'No']}
                   actions={[
                     () => {
-                      setIsRisky(true);
+                      handleInputChange('isRisky', true);
                     },
                     () => {
-                      setIsRisky(false);
+                      handleInputChange('isRisky', false);
                     },
                   ]}
-                  value={isRisky == null ? null : isRisky ? 'Yes' : 'No'}
+                  value={
+                    maintenanceDetails?.isRisky == null
+                      ? null
+                      : maintenanceDetails?.isRisky
+                      ? 'Yes'
+                      : 'No'
+                  }
                 />
               </View>
             </View>
-            <View style={styles.spacer} />
+
             <View style={styles.optionContainer}>
-              <Text type={TextType.CAPTION_2} style={styles.text}>
-                {'Can the Job be carried out'}
-              </Text>
+              <Text style={styles.title}>{'Can the Job be carried out'}</Text>
               <View style={styles.option}>
                 <OptionalButton
                   options={['Yes', 'No']}
                   actions={[
                     () => {
-                      setIsCarryOut(true);
+                      handleInputChange('isCarryOut', true);
                     },
                     () => {
-                      setIsCarryOut(false);
+                      handleInputChange('isCarryOut', false);
                     },
                   ]}
-                  value={isCarryOut == null ? null : isCarryOut ? 'Yes' : 'No'}
+                  value={
+                    maintenanceDetails?.isCarryOut == null
+                      ? null
+                      : maintenanceDetails?.isCarryOut
+                      ? 'Yes'
+                      : 'No'
+                  }
                 />
               </View>
             </View>
-            <View style={styles.spacer} />
+
             <View style={styles.optionContainer}>
-              <Text type={TextType.CAPTION_2} style={styles.text}>
-                {'Is a By-pass fitted'}
-              </Text>
+              <Text style={styles.title}>{'Is a By-pass fitted'}</Text>
               <View style={styles.option}>
                 <OptionalButton
                   options={['Yes', 'No']}
                   actions={[
                     () => {
-                      setIsFitted(true);
+                      handleInputChange('isFitted', true);
                     },
                     () => {
-                      setIsFitted(false);
+                      handleInputChange('isFitted', false);
                     },
                   ]}
-                  value={isFitted == null ? null : isFitted ? 'Yes' : 'No'}
+                  value={
+                    maintenanceDetails?.isFitted == null
+                      ? null
+                      : maintenanceDetails?.isFitted
+                      ? 'Yes'
+                      : 'No'
+                  }
                 />
               </View>
             </View>
-            <View style={styles.spacer} />
+
             <View style={styles.optionContainer}>
-              <Text
-                type={TextType.CAPTION_2}
-                style={{ ...styles.text, width: width * 0.4 }}
-              >
-                {'Condition of meter housing'}
-              </Text>
+              <Text style={styles.title}>Condition of meter housing</Text>
               <View style={styles.option}>
                 <OptionalButton
                   options={['Poor', 'ok', 'good']}
                   actions={[
                     () => {
-                      setCondition('Poor');
+                      handleInputChange('condition', 'Poor');
                     },
                     () => {
-                      setCondition('ok');
+                      handleInputChange('condition', 'ok');
                     },
                     () => {
-                      setCondition('good');
+                      handleInputChange('condition', 'good');
                     },
                   ]}
-                  value={condition}
+                  value={maintenanceDetails?.condition}
                 />
               </View>
             </View>
-            <View style={styles.spacer} />
+
             <View style={styles.optionContainer}>
-              <Text
-                type={TextType.CAPTION_2}
-                style={{ ...styles.text, width: width * 0.18 }}
-              >
-                {'Meter oil level'}
-              </Text>
+              <Text style={{ ...styles.title }}>{'Meter oil level'}</Text>
               <View style={styles.option}>
                 <OptionalButton
                   options={['Low', 'ok', 'overfilled', 'N/A']}
                   actions={[
                     () => {
-                      setOilLevel('Low');
+                      handleInputChange('oilLevel', 'Low');
                     },
                     () => {
-                      setOilLevel('ok');
+                      handleInputChange('oilLevel', 'ok');
                     },
                     () => {
-                      setOilLevel('overfilled');
+                      handleInputChange('oilLevel', 'overfilled');
                     },
                     () => {
-                      setOilLevel('N/A');
+                      handleInputChange('oilLevel', 'N/A');
                     },
                   ]}
-                  value={oilLevel}
-                  style={{ width: width * 0.18 }}
+                  value={maintenanceDetails?.oilLevel}
                 />
               </View>
             </View>
-            <View style={styles.spacer} />
+
             <View style={styles.optionContainer}>
-              <Text
-                type={TextType.CAPTION_2}
-                style={{ ...styles.text, width: width * 0.4 }}
-              >
-                {'vent pipes clear'}
-              </Text>
+              <Text style={{ ...styles.title }}>{'vent pipes clear'}</Text>
               <View style={styles.option}>
                 <OptionalButton
                   options={['Yes', 'No', 'N/A']}
                   actions={[
                     () => {
-                      setIsClearPipes('Yes');
+                      handleInputChange('isClearPipes', 'Yes');
                     },
                     () => {
-                      setIsClearPipes('No');
+                      handleInputChange('isClearPipes', 'No');
                     },
                     () => {
-                      setIsClearPipes('N/A');
+                      handleInputChange('isClearPipes', 'N/A');
                     },
                   ]}
-                  value={isClearPipes}
+                  value={maintenanceDetails?.isClearPipes}
                 />
               </View>
             </View>
-            <View style={styles.spacer} />
-            <View style={styles.spacer} />
+
             <View style={styles.noteContainer}>
               <TextInputWithTitle
                 title={'engineers notes'}
                 onChangeText={(e) => {
-                  setNotes(e);
+                  handleInputChange('notes', e);
                 }}
                 style={styles.input}
                 multiline={true}
                 numberOfLines={5}
-                value={notes}
+                value={maintenanceDetails?.notes}
               />
             </View>
-            <View style={styles.spacer} />
-          
+
             <View style={styles.optionContainer}>
-              <Text
-                type={TextType.CAPTION_2}
-                style={{ ...styles.text, width: width * 0.6 }}
-              >
+              <Text style={{ ...styles.title }}>
                 {
                   'Does the Customer Installation Pipework and appliances confirm to current standards'
                 }
@@ -287,17 +284,22 @@ function MaintenanceQuestionsPage() {
                   options={['Yes', 'No']}
                   actions={[
                     () => {
-                      setIsConfirm(true);
+                      handleInputChange('isConfirm', true);
                     },
                     () => {
-                      setIsConfirm(false);
+                      handleInputChange('isConfirm', false);
                     },
                   ]}
-                  value={isConfirm == null ? null : isConfirm ? 'Yes' : 'No'}
+                  value={
+                    maintenanceDetails?.isConfirm == null
+                      ? null
+                      : maintenanceDetails?.isConfirm
+                      ? 'Yes'
+                      : 'No'
+                  }
                 />
               </View>
             </View>
-            <View style={styles.spacer} />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -310,34 +312,20 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   body: {
-    marginVerticalHorizontal: width * 0.1,
+    padding: 10,
+    gap: 20,
   },
   optionContainer: {
-    width: '90%',
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    flexDirection: 'row',
+    flex: 1,
+    gap: 5,
   },
-  text: {
-    width: width * 0.5,
-    textAlign: 'left',
-    lineHeight: unitH * 20,
-  },
+  title: {},
   option: {
-    justifyContent: 'center',
+    flex: 1,
   },
-  noteContainer: {
-    width: width * 0.9,
-    alignSelf: 'center',
-  },
+  noteContainer: {},
   input: {
-    height: unitH * 100,
-    alignSelf: 'center',
-  },
-
-  spacer: {
-    height: unitH * 20,
+    height: 200,
   },
 });
 

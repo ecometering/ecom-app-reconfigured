@@ -72,12 +72,12 @@ function SiteQuestionsPage() {
     console.log('Photo saved:', { title, photoKey, uri });
     console.log('photos:', photos);
   };
-  const backPressed = () => {
-    saveToDatabase();
+  const backPressed = async () => {
+    await saveToDatabase();
     goToPreviousStep();
   };
 
-  const nextPressed = () => {
+  const nextPressed = async () => {
     if (siteQuestions?.isSafe === null) {
       EcomHelper.showInfoMessage(
         'Please indicate if the meter location is safe.'
@@ -120,7 +120,7 @@ function SiteQuestionsPage() {
       );
       return;
     }
-    saveToDatabase();
+    await saveToDatabase();
     goToNextStep();
   };
 

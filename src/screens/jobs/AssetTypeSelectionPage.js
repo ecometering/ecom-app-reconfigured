@@ -57,12 +57,12 @@ function AssetTypeSelectionPage() {
     });
   };
 
-  const backPressed = () => {
-    saveToDatabase();
+  const backPressed = async () => {
+    await saveToDatabase();
     goToPreviousStep();
   };
 
-  const nextPressed = () => {
+  const nextPressed = async () => {
     const { isMeter, isAmr, isCorrector } = meterDetails || {};
 
     if (!isMeter && !isAmr && !isCorrector) {
@@ -72,7 +72,7 @@ function AssetTypeSelectionPage() {
       return;
     }
 
-    saveToDatabase();
+    await saveToDatabase();
     goToNextStep();
   };
 

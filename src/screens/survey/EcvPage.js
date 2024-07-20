@@ -1,88 +1,75 @@
-import { useContext, useRef, useState, useEffect } from 'react';
 import {
-  Button,
-  KeyboardAvoidingView,
-  SafeAreaView,
+  View,
+  Platform,
   ScrollView,
   StyleSheet,
-  View,
-  Dimensions,
-  Platform,
+  SafeAreaView,
+  KeyboardAvoidingView,
 } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import Header from '../../components/Header';
-import Text from '../../components/Text';
-import OptionalButton from '../../components/OptionButton';
-import EcomDropDown from '../../components/DropDown';
-import TextInput, { TextInputWithTitle } from '../../components/TextInput';
-import { AppContext } from '../../context/AppContext';
-import EcomHelper from '../../utils/ecomHelper';
-import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 import { useSQLiteContext } from 'expo-sqlite/next';
+
+// Components
+import Header from '../../components/Header';
+import EcomDropDown from '../../components/DropDown';
+import { TextInputWithTitle } from '../../components/TextInput';
+
+// Utils & Context
+import EcomHelper from '../../utils/ecomHelper';
 import { SIZE_LIST } from '../../utils/constant';
+import { useFormStateContext } from '../../context/AppContext';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
+import { validateEcvDetails } from './EcvPage.validator';
+
 const isIos = Platform.OS === 'ios';
-const { width, height } = Dimensions.get('window');
+
 export default function EcvPage() {
   const db = useSQLiteContext();
-  const route = useRoute();
-  // const { title} = route.params;
-  const { ecvDetails, setEcvDetails,jobID } = useContext(AppContext);
-  const navigation = useNavigation();
+
+  const { state, setState } = useFormStateContext();
+  const { ecvDetails, jobID } = state;
+
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
   const handleInputChange = (key, value) => {
-    setEcvDetails((prev) => ({
+    setState((prev) => ({
       ...prev,
-      [key]: value,
+      ecvDetails: {
+        ...prev.ecvDetails,
+        [key]: value,
+      },
     }));
-    console.log('ecvDetails', ecvDetails);
   };
-  const saveToDatabase = async () => {
-    const ecvJson = JSON.stringify(ecvDetails)
-    try {
-      await db 
-      .runAsync ( 
-        'UPDATE Jobs SET ecvDetails =? WHERE id = ?',
-        [ecvJson, jobID]
-      )
-      .then((result) => {
-        console.log('ecv Details saved to database:', result);
-      });
-  } catch (error) {
-    console.log('Error saving ecv details to database:', error);
-  }
-    };
-  const nextPressed = async () => {
-    const { type, height, size, dfkw, dfrkw } = ecvDetails;
 
-    if (!type) {
-      EcomHelper.showInfoMessage(
-        'ECV Type is required.Please enter the ECV Type.'
-      );
-    } else if (!height) {
-      EcomHelper.showInfoMessage(
-        'ECV Height is required.Please enter the ECV Height.'
-      );
-    } else if (!size) {
-      EcomHelper.showInfoMessage(
-        'ECV Size is required.Please enter the ECV Size.'
-      );
-    } else if (!dfkw) {
-      EcomHelper.showInfoMessage(
-        'Distance from Kiosk Wall is required.Please enter the Distance from Kiosk Wall.'
-      );
-    } else if (!dfrkw) {
-      EcomHelper.showInfoMessage(
-        'Distance from Rear Kiosk Wall is required.Please enter the Distance from Rear Kiosk Wall.'
-      );
-    } else {
-      saveToDatabase();
-      goToNextStep();
+  const saveToDatabase = async () => {
+    const ecvJson = JSON.stringify(ecvDetails);
+    try {
+      await db
+        .runAsync('UPDATE Jobs SET ecvDetails =? WHERE id = ?', [
+          ecvJson,
+          jobID,
+        ])
+        .then((result) => {
+          console.log('ecv Details saved to database:', result);
+        });
+    } catch (error) {
+      console.log('Error saving ecv details to database:', error);
     }
   };
 
+  const nextPressed = async () => {
+    const { isValid, message } = validateEcvDetails(ecvDetails);
+
+    if (!isValid) {
+      EcomHelper.showInfoMessage(message);
+      return;
+    }
+
+    await saveToDatabase();
+    goToNextStep();
+  };
+
   const backPressed = async () => {
-    saveToDatabase();
+    await saveToDatabase();
     goToPreviousStep();
   };
 
@@ -92,7 +79,7 @@ export default function EcvPage() {
         hasLeftBtn={true}
         hasCenterText={true}
         hasRightBtn={true}
-        centerText={"ecv Details"}
+        centerText={'ecv Details'}
         leftBtnPressed={backPressed}
         rightBtnPressed={nextPressed}
       />
@@ -105,7 +92,7 @@ export default function EcvPage() {
           <View style={styles.spacer} />
           <View style={styles.body}>
             <View style={styles.row}>
-              <View style={{ flex: 1, marginTop: 8, marginLeft: 8 }}>
+              <View style={{ flex: 1 }}>
                 <TextInputWithTitle
                   title="ECV Type"
                   value={ecvDetails.type}
@@ -117,12 +104,11 @@ export default function EcvPage() {
                     );
                     handleInputChange('type', formattedText);
                   }}
-                  style={[styles.input, { width: '100%' }]}
                 />
               </View>
             </View>
             <View style={styles.row}>
-              <View style={{ flex: 0.5, marginTop: 8, marginLeft: 8 }}>
+              <View style={{ flex: 1 }}>
                 <TextInputWithTitle
                   title="ECV height (mm)"
                   value={ecvDetails.height}
@@ -131,27 +117,19 @@ export default function EcvPage() {
                     handleInputChange('height', numericValue);
                   }}
                   keyboardType="numeric"
-                  style={[styles.input, { width: '100%' }]}
                 />
               </View>
-              <View style={{ flex: 0.5, marginTop: 8, marginLeft: 8 }}>
-                
-                    
-                      <EcomDropDown
-                        width={width * 0.35}
-                        value={ecvDetails.size}
-                        valueList={SIZE_LIST}
-                        placeholder="Select size"
-                        onChange={(item) =>
-                          handleInputChange('size', item.value)
-                        }
-                      />
-                   
-                  
+              <View style={{ flex: 1 }}>
+                <EcomDropDown
+                  value={ecvDetails.size}
+                  valueList={SIZE_LIST}
+                  placeholder="Select size"
+                  onChange={(item) => handleInputChange('size', item.value)}
+                />
               </View>
             </View>
             <View style={styles.row}>
-              <View style={{ flex: 0.5, marginTop: 8, marginLeft: 8 }}>
+              <View style={{ flex: 1 }}>
                 <TextInputWithTitle
                   title="Distance from Kiosk wall (mm)"
                   value={ecvDetails.dfkw}
@@ -159,11 +137,10 @@ export default function EcvPage() {
                     const numericValue = txt.replace(/[^0-9.]/g, '');
                     handleInputChange('dfkw', numericValue);
                   }}
-                  style={[styles.input, { width: '100%' }]}
                   keyboardType="numeric"
                 />
               </View>
-              <View style={{ flex: 0.5, marginTop: 8, marginLeft: 8 }}>
+              <View style={{ flex: 1 }}>
                 <TextInputWithTitle
                   title="Distance from  Rear Kiosk wall (mm)"
                   value={ecvDetails.dfrkw}
@@ -171,7 +148,6 @@ export default function EcvPage() {
                     const numericValue = txt.replace(/[^0-9.]/g, '');
                     handleInputChange('dfrkw', numericValue);
                   }}
-                  style={[styles.input, { width: '100%' }]}
                   keyboardType="numeric"
                 />
               </View>
@@ -192,18 +168,11 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   body: {
-    marginHorizontal: width * 0.05,
+    padding: 10,
+    gap: 20,
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center', // Ensure vertical alignment is centered for row items
-  },
-  input: {
-    width: '100%', // Adjust to use full width of its container for better visibility
-    height: 40, // Ensure this is a number, not a string
-    borderColor: 'gray', // Optional: for border
-    borderWidth: 1, // Optional: for border
-    padding: 10,
+    gap: 10,
   },
 });

@@ -1,9 +1,9 @@
 import React from 'react';
-import {Image, Pressible, Text as RNText, View} from 'react-native';
-import {TextType, TextStyles} from '../theme/typography';
-import {unitH} from '../utils/constant';
+import { Image, Text as RNText, View } from 'react-native';
+import { TextStyles } from '../theme/typography';
+import { unitH } from '../utils/constant';
 
-export default function Text({children, type, style, ...otherProps}) {
+export default function Text({ children, type, style, ...otherProps }) {
   return (
     <RNText style={[TextStyles[type], style]} {...otherProps}>
       {children}
@@ -26,7 +26,10 @@ export function CenteredText({
         {children}
       </Text>
       {image && (
-        <Image source={image} style={{height: unitH * 20, width: unitH * 20}} />
+        <Image
+          source={image}
+          style={{ height: unitH * 20, width: unitH * 20 }}
+        />
       )}
     </View>
   );
