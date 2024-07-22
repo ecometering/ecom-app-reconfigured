@@ -16,12 +16,10 @@ import { TextInputWithTitle } from '../../components/TextInput';
 
 // Context and Utils
 import EcomHelper from '../../utils/ecomHelper';
-import { useSQLiteContext } from 'expo-sqlite/next';
 import { useFormStateContext } from '../../context/AppContext';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
 function MaintenanceQuestionsPage() {
-  const db = useSQLiteContext();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const { state, setState } = useFormStateContext();
   const { maintenanceDetails, jobType } = state;
@@ -36,22 +34,6 @@ function MaintenanceQuestionsPage() {
         [key]: value,
       },
     }));
-  };
-
-  const saveToDatabase = async () => {
-    const maintenanceJson = JSON.stringify(maintenanceDetails);
-    try {
-      await db
-        .runAsync('UPDATE Jobs SET  maintenanceQuestions = ? WHERE id = ?', [
-          maintenanceJson,
-          jobID,
-        ])
-        .then((result) => {
-          console.log('maintenance saved to database:', result);
-        });
-    } catch (error) {
-      console.log('Error saving maintenance to database:', error);
-    }
   };
 
   const nextPressed = async () => {
@@ -95,12 +77,11 @@ function MaintenanceQuestionsPage() {
       );
       return;
     }
-    await saveToDatabase();
+
     goToNextStep();
   };
 
   const backPressed = async () => {
-    await saveToDatabase();
     goToPreviousStep();
   };
 

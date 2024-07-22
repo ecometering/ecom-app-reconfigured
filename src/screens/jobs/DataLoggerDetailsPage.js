@@ -1,5 +1,4 @@
 import React, { useRef, useState } from 'react';
-import { useSQLiteContext } from 'expo-sqlite/next';
 import { useRoute } from '@react-navigation/native';
 import {
   View,
@@ -31,15 +30,16 @@ import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvide
 export default function DataLoggerDetailsPage() {
   const route = useRoute();
   const camera = useRef(null);
-  const db = useSQLiteContext();
   const { title, photoKey } = route.params;
   const { state, setState } = useFormStateContext();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
-  const { jobID, photos, dataLoggerDetails } = state;
+  const { photos, dataLoggerDetails } = state;
   const existingPhoto = photos && photoKey ? photos[photoKey] : null;
 
   const [isModal, setIsModal] = useState(false);
+
+  console.log({ dataLoggerDetails });
 
   const handleInputChange = (name, value) => {
     setState((prevState) => ({
@@ -61,25 +61,7 @@ export default function DataLoggerDetailsPage() {
     }));
   };
 
-  const saveToDatabase = async () => {
-    const photosJson = JSON.stringify(photos);
-    const dataloggerJson = JSON.stringify(dataLoggerDetails);
-    try {
-      await db
-        .runAsync(
-          'UPDATE Jobs SET photos = ?, dataloggerDetails = ? WHERE id = ?',
-          [photosJson, dataloggerJson, jobID]
-        )
-        .then((result) => {
-          console.log('photos saved to database:', result);
-        });
-    } catch (error) {
-      console.log('Error saving photos to database:', error);
-    }
-  };
-
   const backPressed = async () => {
-    await saveToDatabase();
     goToPreviousStep();
   };
 
@@ -94,7 +76,6 @@ export default function DataLoggerDetailsPage() {
       return;
     }
 
-    await saveToDatabase();
     goToNextStep();
     return;
   };

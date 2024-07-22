@@ -7,7 +7,6 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import React, { useState } from 'react';
-import { useSQLiteContext } from 'expo-sqlite/next';
 
 // Components
 import Header from '../../components/Header';
@@ -22,44 +21,16 @@ import { useFormStateContext } from '../../context/AppContext';
 import { PrimaryColors, Transparents } from '../../theme/colors';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
-const quantityList = [
-  { _index: 1, label: '1', value: '1' },
-  { _index: 2, label: '2', value: '2' },
-  { _index: 3, label: '3', value: '3' },
-  { _index: 4, label: '4', value: '4' },
-  { _index: 5, label: '5', value: '5' },
-  { _index: 6, label: '6', value: '6' },
-  { _index: 7, label: '7', value: '7' },
-  { _index: 8, label: '8', value: '8' },
-  { _index: 9, label: '9', value: '9' },
-  { _index: 10, label: '10', value: '10' },
-  { _index: 11, label: '11', value: '11' },
-  { _index: 12, label: '12', value: '12' },
-  { _index: 13, label: '13', value: '13' },
-  { _index: 14, label: '14', value: '14' },
-  { _index: 15, label: '15', value: '15' },
-  { _index: 16, label: '16', value: '16' },
-  { _index: 17, label: '17', value: '17' },
-  { _index: 18, label: '18', value: '18' },
-  { _index: 19, label: '19', value: '19' },
-  { _index: 20, label: '20', value: '20' },
-  { _index: 21, label: '21', value: '21' },
-  { _index: 22, label: '22', value: '22' },
-  { _index: 23, label: '23', value: '23' },
-  { _index: 24, label: '24', value: '24' },
-  { _index: 25, label: '25', value: '25' },
-  { _index: 26, label: '26', value: '26' },
-  { _index: 27, label: '27', value: '27' },
-  { _index: 28, label: '28', value: '28' },
-  { _index: 29, label: '29', value: '29' },
-  { _index: 30, label: '30', value: '30' },
-];
+const quantityList = new Array(30).fill(0).map((_, i) => ({
+  _index: i + 1,
+  label: i + 1,
+  value: i + 1,
+}));
 
 function AdditionalMaterialPage() {
-  const db = useSQLiteContext();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const { state, setState } = useFormStateContext();
-  const { regulatorDetails, jobID } = state;
+  const { regulatorDetails } = state;
 
   const [category, setCategory] = useState('');
   const [item, setItem] = useState('');
@@ -75,33 +46,16 @@ function AdditionalMaterialPage() {
     }));
   };
 
-  const saveToDatabase = async () => {
-    const additionalMaterialsJSON = JSON.stringify(regulatorDetails?.materials);
-    try {
-      await db
-        .runAsync('UPDATE Jobs SET additionalMaterials = ? WHERE id = ?', [
-          additionalMaterialsJSON,
-          jobID,
-        ])
-        .then((result) => {
-          console.log('meterDetails saved to database:', result);
-        });
-    } catch (error) {
-      console.log('Error saving meterDetails to database:', error);
-    }
-  };
-
   const nextPressed = async () => {
     if (regulatorDetails?.materials?.length === 0) {
       EcomHelper.showInfoMessage('Please add materials');
       return;
     }
-    await saveToDatabase();
+
     goToNextStep();
   };
 
   const backPressed = async () => {
-    await saveToDatabase();
     goToPreviousStep();
   };
 
@@ -315,12 +269,6 @@ const styles = StyleSheet.create({
   buttonText: {
     textAlign: 'center',
     color: PrimaryColors.White,
-  },
-  divider: {
-    width: '100%',
-    height: 1,
-    backgroundColor: 'black',
-    marginVertical: 10,
   },
   headerCell: {
     flex: 1,

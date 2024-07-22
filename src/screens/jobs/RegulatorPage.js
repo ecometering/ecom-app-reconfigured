@@ -9,7 +9,6 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import React, { useState, createRef } from 'react';
-import { useSQLiteContext } from 'expo-sqlite/next';
 import { useRoute } from '@react-navigation/native';
 
 // Components
@@ -28,14 +27,13 @@ import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvide
 
 function RegulatorPage() {
   const route = useRoute();
-  const db = useSQLiteContext();
   const camera = createRef(null);
 
   const { title } = route.params;
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
   const { state, setState } = useFormStateContext();
-  const { regulatorDetails, jobID } = state;
+  const { regulatorDetails } = state;
 
   const [isModal, setIsModal] = useState(false);
 
@@ -43,22 +41,6 @@ function RegulatorPage() {
     setIsModal(false);
     if (codes && codes.data) {
       handleInputChange('serialNumber', codes.data.toString());
-    }
-  };
-
-  const saveToDatabase = async () => {
-    const regulatorDetailsJson = JSON.stringify(regulatorDetails);
-    try {
-      await db
-        .runAsync('UPDATE Jobs SET regulatorDetails = ? WHERE id = ?', [
-          regulatorDetailsJson,
-          jobID,
-        ])
-        .then((result) => {
-          console.log('regulatorDetails saved to database:', result);
-        });
-    } catch (error) {
-      console.log('Error saving regulatorDetails to database:', error);
     }
   };
 
@@ -80,12 +62,10 @@ function RegulatorPage() {
       return;
     }
 
-    await saveToDatabase();
     goToNextStep();
   };
 
   const backPressed = async () => {
-    await saveToDatabase();
     goToPreviousStep();
   };
 

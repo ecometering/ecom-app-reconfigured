@@ -1,6 +1,5 @@
 import React from 'react';
 import { useRoute } from '@react-navigation/native';
-import { useSQLiteContext } from 'expo-sqlite/next';
 import {
   View,
   Image,
@@ -30,10 +29,9 @@ import { validateFilter } from './FilterPage.validator';
 
 const FilterPage = () => {
   const route = useRoute();
-  const db = useSQLiteContext();
   const { state, setState } = useFormStateContext();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
-  const { jobID, photos, streams } = state;
+  const { photos, streams } = state;
 
   const { title, stream, photoKey } = route.params;
   const existingPhoto = photos && photoKey ? photos[photoKey] : null;
@@ -58,26 +56,7 @@ const FilterPage = () => {
     }));
   };
 
-  const saveToDatabase = async () => {
-    const photosJson = JSON.stringify(photos);
-    const streamsJson = JSON.stringify(streams);
-    try {
-      await db
-        .runAsync('UPDATE Jobs SET photos = ?, streams = ? WHERE id = ?', [
-          photosJson,
-          streamsJson,
-          jobID,
-        ])
-        .then((result) => {
-          console.log('photos saved to database:', result);
-        });
-    } catch (error) {
-      console.log('Error saving photos to database:', error);
-    }
-  };
-
   const backPressed = async () => {
-    await saveToDatabase();
     goToPreviousStep();
   };
 
@@ -89,7 +68,6 @@ const FilterPage = () => {
       return;
     }
 
-    await saveToDatabase();
     goToNextStep();
   };
 

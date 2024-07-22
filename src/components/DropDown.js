@@ -9,7 +9,7 @@ const EcomDropDown = ({ value, valueList, placeholder, onChange }) => {
   return (
     <View
       style={{
-        width: '100%',
+        flex: 1,
       }}
     >
       <Text>{placeholder || ' '}</Text>

@@ -31,11 +31,6 @@ export default function RiddorReportPage() {
   const title = jobType === 'Install' ? 'New Meter Details' : jobType;
 
   const backPressed = async () => {
-    await db.runAsync('UPDATE Jobs SET standards = ? WHERE id = ?', [
-      JSON.stringify(standardDetails),
-      jobID,
-    ]);
-
     goToPreviousStep();
   };
 
@@ -56,11 +51,6 @@ export default function RiddorReportPage() {
       EcomHelper.showInfoMessage(message);
       return;
     }
-
-    await db.runAsync('UPDATE Jobs SET standards = ? WHERE id = ?', [
-      JSON.stringify(standardDetails),
-      jobID,
-    ]);
 
     goToNextStep();
   };

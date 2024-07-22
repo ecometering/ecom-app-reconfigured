@@ -62,15 +62,7 @@ function SnClientInfoPage() {
   };
 
   const backPressed = () => {
-    saveToDB();
     goToPreviousStep();
-  };
-
-  const saveToDB = async () => {
-    await db.runAsync('UPDATE Jobs SET standards = ? WHERE id = ?', [
-      JSON.stringify(standardDetails),
-      appContext.jobID,
-    ]);
   };
 
   const nextPressed = async () => {
@@ -79,7 +71,6 @@ function SnClientInfoPage() {
       return;
     }
 
-    saveToDB();
     goToNextStep();
   };
   const deleteEntry = (index) => {

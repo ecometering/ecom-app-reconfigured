@@ -42,7 +42,7 @@ function MeterDetailsPage() {
   const camera = useRef(null);
   const db = useSQLiteContext();
   const { state, setState } = useFormStateContext();
-  const { jobType, meterDetails, jobID } = state;
+  const { jobType, meterDetails } = state;
 
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
@@ -163,13 +163,11 @@ function MeterDetailsPage() {
     }
 
     try {
-      await saveToDatabase();
       goToNextStep();
     } catch (error) {}
   };
 
   const backPressed = async () => {
-    await saveToDatabase();
     goToPreviousStep();
   };
 
@@ -181,22 +179,6 @@ function MeterDetailsPage() {
     EcomHelper.showInfoMessage(codes.data);
     setIsModal(false);
     handleInputChange('serialNumber', codes.data);
-  };
-
-  const saveToDatabase = async () => {
-    const meterDetailsJson = JSON.stringify(meterDetails);
-    try {
-      await db
-        .runAsync('UPDATE Jobs SET meterDetails = ? WHERE id = ?', [
-          meterDetailsJson,
-          jobID,
-        ])
-        .then((result) => {
-          console.log('meterDetails saved to database:', result);
-        });
-    } catch (error) {
-      console.log('Error saving meterDetails to database:', error);
-    }
   };
 
   return (

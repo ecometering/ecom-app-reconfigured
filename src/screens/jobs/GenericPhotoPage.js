@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useSQLiteContext } from 'expo-sqlite/next';
 import { useRoute } from '@react-navigation/native';
 import {
   View,
@@ -18,11 +17,10 @@ import { useFormStateContext } from '../../context/AppContext';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
 function GenericPhotoPage() {
-  db = useSQLiteContext();
   const { params } = useRoute();
   const { title, photoKey } = params;
   const { state, setState } = useFormStateContext();
-  const { photos, jobID } = state;
+  const { photos } = state;
   const existingPhoto = photos?.[photoKey];
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   // RN uses cache storeage when picking image from gallery
@@ -44,24 +42,8 @@ function GenericPhotoPage() {
     }));
   };
 
-  const savePhotoToDatabase = async () => {
-    const photosJson = JSON.stringify(photos);
-    try {
-      await db
-        .runAsync('UPDATE Jobs SET photos = ? WHERE id = ?', [
-          photosJson,
-          jobID,
-        ])
-        .then((result) => {
-          console.log('photos saved to database:', result);
-        });
-    } catch (error) {
-      console.log('Error saving photos to database:', error);
-    }
-  };
   const nextPressed = () => {
     if (selectedImage) {
-      savePhotoToDatabase();
       // If a photo has been selected, navigate to the next screen
       goToNextStep();
     } else {
@@ -70,7 +52,6 @@ function GenericPhotoPage() {
     }
   };
   const backPressed = () => {
-    savePhotoToDatabase();
     goToPreviousStep();
   };
   return (

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import {
   View,
@@ -20,6 +20,34 @@ import { useFormStateContext } from '../context/AppContext';
 import { openDatabase } from '../utils/database';
 import { useProgressNavigation } from '../context/ProgressiveFlowRouteProvider';
 
+const getCurrentDateTime = () => moment().format('YYYY-MM-DD HH:mm');
+
+const showAlert = (title, message, onPress = null) => {
+  Alert.alert(title, message, [{ text: 'OK', onPress }]);
+};
+
+const handleError = (title, message, error) => {
+  console.error(`${title}:`, error);
+  showAlert(title, message);
+  setLoading(false);
+};
+
+const handleUploadError = (error) => {
+  if (error.response) {
+    console.error('Photo upload error:', error.response.data);
+    showAlert(
+      'Photo Upload Error',
+      `Failed to upload photo. Status: ${error.response.status}. Detail: ${error.response.data}`
+    );
+  } else if (error.request) {
+    console.error('Photo upload error: No response received', error.request);
+    showAlert('Photo Upload Error', 'No response received from server.');
+  } else {
+    console.error('Photo upload error:', error.message);
+    showAlert('Photo Upload Error', error.message);
+  }
+};
+
 const SubmitSuccessPage = () => {
   const { state, resetState } = useFormStateContext();
   const { jobStatus, jobID, photos, standardDetails } = state;
@@ -29,7 +57,10 @@ const SubmitSuccessPage = () => {
 
   const [isLoading, setLoading] = useState(false);
 
-  const getCurrentDateTime = () => moment().format('YYYY-MM-DD HH:mm');
+  useEffect(() => {
+    // Cleanup loading state on unmount
+    return () => setLoading(false);
+  }, []);
 
   const fetchAndUploadJobData = async () => {
     setLoading(true);
@@ -150,32 +181,6 @@ const SubmitSuccessPage = () => {
           handleError('Database Error', 'Failed to update job status.', error)
       );
     });
-  };
-
-  const showAlert = (title, message, onPress = null) => {
-    Alert.alert(title, message, [{ text: 'OK', onPress }]);
-  };
-
-  const handleError = (title, message, error) => {
-    console.error(`${title}:`, error);
-    showAlert(title, message);
-    setLoading(false);
-  };
-
-  const handleUploadError = (error) => {
-    if (error.response) {
-      console.error('Photo upload error:', error.response.data);
-      showAlert(
-        'Photo Upload Error',
-        `Failed to upload photo. Status: ${error.response.status}. Detail: ${error.response.data}`
-      );
-    } else if (error.request) {
-      console.error('Photo upload error: No response received', error.request);
-      showAlert('Photo Upload Error', 'No response received from server.');
-    } else {
-      console.error('Photo upload error:', error.message);
-      showAlert('Photo Upload Error', error.message);
-    }
   };
 
   return (

@@ -10,7 +10,6 @@ import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 
 // Utils and Constants
-import { height, unitH } from '../utils/constant';
 import { PrimaryColors } from '../theme/colors';
 
 // Components
@@ -25,14 +24,14 @@ import { useProgressNavigation } from '../context/ProgressiveFlowRouteProvider';
 function JobTypePage() {
   const navigation = useNavigation();
   const { startFlow } = useProgressNavigation();
-  const { state, setState, setJobType, resetState } = useFormStateContext();
-  const { jobStarted } = state;
+  const { state, setState, resetState } = useFormStateContext();
+  const { startDate, jobID } = state;
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedJobType, setSelectedJobType] = useState('');
 
   const handleJobTypeSelection = async (jobType) => {
-    if (jobStarted) {
+    if (jobID) {
       setSelectedJobType(jobType);
       setModalVisible(true);
     } else {
@@ -42,22 +41,16 @@ function JobTypePage() {
 
   const startNewJob = async (jobType) => {
     try {
-      const jobId = `JOB-${Date.now()}`;
-      const jobData = {
-        jobType,
-        jobId,
-        startDate: new Date().toISOString(),
-        jobStatus: 'in progress',
-        progress: 0,
-      };
-
-      setJobType(jobType);
-      setState((prevState) => ({
-        ...prevState,
-        jobStarted: true,
-        jobDetails: jobData,
-      }));
-
+      if (startDate) {
+        setState((prevState) => ({
+          ...prevState,
+          jobID: jobID || `JOB-${Date.now()}`,
+          jobType,
+          startDate: new Date().toISOString(),
+          jobStatus: 'In Progress',
+          progress: 0,
+        }));
+      }
       startFlow(jobType);
     } catch (error) {
       console.error('Error starting new job:', error);
@@ -81,7 +74,7 @@ function JobTypePage() {
             'Warrant',
             'Maintenance',
           ].map((type, index) => (
-            <View key={index} style={{ alignItems: 'center' }}>
+            <View key={index}>
               <Button
                 onPress={() => handleJobTypeSelection(type)}
                 style={styles.button}
@@ -134,21 +127,16 @@ function JobTypePage() {
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   body: {
-    justifyContent: 'center',
-    height: height * 0.7,
     gap: 20,
+    padding: 10,
   },
-  spacer: { height: unitH * 20 },
   button: {
-    width: '70%',
-    height: unitH * 50,
     backgroundColor: PrimaryColors.Blue,
-    alignItems: 'center',
-    justifyContent: 'center',
     borderRadius: 5,
     borderColor: 'black',
     elevation: 5,
     shadowColor: '#000',
+
     shadowOpacity: 0.7,
     shadowRadius: 2,
     shadowOffset: {
@@ -159,9 +147,10 @@ const styles = StyleSheet.create({
   buttonTxt: {
     color: 'white',
     fontSize: 20,
+    textAlign: 'center',
     fontWeight: '800',
+    padding: 20,
   },
-  // Additional styles for modal
   centeredView: {
     flex: 1,
     justifyContent: 'center',
@@ -189,7 +178,6 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
   },
   modalButton: {
     backgroundColor: PrimaryColors.Blue,

@@ -27,10 +27,8 @@ import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvide
 import EcomHelper from '../../utils/ecomHelper';
 import { PrimaryColors } from '../../theme/colors';
 import { validateStandardDetails } from './StandardPage.validator';
-import { useSQLiteContext } from 'expo-sqlite/next';
 
 function StandardPage() {
-  const db = useSQLiteContext();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const { state, setState } = useFormStateContext();
   const { standardDetails, meterDetails, jobID, setStandardDetails, jobType } =
@@ -66,11 +64,6 @@ function StandardPage() {
   };
 
   const nextPressed = async () => {
-    const meterDetailsUpdate = {
-      ...meterDetails,
-      isStandard: riddorReportable,
-    };
-
     const { isValid, message } = validateStandardDetails(
       standardDetails,
       meterDetails,
@@ -83,16 +76,6 @@ function StandardPage() {
     }
 
     try {
-      await db.runAsync('UPDATE Jobs SET standards = ? WHERE id = ?', [
-        JSON.stringify(standardDetails),
-        jobID,
-      ]);
-
-      await db.runAsync('UPDATE Jobs SET meterDetails = ? WHERE id = ?', [
-        JSON.stringify(meterDetailsUpdate),
-        jobID,
-      ]);
-
       goToNextStep();
     } catch (error) {
       console.error('Error updating job details:', error);

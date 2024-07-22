@@ -8,7 +8,6 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
 } from 'react-native';
-import { useSQLiteContext } from 'expo-sqlite/next';
 import { useRoute } from '@react-navigation/native';
 
 // Components
@@ -30,10 +29,9 @@ import { validateReliefRegulator } from './ReliefRegulatorPage.validator';
 
 const ReliefRegulatorPage = () => {
   const route = useRoute();
-  const db = useSQLiteContext();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const { state, setState } = useFormStateContext();
-  const { jobID, photos, streams } = state;
+  const { photos, streams } = state;
 
   const { title, stream, photoKey } = route.params;
   const existingPhoto = photos && photoKey ? photos[photoKey] : null;
@@ -58,26 +56,7 @@ const ReliefRegulatorPage = () => {
     }));
   };
 
-  const saveToDatabase = async () => {
-    const photosJson = JSON.stringify(photos);
-    const streamsJson = JSON.stringify(streams);
-    try {
-      await db
-        .runAsync('UPDATE Jobs SET photos = ?, streams = ? WHERE id = ?', [
-          photosJson,
-          streamsJson,
-          jobID,
-        ])
-        .then((result) => {
-          console.log('photos saved to database:', result);
-        });
-    } catch (error) {
-      console.log('Error saving photos to database:', error);
-    }
-  };
-
   const backPressed = async () => {
-    await saveToDatabase();
     goToPreviousStep();
   };
 
@@ -93,7 +72,6 @@ const ReliefRegulatorPage = () => {
       return;
     }
 
-    await saveToDatabase();
     goToNextStep();
   };
 

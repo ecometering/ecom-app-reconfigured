@@ -37,7 +37,7 @@ export default function CorrectorDetailsTwoPage() {
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const { state, setState } = useFormStateContext();
 
-  const { jobID, photos, correctorDetailsTwo } = state;
+  const { photos, correctorDetailsTwo } = state;
 
   const { title, photoKey } = route.params;
   const existingPhoto = photos && photoKey ? photos[photoKey] : null;
@@ -86,23 +86,6 @@ export default function CorrectorDetailsTwoPage() {
     }
   }
 
-  const saveToDatabase = async () => {
-    const photosJson = JSON.stringify(photos);
-    const correctorJson = JSON.stringify(correctorDetailsTwo);
-    try {
-      await db
-        .runAsync(
-          'UPDATE Jobs SET photos = ?, correctorDetailsTwo = ? WHERE id = ?',
-          [photosJson, correctorJson, jobID]
-        )
-        .then((result) => {
-          console.log('photos saved to database:', result);
-        });
-    } catch (error) {
-      console.log('Error saving photos to database:', error);
-    }
-  };
-
   const handleInputChange = (name, value) => {
     setState((prevState) => ({
       ...prevState,
@@ -136,7 +119,6 @@ export default function CorrectorDetailsTwoPage() {
   };
 
   const backPressed = async () => {
-    await saveToDatabase();
     goToPreviousStep();
   };
 
@@ -151,7 +133,6 @@ export default function CorrectorDetailsTwoPage() {
       return;
     }
 
-    await saveToDatabase();
     goToNextStep();
   };
 

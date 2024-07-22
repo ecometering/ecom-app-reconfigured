@@ -7,7 +7,6 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
 } from 'react-native';
-import { useSQLiteContext } from 'expo-sqlite/next';
 
 // Components
 import Header from '../../components/Header';
@@ -24,9 +23,8 @@ import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvide
 const isIos = Platform.OS === 'ios';
 
 export default function VentsDetailsPage() {
-  const db = useSQLiteContext();
   const { state, setState } = useFormStateContext();
-  const { ventsDetails, jobID } = state;
+  const { ventsDetails } = state;
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
   const handleInputChange = (key, value) => {
@@ -39,22 +37,6 @@ export default function VentsDetailsPage() {
     }));
   };
 
-  const saveToDatabase = async () => {
-    const ventsJson = JSON.stringify(ventsDetails);
-    try {
-      await db
-        .runAsync('UPDATE Jobs SET ventsDetails =? WHERE id = ?', [
-          ventsJson,
-          jobID,
-        ])
-        .then((result) => {
-          console.log('Vents Details saved to database:', result);
-        });
-    } catch (error) {
-      console.log('Error saving Vents details to database:', error);
-    }
-  };
-
   const nextPressed = async () => {
     const { isValid, message } = validateVentsDetails(ventsDetails);
 
@@ -63,12 +45,10 @@ export default function VentsDetailsPage() {
       return;
     }
 
-    await saveToDatabase();
     goToNextStep();
   };
 
   const backPressed = async () => {
-    await saveToDatabase();
     goToPreviousStep();
   };
 

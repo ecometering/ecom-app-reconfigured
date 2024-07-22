@@ -1,7 +1,5 @@
 import React from 'react';
-import moment from 'moment';
-import { useSQLiteContext } from 'expo-sqlite/next';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -28,46 +26,16 @@ import { validateSiteDetails } from './SiteDetailsPage.validator';
 
 function SiteDetailsPage() {
   const navigation = useNavigation();
-  const route = useRoute();
-  const params = route.params;
 
   const { goToNextStep } = useProgressNavigation();
   const { state, setState } = useFormStateContext();
-  const { jobType, siteDetails, jobID, setJobID } = state;
-
-  const db = useSQLiteContext();
+  const { jobType, siteDetails } = state;
 
   const handleInputChange = (name, value) => {
     setState((prevDetails) => ({
       ...prevDetails,
       siteDetails: { ...prevDetails.siteDetails, [name]: value },
     }));
-  };
-
-  const saveSiteDetailsToDatabase = async () => {
-    const siteDetailsJSON = JSON.stringify(siteDetails);
-
-    const getCurrentDateTime = () => {
-      return moment().format('YYYY-MM-DD HH:mm');
-    };
-
-    const mprn = siteDetails.mprn;
-    const postcode = siteDetails.postCode;
-    const jobStatus = 'In Progress';
-    const startDate = params?.jobData?.startDate ?? getCurrentDateTime();
-
-    try {
-      await db
-        .runAsync(
-          'INSERT INTO Jobs (jobType, MPRN, postcode, startDate, jobStatus, siteDetails) VALUES (?, ?, ?, ?, ?, ?)',
-          [jobType, mprn, postcode, startDate, jobStatus, siteDetailsJSON]
-        )
-        .then((result) => {
-          setJobID(params?.jobData?.id ?? result.lastInsertRowId);
-        });
-    } catch (error) {
-      console.error('Error saving site details to database:', error);
-    }
   };
 
   const backPressed = () => {
@@ -80,10 +48,6 @@ function SiteDetailsPage() {
     if (!isValid) {
       EcomHelper.showInfoMessage(message);
       return;
-    }
-
-    if (!jobID) {
-      await saveSiteDetailsToDatabase();
     }
     goToNextStep();
   };

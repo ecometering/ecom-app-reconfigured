@@ -6,7 +6,6 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
 } from 'react-native';
-import { useSQLiteContext } from 'expo-sqlite/next';
 
 // Components
 import Header from '../../components/Header';
@@ -23,10 +22,8 @@ import { validateMovDetails } from './MovPage.validator';
 const isIos = Platform.OS === 'ios';
 
 export default function MovPage() {
-  const db = useSQLiteContext();
-
   const { state, setState } = useFormStateContext();
-  const { movDetails, jobID } = state;
+  const { movDetails } = state;
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
   const handleInputChange = (key, value) => {
@@ -39,22 +36,6 @@ export default function MovPage() {
     }));
   };
 
-  const saveToDatabase = async () => {
-    const movJson = JSON.stringify(movDetails);
-    try {
-      await db
-        .runAsync('UPDATE Jobs SET movDetails =? WHERE id = ?', [
-          movJson,
-          jobID,
-        ])
-        .then((result) => {
-          console.log('mov Details saved to database:', result);
-        });
-    } catch (error) {
-      console.log('Error saving mov details to database:', error);
-    }
-  };
-
   const nextPressed = async () => {
     const { isValid, message } = validateMovDetails(movDetails);
 
@@ -63,12 +44,10 @@ export default function MovPage() {
       return;
     }
 
-    await saveToDatabase();
     goToNextStep();
   };
 
   const backPressed = async () => {
-    await saveToDatabase();
     goToPreviousStep();
   };
 

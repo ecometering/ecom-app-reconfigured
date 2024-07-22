@@ -30,23 +30,6 @@ function AssetTypeSelectionPage() {
   const { state, setState } = useFormStateContext();
   const { jobType, meterDetails, jobID } = state;
 
-  // Destructuring parameters directly to ensure they're accessed consistently
-  const saveToDatabase = async () => {
-    const meterDetailsJson = JSON.stringify(meterDetails);
-    try {
-      await db
-        .runAsync('UPDATE Jobs SET meterDetails = ? WHERE id = ?', [
-          meterDetailsJson,
-          jobID,
-        ])
-        .then((result) => {
-          console.log('meterDetails saved to database:', result);
-        });
-    } catch (error) {
-      console.log('Error saving meterDetails to database:', error);
-    }
-  };
-
   const handleInputChange = (name, value) => {
     setState({
       ...state,
@@ -58,7 +41,6 @@ function AssetTypeSelectionPage() {
   };
 
   const backPressed = async () => {
-    await saveToDatabase();
     goToPreviousStep();
   };
 
@@ -72,7 +54,6 @@ function AssetTypeSelectionPage() {
       return;
     }
 
-    await saveToDatabase();
     goToNextStep();
   };
 

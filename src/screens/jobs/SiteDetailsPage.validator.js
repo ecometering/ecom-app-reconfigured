@@ -3,6 +3,7 @@ import {
   validateLength,
   validatePostCode,
   validatePhoneNumber,
+  validateBooleanField,
   validateRequiredField,
 } from '../../utils/validation/validators';
 
@@ -54,19 +55,25 @@ export const validateSiteDetails = (siteDetails, jobType) => {
         'Invalid UK post code'
       ),
     () =>
+      siteDetails?.number1 &&
       validatePhoneNumber(
         'phone number1',
         siteDetails.number1,
         'Invalid phone number: phone number1'
       ),
     () =>
+      siteDetails.number2 &&
       validatePhoneNumber(
         'phone number2',
         siteDetails.number2,
         'Invalid phone number: phone number2'
       ),
-    () => validateEmail('email1', siteDetails.email1, 'Invalid email: email1'),
-    () => validateEmail('email2', siteDetails.email2, 'Invalid email: email2'),
+    () =>
+      siteDetails.email1 &&
+      validateEmail('email1', siteDetails.email1, 'Invalid email: email1'),
+    () =>
+      siteDetails.email2 &&
+      validateEmail('email2', siteDetails.email2, 'Invalid email: email2'),
     () =>
       validateBooleanField(
         'all contact is correct',
@@ -74,6 +81,7 @@ export const validateSiteDetails = (siteDetails, jobType) => {
         'Please make sure if all contact is correct'
       ),
     () =>
+      siteDetails.confirmWarrant &&
       validateBooleanField(
         'the warrant went ahead',
         siteDetails.confirmWarrant,

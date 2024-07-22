@@ -23,26 +23,16 @@ import EcomHelper from '../../utils/ecomHelper';
 import { PrimaryColors } from '../../theme/colors';
 import { useFormStateContext } from '../../context/AppContext';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
-import { useSQLiteContext } from 'expo-sqlite/next';
 import { validateGasSafeWarning } from './GasSafeWarningPage.validator';
 
 function GasSafeWarningPage() {
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
   const { state, setState } = useFormStateContext();
-  const { standardDetails, jobID } = state;
+  const { standardDetails } = state;
 
   const [isModal, setIsModal] = useState(false);
   const [isCustomerSign, setIsCustomerSign] = useState(true);
-
-  const db = useSQLiteContext();
-
-  const updateDB = async () => {
-    await db.runAsync('UPDATE Jobs SET standards = ? WHERE id = ?', [
-      JSON.stringify(standardDetails),
-      jobID,
-    ]);
-  };
 
   const handleInputChange = (key, value) => {
     setState({
@@ -69,7 +59,6 @@ function GasSafeWarningPage() {
   };
 
   const backPressed = () => {
-    updateDB();
     goToPreviousStep();
   };
 
@@ -81,7 +70,6 @@ function GasSafeWarningPage() {
       return;
     }
 
-    updateDB();
     goToNextStep();
   };
 

@@ -33,23 +33,6 @@ function SiteQuestionsPage() {
     existingPhoto?.uri || null
   );
 
-  const saveToDatabase = async () => {
-    const photosJson = JSON.stringify(photos);
-    const questionJson = JSON.stringify(siteQuestions);
-    try {
-      await db
-        .runAsync(
-          'UPDATE Jobs SET photos = ?, siteQuestions = ? WHERE id = ?',
-          [photosJson, questionJson, jobID]
-        )
-        .then((result) => {
-          console.log('photos saved to database:', result);
-        });
-    } catch (error) {
-      console.log('Error saving photos to database:', error);
-    }
-  };
-
   const handleInputChange = (name, value) => {
     setState((prevState) => ({
       ...prevState,
@@ -73,7 +56,6 @@ function SiteQuestionsPage() {
     console.log('photos:', photos);
   };
   const backPressed = async () => {
-    await saveToDatabase();
     goToPreviousStep();
   };
 
@@ -120,7 +102,7 @@ function SiteQuestionsPage() {
       );
       return;
     }
-    await saveToDatabase();
+
     goToNextStep();
   };
 

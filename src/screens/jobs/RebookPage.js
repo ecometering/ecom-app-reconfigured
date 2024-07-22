@@ -1,7 +1,6 @@
 import React from 'react';
 import moment from 'moment';
 import { Calendar } from 'react-native-calendars';
-import { useSQLiteContext } from 'expo-sqlite/next';
 import {
   View,
   Text,
@@ -20,10 +19,9 @@ import { useFormStateContext } from '../../context/AppContext';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
 const RebookPage = () => {
-  db = useSQLiteContext();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const { state, setState } = useFormStateContext();
-  const { rebook, jobID } = state;
+  const { rebook } = state;
 
   const handleInputChange = (key, value) => {
     setState({
@@ -37,18 +35,6 @@ const RebookPage = () => {
 
   const twoWeeksFromNow = moment().add(14, 'days').format('YYYY-MM-DD');
 
-  const saveToDatabase = async () => {
-    const rebookDetailsJson = JSON.stringify(rebook);
-    try {
-      await db.runAsync('UPDATE Jobs SET rebook = ? WHERE id = ?', [
-        rebookDetailsJson,
-        jobID,
-      ]);
-    } catch (error) {
-      console.error('Error saving streams to database:', error);
-    }
-  };
-
   const handleConfirmRebook = async () => {
     if (rebook?.rebookToday === null) {
       Alert.alert('Please state if the job can be rebooked today.');
@@ -56,7 +42,6 @@ const RebookPage = () => {
     }
 
     if (rebook?.rebookToday === false) {
-      await saveToDatabase();
       goToNextStep();
       return;
     }
@@ -73,7 +58,6 @@ const RebookPage = () => {
           text: 'OK',
           onPress: async () => {
             console.log('Rebook Confirmed for:', rebook?.selectedDate);
-            await saveToDatabase();
             goToNextStep();
           },
         },

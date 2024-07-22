@@ -1,5 +1,4 @@
 import React, { useRef, useState } from 'react';
-import { useSQLiteContext } from 'expo-sqlite/next';
 import { useRoute } from '@react-navigation/native';
 import {
   View,
@@ -29,11 +28,10 @@ import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvide
 export default function ChatterBoxDetailsPage() {
   const route = useRoute();
   const camera = useRef(null);
-  const db = useSQLiteContext();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
   const { state, setState } = useFormStateContext();
-  const { jobID, photos, chatterBoxDetails } = state;
+  const { photos, chatterBoxDetails } = state;
 
   const { title, photoKey } = route.params;
   const existingPhoto = photos && photoKey ? photos[photoKey] : null;
@@ -60,25 +58,7 @@ export default function ChatterBoxDetailsPage() {
     }));
   };
 
-  const saveToDatabase = async () => {
-    const photosJson = JSON.stringify(photos);
-    const chatterBoxJson = JSON.stringify(chatterBoxDetails);
-    try {
-      await db
-        .runAsync(
-          'UPDATE Jobs SET photos = ?, chatterboxDetails = ? WHERE id = ?',
-          [photosJson, chatterBoxJson, jobID]
-        )
-        .then((result) => {
-          console.log('photos saved to database:', result);
-        });
-    } catch (error) {
-      console.log('Error saving photos to database:', error);
-    }
-  };
-
   const backPressed = async () => {
-    await saveToDatabase();
     goToPreviousStep();
   };
 
@@ -93,7 +73,6 @@ export default function ChatterBoxDetailsPage() {
       return;
     }
 
-    await saveToDatabase();
     goToNextStep();
   };
 

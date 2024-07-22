@@ -8,7 +8,6 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import React from 'react';
-import { useSQLiteContext } from 'expo-sqlite/next';
 import { useRoute } from '@react-navigation/native';
 
 // Components
@@ -23,7 +22,6 @@ import TextInput, { TextInputWithTitle } from '../../components/TextInput';
 import EcomHelper from '../../utils/ecomHelper';
 import { SIZE_LIST } from '../../utils/constant';
 import { TextType } from '../../theme/typography';
-import { PrimaryColors } from '../../theme/colors';
 import { validateSlamShut } from './SlamshutPage.validator';
 import { useFormStateContext } from '../../context/AppContext';
 import withUniqueKey from '../../utils/renderNavigationWithUniqueKey';
@@ -31,10 +29,9 @@ import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvide
 
 const SlamShutPage = () => {
   const route = useRoute();
-  const db = useSQLiteContext();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const { state, setState } = useFormStateContext();
-  const { jobID, photos, streams } = state;
+  const {  photos, streams } = state;
 
   const { title, stream, photoKey } = route.params;
   const existingPhoto = photos && photoKey ? photos[photoKey] : null;
@@ -59,26 +56,7 @@ const SlamShutPage = () => {
     }));
   };
 
-  const saveToDatabase = async () => {
-    const photosJson = JSON.stringify(photos);
-    const streamsJson = JSON.stringify(streams);
-    try {
-      await db
-        .runAsync('UPDATE Jobs SET photos = ?, streams = ? WHERE id = ?', [
-          photosJson,
-          streamsJson,
-          jobID,
-        ])
-        .then((result) => {
-          console.log('photos saved to database:', result);
-        });
-    } catch (error) {
-      console.log('Error saving photos to database:', error);
-    }
-  };
-
   const backPressed = () => {
-    saveToDatabase();
     goToPreviousStep();
   };
 
@@ -94,7 +72,6 @@ const SlamShutPage = () => {
       return;
     }
 
-    await saveToDatabase();
     goToNextStep();
   };
 

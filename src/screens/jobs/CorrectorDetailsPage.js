@@ -37,7 +37,7 @@ export default function CorrectorDetailsPage() {
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const { state, setState } = useFormStateContext();
 
-  const { jobID, photos, correctorDetails } = state;
+  const { photos, correctorDetails } = state;
 
   const { title, photoKey } = route.params;
   const existingPhoto = photos && photoKey ? photos[photoKey] : null;
@@ -86,23 +86,6 @@ export default function CorrectorDetailsPage() {
     }
   }
 
-  const saveToDatabase = async () => {
-    const photosJson = JSON.stringify(photos);
-    const correctorJson = JSON.stringify(correctorDetails);
-    try {
-      await db
-        .runAsync(
-          'UPDATE Jobs SET photos = ?, correctorDetails = ? WHERE id = ?',
-          [photosJson, correctorJson, jobID]
-        )
-        .then((result) => {
-          console.log('photos saved to database:', result);
-        });
-    } catch (error) {
-      console.log('Error saving photos to database:', error);
-    }
-  };
-
   const handleInputChange = (name, value) => {
     setState((prevState) => ({
       ...prevState,
@@ -136,7 +119,6 @@ export default function CorrectorDetailsPage() {
   };
 
   const backPressed = async () => {
-    await saveToDatabase();
     goToPreviousStep();
   };
 
@@ -151,7 +133,6 @@ export default function CorrectorDetailsPage() {
       return;
     }
 
-    await saveToDatabase();
     goToNextStep();
   };
 
@@ -219,11 +200,7 @@ export default function CorrectorDetailsPage() {
                 </View>
               </View>
 
-              <View
-                style={{
-                  ...styles.row,
-                }}
-              >
+              <View style={styles.row}>
                 <EcomDropDown
                   value={correctorDetails.manufacturer}
                   valueList={correctorManufacturers}

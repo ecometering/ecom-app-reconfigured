@@ -17,10 +17,8 @@ import ImagePickerButton from '../../components/ImagePickerButton';
 // Context & Utils
 import { useFormStateContext } from '../../context/AppContext';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
-import { useSQLiteContext } from 'expo-sqlite/next';
 
 const ExtraPhotoPage = () => {
-  const db = useSQLiteContext();
   const { state, setState } = useFormStateContext();
 
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
@@ -61,10 +59,6 @@ const ExtraPhotoPage = () => {
         extraPhotos,
       },
     });
-    await db.runAsync('UPDATE Jobs SET standards = ? WHERE id = ?', [
-      JSON.stringify(state.standardDetails),
-      state.jobID,
-    ]);
   };
 
   const handleSubmit = async () => {

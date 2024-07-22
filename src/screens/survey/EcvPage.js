@@ -6,7 +6,6 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
 } from 'react-native';
-import { useSQLiteContext } from 'expo-sqlite/next';
 
 // Components
 import Header from '../../components/Header';
@@ -23,10 +22,8 @@ import { validateEcvDetails } from './EcvPage.validator';
 const isIos = Platform.OS === 'ios';
 
 export default function EcvPage() {
-  const db = useSQLiteContext();
-
   const { state, setState } = useFormStateContext();
-  const { ecvDetails, jobID } = state;
+  const { ecvDetails } = state;
 
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
@@ -40,22 +37,6 @@ export default function EcvPage() {
     }));
   };
 
-  const saveToDatabase = async () => {
-    const ecvJson = JSON.stringify(ecvDetails);
-    try {
-      await db
-        .runAsync('UPDATE Jobs SET ecvDetails =? WHERE id = ?', [
-          ecvJson,
-          jobID,
-        ])
-        .then((result) => {
-          console.log('ecv Details saved to database:', result);
-        });
-    } catch (error) {
-      console.log('Error saving ecv details to database:', error);
-    }
-  };
-
   const nextPressed = async () => {
     const { isValid, message } = validateEcvDetails(ecvDetails);
 
@@ -64,12 +45,10 @@ export default function EcvPage() {
       return;
     }
 
-    await saveToDatabase();
     goToNextStep();
   };
 
   const backPressed = async () => {
-    await saveToDatabase();
     goToPreviousStep();
   };
 

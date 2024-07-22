@@ -18,12 +18,10 @@ import TextInput from '../../components/TextInput';
 
 // Context & Utils
 import EcomHelper from '../../utils/ecomHelper';
-import { useSQLiteContext } from 'expo-sqlite/next';
 import { useFormStateContext } from '../../context/AppContext';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
 const StreamInputComponent = ({ title, value, onChangeText }) => {
-  console.log({ value });
   return (
     <View style={styles.repeatComponentContainer}>
       <View style={styles.titleContainer}>
@@ -49,9 +47,8 @@ const StreamInputComponent = ({ title, value, onChangeText }) => {
 function StreamsSetSealDetailsPage() {
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const { state, setState } = useFormStateContext();
-  const { streams, jobID } = state;
+  const { streams } = state;
 
-  const db = useSQLiteContext();
   const route = useRoute();
   const { title } = route?.params ?? {};
 
@@ -63,18 +60,6 @@ function StreamsSetSealDetailsPage() {
         [key]: value,
       },
     }));
-  };
-
-  const saveToDatabase = async () => {
-    const streamDetailsJson = JSON.stringify(streams);
-    try {
-      await db.runAsync('UPDATE Jobs SET streams = ? WHERE id = ?', [
-        streamDetailsJson,
-        jobID,
-      ]);
-    } catch (error) {
-      console.error('Error saving streams to database:', error);
-    }
   };
 
   const validateFields = () => {
@@ -97,7 +82,6 @@ function StreamsSetSealDetailsPage() {
 
   const nextPressed = async () => {
     if (!validateFields()) return;
-    await saveToDatabase();
     goToNextStep();
   };
 

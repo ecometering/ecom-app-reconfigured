@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   Image,
   ImageBackground,
@@ -6,16 +6,16 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import {TextType} from '../theme/typography';
+import { TextType } from '../theme/typography';
 import Text from './Text';
-import {PrimaryColors, SecondaryColors} from '../theme/colors';
-import {unitH, unitW} from '../utils/constant';
-import {blueGradientButton, redGradientButton} from '../utils/assets';
+import { PrimaryColors, SecondaryColors } from '../theme/colors';
+import { unitH, unitW } from '../utils/constant';
+import { blueGradientButton, redGradientButton } from '../utils/assets';
 
-export const EcomPressable = ({onPress, ...rest}) => {
+export const EcomPressable = ({ onPress, ...rest }) => {
   return (
     <PressableRN
-      onPress={event => {
+      onPress={(event) => {
         if (onPress) {
           onPress(event);
         }
@@ -42,26 +42,29 @@ const ImageButton = ({
     <EcomPressable
       onPress={onPress}
       onPressIn={() => setPressed(true)}
-      onPressOut={() => setPressed(false)}>
+      onPressOut={() => setPressed(false)}
+    >
       <ImageBackground
         source={pressed || isSelected ? blueGradientButton : redGradientButton}
-        style={{...styles.container, ...containerStyle}}>
+        style={{ ...styles.container, ...containerStyle }}
+      >
         {image && (
           <Image
             resizeMethod="auto"
-            style={{...styles.imageStyle, ...imageStyle}}
+            style={{ ...styles.imageStyle, ...imageStyle }}
             source={image}
           />
         )}
         {text !== '' && (
           <View
             style={[
-              {...textContainerStyle},
+              { ...textContainerStyle },
               pressed || isSelected
                 ? styles.imageCircleBlue
                 : styles.imageCircleRed,
-            ]}>
-            <Text type={textType} style={{...styles.text, ...textStyle}}>
+            ]}
+          >
+            <Text type={textType} style={{ ...styles.text, ...textStyle }}>
               {text}
             </Text>
           </View>
@@ -71,8 +74,8 @@ const ImageButton = ({
   );
 };
 
-export function Separator({separatorStyle}) {
-  return <View style={{...styles.separator, ...separatorStyle}} />;
+export function Separator({ separatorStyle }) {
+  return <View style={{ ...styles.separator, ...separatorStyle }} />;
 }
 
 const styles = StyleSheet.create({

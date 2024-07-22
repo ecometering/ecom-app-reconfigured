@@ -7,7 +7,6 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
 } from 'react-native';
-import { useSQLiteContext } from 'expo-sqlite/next';
 
 // Components
 import Header from '../../components/Header';
@@ -24,9 +23,8 @@ import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvide
 const isIos = Platform.OS === 'ios';
 
 export default function KioskPage() {
-  const db = useSQLiteContext();
   const { state, setState } = useFormStateContext();
-  const { kioskDetails, jobID } = state;
+  const { kioskDetails } = state;
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
   const handleInputChange = (key, value) => {
@@ -39,22 +37,6 @@ export default function KioskPage() {
     }));
   };
 
-  const saveToDatabase = async () => {
-    const kioskJson = JSON.stringify(kioskDetails);
-    try {
-      await db
-        .runAsync('UPDATE Jobs SET kioskDetails =? WHERE id = ?', [
-          kioskJson,
-          jobID,
-        ])
-        .then((result) => {
-          console.log('Kiosk Details saved to database:', result);
-        });
-    } catch (error) {
-      console.log('Error saving Kiosk details to database:', error);
-    }
-  };
-
   const nextPressed = async () => {
     const { isValid, message } = validateKioskDetails(kioskDetails);
 
@@ -63,12 +45,10 @@ export default function KioskPage() {
       return;
     }
 
-    await saveToDatabase();
     goToNextStep();
   };
 
   const backPressed = async () => {
-    await saveToDatabase();
     goToPreviousStep();
   };
 

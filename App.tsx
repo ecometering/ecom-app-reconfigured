@@ -1,20 +1,19 @@
-import React, { useEffect, useContext } from 'react';
+import Constants from 'expo-constants';
+import React, { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
+import { SQLiteProvider } from 'expo-sqlite/next';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { AppContextProvider, AppContext } from './src/context/AppContext';
-import MainNavigator from './src/navigation/MainNavigator';
+
 import {
-  createJobsTable,
-  getDatabaseTables,
   openDatabase,
   deleteDatabase,
+  createJobsTable,
+  getDatabaseTables,
 } from './src/utils/database';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createStackNavigator } from '@react-navigation/stack';
-import Constants from 'expo-constants';
+import MainNavigator from './src/navigation/MainNavigator';
+import { AppContextProvider } from './src/context/AppContext';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
-import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite/next';
-import { NavigationContainer } from '@react-navigation/native';
 
 const CheckFirstLaunch = async () => {
   try {
