@@ -28,7 +28,7 @@ import { PrimaryColors } from '../../theme/colors';
 import { useFormStateContext } from '../../context/AppContext';
 import { makeFontSmallerAsTextGrows } from '../../utils/styles';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
-import { validateCorrectorDetails } from './CorrectorDetailsPage.valodator';
+import { validateCorrectorDetails } from './CorrectorDetailsPage.validator';
 
 export default function CorrectorDetailsPage() {
   const route = useRoute();
@@ -168,9 +168,7 @@ export default function CorrectorDetailsPage() {
                       }}
                       style={{
                         ...styles.input,
-                        fontSize: makeFontSmallerAsTextGrows(
-                          correctorDetails.serialNumber
-                        ),
+                        
                       }}
                       value={correctorDetails.serialNumber}
                     />
@@ -201,6 +199,7 @@ export default function CorrectorDetailsPage() {
               </View>
 
               <View style={styles.row}>
+              <View style={{ flex: 1 }}>
                 <EcomDropDown
                   value={correctorDetails.manufacturer}
                   valueList={correctorManufacturers}
@@ -219,6 +218,7 @@ export default function CorrectorDetailsPage() {
                   placeholder="Select Model Code"
                   onChange={(item) => handleInputChange('model', item.value)}
                 />
+              </View>
               </View>
 
               <View style={styles.row}>

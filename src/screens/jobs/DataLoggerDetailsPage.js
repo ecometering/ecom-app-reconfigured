@@ -129,9 +129,7 @@ export default function DataLoggerDetailsPage() {
                     style={{
                       ...styles.input,
                       alignSelf: 'flex-end',
-                      fontSize: makeFontSmallerAsTextGrows(
-                        dataLoggerDetails.serialNumber
-                      ),
+                      
                     }}
                     value={dataLoggerDetails.serialNumber}
                   />

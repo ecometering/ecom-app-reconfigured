@@ -66,21 +66,14 @@ function MeterDetailsTwoPage() {
       handleInputChange('pulseValue', { _index: 0, label: '1', value: 1 });
     }
     if (!meterDetailsTwo.status) {
-      if (['Install', 'Survey', 'Maintenance'].includes(jobType)) {
+      
         handleInputChange('status', {
           _index: 2,
           data: 'LI',
           label: 'Live',
           value: 3,
         });
-      } else if (['Exchange', 'Warrant', 'Removal'].includes(jobType)) {
-        handleInputChange('status', {
-          _index: 12,
-          data: 'RE',
-          label: 'Removed',
-          value: 13,
-        });
-      }
+      
     }
     if (!meterDetailsTwo.mechanism) {
       handleInputChange('mechanism', { _index: 0, label: 'Credit', value: 1 });
@@ -405,9 +398,7 @@ function MeterDetailsTwoPage() {
                     }}
                     style={{
                       ...styles.input,
-                      fontSize: makeFontSmallerAsTextGrows(
-                        meterDetailsTwo.serialNumber
-                      ),
+                      
                     }}
                   />
                   <Button
@@ -459,7 +450,7 @@ function MeterDetailsTwoPage() {
                         )
                       : METER_PRESSURE_TIER_CHOICES
                   }
-                  placeholder={'Metering pressure tier'}
+                  placeholder={'Inlet pressure tier'}
                   onChange={(item) => {
                     handleInputChange('pressureTier', item);
                   }}

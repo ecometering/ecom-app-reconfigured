@@ -28,6 +28,8 @@ const styles = StyleSheet.create({
   container: {
     borderColor: PrimaryColors.Black,
     borderWidth: 1,
+    padding: 10,
+    borderRadius: 5,
   },
 });
 

@@ -28,7 +28,7 @@ import { PrimaryColors } from '../../theme/colors';
 import { useFormStateContext } from '../../context/AppContext';
 import { makeFontSmallerAsTextGrows } from '../../utils/styles';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
-import { validateCorrectorDetails } from './CorrectorDetailsPage.valodator';
+import { validateCorrectorDetails } from './CorrectorDetailsPage.validator';
 
 export default function CorrectorDetailsTwoPage() {
   const route = useRoute();
@@ -168,9 +168,7 @@ export default function CorrectorDetailsTwoPage() {
                       }}
                       style={{
                         ...styles.input,
-                        fontSize: makeFontSmallerAsTextGrows(
-                          correctorDetailsTwo.serialNumber
-                        ),
+                        
                       }}
                       value={correctorDetailsTwo.serialNumber}
                     />

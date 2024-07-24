@@ -133,7 +133,7 @@ const ExtraPhotoPage = () => {
               )}
             </View>
           ))}
-          <Text style={styles.textLabel}>More extra phots?</Text>
+          <Text style={styles.textLabel}>Any more extra photos?</Text>
           <ImagePickerButton onImageSelected={handleImageSelected} />
         </View>
       </ScrollView>

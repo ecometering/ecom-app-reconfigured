@@ -106,9 +106,7 @@ export const ExchangeStandardPage = [
         chatterbox,
         additionalMaterials,
       } = standards;
-      if (additionalMaterials === true) {
-        return AdditionalMaterialsPage;
-      } else {
+      
         if (chatterbox === true) {
           return chatterBoxPage;
         } else {
@@ -124,7 +122,7 @@ export const ExchangeStandardPage = [
         }
       }
     },
-  },
+  
 ];
 
 export const RebookPage = [
@@ -182,6 +180,9 @@ export const SnClientInfoPage = [
 export const AssetTypeSelectionPage = [
   {
     screen: 'AssetTypeSelectionPage',
+    params: {
+      title: 'Assets being Exchanged',
+        },
     diversions: ({ state }) => {
       const { meterDetails } = state || {};
       if (meterDetails?.isMeter) {

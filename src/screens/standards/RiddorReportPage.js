@@ -67,23 +67,7 @@ export default function RiddorReportPage() {
           rightBtnPressed={nextPressed}
         />
         <View style={styles.contentContainer}>
-          <View style={styles.body}>
-            <Text type={TextType.BODY_1}>RIDDOR Report</Text>
-            {standards?.riddorImage && (
-              <Image
-                source={{ uri: standards?.riddorImage }}
-                style={styles.image}
-                resizeMode="contain"
-              />
-            )}
-            <View style={styles.row}>
-              <ImagePickerButton
-                onImageSelected={(image) =>
-                  handleInputChange('riddorImage', image)
-                }
-              />
-            </View>
-          </View>
+          
 
           <View style={styles.formContainer}>
             <View style={styles.spacer} />
@@ -110,6 +94,23 @@ export default function RiddorReportPage() {
               }}
               style={styles.input}
             />
+          </View>
+          <View style={styles.body}>
+            <Text type={TextType.BODY_1}>RIDDOR Report</Text>
+            {standards?.riddorImage && (
+              <Image
+                source={{ uri: standards?.riddorImage }}
+                style={styles.image}
+                resizeMode="contain"
+              />
+            )}
+            <View style={styles.row}>
+              <ImagePickerButton
+                onImageSelected={(image) =>
+                  handleInputChange('riddorImage', image)
+                }
+              />
+            </View>
           </View>
         </View>
       </SafeAreaView>

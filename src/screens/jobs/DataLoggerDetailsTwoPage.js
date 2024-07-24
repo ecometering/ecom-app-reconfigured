@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRoute } from '@react-navigation/native';
 import {
   View,
@@ -58,6 +58,12 @@ export default function DataLoggerDetailsTwoPage() {
       },
     }));
   };
+  useEffect(() => {
+    if (!dataLoggerDetailsTwo.loggerOwner){
+     
+        handleInputChange('loggerOwner','Eco Metering solutions')}
+  })
+
 
   const backPressed = async () => {
     goToPreviousStep();
@@ -127,9 +133,7 @@ export default function DataLoggerDetailsTwoPage() {
                     style={{
                       ...styles.input,
                       alignSelf: 'flex-end',
-                      fontSize: makeFontSmallerAsTextGrows(
-                        dataLoggerDetailsTwo.serialNumber
-                      ),
+                     
                     }}
                     value={dataLoggerDetailsTwo.serialNumber}
                   />

@@ -119,7 +119,8 @@ function MeterDetailsPage() {
         const modelCodes = result.map((model) => ({
           label: model.ModelCode,
           value: model.ModelCode,
-        }));
+        }))
+        .sort((a, b) => a.label.localeCompare(b.label));;
         setMeterModelCodes(modelCodes);
       } catch (err) {
         console.error('SQL Error: ', err);
@@ -136,7 +137,9 @@ function MeterDetailsPage() {
       const manufacturers = result.map((mf) => ({
         label: mf.Manufacturer,
         value: mf.Manufacturer,
-      }));
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+      
       setMeterManufacturers(manufacturers);
     } catch (err) {
       console.error('SQL Error: ', err);
@@ -403,9 +406,7 @@ function MeterDetailsPage() {
                     }}
                     style={{
                       ...styles.input,
-                      fontSize: makeFontSmallerAsTextGrows(
-                        meterDetails.serialNumber
-                      ),
+                      
                     }}
                   />
                   <Button
@@ -455,7 +456,7 @@ function MeterDetailsPage() {
                         )
                       : METER_PRESSURE_TIER_CHOICES
                   }
-                  placeholder={'Metering pressure tier'}
+                  placeholder={'Inlet pressure tier'}
                   onChange={(item) => {
                     handleInputChange('pressureTier', item);
                   }}
