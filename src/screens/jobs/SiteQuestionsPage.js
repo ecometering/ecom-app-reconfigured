@@ -220,7 +220,7 @@ function SiteQuestionsPage() {
                       },
                     ]}
                     value={
-                      siteQuestions?.[item?.key] === null
+                      siteQuestions?.[item?.key] === undefined
                         ? null
                         : siteQuestions?.[item?.key]
                         ? item?.options[0]

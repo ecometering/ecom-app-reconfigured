@@ -32,13 +32,8 @@ const getInitialJobState = (jobType) => ({
     confirmWarrant: false,
   },
   siteQuestions: {
-    isSafe: false,
-    isGeneric: false,
     genericReason: '',
-    isCarryOut: false,
     carryOutReason: '',
-    isFitted: false,
-    isStandard: false,
   },
   photos: {},
   streams: {},
