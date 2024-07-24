@@ -17,7 +17,7 @@ import Header from '../components/Header';
 
 // Context & Utils
 import { useFormStateContext } from '../context/AppContext';
-import { openDatabase } from '../utils/database';
+import { useSQLiteContext } from 'expo-sqlite/next';
 import { useProgressNavigation } from '../context/ProgressiveFlowRouteProvider';
 
 const getCurrentDateTime = () => moment().format('YYYY-MM-DD HH:mm');
@@ -26,7 +26,7 @@ const showAlert = (title, message, onPress = null) => {
   Alert.alert(title, message, [{ text: 'OK', onPress }]);
 };
 
-const handleError = (title, message, error) => {
+const handleError = (title, message, error, setLoading) => {
   console.error(`${title}:`, error);
   showAlert(title, message);
   setLoading(false);
@@ -54,6 +54,7 @@ const SubmitSuccessPage = () => {
 
   const navigation = useNavigation();
   const { goToPreviousStep } = useProgressNavigation();
+  const db = useSQLiteContext();
 
   const [isLoading, setLoading] = useState(false);
 
@@ -66,28 +67,23 @@ const SubmitSuccessPage = () => {
     setLoading(true);
 
     try {
-      const db = await openDatabase();
-
-      db.transaction((tx) => {
-        tx.executeSql(
-          'SELECT * FROM Jobs WHERE id = ?',
-          [jobID],
-          async (_, { rows: { _array } }) => {
-            if (_array.length > 0) {
-              const jobData = JSON.stringify(_array[0]);
-              await sendData(jobData);
-            } else {
-              showAlert('Error', 'No job data found.');
-              setLoading(false);
-            }
-          },
-          (error) => {
-            handleError('Database Error', 'Failed to fetch job data.', error);
-          }
-        );
-      });
+      const result = await db.getAllAsync('SELECT * FROM Jobs WHERE id = ?', [
+        jobID,
+      ]);
+      if (result.length > 0) {
+        const jobData = JSON.stringify(result[0]);
+        await sendData(jobData);
+      } else {
+        showAlert('Error', 'No job data found.');
+        setLoading(false);
+      }
     } catch (error) {
-      handleError('Database Error', 'Failed to open database.', error);
+      handleError(
+        'Database Error',
+        'Failed to fetch job data.',
+        error,
+        setLoading
+      );
     }
   };
 
@@ -106,7 +102,8 @@ const SubmitSuccessPage = () => {
       handleError(
         'Upload Error',
         `Upload failed with status: ${error?.response?.status}`,
-        error
+        error,
+        setLoading
       );
     }
   };
@@ -159,28 +156,30 @@ const SubmitSuccessPage = () => {
   };
 
   const updateJobStatus = async () => {
-    const db = await openDatabase();
     const endDate = getCurrentDateTime();
 
-    db.transaction((tx) => {
-      tx.executeSql(
+    try {
+      await db.runAsync(
         'UPDATE Jobs SET jobStatus = ?, endDate = ? WHERE id = ?',
-        ['Completed', endDate, jobID],
-        () => {
-          showAlert(
-            'Upload Complete',
-            'Job and photos uploaded successfully.',
-            () => {
-              resetState();
-              setLoading(false);
-              navigation.navigate('Home');
-            }
-          );
-        },
-        (error) =>
-          handleError('Database Error', 'Failed to update job status.', error)
+        ['Completed', endDate, jobID]
       );
-    });
+      showAlert(
+        'Upload Complete',
+        'Job and photos uploaded successfully.',
+        () => {
+          resetState();
+          setLoading(false);
+          navigation.navigate('Home');
+        }
+      );
+    } catch (error) {
+      handleError(
+        'Database Error',
+        'Failed to update job status.',
+        error,
+        setLoading
+      );
+    }
   };
 
   return (

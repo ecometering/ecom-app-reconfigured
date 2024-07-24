@@ -2,6 +2,7 @@ import {
   validateEmail,
   validateLength,
   validatePostCode,
+  validateSelected,
   validatePhoneNumber,
   validateBooleanField,
   validateRequiredField,
@@ -75,10 +76,10 @@ export const validateSiteDetails = (siteDetails, jobType) => {
       siteDetails.email2 &&
       validateEmail('email2', siteDetails.email2, 'Invalid email: email2'),
     () =>
-      validateBooleanField(
-        'all contact is correct',
-        siteDetails.confirmContact,
-        'Please make sure if all contact is correct'
+      validateSelected(
+        'Site Contact',
+        siteDetails.siteContact,
+        'Please confirm contact details are correct'
       ),
     () =>
       siteDetails.confirmWarrant &&

@@ -64,3 +64,10 @@ export const validateBooleanField = (field, value, message) => {
   }
   return null;
 };
+
+export const validateSelected = (field, value, message) => {
+  if (!value) {
+    return message || `Please select ${field}`;
+  }
+  return null;
+};

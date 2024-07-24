@@ -146,7 +146,7 @@ const CalendarComponent = () => {
     new Date().toISOString().split('T')[0]
   );
   const [viewMode, setViewMode] = useState('Month');
-  const [schedules, setSchedules] = useState([]);
+  const [schedules, setSchedules] = useState({});
   const [agendaItem, setAgendaItem] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
 

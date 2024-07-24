@@ -23,6 +23,7 @@ import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvide
 
 import EcomHelper from '../../utils/ecomHelper';
 import { validateSiteDetails } from './SiteDetailsPage.validator';
+import CustomCheckbox from '../../components/Checkbox';
 
 function SiteDetailsPage() {
   const navigation = useNavigation();
@@ -259,22 +260,12 @@ function SiteDetailsPage() {
             />
 
             <View style={{ marginBottom: 30, gap: 20 }}>
-              <View style={{ gap: 10 }}>
-                <Text type={TextType.CAPTION_2}>
-                  {'Is all contact details correct? *'}
-                </Text>
-                <OptionalButton
-                  options={['Yes', 'No']}
-                  actions={[
-                    () => handleInputChange('confirmContact', true),
-                    () => handleInputChange('confirmContact', false),
-                  ]}
-                  value={
-                    siteDetails.confirmContact === null
-                      ? null
-                      : siteDetails.confirmContact
-                      ? 'Yes'
-                      : 'No'
+              <View style={{ gap: 20 }}>
+                <CustomCheckbox
+                  label="I confirm all contact details correct"
+                  checked={siteDetails.confirmContact || false}
+                  onChange={(newValue) =>
+                    handleInputChange('confirmContact', newValue)
                   }
                 />
               </View>
@@ -290,7 +281,7 @@ function SiteDetailsPage() {
                       () => handleInputChange('confirmWarrant', false),
                     ]}
                     value={
-                      siteDetails.confirmWarrant === null
+                      siteDetails.confirmWarrant === undefined
                         ? null
                         : siteDetails.confirmWarrant
                         ? 'Yes'
