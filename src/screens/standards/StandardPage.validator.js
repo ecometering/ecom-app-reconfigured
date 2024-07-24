@@ -4,7 +4,7 @@ import {
 } from '../../utils/validation/validators';
 
 export const validateStandardDetails = (
-  standardDetails,
+  standards,
   meterDetails,
   jobType
 ) => {
@@ -12,25 +12,25 @@ export const validateStandardDetails = (
     () =>
       validateBooleanField(
         'Network service/ECV conform to standards',
-        standardDetails?.conformStandard,
+        standards?.conformStandard,
         'Please answer if the network service/ECV conform to standards'
       ),
     () =>
       validateRequiredField(
         'Inlet Pressure',
-        standardDetails?.pressure,
+        standards?.pressure,
         'Please set inlet pressure'
       ),
     () =>
       validateRequiredField(
         'Signature',
-        standardDetails?.signature,
+        standards?.signature,
         'Please enter signature'
       ),
     () =>
       validateBooleanField(
         'RIDDOR reportable',
-        standardDetails?.riddorReportable,
+        standards?.riddorReportable,
         'Please answer if RIDDOR reportable'
       ),
     ...(meterDetails?.isMeter &&
@@ -39,13 +39,13 @@ export const validateStandardDetails = (
           () =>
             validateBooleanField(
               'Tightness test passed',
-              standardDetails?.testPassed,
+              standards?.testPassed,
               'Please answer if tightness test passed'
             ),
           () =>
             validateBooleanField(
               'Outlet kit is used',
-              standardDetails?.useOutlet,
+              standards?.useOutlet,
               'Please answer if Outlet kit is used'
             ),
         ]

@@ -29,15 +29,10 @@ import { PrimaryColors } from '../../theme/colors';
 import { validateStandardDetails } from './StandardPage.validator';
 
 function StandardPage() {
-  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
+  const signatureWidth = EcomHelper.getSignatureWidth();
   const { state, setState } = useFormStateContext();
-  const { standardDetails, meterDetails, jobID, setStandardDetails, jobType } =
-    state;
-
-  const riddorReportable =
-    standardDetails?.riddorReportable == null
-      ? meterDetails?.isStandard
-      : standardDetails?.riddorReportable;
+  const { goToNextStep, goToPreviousStep } = useProgressNavigation();
+  const { standards, meterDetails, jobType } = state;
 
   const [isModal, setIsModal] = useState(false);
 
@@ -45,8 +40,8 @@ function StandardPage() {
     const base64String = signature.replace('data:image/png;base64,', '');
     setState((prevState) => ({
       ...prevState,
-      standardDetails: {
-        ...prevState.standardDetails,
+      standards: {
+        ...prevState.standards,
         signature: base64String,
       },
     }));
@@ -56,8 +51,8 @@ function StandardPage() {
   const handleInputChange = (name, value) => {
     setState((prevState) => ({
       ...prevState,
-      standardDetails: {
-        ...prevState.standardDetails,
+      standards: {
+        ...prevState.standards,
         [name]: value,
       },
     }));
@@ -65,7 +60,7 @@ function StandardPage() {
 
   const nextPressed = async () => {
     const { isValid, message } = validateStandardDetails(
-      standardDetails,
+      standards,
       meterDetails,
       jobType
     );
@@ -166,9 +161,9 @@ function StandardPage() {
                         },
                       ]}
                       value={
-                        standardDetails?.[item?.key] === undefined
+                        standards?.[item?.key] === undefined
                           ? null
-                          : standardDetails?.[item?.key]
+                          : standards?.[item?.key]
                           ? item?.options[0]
                           : item?.options[1]
                       }
@@ -180,7 +175,7 @@ function StandardPage() {
 
             <TextInputWithTitle
               title={'Inlet Pressure'}
-              value={standardDetails?.pressure}
+              value={standards?.pressure}
               onChange={(event) => {
                 // its sendign native event with numeric keyboard
                 handleInputChange('pressure', event.nativeEvent.text);
@@ -190,7 +185,7 @@ function StandardPage() {
 
             <TextInputWithTitle
               title={'Notes'}
-              value={standardDetails?.conformText}
+              value={standards?.conformText}
               onChangeText={(text) => {
                 handleInputChange('conformText', text);
               }}
@@ -211,10 +206,10 @@ function StandardPage() {
                 }}
               />
 
-              {standardDetails?.signature && (
+              {standards?.signature && (
                 <Image
                   source={{
-                    uri: `data:image/png;base64,${standardDetails?.signature}`,
+                    uri: `data:image/png;base64,${standards?.signature}`,
                   }}
                   style={styles.signImage}
                 />
@@ -233,14 +228,18 @@ function StandardPage() {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalInnerContainer}>
-            <View style={{ height: 350 }}>
-              <SignatureScreen
-                onOK={handleOK}
-                webStyle={`.m-signature-pad { ... }`}
-                backgroundColor={PrimaryColors.Sand}
-                scrollable={true}
-              />
-            </View>
+            <SignatureScreen
+              onOK={handleOK}
+              webStyle={`
+                .m-signature-pad { box-shadow: none; border: none; width: ${signatureWidth}; height: 70%; } 
+                .m-signature-pad--body { border: none; }
+                .m-signature-pad--footer { margin: 0px; }
+                body, html { width: 100%; height: 100%;}
+              `}
+              backgroundColor={PrimaryColors.Sand}
+              style={styles.signatureCanvas}
+              webviewContainerStyle={styles.webviewContainer}
+            />
             <Button
               title="Close"
               onPress={() => {
@@ -266,32 +265,40 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)', // Semi-transparent background
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative',
   },
   modalInnerContainer: {
+    width: '90%',
+    height: '70%',
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 20,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    position: 'absolute',
-    left: 20,
-    right: 20,
+  },
+  signatureCanvas: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    backgroundColor: PrimaryColors.Sand,
+    borderRadius: 10,
   },
   signImage: {
     width: '100%',
     height: 300,
     alignSelf: 'center',
   },
+  webviewContainer: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    backgroundColor: PrimaryColors.Sand,
+    borderRadius: 10,
+  },
 });
-
 export default StandardPage;

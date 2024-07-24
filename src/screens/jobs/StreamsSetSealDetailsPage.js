@@ -153,7 +153,6 @@ function StreamsSetSealDetailsPage() {
                       title: 'Working Pressure',
                     },
                   ].map((strem) => {
-                    console.log(strem.key);
                     return (
                       <StreamInputComponent
                         key={strem.key}

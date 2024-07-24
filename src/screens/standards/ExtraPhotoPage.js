@@ -22,8 +22,16 @@ const ExtraPhotoPage = () => {
   const { state, setState } = useFormStateContext();
 
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
-  const [photos, setPhotos] = useState([]);
+  const existingPhotos =
+    state?.standards?.extraPhotos &&
+    state.standards.extraPhotos.map((photo) => ({
+      uri: photo.extraPhoto,
+      extraComment: photo.extraComment,
+    }));
+  const [photos, setPhotos] = useState(existingPhotos || []);
   const [activeSections, setActiveSections] = useState([]);
+
+  console.log({ photos });
 
   const handleImageSelected = (newPhoto) => {
     const updatedPhotos = [...photos, { uri: newPhoto }];
@@ -54,8 +62,8 @@ const ExtraPhotoPage = () => {
 
     setState({
       ...state,
-      standardDetails: {
-        ...state.standardDetails,
+      standards: {
+        ...state.standards,
         extraPhotos,
       },
     });
@@ -92,7 +100,10 @@ const ExtraPhotoPage = () => {
             <View key={index}>
               <TouchableOpacity onPress={() => toggleSection(index)}>
                 <View style={styles.header}>
-                  <Text style={styles.headerText}>Photo {index + 1}</Text>
+                  <Text style={styles.headerText}>
+                    {activeSections.includes(index) ? '▲' : '▼'} Photo{' '}
+                    {index + 1}
+                  </Text>
                   <TouchableOpacity onPress={() => handleRemovePhoto(index)}>
                     <Text style={styles.removeText}>Remove</Text>
                   </TouchableOpacity>

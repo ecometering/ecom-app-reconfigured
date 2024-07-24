@@ -96,8 +96,8 @@ export const RiddorReportPage = [
   {
     screen: 'RiddorReportPage',
     diversions: ({ state }) => {
-      const { standardDetails } = state;
-      if (standardDetails.conformStandard === false) {
+      const { standards } = state;
+      if (standards.conformStandard === false) {
         return SnClientInfoPage;
       } else {
         return CompositeLabelPhoto;
@@ -139,8 +139,8 @@ export const chatterBoxPage = [
   {
     screen: 'chatterBox',
     diversions: ({ state }) => {
-      const { standardDetails } = state;
-      const { riddorReportable, conformStandard } = standardDetails;
+      const { standards } = state;
+      const { riddorReportable, conformStandard } = standards;
 
       if (riddorReportable === true) {
         return RiddorReportPage;
@@ -159,8 +159,8 @@ export const AdditionalMaterialsPage = [
   {
     screen: 'AdditionalMaterials',
     diversions: ({ state }) => {
-      const { standardDetails } = state;
-      const { riddorReportable, conformStandard, chatterbox } = standardDetails;
+      const { standards } = state;
+      const { riddorReportable, conformStandard, chatterbox } = standards;
       if (chatterbox === true) {
         return chatterBoxPage;
       } else {
@@ -182,13 +182,13 @@ export const RemovedStandardPage = [
   {
     screen: 'StandardPage',
     diversions: ({ state }) => {
-      const { standardDetails } = state;
+      const { standards } = state;
       const {
         riddorReportable,
         conformStandard,
         chatterbox,
         additionalMaterials,
-      } = standardDetails;
+      } = standards;
       if (additionalMaterials === true) {
         return AdditionalMaterialsPage;
       } else {

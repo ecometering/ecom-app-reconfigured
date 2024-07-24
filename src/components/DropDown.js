@@ -7,11 +7,7 @@ import { PrimaryColors } from '../theme/colors';
 
 const EcomDropDown = ({ value, valueList, placeholder, onChange }) => {
   return (
-    <View
-      style={{
-        flex: 1,
-      }}
-    >
+    <View>
       <Text>{placeholder || ' '}</Text>
       <View style={styles.container}>
         <Dropdown

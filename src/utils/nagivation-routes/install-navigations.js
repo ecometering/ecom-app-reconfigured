@@ -58,8 +58,8 @@ export const chatterBoxPage = [
       photoKey: 'InstalledChatterBox',
     },
     diversions: ({ state }) => {
-      const { standardDetails } = state;
-      const { riddorReportable, conformStandard } = standardDetails;
+      const { standards } = state;
+      const { riddorReportable, conformStandard } = standards;
       if (riddorReportable) {
         return RiddorReportPage;
       } else {
@@ -77,8 +77,8 @@ export const AdditionalMaterialsPage = [
   {
     screen: 'AdditionalMaterial',
     diversions: ({ state }) => {
-      const { standardDetails } = state;
-      const { riddorReportable, conformStandard, chatterbox } = standardDetails;
+      const { standards } = state;
+      const { riddorReportable, conformStandard, chatterbox } = standards;
       if (chatterbox === true) {
         return chatterBoxPage;
       } else {
@@ -100,13 +100,13 @@ export const StandardPage = [
   {
     screen: 'StandardPage',
     diversions: ({ state }) => {
-      const { standardDetails } = state;
+      const { standards } = state;
       const {
         riddorReportable,
         conformStandard,
         chatterbox,
         additionalMaterials,
-      } = standardDetails;
+      } = standards;
       if (additionalMaterials === true) {
         return AdditionalMaterialsPage;
       } else {
@@ -142,8 +142,8 @@ export const RiddorReportPage = [
   {
     screen: 'RiddorReportPage',
     diversions: ({ state }) => {
-      const { standardDetails } = state;
-      if (standardDetails.conformStandard === false) {
+      const { standards } = state;
+      if (standards.conformStandard === false) {
         return SnClientInfoPage;
       } else {
         return CompositeLabelPhoto;

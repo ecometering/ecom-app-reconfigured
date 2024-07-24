@@ -3,40 +3,40 @@ import {
   validateBooleanField,
 } from '../../utils/validation/validators';
 
-export const validateGasSafeWarning = (standardDetails) => {
+export const validateGasSafeWarning = (standards) => {
   const validations = [
     () =>
       validateRequiredField(
         'Certificate Reference',
-        standardDetails?.certificateReference,
+        standards?.certificateReference,
         'Please enter Certificate Reference'
       ),
     () =>
       validateRequiredField(
         'Emergency Service Provider',
-        standardDetails?.emergencyService,
+        standards?.emergencyService,
         'Please enter Details of gas Emergency Service Provider'
       ),
     () =>
       validateBooleanField(
         'Property Rented',
-        standardDetails?.isPropertyRented,
+        standards?.isPropertyRented,
         'Please answer if the property is rented'
       ),
     () =>
       validateBooleanField(
         'Customer Available on Site',
-        standardDetails?.isCustomerAvailable,
+        standards?.isCustomerAvailable,
         'Please answer if Customer was available on site'
       ),
     () =>
-      standardDetails?.isCustomerAvailable && !standardDetails?.customerSign
+      standards?.isCustomerAvailable && !standards?.customerSign
         ? 'Please check Customer Signature'
         : null,
     () =>
       validateRequiredField(
         'Engineer Signature',
-        standardDetails?.engineerSign,
+        standards?.engineerSign,
         'Please check Engineer Signature'
       ),
   ];

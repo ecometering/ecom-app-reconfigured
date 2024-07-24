@@ -26,10 +26,11 @@ import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvide
 import { validateGasSafeWarning } from './GasSafeWarningPage.validator';
 
 function GasSafeWarningPage() {
+  const signatureWidth = EcomHelper.getSignatureWidth();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
   const { state, setState } = useFormStateContext();
-  const { standardDetails } = state;
+  const { standards } = state;
 
   const [isModal, setIsModal] = useState(false);
   const [isCustomerSign, setIsCustomerSign] = useState(true);
@@ -37,8 +38,8 @@ function GasSafeWarningPage() {
   const handleInputChange = (key, value) => {
     setState({
       ...state,
-      standardDetails: {
-        ...standardDetails,
+      standards: {
+        ...standards,
         [key]: value,
       },
     });
@@ -48,8 +49,8 @@ function GasSafeWarningPage() {
     const base64String = signature.replace('data:image/png;base64,', '');
     setState({
       ...state,
-      standardDetails: {
-        ...standardDetails,
+      standards: {
+        ...standards,
         ...(isCustomerSign
           ? { customerSign: base64String }
           : { engineerSign: base64String }),
@@ -63,7 +64,7 @@ function GasSafeWarningPage() {
   };
 
   const nextPressed = async () => {
-    const { isValid, message } = validateGasSafeWarning(standardDetails);
+    const { isValid, message } = validateGasSafeWarning(standards);
 
     if (!isValid) {
       EcomHelper.showInfoMessage(message);
@@ -99,7 +100,7 @@ function GasSafeWarningPage() {
               onChangeText={(txt) => {
                 handleInputChange('certificateReference', txt);
               }}
-              value={standardDetails?.certificateReference}
+              value={standards?.certificateReference}
             />
 
             <TextInputWithTitle
@@ -108,7 +109,7 @@ function GasSafeWarningPage() {
               onChangeText={(txt) => {
                 handleInputChange('emergencyService', txt);
               }}
-              value={standardDetails?.emergencyService}
+              value={standards?.emergencyService}
             />
 
             <View style={styles.row}>
@@ -138,9 +139,9 @@ function GasSafeWarningPage() {
                       },
                     ]}
                     value={
-                      standardDetails?.isPropertyRented == null
+                      standards?.isPropertyRented == null
                         ? null
-                        : standardDetails?.isPropertyRented
+                        : standards?.isPropertyRented
                         ? 'Yes'
                         : 'No'
                     }
@@ -174,9 +175,9 @@ function GasSafeWarningPage() {
                       },
                     ]}
                     value={
-                      standardDetails?.isCustomerAvailable == null
+                      standards?.isCustomerAvailable == null
                         ? null
-                        : standardDetails?.isCustomerAvailable
+                        : standards?.isCustomerAvailable
                         ? 'Yes'
                         : 'No'
                     }
@@ -186,7 +187,7 @@ function GasSafeWarningPage() {
             </View>
 
             <View>
-              {standardDetails?.isCustomerAvailable && (
+              {standards?.isCustomerAvailable && (
                 <View>
                   <Button
                     title={'Customer Signature'}
@@ -196,10 +197,10 @@ function GasSafeWarningPage() {
                     }}
                   />
 
-                  {standardDetails?.customerSign && (
+                  {standards?.customerSign && (
                     <Image
                       source={{
-                        uri: `data:image/png;base64,${standardDetails?.customerSign}`,
+                        uri: `data:image/png;base64,${standards?.customerSign}`,
                       }}
                       style={styles.signImage}
                     />
@@ -218,7 +219,7 @@ function GasSafeWarningPage() {
 
                 <Image
                   source={{
-                    uri: `data:image/png;base64,${standardDetails?.engineerSign}`,
+                    uri: `data:image/png;base64,${standards?.engineerSign}`,
                   }}
                   style={styles.signImage}
                 />
@@ -234,15 +235,19 @@ function GasSafeWarningPage() {
               }}
             >
               <View style={styles.modalOverlay}>
-                <View style={[styles.modalInnerContainer]}>
-                  <View style={{ height: 350 }}>
-                    <SignatureScreen
-                      onOK={handleOK}
-                      webStyle={`.m-signature-pad { ... }`}
-                      backgroundColor={PrimaryColors.Sand}
-                      scrollable={true}
-                    />
-                  </View>
+                <View style={styles.modalInnerContainer}>
+                  <SignatureScreen
+                    onOK={handleOK}
+                    webStyle={`
+                    .m-signature-pad { box-shadow: none; border: none; width: ${signatureWidth}; height: 70%; } 
+                    .m-signature-pad--body { border: none; }
+                    .m-signature-pad--footer { margin: 0px; }
+                    body, html { width: 100%; height: 100%;}
+                  `}
+                    backgroundColor={PrimaryColors.Sand}
+                    style={styles.signatureCanvas}
+                    webviewContainerStyle={styles.webviewContainer}
+                  />
                   <Button
                     title="Close"
                     onPress={() => {
@@ -288,31 +293,40 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)', // Semi-transparent background
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative',
   },
   modalInnerContainer: {
+    width: '90%',
+    height: '70%',
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 20,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    position: 'absolute',
-    left: 20,
-    right: 20,
+  },
+  signatureCanvas: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    backgroundColor: PrimaryColors.Sand,
+    borderRadius: 10,
   },
   signImage: {
     width: '100%',
     height: 300,
     alignSelf: 'center',
+  },
+  webviewContainer: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    backgroundColor: PrimaryColors.Sand,
+    borderRadius: 10,
   },
 });
 

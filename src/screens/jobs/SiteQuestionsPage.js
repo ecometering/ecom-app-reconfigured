@@ -202,6 +202,7 @@ function SiteQuestionsPage() {
           ].map((item) => {
             return (
               <View
+                key={item?.key}
                 style={{
                   gap: 10,
                 }}

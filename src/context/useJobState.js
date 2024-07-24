@@ -1,6 +1,7 @@
+import moment from 'moment';
 import { useState, useCallback } from 'react';
 import { useSQLiteContext } from 'expo-sqlite/next';
-import moment from 'moment';
+
 import { fieldMapping, jsonFields } from './stateDatabaseMapping';
 
 const getInitialJobState = (jobType) => ({
@@ -46,7 +47,7 @@ const getInitialJobState = (jobType) => ({
   ecvDetails: {},
   movDetails: {},
   regulatorDetails: {},
-  standards: null,
+  standards: {},
   meterDetailsTwo: {},
   additionalMaterials: {},
   dataLoggerDetails: {},
@@ -104,10 +105,21 @@ const useJobState = () => {
 
       const fields = Object.keys(fieldMapping).filter((key) => key !== 'jobID');
       const values = fields.map((field) => {
+        let value = currentState[field];
+
         if (jsonFields.includes(field)) {
-          return JSON.stringify(currentState[field]);
+          if (typeof value === 'string') {
+            try {
+              const parsedValue = JSON.parse(value);
+              value = JSON.stringify(parsedValue);
+            } catch (e) {
+              console.log('error parsing json', e);
+            }
+          } else {
+            value = JSON.stringify(value || {});
+          }
         }
-        return currentState[field];
+        return value;
       });
 
       if (jobID) {
@@ -140,7 +152,9 @@ const useJobState = () => {
     setState((prevState) => {
       const updatedState =
         typeof newState === 'function' ? newState(prevState) : newState;
-      ensureFieldsExist().then(() => saveToDatabase(updatedState));
+      ensureFieldsExist().then(() => {
+        saveToDatabase(updatedState);
+      });
       return updatedState;
     });
   };

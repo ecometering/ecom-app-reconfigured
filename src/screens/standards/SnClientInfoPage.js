@@ -48,7 +48,7 @@ function SnClientInfoPage() {
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const appContext = useContext(AppContext);
   const { state, setState } = useFormStateContext();
-  const { standardDetails } = state;
+  const { standards } = state;
   const jobType = appContext.jobType;
   const title = jobType === 'Install' ? 'New Meter Details' : jobType;
 
@@ -66,7 +66,7 @@ function SnClientInfoPage() {
   };
 
   const nextPressed = async () => {
-    if (standardDetails?.tableData?.length === 0) {
+    if (standards?.tableData?.length === 0) {
       EcomHelper.showInfoMessage('Atleast one entry required');
       return;
     }
@@ -295,10 +295,10 @@ function SnClientInfoPage() {
                 onPress={() => {
                   setState((prev) => ({
                     ...prev,
-                    standardDetails: {
-                      ...prev.standardDetails,
+                    standards: {
+                      ...prev.standards,
                       tableData: [
-                        ...(prev.standardDetails?.tableData || []),
+                        ...(prev.standards?.tableData || []),
                         localState,
                       ],
                     },
@@ -308,7 +308,7 @@ function SnClientInfoPage() {
               />
             </View>
 
-            {standardDetails?.tableData?.map((item, index) => {
+            {standards?.tableData?.map((item, index) => {
               return (
                 <View
                   key={index}

@@ -19,7 +19,7 @@ const fieldsToParse = [
   'ecvDetails',
   'movDetails',
   'regulatorDetails',
-  'standardDetails',
+  'standards',
   'meterDetailsTwo',
   'additionalMaterials',
   'dataLoggerDetails',

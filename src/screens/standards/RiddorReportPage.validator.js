@@ -1,23 +1,23 @@
 import { validateRequiredField } from '../../utils/validation/validators';
 
-export const validateRiddorReport = (standardDetails) => {
+export const validateRiddorReport = (standards) => {
   const validations = [
     () =>
       validateRequiredField(
         'Image',
-        standardDetails?.riddorImage,
+        standards?.riddorImage,
         'Please choose an image.'
       ),
     () =>
       validateRequiredField(
         'Notes',
-        standardDetails?.notes,
+        standards?.notes,
         'Notes are compulsory!'
       ),
     () =>
       validateRequiredField(
         'RIDDOR Reference',
-        standardDetails?.riddorRef,
+        standards?.riddorRef,
         'RIDDOR reference is required!'
       ),
   ];

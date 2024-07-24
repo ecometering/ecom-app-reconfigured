@@ -50,7 +50,7 @@ const handleUploadError = (error) => {
 
 const SubmitSuccessPage = () => {
   const { state, resetState } = useFormStateContext();
-  const { jobStatus, jobID, photos, standardDetails } = state;
+  const { jobStatus, jobID, photos, standards } = state;
 
   const navigation = useNavigation();
   const { goToPreviousStep } = useProgressNavigation();
@@ -115,7 +115,7 @@ const SubmitSuccessPage = () => {
     console.log('Uploading photos...');
     const photosToUpload = (photos && Object.values(photos)) || [];
     const extraPhotos =
-      standardDetails?.extras
+      standards?.extras
         ?.filter((extra) => extra.extraPhoto)
         ?.map((extra) => ({
           photoKey: 'OtherPhoto',

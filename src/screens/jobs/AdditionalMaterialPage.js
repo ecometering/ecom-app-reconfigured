@@ -186,7 +186,7 @@ function AdditionalMaterialPage() {
           </Button>
         </View>
         {regulatorDetails?.materials?.length > 0 ? (
-          <View style={{ flex: 1 }}>
+          <View>
             <View
               style={[styles.row, { backgroundColor: Transparents.BlueColor2 }]}
             >
@@ -240,11 +240,8 @@ function AdditionalMaterialPage() {
 }
 
 const styles = StyleSheet.create({
-  content: {
-    flex: 1,
-  },
+  content: {},
   container: {
-    flex: 1,
     gap: 10,
     padding: 10,
   },
@@ -255,7 +252,6 @@ const styles = StyleSheet.create({
   row: {
     display: 'flex',
     flexDirection: 'row',
-    flex: 1,
     maxHeight: 50,
   },
   buttonContainer: {

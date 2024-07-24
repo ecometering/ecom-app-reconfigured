@@ -35,6 +35,7 @@ function JobTypePage() {
       setSelectedJobType(jobType);
       setModalVisible(true);
     } else {
+      setSelectedJobType(jobType);
       await startNewJob(jobType);
     }
   };
@@ -73,8 +74,8 @@ function JobTypePage() {
             'Survey',
             'Warrant',
             'Maintenance',
-          ].map((type, index) => (
-            <View key={index}>
+          ].map((type) => (
+            <View key={type}>
               <Button
                 onPress={() => handleJobTypeSelection(type)}
                 style={styles.button}

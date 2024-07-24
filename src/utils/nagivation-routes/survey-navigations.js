@@ -81,8 +81,8 @@ export const RiddorReportPage = [
   {
     screen: 'RiddorReportPage',
     diversions: ({ state }) => {
-      const { standardDetails } = state;
-      if (standardDetails.conformStandard === false) {
+      const { standards } = state;
+      if (standards.conformStandard === false) {
         return SnClientInfoPage;
       } else {
         return CompositeLabelPhoto;
@@ -106,8 +106,8 @@ export const SurveyStandardPage = [
   {
     screen: 'StandardPage',
     diversions: ({ state }) => {
-      const { standardDetails } = state;
-      const { riddorReportable, conformStandard } = standardDetails;
+      const { standards } = state;
+      const { riddorReportable, conformStandard } = standards;
       if (riddorReportable === true) {
         return RiddorReportPage;
       } else {

@@ -26,7 +26,7 @@ export default function RiddorReportPage() {
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const { state, setState } = useFormStateContext();
 
-  const { standardDetails, jobType, jobID } = state;
+  const { standards, jobType, jobID } = state;
 
   const title = jobType === 'Install' ? 'New Meter Details' : jobType;
 
@@ -37,15 +37,15 @@ export default function RiddorReportPage() {
   const handleInputChange = (key, value) => {
     setState((prev) => ({
       ...prev,
-      standardDetails: {
-        ...prev.standardDetails,
+      standards: {
+        ...prev.standards,
         [key]: value,
       },
     }));
   };
 
   const nextPressed = async () => {
-    const { isValid, message } = validateRiddorReport(standardDetails);
+    const { isValid, message } = validateRiddorReport(standards);
 
     if (!isValid) {
       EcomHelper.showInfoMessage(message);
@@ -69,9 +69,9 @@ export default function RiddorReportPage() {
         <View style={styles.contentContainer}>
           <View style={styles.body}>
             <Text type={TextType.BODY_1}>RIDDOR Report</Text>
-            {standardDetails?.riddorImage && (
+            {standards?.riddorImage && (
               <Image
-                source={{ uri: standardDetails?.riddorImage }}
+                source={{ uri: standards?.riddorImage }}
                 style={styles.image}
                 resizeMode="contain"
               />
@@ -89,7 +89,7 @@ export default function RiddorReportPage() {
             <View style={styles.spacer} />
             <Text>Notes</Text>
             <TextInput
-              value={standardDetails?.notes}
+              value={standards?.notes}
               onChangeText={(text) => {
                 handleInputChange('notes', text);
               }}
@@ -100,7 +100,7 @@ export default function RiddorReportPage() {
             <View style={styles.spacer} />
             <Text>RIDDOR Reference</Text>
             <TextInput
-              value={standardDetails?.riddorRef}
+              value={standards?.riddorRef}
               onChangeText={(txt) => {
                 const numericRegex = /^[0-9]+$/;
                 const formattedText = txt.replace(/[^0-9]/g, ''); // Remove non-numeric characters
