@@ -15,16 +15,10 @@ import { EcomPressable as Button } from '../components/ImageButton';
 // Context
 import { PrimaryColors } from '../theme/colors';
 import { useAuth } from '../context/AuthContext';
+import CalendarComponent from './calendar/CalendarPage';
+import JobTypeSection from './JobTypePage';
 
 const buttons = [
-  {
-    title: 'Engineers Calendar',
-    navigationName: 'CalendarPage',
-  },
-  {
-    title: 'New Job',
-    navigationName: 'NewJobPage',
-  },
   {
     title: 'Planned Job',
     navigationName: 'PlannedJobPage',
@@ -49,9 +43,11 @@ function HomePage() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView>
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+      <ScrollView style={{ flex: 1 }}>
         <View style={styles.body}>
+          <CalendarComponent />
+          <JobTypeSection />
           {buttons.map((button) => (
             <Button
               onPress={() => {

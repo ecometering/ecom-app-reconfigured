@@ -1,43 +1,23 @@
-import {
-  View,
-  Modal,
-  ScrollView,
-  StyleSheet,
-  SafeAreaView,
-  TouchableOpacity,
-} from 'react-native';
-import React, { useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { View, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import React from 'react';
 
 // Utils and Constants
 import { PrimaryColors } from '../theme/colors';
 
 // Components
 import Text from '../components/Text';
-import Header from '../components/Header';
-import { EcomPressable as Button } from '../components/ImageButton';
 
 // Context
 import { useFormStateContext } from '../context/AppContext';
 import { useProgressNavigation } from '../context/ProgressiveFlowRouteProvider';
 
-function JobTypePage() {
-  const navigation = useNavigation();
+function JobTypeSection() {
   const { startFlow } = useProgressNavigation();
   const { state, setState, resetState } = useFormStateContext();
   const { startDate, jobID } = state;
 
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedJobType, setSelectedJobType] = useState('');
-
-  const handleJobTypeSelection = async (jobType) => {
-    if (jobID) {
-      setSelectedJobType(jobType);
-      setModalVisible(true);
-    } else {
-      setSelectedJobType(jobType);
-      await startNewJob(jobType);
-    }
+  const handleJobTypeSelection = (jobType) => {
+    startNewJob(jobType);
   };
 
   const startNewJob = async (jobType) => {
@@ -60,67 +40,60 @@ function JobTypePage() {
 
   return (
     <SafeAreaView style={styles.flex}>
-      <Header
-        hasLeftBtn={true}
-        leftBtnPressed={() => navigation.goBack()}
-        centerText="Job Type Selection"
-      />
-      <ScrollView>
-        <View style={styles.body}>
-          {[
-            'Install',
-            'Removal',
-            'Exchange',
-            'Survey',
-            'Warrant',
-            'Maintenance',
-          ].map((type) => (
-            <View key={type}>
-              <Button
-                onPress={() => handleJobTypeSelection(type)}
-                style={styles.button}
-              >
-                <Text style={styles.buttonTxt}>{`Asset ${type}`}</Text>
-              </Button>
-            </View>
-          ))}
-        </View>
-      </ScrollView>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>
-              A job is currently active. Would you like to discard it?
+      {state?.jobStatus === 'In Progress' ? (
+        <View style={styles.jobInProgressContainer}>
+          <Text style={styles.jobInProgressTitle}>
+            A {state?.jobType} job is in progress
+          </Text>
+          <View style={styles.jobInProgressInfo}>
+            <Text>
+              Last Screen: {state?.lastScreen || 'This is just a placeholder'}
             </Text>
-            <View style={styles.buttonRow}>
-              <TouchableOpacity
-                style={styles.modalButton}
-                onPress={() => {
-                  resetState();
-                  setModalVisible(false);
-                  startNewJob(selectedJobType);
-                }}
-              >
-                <Text style={styles.modalButtonText}>Yes</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.modalButton}
-                onPress={() => {
-                  setModalVisible(false);
-                  startNewJob(selectedJobType);
-                }}
-              >
-                <Text style={styles.modalButtonText}>No</Text>
-              </TouchableOpacity>
+            <View style={styles.progressBarBackground}>
+              <View style={styles.progressBarForeground} />
             </View>
           </View>
+          <View style={styles.jobInProgressActions}>
+            <TouchableOpacity style={styles.cancelButton} onPress={resetState}>
+              <Text>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.continueButton}
+              onPress={() => startFlow(state?.jobType)}
+            >
+              <Text>Continue</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </Modal>
+      ) : (
+        <View style={styles.newJobContainer}>
+          <Text style={styles.newJobTitle}>Start a new job</Text>
+          <View style={styles.body}>
+            {['Install', 'Removal', 'Exchange'].map((type, index) => (
+              <View style={styles.buttonWrapper} key={index}>
+                <TouchableOpacity
+                  onPress={() => handleJobTypeSelection(type)}
+                  style={styles.button}
+                >
+                  <Text style={styles.buttonTxt}>{type}</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+          <View style={styles.body}>
+            {['Survey', 'Warrant', 'Maintenance'].map((type, index) => (
+              <View style={styles.buttonWrapper} key={index}>
+                <TouchableOpacity
+                  onPress={() => handleJobTypeSelection(type)}
+                  style={styles.button}
+                >
+                  <Text style={styles.buttonTxt}>{type}</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -128,42 +101,28 @@ function JobTypePage() {
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   body: {
-    gap: 20,
-    padding: 10,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  buttonWrapper: {
+    flex: 1,
   },
   button: {
-    backgroundColor: PrimaryColors.Blue,
-    borderRadius: 5,
-    borderColor: 'black',
-    elevation: 5,
-    shadowColor: '#000',
-
-    shadowOpacity: 0.7,
-    shadowRadius: 2,
-    shadowOffset: {
-      width: 2.5,
-      height: 2.5,
-    },
-  },
-  buttonTxt: {
-    color: 'white',
-    fontSize: 20,
-    textAlign: 'center',
-    fontWeight: '800',
-    padding: 20,
-  },
-  centeredView: {
     flex: 1,
+    backgroundColor: `${PrimaryColors.Sand}50`,
+    borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 22,
   },
-  modalView: {
-    margin: 20,
+  buttonTxt: {
+    textAlign: 'center',
+    paddingVertical: 30,
+  },
+  jobInProgressContainer: {
     backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 35,
-    alignItems: 'center',
+    padding: 10,
+    borderRadius: 5,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -172,26 +131,52 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    gap: 10,
   },
-  modalText: {
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-  buttonRow: {
-    flexDirection: 'row',
-  },
-  modalButton: {
-    backgroundColor: PrimaryColors.Blue,
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-    marginHorizontal: 10,
-  },
-  modalButtonText: {
-    color: 'white',
+  jobInProgressTitle: {
     fontWeight: 'bold',
-    textAlign: 'center',
+    fontSize: 16,
+  },
+  jobInProgressInfo: {
+    gap: 5,
+  },
+  progressBarBackground: {
+    width: '100%',
+    height: 8,
+    borderRadius: 5,
+    backgroundColor: `${PrimaryColors.Green}50`,
+  },
+  progressBarForeground: {
+    width: `${20}%`,
+    height: 8,
+    borderRadius: 5,
+    backgroundColor: PrimaryColors.Green,
+  },
+  jobInProgressActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 10,
+    marginTop: 10,
+  },
+  cancelButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: `${PrimaryColors.Gray}50`,
+  },
+  continueButton: {
+    backgroundColor: `${PrimaryColors.Green}50`,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  newJobContainer: {
+    gap: 10,
+  },
+  newJobTitle: {
+    fontSize: 16,
   },
 });
 
-export default JobTypePage;
+export default JobTypeSection;

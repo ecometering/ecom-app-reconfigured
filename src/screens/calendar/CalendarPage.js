@@ -1,99 +1,47 @@
-import React, { useEffect, useState } from "react";
 import {
-  SafeAreaView,
-  StyleSheet,
-  TouchableOpacity,
   View,
   Modal,
+  Button,
   TextInput,
-  Button
-} from "react-native";
-import { width, height, unitH } from "../../utils/constant";
-import { PrimaryColors } from "../../theme/colors";
-import { useNavigation } from "@react-navigation/native";
-import { Calendar, Agenda, WeekCalendar } from "react-native-calendars";
-//import { Calendar, Agenda, WeekCalendar } from "react-native-calendars";
-import moment from "moment";
-import Text from "../../components/Text";
-import Header from "../../components/Header";
-import OptionalButton from "../../components/OptionButton";
-import DailyView from "../../components/calendar/DailyView";
-import { MaterialCommunityIcons } from "@expo/vector-icons"
+  StyleSheet,
+  SafeAreaView,
+  TouchableOpacity,
+} from 'react-native';
+import axios from 'axios';
+import moment from 'moment';
+import React, { useEffect, useState } from 'react';
+import { Calendar, Agenda } from 'react-native-calendars';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-export const sampleEvents = {
-  ["2024-03-31"]: [
-    {
-      title: "Team Meeting",
-      startTime: "9:30 AM",
-      endTime: "10:30 AM",
-      location: "Conference Room",
-      description: "Discuss project progress and assign tasks",
-    },
-    {
-      title: "Training Session",
-      startTime: "2:00 PM",
-      endTime: "4:00 PM",
-      location: "Training Room",
-      description: "Learn new technologies and tools",
-    },
-  ],
-  ["2024-03-21"]: [
-    {
-      title: "Meeting with Client",
-      startTime: "10:00 AM",
-      endTime: "11:00 AM",
-      location: "Office",
-      description: "Discuss project requirements and deliverables",
-    },
-    {
-      title: "Lunch Break",
-      startTime: "12:00 PM",
-      endTime: "1:00 PM",
-      location: "Cafeteria",
-      description: "Enjoy lunch with colleagues",
-    },
-  ],
-  ["2024-03-22"]: [
-    {
-      title: "Team Meeting",
-      startTime: "9:30 AM",
-      endTime: "10:30 AM",
-      location: "Conference Room",
-      description: "Discuss project progress and assign tasks",
-    },
-    {
-      title: "Training Session",
-      startTime: "2:00 PM",
-      endTime: "4:00 PM",
-      location: "Training Room",
-      description: "Learn new technologies and tools",
-    },
-  ],
-};
+// Components
+import Text from '../../components/Text';
+import Tabs from '../../components/Tabs';
+
+// Utils
+import { PrimaryColors } from '../../theme/colors';
+
+const API_BASE_URL = 'https://test.ecomdata.co.uk/api/events';
 
 const EventModal = ({ isVisible, onClose, onSubmit, event = {} }) => {
   const [title, setTitle] = useState(event.title || '');
-
-  const [location, setLocation] = useState(event.location || ''); // Corrected
-
+  const [location, setLocation] = useState(event.location || '');
   const [startTime, setStartTime] = useState(event.startTime || '');
   const [endTime, setEndTime] = useState(event.endTime || '');
   const [description, setDescription] = useState(event.description || '');
 
   const handleSubmit = () => {
-    const eventData = { title, startTime, endTime, location, description };
+    const eventData = { title, location, startTime, endTime, description };
     onSubmit(eventData);
     onClose();
   };
 
-
   return (
-
     <Modal
       animationType="slide"
-      transparent={true}
+      transparent
       visible={isVisible}
-      onRequestClose={onClose}>
+      onRequestClose={onClose}
+    >
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <Text style={styles.modalText}>Holiday Settings</Text>
@@ -105,9 +53,9 @@ const EventModal = ({ isVisible, onClose, onSubmit, event = {} }) => {
           />
           <TextInput
             style={styles.input}
-            placeholder="Description"
-            value={description}
-            onChangeText={setDescription}
+            placeholder="Location"
+            value={location}
+            onChangeText={setLocation}
           />
           <TextInput
             style={styles.input}
@@ -121,6 +69,12 @@ const EventModal = ({ isVisible, onClose, onSubmit, event = {} }) => {
             value={endTime}
             onChangeText={setEndTime}
           />
+          <TextInput
+            style={styles.input}
+            placeholder="Description"
+            value={description}
+            onChangeText={setDescription}
+          />
           <Button title="Submit" onPress={handleSubmit} />
           <Button title="Close" onPress={onClose} />
         </View>
@@ -131,10 +85,8 @@ const EventModal = ({ isVisible, onClose, onSubmit, event = {} }) => {
 
 const fetchEvents = async () => {
   try {
-    const response = await fetch('https://test.ecomdata.co.uk/api/events');
-    const data = await response.json();
-    console.log("data-------->", data)
-
+    const response = await axios.get(API_BASE_URL);
+    const data = response.data || [];
     const formattedEvents = data.reduce((acc, curr) => {
       const { start_date, title, ...rest } = curr;
       const date = moment(start_date).format('YYYY-MM-DD');
@@ -151,265 +103,159 @@ const fetchEvents = async () => {
   }
 };
 
-const sendEvent = async (eventData) => {
+const AddEventButton = ({ onPress }) => (
+  <TouchableOpacity
+    style={{
+      backgroundColor: PrimaryColors.Green,
+      padding: 10,
+      borderRadius: 5,
+    }}
+    onPress={onPress}
+  >
+    <Text style={{ color: 'white' }}>Add Event</Text>
+  </TouchableOpacity>
+);
+
+const handleEventSubmit = async (eventData) => {
   try {
-    const response = await fetch(API_BASE_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(eventData),
+    const response = await axios.post(API_BASE_URL, {
+      event_name: eventData.title,
+      description: eventData.description,
+      start_date: eventData.startTime,
+      end_date: eventData.endTime,
+      event_type: 4, // Holiday
+      is_all_day: true,
+      is_public: true,
+      is_organisation: true,
+      repeat_type: 'None',
+      reminder_time: null,
     });
-    return response.json(); // Adjust according to your API response structure
+
+    if (response.status === 200) {
+      alert('Event created successfully');
+    } else {
+      alert('Failed to create event');
+    }
   } catch (error) {
-    console.error('Sending event failed:', error);
+    alert('Error submitting form: ' + error.message);
   }
 };
 
-function CalendarPage() {
-  const navigation = useNavigation();
+const CalendarComponent = () => {
   const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split('T')[0]
   );
-
-  const [viewMode, setViewMode] = useState("Month"); //DAILY
-  const today = moment().format("YYYY-MM-DD");
-
+  const [viewMode, setViewMode] = useState('Month');
   const [schedules, setSchedules] = useState([]);
-  const [agendaItem, setAgendaItem] = useState();
+  const [agendaItem, setAgendaItem] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
 
-
   useEffect(() => {
-    const _schedules = {};
-
-    Object.keys(sampleEvents).forEach((date) => {
-      _schedules[date] = { marked: true };
-    });
-    console.log(_schedules);
-    setSchedules(_schedules);
+    const loadEvents = async () => {
+      const events = await fetchEvents();
+      setSchedules(events);
+    };
+    loadEvents();
   }, []);
-
-  useEffect(() => {
-    fetchEvents();
-  }, []);
-
-  const handleEventSubmit = async (eventData) => {
-    try {
-      const response = await fetch('https://test.ecomdata.co.uk/api/events', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          event_name: eventData.title,
-          description: eventData.description,
-          start_date: eventData.startDate,
-          end_date: eventData.endDate,
-          event_type: 4, // Holiday
-          is_all_day: true,
-          is_public: true,
-          is_organisation: true,
-          repeat_type: 'None',
-          reminder_time: null,
-        }),
-      });
-
-      if (response.ok) {
-        // Handle success response
-        setIsModalVisible(false);
-        // Reset form fields if necessary
-        setEventName('');
-        setDescription('');
-        setStartDate('');
-        setEndDate('');
-        // Optionally refresh or update the parent component state
-      } else {
-        // Handle error response
-        alert('Failed to create event');
-      }
-    } catch (error) {
-      alert('Error submitting form: ' + error.message);
-    }
-  };
-
-  const backPressed = () => {
-    navigation.goBack();
-  };
-
-  const renderArrow = (direction) => {
-    const iconName = direction === "left" ? "arrow-left" : "arrow-right";
-    return (
-      <MaterialCommunityIcons name={iconName} size={unitH * 30} color="black" />
-    );
-  };
-
-  const goNextDay = () => {
-    //'2023-10-18'
-    const currentDate = moment(selectedDate);
-    const nextDay = currentDate.add(1, "day").format("YYYY-MM-DD"); // Add 1 day and format as 'YYYY-MM-DD'
-    console.log(nextDay); // Output: 2023-10-19
-    setSelectedDate(nextDay);
-  };
-
-  const goPrevDay = () => {
-    const currentDate = moment(selectedDate);
-    const prevDay = currentDate.subtract(1, "day").format("YYYY-MM-DD"); // Add 1 day and format as 'YYYY-MM-DD'
-    console.log(prevDay); // Output: 2023-10-19
-    setSelectedDate(prevDay);
-  };
 
   return (
     <SafeAreaView style={styles.body}>
-      <Header
-        hasLeftBtn={true}
-        hasMenuButton={false}
-        hasCenterText={true}
-        hasRightBtn={viewMode === "Day"}
-        rightBtnText={"Book holiday"}
-        rightBtnPressed={() => setModalVisible(true)}
-        centerText="Calendar"
-        leftBtnPressed={() => navigation.goBack()}
-      />
-      <View style={{ flex: 1, width: "100%" }}>
-        <View style={{ paddingVertical: unitH * 20, flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-          <OptionalButton
-            options={["Month", "Week", "Day"]}
-            style={{ width: 55, height: 40 }}
-            actions={[
-              () => setViewMode("Month"),
-              () => setViewMode("Week"),
-              () => setViewMode("Day"),
-            ]}
-            value={viewMode}
-          />
-        </View>
-        {viewMode === "Month" && (
+      <View style={{ flex: 1, width: '100%' }}>
+        <Tabs
+          options={['Month', 'Week', 'Day']}
+          style={styles.optionButton}
+          actions={[
+            () => setViewMode('Month'),
+            () => setViewMode('Week'),
+            () => setViewMode('Day'),
+          ]}
+          value={viewMode}
+        />
+        {viewMode === 'Month' && (
           <Calendar
-            style={{ paddingBottom: unitH * 15 }}
-            headerStyle={{ marginBottom: unitH * 10 }}
             onDayPress={(day) => {
               setSelectedDate(day.dateString);
-              setAgendaItem({ [day.dateString]: sampleEvents[day.dateString] });
-              setViewMode("Day");
+              setViewMode('Day');
             }}
             markedDates={schedules}
-            hideExtraDays={true}
-            enableSwipeMonths={true}
-            allowSelectionOutOfRange={true}
+            hideExtraDays
+            enableSwipeMonths
             renderArrow={(direction) => (
-              <MaterialCommunityIcons name={`arrow-${direction}`} size={unitH * 30} color="black" />
+              <MaterialCommunityIcons
+                name={`arrow-${direction}`}
+                color="black"
+                size={20}
+              />
             )}
           />
         )}
-        {(viewMode === "Week" || viewMode === "Day") && (
+        {(viewMode === 'Week' || viewMode === 'Day') && (
           <Agenda
             markedDates={schedules}
             selected={selectedDate}
             items={agendaItem}
             onDayPress={(day) => {
               setSelectedDate(day.dateString);
-              setAgendaItem({ [day.dateString]: sampleEvents[day.dateString] });
-              setViewMode("Day");
+              setViewMode('Day');
             }}
-            renderItem={(item, firstItemInDay) => (
-              <TouchableOpacity onPress={() => { }}>
+            style={{
+              minHeight: 310,
+            }}
+            renderItem={(item) => (
+              <TouchableOpacity>
                 <View style={styles.eventContainer}>
                   <Text style={styles.eventTitle}>{item.title}</Text>
-                  <Text style={styles.eventTime}>{`${item.startTime} - ${item.endTime}`}</Text>
+                  <Text
+                    style={styles.eventTime}
+                  >{`${item.startTime} - ${item.endTime}`}</Text>
                   <Text style={styles.eventLocation}>{item.location}</Text>
-                  <Text style={styles.eventDescription}>{item.description}</Text>
+                  <Text style={styles.eventDescription}>
+                    {item.description}
+                  </Text>
                 </View>
               </TouchableOpacity>
             )}
-            showClosingKnob
             renderEmptyData={() => (
               <View style={styles.noEventDataContainer}>
-                <Text style={styles.noEventDataText}>No events for this day</Text>
+                <Text style={styles.noEventDataText}>
+                  No events for this day
+                </Text>
+                <AddEventButton onPress={() => setModalVisible(true)} />
               </View>
             )}
           />
         )}
       </View>
-
       <EventModal
         isVisible={modalVisible}
         onClose={() => setModalVisible(false)}
-        onSubmit={(eventData) => {
-          handleEventSubmit(eventData);
-          // After submitting, you might want to refresh the events or handle the state update accordingly
-        }}
+        onSubmit={handleEventSubmit}
       />
     </SafeAreaView>
-
   );
-}
-
+};
 
 const styles = StyleSheet.create({
-  flex: { flex: 1 },
-  scrollView: {
-    width: width,
-    height: height,
-  },
   body: {
     flex: 1,
-    // width: width,
-    // height: height,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white"
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'white',
   },
-  spacer: {
-    height: unitH * 30,
-  },
-  button: {
-    width: "80%",
-    height: unitH * 150,
-    backgroundColor: PrimaryColors.White,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: PrimaryColors.Blue,
-    //
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOpacity: 0.7,
-    shadowRadius: 2,
-    shadowOffset: {
-      width: 2.5,
-      height: 2.5,
-    },
-  },
-  buttonTxt: {
-    color: "black",
-    fontSize: 20,
-    fontWeight: "500",
-  },
-  calendarButtonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 10,
-  },
-  calendarButton: {
-    backgroundColor: "#ccc",
-    padding: 10,
-    borderRadius: 5,
-  },
-  calendarButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
+  viewModeContainer: {},
+  optionButton: {
+    width: 55,
+    height: 40,
   },
   eventContainer: {
-    backgroundColor: "#F5F5F5",
+    backgroundColor: '#F5F5F5',
     padding: 10,
     marginBottom: 10,
     borderRadius: 5,
   },
   eventTitle: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 5,
   },
   eventTime: {
@@ -425,13 +271,13 @@ const styles = StyleSheet.create({
   },
   noEventDataContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   noEventDataText: {
     fontSize: 16,
-    fontWeight: "bold",
-    color: "gray",
+    fontWeight: 'bold',
+    color: 'gray',
   },
   centeredView: {
     flex: 1,
@@ -444,7 +290,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 35,
-    // alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -453,12 +298,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: '80%'
+    width: '80%',
   },
   modalText: {
     marginBottom: 15,
     textAlign: 'center',
-    fontSize: width * 0.05,
   },
   input: {
     width: '100%',
@@ -466,41 +310,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'gray',
     marginBottom: 20,
-  }
-  // centeredView: {
-  //   flex: 1,
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   marginTop: 22,
-  // },
-  // modalView: {
-  //   margin: 20,
-  //   backgroundColor: 'white',
-  //   borderRadius: 20,
-  //   padding: 35,
-  //   // alignItems: 'center',
-  //   shadowColor: '#000',
-  //   shadowOffset: {
-  //     width: 0,
-  //     height: 2,
-  //   },
-  //   shadowOpacity: 0.25,
-  //   shadowRadius: 4,
-  //   elevation: 5,
-  //   width: '80%'
-  // },
-  // // modalText: {
-  // //   marginBottom: 15,
-  // //   textAlign: 'center',
-  // //   fontSize: width * 0.05,
-  // // },
-  // input: {
-  //   width: '100%',
-  //   padding: 10,
-  //   borderWidth: 1,
-  //   borderColor: 'gray',
-  //   marginBottom: 20,
-  // }
+  },
 });
 
-export default CalendarPage;
+export default CalendarComponent;
