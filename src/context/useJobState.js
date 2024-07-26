@@ -98,7 +98,6 @@ const useJobState = () => {
   const saveToDatabase = async (currentState) => {
     try {
       const { jobID } = currentState;
-      console.log({ jobID });
 
       const fields = Object.keys(fieldMapping).filter((key) => key !== 'jobID');
       const values = fields.map((field) => {
@@ -159,7 +158,6 @@ const useJobState = () => {
     setState((prevState) => {
       const updatedState =
         typeof newState === 'function' ? newState(prevState) : newState;
-      console.log('hello');
       debouncedEnsureFieldsAndSave(updatedState);
       return updatedState;
     });

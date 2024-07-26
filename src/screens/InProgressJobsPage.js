@@ -62,7 +62,10 @@ const JobsTable = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const result = await db.getAllAsync('SELECT * FROM jobs');
+      const result = await db.getAllAsync(
+        'SELECT * FROM jobs WHERE jobStatus = ?',
+        ['In Progress']
+      );
       setJobs(result);
       setLoading(false);
     } catch (error) {

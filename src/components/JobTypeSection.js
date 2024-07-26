@@ -5,7 +5,7 @@ import React from 'react';
 import { PrimaryColors } from '../theme/colors';
 
 // Components
-import Text from '../components/Text';
+import Text from './Text';
 
 // Context
 import { useFormStateContext } from '../context/AppContext';

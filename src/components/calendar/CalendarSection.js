@@ -14,8 +14,8 @@ import { Calendar, Agenda } from 'react-native-calendars';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 // Components
-import Text from '../../components/Text';
-import Tabs from '../../components/Tabs';
+import Text from '../Text';
+import Tabs from '../Tabs';
 
 // Utils
 import { PrimaryColors } from '../../theme/colors';
