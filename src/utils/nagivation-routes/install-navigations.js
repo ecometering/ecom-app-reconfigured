@@ -19,7 +19,7 @@ export const InstallNavigation = [
       title: 'Site Questions',
       photoKey: 'bypassPhoto',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { siteQuestions } = state || {};
       if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
         return StandardPage;
@@ -57,9 +57,9 @@ export const chatterBoxPage = [
       title: 'Installed chatter box',
       photoKey: 'InstalledChatterBox',
     },
-    diversions: (state) => {
-      const { standardDetails } = state;
-      const { riddorReportable, conformStandard } = standardDetails;
+    diversions: ({ state }) => {
+      const { standards } = state;
+      const { riddorReportable, conformStandard } = standards;
       if (riddorReportable) {
         return RiddorReportPage;
       } else {
@@ -76,9 +76,9 @@ export const chatterBoxPage = [
 export const AdditionalMaterialsPage = [
   {
     screen: 'AdditionalMaterial',
-    diversions: (state) => {
-      const { standardDetails } = state;
-      const { riddorReportable, conformStandard, chatterbox } = standardDetails;
+    diversions: ({ state }) => {
+      const { standards } = state;
+      const { riddorReportable, conformStandard, chatterbox } = standards;
       if (chatterbox === true) {
         return chatterBoxPage;
       } else {
@@ -99,14 +99,14 @@ export const AdditionalMaterialsPage = [
 export const StandardPage = [
   {
     screen: 'StandardPage',
-    diversions: (state) => {
-      const { standardDetails } = state;
+    diversions: ({ state }) => {
+      const { standards } = state;
       const {
         riddorReportable,
         conformStandard,
         chatterbox,
         additionalMaterials,
-      } = standardDetails;
+      } = standards;
       if (additionalMaterials === true) {
         return AdditionalMaterialsPage;
       } else {
@@ -141,9 +141,9 @@ export const RebookPage = [
 export const RiddorReportPage = [
   {
     screen: 'RiddorReportPage',
-    diversions: (state) => {
-      const { standardDetails } = state;
-      if (standardDetails.conformStandard === false) {
+    diversions: ({ state }) => {
+      const { standards } = state;
+      if (standards.conformStandard === false) {
         return SnClientInfoPage;
       } else {
         return CompositeLabelPhoto;
@@ -189,7 +189,7 @@ export const SnClientInfoPage = [
 export const AssetTypeSelectionPage = [
   {
     screen: 'AssetTypeSelectionPage',
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
       if (meterDetails?.isMeter) {
         return MeterDetailsPage;
@@ -216,7 +216,7 @@ export const MeterDetailsPage = [
       title: 'New ECV to MOV',
       photoKey: 'NewEcvToMov',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
       const Type = meterDetails?.meterType.value;
 
@@ -236,7 +236,7 @@ export const CorrectorDetailsPage = [
       title: 'New Corrector installed',
       photoKey: 'installedCorrector',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
       const { pressureTier } = meterDetails || {};
       const isAmr = meterDetails?.isAmr;
@@ -263,7 +263,7 @@ export const DataLoggerDetailsPage = [
       title: 'New AMR installed',
       photoKey: 'installedAMR',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
 
       const pressureTier = meterDetails?.pressureTier?.label;
@@ -296,7 +296,7 @@ export const MeterIndexPage = [
       title: 'New Meter photo',
       photoKey: 'NewMeterPhoto',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
       const isMeter = meterDetails?.isMeter;
       const isAmr = meterDetails?.isAmr;
@@ -333,9 +333,9 @@ export const MeterDataBadgePage = [
 export const InstancesForStreamFlow = ({ state }) => {
   // TODO: sort context switch
   // Redux might be a better option
-  const { streamNumber } = state || {};
+  const { streams } = state || {};
 
-  return Array.from({ length: streamNumber }, (_, index) => index + 1).reduce(
+  return Array.from({ length: streams.Number }, (_, index) => index + 1).reduce(
     (acc, stream) => {
       return [
         ...acc,
@@ -351,6 +351,7 @@ export const InstancesForStreamFlow = ({ state }) => {
           screen: 'StreamSlamshutPage',
           params: {
             title: `Slamshut Page ${stream}`,
+            stream: stream,
             photoKey: `SlamShut${stream}Photo`,
           },
         },
@@ -358,6 +359,7 @@ export const InstancesForStreamFlow = ({ state }) => {
           screen: 'StreamActiveRegulatorPage',
           params: {
             title: `Active Regulator Page ${stream}`,
+            stream: stream,
             photoKey: `ActiveRegulator${stream}Photo`,
           },
         },
@@ -365,6 +367,7 @@ export const InstancesForStreamFlow = ({ state }) => {
           screen: 'StreamReliefRegulatorPage',
           params: {
             title: `Relief Regulator Page ${stream}`,
+            stream: stream,
             photoKey: `ReliefRegulator${stream}Photo`,
           },
         },
@@ -372,6 +375,7 @@ export const InstancesForStreamFlow = ({ state }) => {
           screen: 'StreamWaferCheckPage',
           params: {
             title: `Wafer Check Page ${stream}`,
+            stream: stream,
             photoKey: `WaferCheck${stream}Photo`,
           },
         },
@@ -387,7 +391,7 @@ export const StreamsSetSealDetailsPage = [
     params: {
       title: 'Streams Set Seal Details',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const streamFlows = InstancesForStreamFlow({ state });
       return [...streamFlows, ...RegulatorPage];
     },

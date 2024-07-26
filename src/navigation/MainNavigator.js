@@ -6,19 +6,18 @@ import { NavigationContainer } from '@react-navigation/native';
 // Context
 import { AppContext } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
-import { NavigationProvider } from '../context/ExampleFlowRouteProvider';
+import { NavigationProvider } from '../context/ProgressiveFlowRouteProvider';
 
 // import screens from "..screens"
 import CompletedJobsPage from '../screens/CompletedJobsPage';
 import HomePage from '../screens/HomePage';
 import InProgressJobsPage from '../screens/InProgressJobsPage';
-import JobTypePage from '../screens/JobTypePage';
+// import JobTypePage from '../screens/JobTypePage';
 import PlannedJobPage from '../screens/PlannedJobPage';
 import SubmitSuccessPage from '../screens/SubmitSuccessPage';
 import RebookPage from '../screens/jobs/RebookPage';
 
 // calendar imports
-import CalendarPage from '../screens/calendar/CalendarPage';
 import LoginPage from '../screens/LoginPage';
 
 //import standards inport from ../screens/standards
@@ -79,8 +78,6 @@ const MainNavigator = () => {
                 name="Corrector Details"
                 component={CorrectorDetailsPage}
               />
-              <Stack.Screen name="CalendarPage" component={CalendarPage} />
-              <Stack.Screen name="NewJobPage" component={JobTypePage} />
               <Stack.Screen name="PlannedJobPage" component={PlannedJobPage} />
               <Stack.Screen
                 name="InProgressJobsPage"
@@ -98,7 +95,7 @@ const MainNavigator = () => {
                   nextScreen: 'EcvPage',
                 }}
               />
-             
+
               <Stack.Screen
                 name="SiteDetailsPage"
                 component={SiteDetailsPage}

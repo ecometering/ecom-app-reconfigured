@@ -1,216 +1,192 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import {
   View,
   Text,
   Button,
   Alert,
   StyleSheet,
-  ActivityIndicator,
   SafeAreaView,
+  ActivityIndicator,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { AppContext } from '../context/AppContext';
-import { openDatabase } from '../utils/database';
 import axios from 'axios';
 import moment from 'moment';
+
+// Components
 import Header from '../components/Header';
-import { useProgressNavigation } from '../context/ExampleFlowRouteProvider';
+
+// Context & Utils
+import { useFormStateContext } from '../context/AppContext';
+import { useSQLiteContext } from 'expo-sqlite/next';
+import { useProgressNavigation } from '../context/ProgressiveFlowRouteProvider';
+
+const getCurrentDateTime = () => moment().format('YYYY-MM-DD HH:mm');
+
+const showAlert = (title, message, onPress = null) => {
+  Alert.alert(title, message, [{ text: 'OK', onPress }]);
+};
+
+const handleError = (title, message, error, setLoading) => {
+  console.error(`${title}:`, error);
+  showAlert(title, message);
+  setLoading(false);
+};
+
+const handleUploadError = (error) => {
+  if (error.response) {
+    console.error('Photo upload error:', error.response.data);
+    showAlert(
+      'Photo Upload Error',
+      `Failed to upload photo. Status: ${error.response.status}. Detail: ${error.response.data}`
+    );
+  } else if (error.request) {
+    console.error('Photo upload error: No response received', error.request);
+    showAlert('Photo Upload Error', 'No response received from server.');
+  } else {
+    console.error('Photo upload error:', error.message);
+    showAlert('Photo Upload Error', error.message);
+  }
+};
 
 const SubmitSuccessPage = () => {
-  const appContext = useContext(AppContext);
-  const { jobStatus } = appContext;
+  const { state, resetState } = useFormStateContext();
+  const { jobStatus, jobID, photos, standards } = state;
+
   const navigation = useNavigation();
   const { goToPreviousStep } = useProgressNavigation();
+  const db = useSQLiteContext();
+
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
-    setLoading(false);
+    // Cleanup loading state on unmount
+    return () => setLoading(false);
   }, []);
 
-  const getCurrentDateTime = () => {
-    return moment().format('YYYY-MM-DD HH:mm');
-  };
-
-  async function fetchAndUploadJobData() {
+  const fetchAndUploadJobData = async () => {
     setLoading(true);
 
     try {
-      const db = await openDatabase();
-
-      db?.transaction((tx) => {
-        tx.executeSql(
-          'SELECT * FROM Jobs WHERE id = ?',
-          [appContext?.jobID],
-          async (_, { rows: { _array } }) => {
-            if (_array.length > 0) {
-              const jobData = JSON.stringify(_array[0]);
-              await sendData(jobData);
-            } else {
-              Alert.alert('Error', 'No job data found.');
-              setLoading(false);
-            }
-          },
-          (error) => {
-            console.error('SQL error:', error);
-            setLoading(false);
-            Alert.alert('Database Error', 'Failed to fetch job data.');
-          }
-        );
-      });
+      const result = await db.getAllAsync('SELECT * FROM Jobs WHERE id = ?', [
+        jobID,
+      ]);
+      if (result.length > 0) {
+        const jobData = JSON.stringify(result[0]);
+        await sendData(jobData);
+      } else {
+        showAlert('Error', 'No job data found.');
+        setLoading(false);
+      }
     } catch (error) {
-      console.error('Database error:', error);
-      setLoading(false);
-      Alert.alert('Database Error', 'Failed to open database.');
+      handleError(
+        'Database Error',
+        'Failed to fetch job data.',
+        error,
+        setLoading
+      );
     }
-  }
+  };
 
-  async function sendData(jobData) {
-    const body = {
-      data: jobData,
-    };
+  const sendData = async (jobData) => {
+    const body = { data: jobData };
+
     try {
-      axios
-        .post('https://test.ecomdata.co.uk/api/incoming-jobs/', body)
-        .then((response) => {
-          console.log('Job data uploaded:', response.data);
-          uploadPhotos(response.data.job_id)
-            .then(() => {
-              updateJobStatus();
-            })
-            .catch((error) => {
-              console.error('Photo upload error:', error);
-              Alert.alert('Photo Upload Error', 'Failed to upload photos.');
-              setLoading(false);
-            });
-        })
-        .catch(async (error) => {
-          console.error('Upload error:', error);
-          setLoading(false);
-          Alert.alert(
-            'Upload Error',
-            `Upload failed with status: ${error?.response?.status}`
-          );
-        });
+      const response = await axios.post(
+        'https://test.ecomdata.co.uk/api/incoming-jobs/',
+        body
+      );
+      console.log('Job data uploaded:', response.data);
+      await uploadPhotos(response.data.job_id);
+      updateJobStatus();
     } catch (error) {
-      console.error('Upload error:', error);
-      setLoading(false);
-      Alert.alert('Upload Error', 'Failed to upload job data.');
+      handleError(
+        'Upload Error',
+        `Upload failed with status: ${error?.response?.status}`,
+        error,
+        setLoading
+      );
     }
-  }
+  };
 
-  async function uploadPhotos(job_id) {
+  const uploadPhotos = async (job_id) => {
     console.log('Uploading photos...');
-    const photos =
-      (appContext.photos && Object.values(appContext.photos)) || [];
-
-    // Parse and Add extra photos to the list
+    const photosToUpload = (photos && Object.values(photos)) || [];
     const extraPhotos =
-      appContext?.standardDetails?.extras?.length > 0
-        ? appContext.standardDetails.extras
-            .filter((extra) => extra.extraPhoto) // Filter out items where extraPhoto is falsy (null, undefined, '', etc.)
-            .map((extra) => ({
-              photoKey: 'OtherPhoto',
-              description: extra.extraComment,
-              uri: extra.extraPhoto,
-            }))
-        : [];
+      standards?.extras
+        ?.filter((extra) => extra.extraPhoto)
+        ?.map((extra) => ({
+          photoKey: 'OtherPhoto',
+          description: extra.extraComment,
+          uri: extra.extraPhoto,
+        })) || [];
 
-    [...photos, ...extraPhotos].forEach((photo) => {
-      uploadResource(photo, job_id);
-    });
-  }
+    const allPhotos = [...photosToUpload, ...extraPhotos];
 
-  const uploadResource = (photo, job_id) => {
+    await Promise.all(allPhotos.map((photo) => uploadResource(photo, job_id)));
+  };
+
+  const uploadResource = async (photo, job_id) => {
     if (!photo.uri) {
-      console.error({ photo });
-      console.error('Photo URI is empty');
+      console.error('Photo URI is empty', { photo });
       return;
     }
+
     const formData = new FormData();
     formData.append('photo_type', photo.photoKey);
     formData.append('job_id', job_id);
     formData.append('description', photo.description);
     formData.append('photo', {
-      uri: photo.uri.replace('file://', ''), // Adjust the URI if necessary
+      uri: photo.uri.replace('file://', ''),
       type: 'image/jpeg',
       name: `${photo.photoKey}.jpg`,
     });
 
-    axios
-      .post('https://test.ecomdata.co.uk/api/upload-photos/', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data', // Axios sets this automatically, but specifying just in case
-        },
-      })
-      .then((response) => {
-        console.log('Upload successful:', response.data);
-      })
-      .catch((error) => {
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          console.error('Photo upload error:', error.response.data);
-          Alert.alert(
-            'Photo Upload Error',
-            `Failed to upload photo. Status: ${error.response.status}. Detail: ${error.response.data}`
-          );
-        } else if (error.request) {
-          // The request was made but no response was received
-          console.error(
-            'Photo upload error: No response received',
-            error.request
-          );
-          Alert.alert(
-            'Photo Upload Error',
-            'No response received from server.'
-          );
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.error('Photo upload error:', error.message);
-          Alert.alert('Photo Upload Error', error.message);
-        }
-      });
-  };
-
-  async function updateJobStatus() {
-    const db = await openDatabase();
-    const endDate = getCurrentDateTime();
-
-    db.transaction((tx) => {
-      tx.executeSql(
-        'UPDATE Jobs SET jobStatus = ?, endDate = ? WHERE id = ?',
-        ['Completed', endDate, appContext?.jobID],
-        () => {
-          Alert.alert(
-            'Upload Complete',
-            'Job and photos uploaded successfully.',
-            [
-              {
-                text: 'OK',
-                onPress: () => {
-                  // Clear job data and navigate to home
-                  appContext.resetContext();
-                  setLoading(false);
-                  navigation.navigate('Home');
-                },
-              },
-            ]
-          );
-        },
-        (error) => {
-          console.error('SQL error:', error);
-          Alert.alert('Database Error', 'Failed to update job status.');
-          setLoading(false);
+    try {
+      const response = await axios.post(
+        'https://test.ecomdata.co.uk/api/upload-photos/',
+        formData,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' },
         }
       );
-    });
-  }
+      console.log('Upload successful:', response.data);
+    } catch (error) {
+      handleUploadError(error);
+    }
+  };
+
+  const updateJobStatus = async () => {
+    const endDate = getCurrentDateTime();
+
+    try {
+      await db.runAsync(
+        'UPDATE Jobs SET jobStatus = ?, endDate = ? WHERE id = ?',
+        ['Completed', endDate, jobID]
+      );
+      showAlert(
+        'Upload Complete',
+        'Job and photos uploaded successfully.',
+        () => {
+          resetState();
+          setLoading(false);
+          navigation.navigate('Home');
+        }
+      );
+    } catch (error) {
+      handleError(
+        'Database Error',
+        'Failed to update job status.',
+        error,
+        setLoading
+      );
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <Header
         hasLeftBtn={true}
-        leftBtnPressed={() => goToPreviousStep()}
+        leftBtnPressed={goToPreviousStep}
         hasCenterText={true}
         centerText="Submit Job"
       />
@@ -223,9 +199,7 @@ const SubmitSuccessPage = () => {
         ) : (
           <Button
             title="Return to Home"
-            onPress={() => {
-              navigation.navigate('Home');
-            }}
+            onPress={() => navigation.navigate('Home')}
           />
         )}
       </View>

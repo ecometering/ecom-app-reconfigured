@@ -1,4 +1,4 @@
-import { AppContext } from './AppContext';
+import { useFormStateContext } from './AppContext';
 import { useNavigation } from '@react-navigation/native';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
@@ -22,7 +22,7 @@ const config = {
 };
 
 export function NavigationProvider({ children }) {
-  const state = useContext(AppContext);
+  const state = useFormStateContext();
   const navigation = useNavigation();
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [flowType, setFlowType] = useState(); // Default flow type
@@ -58,7 +58,7 @@ export function NavigationProvider({ children }) {
   const startFlow = (newFlowType) => {
     setFlowType(newFlowType);
     setCurrentStepIndex(0);
-    return config[newFlowType][0];
+    return navigation.navigate(config[newFlowType][0].screen);
   };
 
   const pushNavigation = (flowUpdate) => {

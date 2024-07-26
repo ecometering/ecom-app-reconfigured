@@ -1,38 +1,113 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { SafeAreaView, Text, StyleSheet, FlatList } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { SafeAreaView, Text, StyleSheet, FlatList, Alert } from 'react-native';
 
 // Components
 import Header from '../components/Header';
 import JobCard from '../components/JobCard';
 
 // Utils
-import { loadJob } from '../utils/loadJob';
-import { getDatabaseJob } from '../utils/database'; // Importing required functions
-import { useProgressNavigation } from '../context/ExampleFlowRouteProvider';
+import { useProgressNavigation } from '../context/ProgressiveFlowRouteProvider';
+import { useSQLiteContext } from 'expo-sqlite/next';
+import { useFormStateContext } from '../context/AppContext';
+
+const fieldsToParse = [
+  'siteDetails',
+  'siteQuestions',
+  'photos',
+  'streams',
+  'meterDetails',
+  'kioskDetails',
+  'ecvDetails',
+  'movDetails',
+  'regulatorDetails',
+  'standards',
+  'meterDetailsTwo',
+  'additionalMaterials',
+  'dataLoggerDetails',
+  'dataLoggerDetailsTwo',
+  'maintenanceDetails',
+  'correctorDetails',
+  'correctorDetailsTwo',
+  'chatterBoxDetails',
+];
+
+const safeParse = (jsonString, fallbackValue) => {
+  try {
+    return !!jsonString ? JSON.parse(jsonString) : fallbackValue;
+  } catch (error) {
+    console.error('Error parsing JSON string:', error, jsonString);
+    return fallbackValue;
+  }
+};
 
 const CompletedJobsTable = () => {
-  const [jobs, setJobs] = useState([]);
+  const db = useSQLiteContext();
   const navigation = useNavigation();
+  const { setState } = useFormStateContext();
   const { startFlow } = useProgressNavigation();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const [jobs, setJobs] = useState([]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [])
+  );
 
   const fetchData = async () => {
-    await getDatabaseJob(setJobs, 'Completed'); // Fetch completed jobs
+    try {
+      const result = await db.getAllAsync(
+        'SELECT * FROM jobs WHERE jobStatus = ?',
+        ['Completed']
+      );
+      setJobs(result);
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+    }
   };
 
   const handleRowClick = async (jobId) => {
     try {
-      const jobData = await loadJob(jobId);
-      startFlow(jobData.jobType);
-      navigation.navigate('SiteDetailsPage', { jobData });
+      const jobData = jobs.find(({ id }) => id === jobId);
+      if (jobData) {
+        const parsedJobData = { ...jobData };
+
+        fieldsToParse.forEach((field) => {
+          parsedJobData[field] = safeParse(
+            jobData?.[field],
+            Array.isArray(parsedJobData?.[field]) ? [] : {}
+          );
+        });
+
+        setState((prevState) => ({
+          ...prevState,
+          ...parsedJobData,
+          jobID: jobId,
+        }));
+        startFlow(parsedJobData.jobType);
+      }
     } catch (error) {
       console.error('Error loading job:', error);
-      // Handle the error, e.g., show an error message
     }
+  };
+
+  const handleDeleteJob = async (jobId) => {
+    Alert.alert('Delete Job', 'Are you sure you want to delete this job?', [
+      { text: 'Cancel' },
+      {
+        text: 'Yes',
+        onPress: async () => {
+          try {
+            await db.runAsync('DELETE FROM Jobs WHERE id = ?', [jobId]);
+            console.log('Record deleted successfully');
+            fetchData();
+          } catch (error) {
+            console.error('Error deleting record:', error);
+          }
+        },
+      },
+    ]);
   };
 
   return (

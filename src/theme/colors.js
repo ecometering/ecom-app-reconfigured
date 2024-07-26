@@ -5,6 +5,7 @@ export const PrimaryColors = {
   Black: '#626262', //'#000000', // '#666666'
   Gray: '#b6ada5',
   Sand: '#e7ceb5',
+  Green: '#4caf50',
 };
 
 export const SecondaryColors = {
@@ -44,5 +45,5 @@ export const GradientNames = {
 };
 
 export const Gradients = {
-  [GradientNames.Red]: {start: PrimaryColors.Red, end: SecondaryColors.Red},
+  [GradientNames.Red]: { start: PrimaryColors.Red, end: SecondaryColors.Red },
 };

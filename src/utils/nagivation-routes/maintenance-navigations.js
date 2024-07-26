@@ -1,4 +1,4 @@
-import { RegulatorPage } from "./install-navigations";
+import { RegulatorPage } from './install-navigations';
 
 export const MaintenanceNavigation = [
   {
@@ -21,7 +21,7 @@ export const MaintenanceNavigation = [
       title: 'Site Questions',
       photoKey: 'bypassPhoto',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { siteQuestions } = state;
       if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
         return MaintenanceStandardPage;
@@ -53,49 +53,48 @@ export const ExtraPhotoPageRoute = (
   },
 ];
 
-export const chatterBoxPage =[
+export const chatterBoxPage = [
   {
     screen: 'chatterBox',
-    diversions: (state) => {
-      const { standardDetails } = state;
-      const { riddorReportable, conformStandard } = standardDetails;
-   
-      
-    if (riddorReportable === true) {
-      return RiddorReportPage;
-    } else {
-      if (conformStandard === false) {
-        return SnClientInfoPage;
+    diversions: ({ state }) => {
+      const { standards } = state;
+      const { riddorReportable, conformStandard } = standards;
+
+      if (riddorReportable === true) {
+        return RiddorReportPage;
       } else {
-        return CompositeLabelPhoto;
+        if (conformStandard === false) {
+          return SnClientInfoPage;
+        } else {
+          return CompositeLabelPhoto;
+        }
       }
-    }}
+    },
   },
+];
 
-]
-
-export const AdditionalMaterialsPage =[
+export const AdditionalMaterialsPage = [
   {
     screen: 'AdditionalMaterials',
-    diversions: (state) => {
-      const { standardDetails } = state;
-      const { riddorReportable, conformStandard,chatterbox, } = standardDetails;
-    if (chatterbox === true) {
-      return chatterBoxPage}
-    else {
-      
-    if (riddorReportable === true) {
-      return RiddorReportPage;
-    } else {
-      if (conformStandard === false) {
-        return SnClientInfoPage;
+    diversions: ({ state }) => {
+      const { standards } = state;
+      const { riddorReportable, conformStandard, chatterbox } = standards;
+      if (chatterbox === true) {
+        return chatterBoxPage;
       } else {
-        return CompositeLabelPhoto;
+        if (riddorReportable === true) {
+          return RiddorReportPage;
+        } else {
+          if (conformStandard === false) {
+            return SnClientInfoPage;
+          } else {
+            return CompositeLabelPhoto;
+          }
+        }
       }
-    }}
+    },
   },
-}
-]
+];
 export const MaintenanceExistingMeterIndex = [
   {
     screen: 'MeterIndex',
@@ -111,7 +110,7 @@ export const MaintenanceExistingMeterIndex = [
       photoKey: 'ExistingMeterPhoto',
     },
 
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
       const { pressureTier } = meterDetails || {};
       const isCorrector = meterDetails?.isCorrector;
@@ -122,14 +121,14 @@ export const MaintenanceExistingMeterIndex = [
       }
       if (isAmr) {
         return MaintenanceExistingDataLoggerDetails;
-      } 
+      }
       if (isMeter) {
         if (pressureTier === 'LP' || pressureTier?.label === 'LP') {
           return RegulatorPage;
         }
-      } 
-     
-       return StreamsSetSealDetailsPage;
+      }
+
+      return StreamsSetSealDetailsPage;
     },
   },
 ];
@@ -147,26 +146,31 @@ export const MaintenanceExistingMeterDataBadge = [
 export const MaintenanceStandardPage = [
   {
     screen: 'StandardPage',
-    diversions: (state) => {
-      const { standardDetails } = state;
-      const { riddorReportable, conformStandard,chatterbox,additionalMaterials } = standardDetails;
-     if (additionalMaterials === true) {
-          return AdditionalMaterialsPage;
-        }
-        else{ 
-          if (chatterbox === true) {
-        return chatterBoxPage}
-      else {
-        
-      if (riddorReportable === true) {
-        return RiddorReportPage;
+    diversions: ({ state }) => {
+      const { standards } = state;
+      const {
+        riddorReportable,
+        conformStandard,
+        chatterbox,
+        additionalMaterials,
+      } = standards;
+      if (additionalMaterials === true) {
+        return AdditionalMaterialsPage;
       } else {
-        if (conformStandard === false) {
-          return SnClientInfoPage;
+        if (chatterbox === true) {
+          return chatterBoxPage;
         } else {
-          return CompositeLabelPhoto;
+          if (riddorReportable === true) {
+            return RiddorReportPage;
+          } else {
+            if (conformStandard === false) {
+              return SnClientInfoPage;
+            } else {
+              return CompositeLabelPhoto;
+            }
+          }
         }
-      }}}
+      }
     },
   },
 ];
@@ -174,9 +178,9 @@ export const MaintenanceStandardPage = [
 export const RiddorReportPage = [
   {
     screen: 'RiddorReportPage',
-    diversions: (state) => {
-      const { standardDetails } = state;
-      if (standardDetails.conformStandard === false) {
+    diversions: ({ state }) => {
+      const { standards } = state;
+      if (standards.conformStandard === false) {
         return SnClientInfoPage;
       } else {
         return CompositeLabelPhoto;
@@ -225,7 +229,7 @@ export const RebookPage = [
 export const AssetTypeSelectionPage = [
   {
     screen: 'AssetTypeSelectionPage',
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
 
       if (meterDetails?.isMeter) {
@@ -252,7 +256,7 @@ export const MaintenanceExistingMeterDetails = [
       title: 'Existing ECV to MOV',
       photoKey: 'ExistingEcvToMov',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
 
       const Type = meterDetails?.meterType.value;
@@ -272,26 +276,24 @@ export const MaintenanceExistingCorrectorDetails = [
     params: {
       title: 'Existing Corrector installed',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
       const { pressureTier } = meterDetails || {};
-    
+
       const isAmr = meterDetails?.isAmr;
       const isMeter = meterDetails?.isMeter;
-    
 
       if (isAmr) {
         return MaintenanceExistingDataLoggerDetails;
       }
       if (isMeter) {
         if (pressureTier === 'LP' || pressureTier?.label === 'LP') {
-        return RegulatorPage;
-        } else {  
+          return RegulatorPage;
+        } else {
           return StreamsSetSealDetailsPage;
         }
-      } 
-        return MaintenanceQuestionsPage;
-      
+      }
+      return MaintenanceQuestionsPage;
     },
   },
 ];
@@ -302,23 +304,20 @@ export const MaintenanceExistingDataLoggerDetails = [
     params: {
       title: 'Existing AMR installed',
     },
-    diversions: (state) => {
-    
-
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
       const pressureTier = meterDetails?.pressureTier?.label;
       const isMeter = meterDetails?.isMeter;
-     
+
       if (isMeter) {
         if (pressureTier === 'LP') {
-          
-           return MaintenanceQuestionsPage;
-        }else {
-         return StreamsSetSealDetailsPage;
-      } }
-     
-        return MaintenanceQuestionsPage;
-      
+          return MaintenanceQuestionsPage;
+        } else {
+          return StreamsSetSealDetailsPage;
+        }
+      }
+
+      return MaintenanceQuestionsPage;
     },
   },
 ];
@@ -336,39 +335,36 @@ export const InstancesForStreamFlow = ({ state }) => {
           screen: 'StreamFilterPage',
           params: {
             title: `Filter Page ${stream}`,
-            stream:stream ,
-            photoKey:`Filter${stream}Photo`
+            stream: stream,
+            photoKey: `Filter${stream}Photo`,
           },
         },
         {
           screen: 'StreamSlamshutPage',
           params: {
             title: `Slamshut Page ${stream}`,
-            photoKey:`SlamShut${stream}Photo`,
+            photoKey: `SlamShut${stream}Photo`,
           },
         },
         {
           screen: 'StreamActiveRegulatorPage',
           params: {
             title: `Active Regulator Page ${stream}`,
-            photoKey:`ActiveRegulator${stream}Photo`,
-
+            photoKey: `ActiveRegulator${stream}Photo`,
           },
         },
         {
           screen: 'StreamReliefRegulatorPage',
           params: {
             title: `Relief Regulator Page ${stream}`,
-            photoKey:`ReliefRegulator${stream}Photo`,
-
+            photoKey: `ReliefRegulator${stream}Photo`,
           },
         },
         {
           screen: 'StreamWaferCheckPage',
           params: {
             title: `Wafer Check Page ${stream}`,
-            photoKey:`WaferCheck${stream}Photo`,
-
+            photoKey: `WaferCheck${stream}Photo`,
           },
         },
       ];
@@ -383,7 +379,7 @@ export const StreamsSetSealDetailsPage = [
     params: {
       title: 'Streams Set Seal Details',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const streamFlows = InstancesForStreamFlow({ state });
       return [...streamFlows, ...MaintenanceQuestionsPage];
     },
@@ -404,7 +400,6 @@ export const MaintenanceQuestionsPage = [
       photoKey: 'RegulatorPhotoPage',
     },
   },
-
 
   ...MaintenanceStandardPage,
 ];

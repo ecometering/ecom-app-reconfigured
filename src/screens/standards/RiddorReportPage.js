@@ -2,94 +2,55 @@ import {
   View,
   Image,
   StyleSheet,
-  Dimensions,
   ScrollView,
   SafeAreaView,
 } from 'react-native';
-import React, { useContext, useState } from 'react';
+import React from 'react';
 
 // Components
 import Text from '../../components/Text';
 import Header from '../../components/Header';
 import TextInput from '../../components/TextInput';
-import ImagePickerButton from '../../components/ImagePickerButton'; // Adjust this path as necessary
+import ImagePickerButton from '../../components/ImagePickerButton';
 
 // Context
-import { AppContext } from '../../context/AppContext';
-import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import { useFormStateContext } from '../../context/AppContext';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
 // Utils
 import { TextType } from '../../theme/typography';
 import EcomHelper from '../../utils/ecomHelper';
-
-const { width, height } = Dimensions.get('window'); // Use Dimensions to get width and height
+import { validateRiddorReport } from './RiddorReportPage.validator';
 
 export default function RiddorReportPage() {
-  const appContext = useContext(AppContext);
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
-  const standardDetails = appContext.standardDetails;
-  const jobType = appContext.jobType;
-  const jobID = appContext.jobID;
+  const { state, setState } = useFormStateContext();
+
+  const { standards, jobType, jobID } = state;
+
   const title = jobType === 'Install' ? 'New Meter Details' : jobType;
 
-  const [riddorImage, setRiddorImage] = useState(standardDetails?.riddorImage); // Renamed state
-  const [notes, setNotes] = useState(standardDetails?.notes);
-  const [riddorRef, setRiddorRef] = useState(standardDetails?.riddorRef);
-
   const backPressed = async () => {
-    const standards = {
-      ...standardDetails,
-      riddorImage: riddorImage, // Updated reference
-      notes,
-      riddorRef,
-    };
-
-    appContext.setStandardDetails(standards);
-    await db.runAsync('UPDATE Jobs SET standards = ? WHERE id = ?', [
-      JSON.stringify(standards),
-      jobID,
-    ]);
-
     goToPreviousStep();
   };
 
+  const handleInputChange = (key, value) => {
+    setState((prev) => ({
+      ...prev,
+      standards: {
+        ...prev.standards,
+        [key]: value,
+      },
+    }));
+  };
+
   const nextPressed = async () => {
-    if (!riddorImage) {
-      // Updated check
-      EcomHelper.showInfoMessage('Please choose an image.');
+    const { isValid, message } = validateRiddorReport(standards);
+
+    if (!isValid) {
+      EcomHelper.showInfoMessage(message);
       return;
     }
-
-    if (!notes) {
-      EcomHelper.showInfoMessage('Notes are compulsory!');
-      return;
-    }
-
-    if (!riddorRef) {
-      EcomHelper.showInfoMessage('RIDDOR reference is required!');
-      return;
-    }
-
-    try {
-      const response = await fetch(riddorImage); // Updated reference
-      const blob = await response.blob();
-      appContext.setBlobs((prev) => [...prev, blob]);
-    } catch (err) {
-      console.error(err);
-    }
-
-    const standards = {
-      ...standardDetails,
-      riddorImage: riddorImage, // Updated reference
-      notes,
-      riddorRef,
-    };
-
-    appContext.setStandardDetails(standards);
-    await db.runAsync('UPDATE Jobs SET standards = ? WHERE id = ?', [
-      JSON.stringify(standards),
-      jobID,
-    ]);
 
     goToNextStep();
   };
@@ -106,45 +67,50 @@ export default function RiddorReportPage() {
           rightBtnPressed={nextPressed}
         />
         <View style={styles.contentContainer}>
-          <View style={styles.body}>
-            <Text type={TextType.BODY_1}>RIDDOR Report</Text>
-            {riddorImage && ( // Updated reference
-              <Image
-                source={{ uri: riddorImage }} // Updated reference
-                style={styles.image}
-                resizeMode="contain"
-              />
-            )}
-            <View style={styles.row}>
-              <ImagePickerButton onImageSelected={setRiddorImage} />
-            </View>
-          </View>
+          
 
           <View style={styles.formContainer}>
             <View style={styles.spacer} />
             <Text>Notes</Text>
             <TextInput
-              value={notes}
-              onChangeText={(text) => setNotes(text)}
-              style={styles.input}
+              value={standards?.notes}
+              onChangeText={(text) => {
+                handleInputChange('notes', text);
+              }}
+              style={{ ...styles.input, minHeight: 100 }}
               multiline={true}
+              numberOfLines={4}
             />
             <View style={styles.spacer} />
             <Text>RIDDOR Reference</Text>
             <TextInput
-              value={riddorRef}
+              value={standards?.riddorRef}
               onChangeText={(txt) => {
-                // Define the alphanumeric regular expression
-                const alphanumericRegex = /^[a-z0-9]+$/i;
-
-                // Capitalize the text
-                const formattedText = txt.toUpperCase();
-
-                // Check if the formatted text is alphanumeric
-                if (alphanumericRegex.test(formattedText)) 
-             setRiddorRef(formattedText)}}
+                const numericRegex = /^[0-9]+$/;
+                const formattedText = txt.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+                if (numericRegex.test(formattedText) || formattedText === '') {
+                  handleInputChange('riddorRef', formattedText);
+                }
+              }}
               style={styles.input}
             />
+          </View>
+          <View style={styles.body}>
+            <Text type={TextType.BODY_1}>RIDDOR Report</Text>
+            {standards?.riddorImage && (
+              <Image
+                source={{ uri: standards?.riddorImage }}
+                style={styles.image}
+                resizeMode="contain"
+              />
+            )}
+            <View style={styles.row}>
+              <ImagePickerButton
+                onImageSelected={(image) =>
+                  handleInputChange('riddorImage', image)
+                }
+              />
+            </View>
           </View>
         </View>
       </SafeAreaView>
@@ -165,8 +131,8 @@ const styles = StyleSheet.create({
   },
   body: {},
   image: {
-    width: width * 0.8,
-    height: height * 0.3,
+    width: '100%',
+    height: 300,
     alignSelf: 'center',
   },
   row: {

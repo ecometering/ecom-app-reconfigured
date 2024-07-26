@@ -1,27 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useRoute } from '@react-navigation/native';
 import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Dimensions,
   View,
   Image,
   Alert,
+  StyleSheet,
+  ScrollView,
+  SafeAreaView,
 } from 'react-native';
-import { useRoute } from '@react-navigation/native';
-import { useAppContext } from '../../context/AppContext';
-import Header from '../../components/Header';
+
 import Text from '../../components/Text';
+import Header from '../../components/Header';
 import ImagePickerButton from '../../components/ImagePickerButton';
-import { useSQLiteContext } from 'expo-sqlite/next';
-import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
-const { width, height } = Dimensions.get('window');
+
+import { useFormStateContext } from '../../context/AppContext';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
 function GenericPhotoPage() {
-  db = useSQLiteContext();
   const { params } = useRoute();
-  const { title, photoKey, nextScreen } = params;
-  const { photos, savePhoto, jobID } = useAppContext();
+  const { title, photoKey } = params;
+  const { state, setState } = useFormStateContext();
+  const { photos } = state;
   const existingPhoto = photos?.[photoKey];
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   // RN uses cache storeage when picking image from gallery
@@ -34,28 +33,17 @@ function GenericPhotoPage() {
 
   const handlePhotoSelected = (uri) => {
     setSelectedImage(uri);
-    savePhoto(photoKey, { title, photoKey, uri });
-    console.log('Photo saved:', { title, photoKey, uri });
-    console.log('photos:', photos);
+    setState((prevState) => ({
+      ...prevState,
+      photos: {
+        ...prevState.photos,
+        [photoKey]: { title, photoKey, uri },
+      },
+    }));
   };
-  const savePhotoToDatabase = async () => {
-    const photosJson = JSON.stringify(photos);
-    try {
-      await db
-        .runAsync('UPDATE Jobs SET photos = ? WHERE id = ?', [
-          photosJson,
-          jobID,
-        ])
-        .then((result) => {
-          console.log('photos saved to database:', result);
-        });
-    } catch (error) {
-      console.log('Error saving photos to database:', error);
-    }
-  };
+
   const nextPressed = () => {
     if (selectedImage) {
-      savePhotoToDatabase();
       // If a photo has been selected, navigate to the next screen
       goToNextStep();
     } else {
@@ -64,7 +52,6 @@ function GenericPhotoPage() {
     }
   };
   const backPressed = () => {
-    savePhotoToDatabase();
     goToPreviousStep();
   };
   return (
@@ -111,8 +98,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   image: {
-    width: width * 0.8,
-    height: height * 0.4,
+    width: '100%',
+    height: 400,
     marginTop: 20,
     resizeMode: 'contain',
   },

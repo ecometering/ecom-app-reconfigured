@@ -19,7 +19,7 @@ export const SurveyNavigation = [
       title: 'Site Questions',
       photoKey: 'bypassPhoto',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { siteQuestions } = state;
       if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
         return SurveyStandardPage;
@@ -80,9 +80,9 @@ export const CompositeLabelPhoto = [
 export const RiddorReportPage = [
   {
     screen: 'RiddorReportPage',
-    diversions: (state) => {
-      const { standardDetails } = state;
-      if (standardDetails.conformStandard === false) {
+    diversions: ({ state }) => {
+      const { standards } = state;
+      if (standards.conformStandard === false) {
         return SnClientInfoPage;
       } else {
         return CompositeLabelPhoto;
@@ -105,9 +105,9 @@ export const SnClientInfoPage = [
 export const SurveyStandardPage = [
   {
     screen: 'StandardPage',
-    diversions: (state) => {
-      const { standardDetails } = state;
-      const { riddorReportable, conformStandard } = standardDetails;
+    diversions: ({ state }) => {
+      const { standards } = state;
+      const { riddorReportable, conformStandard } = standards;
       if (riddorReportable === true) {
         return RiddorReportPage;
       } else {
@@ -132,7 +132,7 @@ export const RebookPage = [
 export const AssetTypeSelectionPage = [
   {
     screen: 'AssetTypeSelectionPage',
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
       if (meterDetails?.isMeter) {
         return SurveyExistingMeterDetails;
@@ -158,7 +158,7 @@ export const SurveyExistingMeterDetails = [
       title: 'Existing ECV to MOV',
       photoKey: 'ExistingEcvToMov',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
 
       const Type = meterDetails?.meterType.value;
@@ -178,17 +178,17 @@ export const SurveyExistingCorrectorDetails = [
     params: {
       title: 'Existing Corrector installed',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
       const { pressureTier } = meterDetails || {};
-    
+
       const isAmr = meterDetails?.isAmr;
       const isMeter = meterDetails?.isMeter;
-    
+
       if (isAmr) {
         return SurveyExistingDataLoggerDetails;
       }
-      
+
       if (isMeter) {
         if (pressureTier === 'LP' || pressureTier?.label === 'LP') {
           return SurveyStandardPage;
@@ -196,9 +196,9 @@ export const SurveyExistingCorrectorDetails = [
           return SurveyStreamsSetSealDetailsPage;
         }
       }
-    
+
       return SurveyStandardPage;
-    }
+    },
   },
 ];
 
@@ -208,12 +208,12 @@ export const SurveyExistingDataLoggerDetails = [
     params: {
       title: 'Existing AMR installed',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
-    
+
       const pressureTier = meterDetails?.pressureTier?.label;
       const isMeter = meterDetails?.isMeter;
-    
+
       if (isMeter) {
         if (pressureTier === 'LP') {
           return SurveyStandardPage;
@@ -221,9 +221,9 @@ export const SurveyExistingDataLoggerDetails = [
           return SurveyStreamsSetSealDetailsPage;
         }
       }
-    
+
       return SurveyStandardPage;
-    }
+    },
   },
 ];
 
@@ -240,39 +240,36 @@ export const InstancesForStreamFlow = ({ state }) => {
           screen: 'StreamFilterPage',
           params: {
             title: `Filter Page ${stream}`,
-            stream:stream ,
-            photoKey:`Filter${stream}Photo`
+            stream: stream,
+            photoKey: `Filter${stream}Photo`,
           },
         },
         {
           screen: 'StreamSlamshutPage',
           params: {
             title: `Slamshut Page ${stream}`,
-            photoKey:`SlamShut${stream}Photo`,
+            photoKey: `SlamShut${stream}Photo`,
           },
         },
         {
           screen: 'StreamActiveRegulatorPage',
           params: {
             title: `Active Regulator Page ${stream}`,
-            photoKey:`ActiveRegulator${stream}Photo`,
-
+            photoKey: `ActiveRegulator${stream}Photo`,
           },
         },
         {
           screen: 'StreamReliefRegulatorPage',
           params: {
             title: `Relief Regulator Page ${stream}`,
-            photoKey:`ReliefRegulator${stream}Photo`,
-
+            photoKey: `ReliefRegulator${stream}Photo`,
           },
         },
         {
           screen: 'StreamWaferCheckPage',
           params: {
             title: `Wafer Check Page ${stream}`,
-            photoKey:`WaferCheck${stream}Photo`,
-
+            photoKey: `WaferCheck${stream}Photo`,
           },
         },
       ];
@@ -287,14 +284,12 @@ export const SurveyStreamsSetSealDetailsPage = [
     params: {
       title: 'Streams Set Seal Details',
     },
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const streamFlows = InstancesForStreamFlow({ state });
       return [...streamFlows, ...SurveyStandardPage];
     },
   },
 ];
-
-
 
 export const SurveyExistingMeterIndex = [
   {
@@ -311,30 +306,29 @@ export const SurveyExistingMeterIndex = [
       photoKey: 'ExistingMeterPhoto',
     },
 
-    diversions: (state) => {
+    diversions: ({ state }) => {
       const { meterDetails } = state || {};
       const { pressureTier } = meterDetails || {};
       const isCorrector = meterDetails?.isCorrector;
       const isAmr = meterDetails?.isAmr;
       const isMeter = meterDetails?.isMeter;
-    
-     
+
       if (isCorrector) {
         return SurveyExistingCorrectorDetails;
       }
-    
+
       if (isAmr) {
         return SurveyExistingDataLoggerDetails;
       }
-    
+
       if (isMeter) {
         if (pressureTier === 'LP' || pressureTier?.label === 'LP') {
           return SurveyStandardPage;
         }
       }
-    
+
       return SurveyStreamsSetSealDetailsPage;
-    }
+    },
   },
 ];
 

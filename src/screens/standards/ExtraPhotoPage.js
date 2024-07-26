@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -15,14 +15,23 @@ import Header from '../../components/Header';
 import ImagePickerButton from '../../components/ImagePickerButton';
 
 // Context & Utils
-import { AppContext } from '../../context/AppContext';
-import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import { useFormStateContext } from '../../context/AppContext';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
 const ExtraPhotoPage = () => {
-  const appContext = useContext(AppContext);
+  const { state, setState } = useFormStateContext();
+
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
-  const [photos, setPhotos] = useState([]);
+  const existingPhotos =
+    state?.standards?.extraPhotos &&
+    state.standards.extraPhotos.map((photo) => ({
+      uri: photo.extraPhoto,
+      extraComment: photo.extraComment,
+    }));
+  const [photos, setPhotos] = useState(existingPhotos || []);
   const [activeSections, setActiveSections] = useState([]);
+
+  console.log({ photos });
 
   const handleImageSelected = (newPhoto) => {
     const updatedPhotos = [...photos, { uri: newPhoto }];
@@ -42,7 +51,7 @@ const ExtraPhotoPage = () => {
     );
   };
 
-  const handleSubmit = async () => {
+  const handleDbUpdate = async () => {
     const extraPhotos = photos.map((photo, index) => {
       return {
         photoNumber: index + 1,
@@ -51,17 +60,23 @@ const ExtraPhotoPage = () => {
       };
     });
 
-    const standards = {
-      ...appContext.standardDetails,
-      extras: extraPhotos,
-    };
+    setState({
+      ...state,
+      standards: {
+        ...state.standards,
+        extraPhotos,
+      },
+    });
+  };
 
-    appContext.setStandardDetails(standards);
-    await db.runAsync('UPDATE Jobs SET standards = ? WHERE id = ?', [
-      JSON.stringify(standards),
-      appContext.jobID,
-    ]);
+  const handleSubmit = async () => {
+    handleDbUpdate();
     goToNextStep();
+  };
+
+  const handleGoBack = async () => {
+    handleDbUpdate();
+    goToPreviousStep();
   };
 
   return (
@@ -75,7 +90,7 @@ const ExtraPhotoPage = () => {
         hasCenterText={true}
         hasRightBtn={true}
         centerText={'Extra Photos'}
-        leftBtnPressed={() => goToPreviousStep()}
+        leftBtnPressed={handleGoBack}
         rightBtnPressed={handleSubmit}
       />
 
@@ -85,7 +100,10 @@ const ExtraPhotoPage = () => {
             <View key={index}>
               <TouchableOpacity onPress={() => toggleSection(index)}>
                 <View style={styles.header}>
-                  <Text style={styles.headerText}>Photo {index + 1}</Text>
+                  <Text style={styles.headerText}>
+                    {activeSections.includes(index) ? '▲' : '▼'} Photo{' '}
+                    {index + 1}
+                  </Text>
                   <TouchableOpacity onPress={() => handleRemovePhoto(index)}>
                     <Text style={styles.removeText}>Remove</Text>
                   </TouchableOpacity>
@@ -115,7 +133,7 @@ const ExtraPhotoPage = () => {
               )}
             </View>
           ))}
-          <Text style={styles.textLabel}>More extra phots?</Text>
+          <Text style={styles.textLabel}>Any more extra photos?</Text>
           <ImagePickerButton onImageSelected={handleImageSelected} />
         </View>
       </ScrollView>

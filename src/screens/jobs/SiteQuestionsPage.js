@@ -3,7 +3,6 @@ import {
   View,
   ScrollView,
   StyleSheet,
-  Dimensions,
   SafeAreaView,
 } from 'react-native';
 import React, { useState } from 'react';
@@ -12,24 +11,21 @@ import { useRoute } from '@react-navigation/native';
 // Components
 import Text from '../../components/Text';
 import Header from '../../components/Header';
-import { useAppContext } from '../../context/AppContext';
 import OptionalButton from '../../components/OptionButton';
 import { TextInputWithTitle } from '../../components/TextInput';
 import ImagePickerButton from '../../components/ImagePickerButton';
 
-// Utils and Constants
-
+// Utils and Context
 import EcomHelper from '../../utils/ecomHelper';
-import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
-
-const { width, height } = Dimensions.get('window');
+import { useFormStateContext } from '../../context/AppContext';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
 function SiteQuestionsPage() {
   const { params } = useRoute();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
+  const { state, setState } = useFormStateContext();
 
-  const { jobID, setSiteQuestions, siteQuestions, photos, savePhoto } =
-    useAppContext();
+  const { jobID, siteQuestions, photos } = state;
   const { title, photoKey } = params;
   const existingPhoto = photos[photoKey];
 
@@ -37,41 +33,33 @@ function SiteQuestionsPage() {
     existingPhoto?.uri || null
   );
 
-  const saveToDatabase = async () => {
-    const photosJson = JSON.stringify(photos);
-    const questionJson = JSON.stringify(siteQuestions);
-    try {
-      await db
-        .runAsync(
-          'UPDATE Jobs SET photos = ?, siteQuestions = ? WHERE id = ?',
-          [photosJson, questionJson, jobID]
-        )
-        .then((result) => {
-          console.log('photos saved to database:', result);
-        });
-    } catch (error) {
-      console.log('Error saving photos to database:', error);
-    }
-  };
-
   const handleInputChange = (name, value) => {
-    setSiteQuestions((prevDetails) => ({
-      ...prevDetails,
-      [name]: value,
+    setState((prevState) => ({
+      ...prevState,
+      siteQuestions: {
+        ...prevState.siteQuestions,
+        [name]: value,
+      },
     }));
   };
+
   const handlePhotoSelected = (uri) => {
     setSelectedImage(uri);
-    savePhoto(photoKey, { title, photoKey, uri });
+    setState((prevState) => ({
+      ...prevState,
+      photos: {
+        ...prevState.photos,
+        [photoKey]: { title, photoKey, uri },
+      },
+    }));
     console.log('Photo saved:', { title, photoKey, uri });
     console.log('photos:', photos);
   };
-  const backPressed = () => {
-    saveToDatabase();
+  const backPressed = async () => {
     goToPreviousStep();
   };
 
-  const nextPressed = () => {
+  const nextPressed = async () => {
     if (siteQuestions?.isSafe === null) {
       EcomHelper.showInfoMessage(
         'Please indicate if the meter location is safe.'
@@ -114,7 +102,7 @@ function SiteQuestionsPage() {
       );
       return;
     }
-    saveToDatabase();
+
     goToNextStep();
   };
 
@@ -130,167 +118,120 @@ function SiteQuestionsPage() {
       />
       <ScrollView style={styles.content}>
         <View style={styles.body}>
-          <View style={styles.spacer} />
-          <Text>
-            Is meter location safe and approved for a meter installation to take
-            place
-          </Text>
-          <View style={styles.optionContainer}>
-            <OptionalButton
-              options={['Yes', 'No']}
-              actions={[
-                () => {
-                  handleInputChange('isSafe', true);
-                },
-                () => {
-                  handleInputChange('isSafe', false);
-                },
-              ]}
-              value={
-                siteQuestions?.isSafe === null
-                  ? null
-                  : siteQuestions?.isSafe
-                  ? 'Yes'
-                  : 'No'
-              }
-            />
-          </View>
-          <View style={styles.spacer} />
-          <View style={styles.spacer} />
-          <Text>Is the job covered by the generic risk assessment</Text>
-          <View style={styles.optionContainer}>
-            <OptionalButton
-              options={['Yes', 'No']}
-              actions={[
-                () => {
-                  handleInputChange('isGeneric', true);
-                },
-                () => {
-                  handleInputChange('isGeneric', false);
-                },
-              ]}
-              value={
-                siteQuestions?.isGeneric === null
-                  ? null
-                  : siteQuestions?.isGeneric
-                  ? 'Yes'
-                  : 'No'
-              }
-            />
-          </View>
-          {!siteQuestions?.isGeneric && (
-            <TextInputWithTitle
-              title={
-                'Why is this job not covered by the generic risk assesment'
-              }
-              placeholder={''}
-              value={siteQuestions?.genericReason}
-              onChangeText={(txt) => {
-                handleInputChange('genericReason', txt);
-              }}
-            />
-          )}
-          <View style={styles.spacer} />
-          <View style={styles.spacer} />
-          <Text>Can the Job be carried out</Text>
-          <View style={styles.optionContainer}>
-            <OptionalButton
-              options={['Yes', 'No']}
-              actions={[
-                () => {
-                  handleInputChange('isCarryOut', true);
-                },
-                () => {
-                  handleInputChange('isCarryOut', false);
-                },
-              ]}
-              value={
-                siteQuestions?.isCarryOut === null
-                  ? null
-                  : siteQuestions?.isCarryOut
-                  ? 'Yes'
-                  : 'No'
-              }
-            />
-          </View>
-          {!siteQuestions?.isCarryOut && (
-            <TextInputWithTitle
-              title={'Why it cant be carried out'}
-              placeholder={''}
-              value={siteQuestions?.carryOutReason}
-              onChangeText={(txt) => {
-                handleInputChange('carryOutReason', txt);
-              }}
-              containerStyle={styles.inputContainer}
-            />
-          )}
-          <View style={styles.spacer} />
-          <View style={styles.spacer} />
-          <Text>Is a bypass fitted</Text>
-          <View style={styles.optionContainer}>
-            <OptionalButton
-              options={['Yes', 'No']}
-              actions={[
-                () => {
-                  handleInputChange('isFitted', true);
-                },
-                () => {
-                  handleInputChange('isFitted', false);
-                },
-              ]}
-              value={
-                siteQuestions?.isFitted === null
-                  ? null
-                  : siteQuestions?.isFitted
-                  ? 'Yes'
-                  : 'No'
-              }
-            />
-          </View>
+          {[
+            {
+              key: 'isSafe',
+              question: 'Is the meter location safe',
+              options: ['Yes', 'No'],
+            },
 
-          {siteQuestions?.isFitted && (
-            <View style={styles.imagePickerContainer}>
-              <View style={styles.body}>
-                <Text type="caption" style={styles.text}>
-                  Bypass
-                </Text>
-                <ImagePickerButton
-                  onImageSelected={handlePhotoSelected}
-                  currentImage={selectedImage}
-                />
-                {selectedImage && (
-                  <Image source={{ uri: selectedImage }} style={styles.image} />
-                )}
+            {
+              key: 'isGeneric',
+              question: 'Is the job covered by the generic risk assessment',
+              options: ['Yes', 'No'],
+              extra: () => {
+                if (!siteQuestions?.isGeneric) {
+                  return (
+                    <TextInputWithTitle
+                      title={
+                        'Why is this job not covered by the generic risk assesment'
+                      }
+                      placeholder={''}
+                      value={siteQuestions?.genericReason}
+                      onChangeText={(txt) => {
+                        handleInputChange('genericReason', txt);
+                      }}
+                    />
+                  );
+                }
+              },
+            },
+            {
+              key: 'isCarryOut',
+              question: 'Can the Job be carried out',
+              options: ['Yes', 'No'],
+              extra: () => {
+                if (!siteQuestions?.isCarryOut) {
+                  return (
+                    <TextInputWithTitle
+                      title={'Why it cant be carried out'}
+                      placeholder={''}
+                      value={siteQuestions?.carryOutReason}
+                      onChangeText={(txt) => {
+                        handleInputChange('carryOutReason', txt);
+                      }}
+                    />
+                  );
+                }
+              },
+            },
+            {
+              key: 'isFitted',
+              question: 'Is a bypass fitted',
+              options: ['Yes', 'No'],
+              extra: () => {
+                if (siteQuestions?.isFitted) {
+                  return (
+                    <View style={styles.imagePickerContainer}>
+                      <View style={styles.body}>
+                        <Text type="caption" style={styles.text}>
+                          Bypass
+                        </Text>
+                        <ImagePickerButton
+                          onImageSelected={handlePhotoSelected}
+                          currentImage={selectedImage}
+                        />
+                        {selectedImage && (
+                          <Image
+                            source={{ uri: selectedImage }}
+                            style={styles.image}
+                          />
+                        )}
+                      </View>
+                    </View>
+                  );
+                }
+              },
+            },
+            {
+              key: 'isStandard',
+              question:
+                'Does the Customer installation Pipework and appliances conform to current standards',
+              options: ['Yes', 'No'],
+            },
+          ].map((item) => {
+            return (
+              <View
+                key={item?.key}
+                style={{
+                  gap: 10,
+                }}
+              >
+                <Text>{item?.question}</Text>
+                <View style={styles.optionContainer}>
+                  <OptionalButton
+                    options={item?.options}
+                    actions={[
+                      () => {
+                        handleInputChange(item?.key, true);
+                      },
+                      () => {
+                        handleInputChange(item?.key, false);
+                      },
+                    ]}
+                    value={
+                      siteQuestions?.[item?.key] === undefined
+                        ? null
+                        : siteQuestions?.[item?.key]
+                        ? item?.options[0]
+                        : item?.options[1]
+                    }
+                  />
+                </View>
+                {item?.extra && item?.extra()}
               </View>
-            </View>
-          )}
-
-          <View style={styles.spacer} />
-          <View style={styles.spacer} />
-          <Text>
-            Does the Customer installation Pipework and appliances conform to
-            current standards
-          </Text>
-          <View style={styles.optionContainer}>
-            <OptionalButton
-              options={['Yes', 'No']}
-              actions={[
-                () => {
-                  handleInputChange('isStandard', true);
-                },
-                () => {
-                  handleInputChange('isStandard', false);
-                },
-              ]}
-              value={
-                siteQuestions?.isStandard === null
-                  ? null
-                  : siteQuestions?.isStandard
-                  ? 'Yes'
-                  : 'No'
-              }
-            />
-          </View>
+            );
+          })}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -303,21 +244,15 @@ const styles = StyleSheet.create({
   },
   body: {
     padding: 20,
+    gap: 20,
   },
-  optionContainer: {
-    width: width * 0.25,
-    marginVertical: height * 0.01,
-    alignSelf: 'flex-start',
-  },
-  spacer: {
-    height: height * 0.01,
-  },
+  optionContainer: {},
   inputContainer: {
     flex: 1,
   },
   image: {
-    width: width * 0.5,
-    height: height * 0.25,
+    width: '100%',
+    height: 300,
     alignSelf: 'center',
   },
 });

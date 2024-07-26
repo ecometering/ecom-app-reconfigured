@@ -1,33 +1,26 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import {
-  SafeAreaView,
-  KeyboardAvoidingView,
-  ScrollView,
   View,
-  StyleSheet,
-  Text,
-  TextInput,
   Image,
   Button,
+  TextInput,
+  StyleSheet,
+  ScrollView,
+  SafeAreaView,
+  KeyboardAvoidingView,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { setItemAsync } from 'expo-secure-store';
+
 import { height, unitH, isIos } from '../utils/constant';
 import { PrimaryColors, Transparents } from '../theme/colors';
-import { AppContext } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
 
 function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { OnLogin } = useAuth();
-  const navigation = useNavigation();
-
-  const appContext = useContext(AppContext);
 
   const login = async () => {
     const result = await OnLogin!(username, password);
-    console.log('file : LoginPage.tsx ~ line 47 ~ login ~ result', result);
     if (result && result.error) {
       alert(result.msg);
     }
@@ -35,7 +28,6 @@ function LoginPage() {
 
   const handleLoginPress = () => {
     console.log('Login button pressed');
-
     login();
   };
 

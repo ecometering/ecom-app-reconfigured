@@ -1,6 +1,5 @@
-import { useSQLiteContext } from 'expo-sqlite/next';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRoute } from '@react-navigation/native';
-import React, { useContext, useRef, useState } from 'react';
 import {
   View,
   Image,
@@ -8,7 +7,6 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Dimensions,
   SafeAreaView,
   KeyboardAvoidingView,
 } from 'react-native';
@@ -24,124 +22,64 @@ import ImagePickerButton from '../../components/ImagePickerButton';
 // Context and Helpers
 import EcomHelper from '../../utils/ecomHelper';
 import { TextType } from '../../theme/typography';
-import { PrimaryColors } from '../../theme/colors';
-import { AppContext } from '../../context/AppContext';
+import { useFormStateContext } from '../../context/AppContext';
 import { makeFontSmallerAsTextGrows } from '../../utils/styles';
-import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
-
-const alphanumericRegex = /^[a-zA-Z0-9]+$/;
-const { width, height } = Dimensions.get('window');
+import { validateDataLoggerDetails } from './DataLoggerDetailsPage.validator';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
 export default function DataLoggerDetailsTwoPage() {
   const route = useRoute();
   const camera = useRef(null);
-  const db = useSQLiteContext();
+  const { title, photoKey } = route.params;
+  const { state, setState } = useFormStateContext();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
-  const {
-    jobID,
-    photos,
-    jobType,
-    savePhoto,
-    dataLoggerDetailsTwo,
-    setDataLoggerDetailsTwo,
-  } = useContext(AppContext);
 
-  const { title, nextScreen, photoKey } = route.params;
+  const { photos, dataLoggerDetailsTwo } = state;
   const existingPhoto = photos && photoKey ? photos[photoKey] : null;
 
   const [isModal, setIsModal] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(existingPhoto || {});
-  const [localdataLoggerDetailsTwo, setLocaldataLoggerDetailsTwo] = useState(
-    {
-      ...dataLoggerDetailsTwo,
-      isMountingBracket: dataLoggerDetailsTwo.isMountingBracket ?? false,
-      isAdapter: dataLoggerDetailsTwo.isAdapter ?? false,
-      isPulseSplitter: dataLoggerDetailsTwo.isPulseSplitter ?? false,
-    } || {
-      isMountingBracket: false,
-      isAdapter: false,
-      isPulseSplitter: false,
-    }
-  );
 
   const handleInputChange = (name, value) => {
-    setLocaldataLoggerDetailsTwo((prevDetails) => ({
-      ...prevDetails,
-      [name]: value,
+    setState((prevState) => ({
+      ...prevState,
+      dataLoggerDetailsTwo: {
+        ...prevState.dataLoggerDetailsTwo,
+        [name]: value,
+      },
     }));
   };
 
   const handlePhotoSelected = (uri) => {
-    setSelectedImage({ title, photoKey, uri });
-    console.log('Photo saved:', { title, photoKey, uri });
+    setState((prevState) => ({
+      ...prevState,
+      photos: {
+        ...prevState.photos,
+        [photoKey]: { title, photoKey, uri },
+      },
+    }));
   };
+  useEffect(() => {
+    if (!dataLoggerDetailsTwo.loggerOwner){
+     
+        handleInputChange('loggerOwner','Eco Metering solutions')}
+  })
 
-  const saveToDatabase = async () => {
-    const photosJson = JSON.stringify(photos);
-    const dataloggerJson = JSON.stringify(localdataLoggerDetailsTwo);
-    try {
-      await db
-        .runAsync(
-          'UPDATE Jobs SET photos = ?, dataLoggerDetailsTwo = ? WHERE id = ?',
-          [photosJson, dataloggerJson, jobID]
-        )
-        .then((result) => {
-          console.log('photos saved to database:', result);
-        });
-    } catch (error) {
-      console.log('Error saving photos to database:', error);
-    }
-  };
-  console.log('dataLoggerDetailsTwoPage');
 
   const backPressed = async () => {
-    savePhoto(photoKey, selectedImage);
-    setDataLoggerDetailsTwo(localdataLoggerDetailsTwo);
-    await saveToDatabase();
     goToPreviousStep();
   };
-  console.log(localdataLoggerDetailsTwo);
 
   const nextPressed = async () => {
-    if (!selectedImage?.uri) {
-      EcomHelper.showInfoMessage('Please choose image');
+    const { isValid, message } = validateDataLoggerDetails(
+      dataLoggerDetailsTwo,
+      existingPhoto
+    );
+
+    if (!isValid) {
+      EcomHelper.showInfoMessage(message);
       return;
     }
 
-    if (
-      !localdataLoggerDetailsTwo.serialNumber ||
-      localdataLoggerDetailsTwo.serialNumber === ''
-    ) {
-      EcomHelper.showInfoMessage('Please enter serial number');
-      return;
-    }
-    if (localdataLoggerDetailsTwo.isMountingBracket == null) {
-      EcomHelper.showInfoMessage('Please answer if mounting bracket was used');
-      return;
-    }
-    if (localdataLoggerDetailsTwo.isAdapter == null) {
-      EcomHelper.showInfoMessage('Please answer if adapter was used');
-      return;
-    }
-    if (localdataLoggerDetailsTwo.isPulseSplitter == null) {
-      EcomHelper.showInfoMessage('Please answer if pulse splitter was used');
-      return;
-    }
-    if (localdataLoggerDetailsTwo.manufacturer == null) {
-      EcomHelper.showInfoMessage('Please choose manufacturer');
-      return;
-    }
-    if (localdataLoggerDetailsTwo.model == null) {
-      EcomHelper.showInfoMessage('Please choose model');
-      return;
-    }
-    if (localdataLoggerDetailsTwo.loggerOwner == null) {
-      EcomHelper.showInfoMessage('Please choose Logger owner');
-      return;
-    }
-    savePhoto(photoKey, selectedImage);
-    setDataLoggerDetailsTwo(localdataLoggerDetailsTwo);
-    await saveToDatabase();
     goToNextStep();
     return;
   };
@@ -176,197 +114,177 @@ export default function DataLoggerDetailsTwoPage() {
             <Text type={TextType.HEADER_1} style={{ alignSelf: 'center' }}>
               AMR
             </Text>
-            <View style={styles.spacer} />
-            <View style={styles.border}>
-              <View style={styles.row}>
-                <View
-                  style={{
-                    width: width * 0.45,
-                    alignSelf: 'flex-end',
-                  }}
-                >
-                  <Text>Data logger Serial Number</Text>
-                  <View style={styles.spacer2} />
-                  <View style={{ ...styles.row, width: width * 0.35 }}>
-                    <TextInput
-                      onChangeText={(txt) => {
-                        // Define the alphanumeric regular expression
-                        const alphanumericRegex = /^[a-z0-9]+$/i;
-
-                        // Capitalize the text
-                        const formattedText = txt.toUpperCase();
-
-                        // Check if the formatted text is alphanumeric
-                        if (alphanumericRegex.test(formattedText)) {
-                          handleInputChange('serialNumber', formattedText);
-                        }
-                      }}
-                      style={{
-                        ...styles.input,
-                        width: width * 0.25,
-                        alignSelf: 'flex-end',
-                        fontSize: makeFontSmallerAsTextGrows(
-                          localdataLoggerDetailsTwo.serialNumber
-                        ),
-                      }}
-                      value={localdataLoggerDetailsTwo.serialNumber}
-                    />
-                    <Button title="📷" onPress={scanBarcode} />
-                  </View>
-                </View>
-                <View>
-                  <Text>{'Mounting bracket used?'}</Text>
-                  <View style={styles.optionContainer}>
-                    <OptionalButton
-                      options={['Yes', 'No']}
-                      actions={[
-                        () => {
-                          handleInputChange('isMountingBracket', true);
-                        },
-                        () => {
-                          handleInputChange('isMountingBracket', false);
-                        },
-                      ]}
-                      value={
-                        localdataLoggerDetailsTwo.isMountingBracket == null
-                          ? null
-                          : localdataLoggerDetailsTwo.isMountingBracket
-                          ? 'Yes'
-                          : 'No'
-                      }
-                    />
-                  </View>
-                </View>
-              </View>
-              <View style={styles.spacer} />
-              <View style={{ ...styles.row, justifyContent: 'flex-start' }}>
-                <View style={{ width: width * 0.45 }}>
-                  <Text>{'Adaptor used'}</Text>
-                  <View style={styles.optionContainer}>
-                    <OptionalButton
-                      options={['Yes', 'No']}
-                      actions={[
-                        () => {
-                          handleInputChange('isAdapter', true);
-                        },
-                        () => {
-                          handleInputChange('isAdapter', false);
-                        },
-                      ]}
-                      value={
-                        localdataLoggerDetailsTwo.isAdapter === null
-                          ? null
-                          : localdataLoggerDetailsTwo.isAdapter
-                          ? 'Yes'
-                          : 'No'
-                      }
-                    />
-                  </View>
-                </View>
-                <View>
-                  <Text>{'Pulse splitter Used'}</Text>
-                  <View style={styles.optionContainer}>
-                    <OptionalButton
-                      options={['Yes', 'No']}
-                      actions={[
-                        () => {
-                          handleInputChange('isPulseSplitter', true);
-                        },
-                        () => {
-                          handleInputChange('isPulseSplitter', false);
-                        },
-                      ]}
-                      value={
-                        localdataLoggerDetailsTwo.isPulseSplitter == null
-                          ? null
-                          : localdataLoggerDetailsTwo.isPulseSplitter
-                          ? 'Yes'
-                          : 'No'
-                      }
-                    />
-                  </View>
-                </View>
-              </View>
-              <View style={styles.spacer} />
-              <View style={styles.spacer} />
-              <View style={{ ...styles.row, justifyContent: 'flex-start' }}>
-                <View style={{ width: width * 0.45 }}>
-                  <View style={styles.spacer2} />
-                  <Text>Manufacturer</Text>
-                  <View style={styles.spacer2} />
-                  <View style={{ ...styles.row, width: width * 0.35 }}>
-                    <TextInput
-                      onChangeText={(txt) => {
-                        handleInputChange('manufacturer', txt);
-                      }}
-                      style={{
-                        ...styles.input,
-                        width: width * 0.25,
-                        alignSelf: 'flex-end',
-                      }}
-                      value={localdataLoggerDetailsTwo.manufacturer}
-                    />
-                  </View>
-                </View>
-                <View style={{ width: width * 0.45 }}>
-                  <View style={styles.spacer2} />
-                  <Text>Model</Text>
-                  <View style={styles.spacer2} />
-                  <View style={{ ...styles.row, width: width * 0.35 }}>
-                    <TextInput
-                      onChangeText={(txt) => {
-                        handleInputChange('model', txt);
-                      }}
-                      style={{
-                        ...styles.input,
-                        width: width * 0.25,
-                        alignSelf: 'flex-end',
-                      }}
-                      value={localdataLoggerDetailsTwo.model}
-                    />
-                  </View>
-                </View>
-              </View>
-              <View style={styles.spacer} />
-              <View style={{ width: width * 0.4 }}>
-                <View style={styles.spacer2} />
-                <Text>Logger owner</Text>
-                <View style={styles.spacer2} />
-                <View style={{ ...styles.row, width: width * 0.35 }}>
+            <View style={styles.row}>
+              <View
+                style={{
+                  flex: 1,
+                }}
+              >
+                <Text>Data logger Serial Number</Text>
+                <View style={styles.row}>
                   <TextInput
                     onChangeText={(txt) => {
-                      handleInputChange('loggerOwner', txt);
+                      const alphanumericRegex = /^[a-z0-9]+$/i;
+                      const formattedText = txt.toUpperCase();
+                      if (alphanumericRegex.test(formattedText)) {
+                        handleInputChange('serialNumber', formattedText);
+                      }
                     }}
                     style={{
                       ...styles.input,
-                      width: width * 0.25,
                       alignSelf: 'flex-end',
+                     
                     }}
-                    value={localdataLoggerDetailsTwo.loggerOwner}
+                    value={dataLoggerDetailsTwo.serialNumber}
+                  />
+                  <Button title="📷" onPress={scanBarcode} />
+                </View>
+              </View>
+              <View
+                style={{
+                  flex: 1,
+                }}
+              >
+                <Text>{'Mounting bracket used?'}</Text>
+                <View>
+                  <OptionalButton
+                    options={['Yes', 'No']}
+                    actions={[
+                      () => {
+                        handleInputChange('isMountingBracket', true);
+                      },
+                      () => {
+                        handleInputChange('isMountingBracket', false);
+                      },
+                    ]}
+                    value={
+                      dataLoggerDetailsTwo.isMountingBracket == null
+                        ? null
+                        : dataLoggerDetailsTwo.isMountingBracket
+                        ? 'Yes'
+                        : 'No'
+                    }
                   />
                 </View>
               </View>
             </View>
-            <View style={styles.spacer} />
+            <View style={styles.row}>
+              <View
+                style={{
+                  flex: 1,
+                }}
+              >
+                <Text>{'Adaptor used'}</Text>
+                <View>
+                  <OptionalButton
+                    options={['Yes', 'No']}
+                    actions={[
+                      () => {
+                        handleInputChange('isAdapter', true);
+                      },
+                      () => {
+                        handleInputChange('isAdapter', false);
+                      },
+                    ]}
+                    value={
+                      dataLoggerDetailsTwo.isAdapter == null
+                        ? null
+                        : dataLoggerDetailsTwo.isAdapter
+                        ? 'Yes'
+                        : 'No'
+                    }
+                  />
+                </View>
+              </View>
+              <View
+                style={{
+                  flex: 1,
+                }}
+              >
+                <Text>{'Pulse splitter Used'}</Text>
+                <View>
+                  <OptionalButton
+                    options={['Yes', 'No']}
+                    actions={[
+                      () => {
+                        handleInputChange('isPulseSplitter', true);
+                      },
+                      () => {
+                        handleInputChange('isPulseSplitter', false);
+                      },
+                    ]}
+                    value={
+                      dataLoggerDetailsTwo.isPulseSplitter == null
+                        ? null
+                        : dataLoggerDetailsTwo.isPulseSplitter
+                        ? 'Yes'
+                        : 'No'
+                    }
+                  />
+                </View>
+              </View>
+            </View>
+            <View style={styles.row}>
+              <View
+                style={{
+                  flex: 1,
+                }}
+              >
+                <Text>Manufacturer</Text>
+                <View style={styles.row}>
+                  <TextInput
+                    onChangeText={(txt) => {
+                      handleInputChange('manufacturer', txt);
+                    }}
+                    value={dataLoggerDetailsTwo.manufacturer}
+                  />
+                </View>
+              </View>
+              <View
+                style={{
+                  flex: 1,
+                }}
+              >
+                <Text>Model</Text>
+                <TextInput
+                  onChangeText={(txt) => {
+                    handleInputChange('model', txt);
+                  }}
+                  value={dataLoggerDetailsTwo.model}
+                />
+              </View>
+            </View>
+            <View
+              style={{
+                flex: 1,
+              }}
+            >
+              <Text>Logger owner</Text>
+              <TextInput
+                onChangeText={(txt) => {
+                  handleInputChange('loggerOwner', txt);
+                }}
+                value={dataLoggerDetailsTwo.loggerOwner}
+              />
+            </View>
             <View style={styles.imagePickerContainer}>
-              <View style={styles.body}>
+              <View>
                 <Text type="caption" style={styles.text}>
                   AMR photo
                 </Text>
                 <ImagePickerButton
                   onImageSelected={handlePhotoSelected}
-                  currentImage={selectedImage?.uri}
+                  currentImage={existingPhoto?.uri}
                 />
-                {selectedImage?.uri && (
+                {existingPhoto?.uri && (
                   <Image
-                    source={{ uri: selectedImage?.uri }}
+                    source={{ uri: existingPhoto?.uri }}
                     style={styles.image}
                   />
                 )}
               </View>
             </View>
           </View>
-
           {isModal && (
             <BarcodeScanner
               setIsModal={setIsModal}
@@ -382,77 +300,19 @@ export default function DataLoggerDetailsTwoPage() {
 
 const styles = StyleSheet.create({
   image: {
-    height: height * 0.25, // Example: Adjust the factor according to your needs
+    height: 300,
+    width: '100%',
   },
   content: {
     flex: 1,
   },
   body: {
-    marginHorizontal: width * 0.05,
-  },
-  border: {
-    borderWidth: 1,
-    borderColor: PrimaryColors.Black,
-    padding: height * 0.02, // Adjusted from unitH to use a percentage of the screen height
+    gap: 10,
+    padding: 10,
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-  },
-  buttonContainer: {
-    width: width * 0.4,
-    alignSelf: 'center',
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-  },
-  button: {
-    width: width * 0.2,
-  },
-  divider: {
-    width: '100%',
-    height: 1,
-    backgroundColor: 'black',
-  },
-  headerCell: {
-    textAlign: 'center',
-    borderWidth: 1,
-    borderBottomWidth: 0,
-    borderColor: PrimaryColors.Black,
-    minHeight: height * 0.05, // Adjusted
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  cell: {
     flex: 1,
-    textAlign: 'center',
-    borderWidth: 1,
-    borderBottomWidth: 0,
-    borderTopWidth: 0,
-    borderColor: PrimaryColors.Black,
-    minHeight: height * 0.05, // Adjusted
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  optionContainer: {
-    width: width * 0.25, // Adjusted
-    marginVertical: height * 0.01, // Adjusted
-    alignSelf: 'flex-start',
-  },
-  spacer: {
-    height: height * 0.02, // Adjusted
-  },
-  spacer2: {
-    height: height * 0.01, // Adjusted
-  },
-  closeButtonContainer: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-  },
-  closeButtonIcon: {
-    width: 20,
-    height: 20,
-    // Other styles for the close icon
+    gap: 10,
   },
 });

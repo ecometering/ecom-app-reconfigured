@@ -7,11 +7,10 @@ import {
   Platform,
   StyleSheet,
   ScrollView,
-  Dimensions,
   SafeAreaView,
   KeyboardAvoidingView,
 } from 'react-native';
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import SignatureScreen from 'react-native-signature-canvas';
 
 // Components
@@ -22,33 +21,41 @@ import { TextInputWithTitle } from '../../components/TextInput';
 // Context & Utils
 import EcomHelper from '../../utils/ecomHelper';
 import { PrimaryColors } from '../../theme/colors';
-import { AppContext } from '../../context/AppContext';
-import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
-
-const { width, height } = Dimensions.get('window');
+import { useFormStateContext } from '../../context/AppContext';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
+import { validateGasSafeWarning } from './GasSafeWarningPage.validator';
 
 function GasSafeWarningPage() {
+  const signatureWidth = EcomHelper.getSignatureWidth();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
-  const appContext = useContext(AppContext);
-  const { standardDetails } = appContext || {};
+
+  const { state, setState } = useFormStateContext();
+  const { standards } = state;
 
   const [isModal, setIsModal] = useState(false);
   const [isCustomerSign, setIsCustomerSign] = useState(true);
 
+  const handleInputChange = (key, value) => {
+    setState({
+      ...state,
+      standards: {
+        ...standards,
+        [key]: value,
+      },
+    });
+  };
+
   const handleOK = (signature) => {
     const base64String = signature.replace('data:image/png;base64,', '');
-
-    if (isCustomerSign) {
-      appContext.setStandardDetails({
-        ...standardDetails,
-        customerSign: base64String,
-      });
-    } else {
-      appContext.setStandardDetails({
-        ...standardDetails,
-        engineerSign: base64String,
-      });
-    }
+    setState({
+      ...state,
+      standards: {
+        ...standards,
+        ...(isCustomerSign
+          ? { customerSign: base64String }
+          : { engineerSign: base64String }),
+      },
+    });
     setIsModal(false);
   };
 
@@ -57,42 +64,12 @@ function GasSafeWarningPage() {
   };
 
   const nextPressed = async () => {
-    if (standardDetails.certificateReference == null) {
-      EcomHelper.showInfoMessage('Please enter Certificate Reference');
-      return;
-    }
-    if (standardDetails.emergencyService == null) {
-      EcomHelper.showInfoMessage(
-        'Please enter Details of gas EmergencySErvice Provider RED'
-      );
-      return;
-    }
-    if (standardDetails.isPropertyRented == null) {
-      EcomHelper.showInfoMessage('Please answer if the property is rented');
-      return;
-    }
-    if (standardDetails.isCustomerAvailable == null) {
-      EcomHelper.showInfoMessage(
-        'Please answer if Customer was available on site'
-      );
-      return;
-    }
-    if (
-      standardDetails.isCustomerAvailable &&
-      standardDetails.customerSign == null
-    ) {
-      EcomHelper.showInfoMessage('Please check Customer Signature');
-      return;
-    }
-    if (standardDetails.engineerSign == null) {
-      EcomHelper.showInfoMessage('Please check Engineer Signature');
-      return;
-    }
+    const { isValid, message } = validateGasSafeWarning(standards);
 
-    await db.runAsync('UPDATE Jobs SET standards = ? WHERE id = ?', [
-      JSON.stringify(standardDetails),
-      appContext.jobID,
-    ]);
+    if (!isValid) {
+      EcomHelper.showInfoMessage(message);
+      return;
+    }
 
     goToNextStep();
   };
@@ -116,191 +93,171 @@ function GasSafeWarningPage() {
         behavior={Platform.OS === 'ios' ? 'padding' : null}
       >
         <ScrollView>
-          <TextInputWithTitle
-            title={'Certificate Reference'}
-            placeholder={''}
-            onChangeText={(txt) => {
-              appContext.setStandardDetails({
-                ...standardDetails,
-                certificateReference: txt,
-              });
-            }}
-            value={standardDetails?.certificateReference}
-            containerStyle={styles.inputContainer}
-          />
-
-          <TextInputWithTitle
-            title={'Details of gas EmergencyService Provider REF'}
-            placeholder={''}
-            onChangeText={(txt) => {
-              appContext.setStandardDetails({
-                ...standardDetails,
-                emergencyService: txt,
-              });
-            }}
-            value={standardDetails?.emergencyService}
-            containerStyle={styles.inputContainer}
-          />
-
-          <View
-            style={{
-              flexDirection: 'row',
-              flex: 2,
-            }}
-          >
-            <View
-              style={{
-                flex: 1,
-                gap: 10,
+          <View style={{ gap: 10 }}>
+            <TextInputWithTitle
+              title={'Certificate Reference'}
+              placeholder={''}
+              onChangeText={(txt) => {
+                handleInputChange('certificateReference', txt);
               }}
-            >
-              <Text
+              value={standards?.certificateReference}
+            />
+
+            <TextInputWithTitle
+              title={'Details of gas EmergencyService Provider REF'}
+              placeholder={''}
+              onChangeText={(txt) => {
+                handleInputChange('emergencyService', txt);
+              }}
+              value={standards?.emergencyService}
+            />
+
+            <View style={styles.row}>
+              <View
                 style={{
-                  textAlign: 'center',
+                  flex: 1,
+                  gap: 10,
                 }}
               >
-                {'Is the property Rented?'}
-              </Text>
-              <View style={styles.optionsContainer}>
-                <OptionalButton
-                  options={['Yes', 'No']}
-                  actions={[
-                    () => {
-                      appContext.setStandardDetails({
-                        ...standardDetails,
-                        isPropertyRented: true,
-                      });
-                    },
-                    () => {
-                      appContext.setStandardDetails({
-                        ...standardDetails,
-                        isPropertyRented: false,
-                      });
-                    },
-                  ]}
-                  value={
-                    appContext.isPropertyRented == null
-                      ? null
-                      : appContext.isPropertyRented
-                      ? 'Yes'
-                      : 'No'
-                  }
-                />
-              </View>
-            </View>
-
-            <View
-              style={{
-                flex: 1,
-                gap: 10,
-              }}
-            >
-              <Text
-                style={{
-                  textAlign: 'center',
-                }}
-              >
-                {'Was Customer available on site'}
-              </Text>
-              <View style={styles.optionsContainer}>
-                <OptionalButton
-                  options={['Yes', 'No']}
-                  actions={[
-                    () => {
-                      appContext.setStandardDetails({
-                        ...standardDetails,
-                        isCustomerAvailable: true,
-                      });
-                    },
-                    () => {
-                      appContext.setStandardDetails({
-                        ...standardDetails,
-                        isCustomerAvailable: false,
-                      });
-                    },
-                  ]}
-                  value={
-                    appContext.isCustomerAvailable == null
-                      ? null
-                      : appContext.isCustomerAvailable
-                      ? 'Yes'
-                      : 'No'
-                  }
-                />
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.row}>
-            {appContext.isCustomerAvailable && (
-              <View>
-                <Button
-                  title={'Customer Signature'}
-                  onPress={() => {
-                    setIsModal(true);
-                    setIsCustomerSign(true);
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    minHeight: 40,
                   }}
-                />
-
-                {standardDetails.customerSign && (
-                  <Image
-                    source={{
-                      uri: `data:image/png;base64,${standardDetails.customerSign}`,
-                    }}
-                    style={styles.signImage}
+                >
+                  {'Is the property Rented?'}
+                </Text>
+                <View style={styles.optionsContainer}>
+                  <OptionalButton
+                    options={['Yes', 'No']}
+                    actions={[
+                      () => {
+                        handleInputChange('isPropertyRented', true);
+                      },
+                      () => {
+                        handleInputChange('isPropertyRented', false);
+                      },
+                    ]}
+                    value={
+                      standards?.isPropertyRented == null
+                        ? null
+                        : standards?.isPropertyRented
+                        ? 'Yes'
+                        : 'No'
+                    }
                   />
-                )}
+                </View>
               </View>
-            )}
+
+              <View
+                style={{
+                  flex: 1,
+                  gap: 10,
+                }}
+              >
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    minHeight: 40,
+                  }}
+                >
+                  {'Was Customer available on site'}
+                </Text>
+                <View style={styles.optionsContainer}>
+                  <OptionalButton
+                    options={['Yes', 'No']}
+                    actions={[
+                      () => {
+                        handleInputChange('isCustomerAvailable', true);
+                      },
+                      () => {
+                        handleInputChange('isCustomerAvailable', false);
+                      },
+                    ]}
+                    value={
+                      standards?.isCustomerAvailable == null
+                        ? null
+                        : standards?.isCustomerAvailable
+                        ? 'Yes'
+                        : 'No'
+                    }
+                  />
+                </View>
+              </View>
+            </View>
 
             <View>
-              <Button
-                title={'Engineer Signature'}
-                onPress={() => {
-                  setIsModal(true);
-                  setIsCustomerSign(false);
-                }}
-              />
+              {standards?.isCustomerAvailable && (
+                <View>
+                  <Button
+                    title={'Customer Signature'}
+                    onPress={() => {
+                      setIsModal(true);
+                      setIsCustomerSign(true);
+                    }}
+                  />
 
-              <Image
-                source={{
-                  uri: `data:image/png;base64,${standardDetails.engineerSign}`,
-                }}
-                style={styles.signImage}
-              />
-            </View>
-          </View>
+                  {standards?.customerSign && (
+                    <Image
+                      source={{
+                        uri: `data:image/png;base64,${standards?.customerSign}`,
+                      }}
+                      style={styles.signImage}
+                    />
+                  )}
+                </View>
+              )}
 
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={isModal}
-            onRequestClose={() => {
-              setIsModal(!isModal);
-            }}
-          >
-            <View style={styles.modalOverlay}>
-              <View
-                style={[
-                  styles.modalInnerContainer,
-                  { width: width * 0.8, height: height * 0.6 },
-                ]}
-              >
+              <View>
                 <Button
-                  title="Close"
+                  title={'Engineer Signature'}
                   onPress={() => {
-                    setIsModal(false);
+                    setIsModal(true);
+                    setIsCustomerSign(false);
                   }}
                 />
-                <SignatureScreen
-                  onOK={handleOK}
-                  webStyle={`.m-signature-pad { ... }`}
-                  backgroundColor={PrimaryColors.Sand}
-                  scrollable={true}
+
+                <Image
+                  source={{
+                    uri: `data:image/png;base64,${standards?.engineerSign}`,
+                  }}
+                  style={styles.signImage}
                 />
               </View>
             </View>
-          </Modal>
+
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={isModal}
+              onRequestClose={() => {
+                setIsModal(!isModal);
+              }}
+            >
+              <View style={styles.modalOverlay}>
+                <View style={styles.modalInnerContainer}>
+                  <SignatureScreen
+                    onOK={handleOK}
+                    webStyle={`
+                    .m-signature-pad { box-shadow: none; border: none; width: ${signatureWidth}; height: 70%; } 
+                    .m-signature-pad--body { border: none; }
+                    .m-signature-pad--footer { margin: 0px; }
+                    body, html { width: 100%; height: 100%;}
+                  `}
+                    backgroundColor={PrimaryColors.Sand}
+                    style={styles.signatureCanvas}
+                    webviewContainerStyle={styles.webviewContainer}
+                  />
+                  <Button
+                    title="Close"
+                    onPress={() => {
+                      setIsModal(false);
+                    }}
+                  />
+                </View>
+              </View>
+            </Modal>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -321,7 +278,6 @@ const styles = StyleSheet.create({
   optionsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: width * 0.1,
     alignItems: 'center',
     marginBottom: 20,
   },
@@ -331,30 +287,46 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginBottom: 20,
   },
+  row: {
+    flexDirection: 'row',
+    gap: 10,
+  },
   modalOverlay: {
     flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalInnerContainer: {
+    width: '90%',
+    height: '70%',
     backgroundColor: 'white',
-    padding: 20,
     borderRadius: 10,
-    overflow: 'hidden',
-    alignItems: 'center',
+    padding: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
   },
+  signatureCanvas: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    backgroundColor: PrimaryColors.Sand,
+    borderRadius: 10,
+  },
   signImage: {
-    width: width * 0.8,
-    height: 150,
-    resizeMode: 'contain',
+    width: '100%',
+    height: 300,
     alignSelf: 'center',
-    marginVertical: 15,
+  },
+  webviewContainer: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    backgroundColor: PrimaryColors.Sand,
+    borderRadius: 10,
   },
 });
 

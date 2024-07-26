@@ -6,7 +6,7 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
 } from 'react-native';
-import React, { useContext } from 'react';
+import React from 'react';
 import { useRoute } from '@react-navigation/native';
 
 // Components
@@ -17,50 +17,34 @@ import SwitchWithTitle from '../../components/Switch';
 // Utils
 import EcomHelper from '../../utils/ecomHelper';
 import { TextType } from '../../theme/typography';
-import { unitH, width } from '../../utils/constant';
 
 // Context
-import { AppContext } from '../../context/AppContext';
-import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import { useFormStateContext } from '../../context/AppContext';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
 function AssetTypeSelectionPage() {
   const { goToPreviousStep, goToNextStep } = useProgressNavigation();
   const route = useRoute();
   const { title } = route.params;
 
-  const { setMeterDetails, jobType, meterDetails, jobID } =
-    useContext(AppContext);
-
-  // Destructuring parameters directly to ensure they're accessed consistently
-  const saveToDatabase = async () => {
-    const meterDetailsJson = JSON.stringify(meterDetails);
-    try {
-      await db
-        .runAsync('UPDATE Jobs SET meterDetails = ? WHERE id = ?', [
-          meterDetailsJson,
-          jobID,
-        ])
-        .then((result) => {
-          console.log('meterDetails saved to database:', result);
-        });
-    } catch (error) {
-      console.log('Error saving meterDetails to database:', error);
-    }
-  };
+  const { state, setState } = useFormStateContext();
+  const { jobType, meterDetails, jobID } = state;
 
   const handleInputChange = (name, value) => {
-    setMeterDetails((prevDetails) => ({
-      ...prevDetails,
-      [name]: value,
-    }));
+    setState({
+      ...state,
+      meterDetails: {
+        ...meterDetails,
+        [name]: value,
+      },
+    });
   };
 
-  const backPressed = () => {
-    saveToDatabase();
+  const backPressed = async () => {
     goToPreviousStep();
   };
 
-  const nextPressed = () => {
+  const nextPressed = async () => {
     const { isMeter, isAmr, isCorrector } = meterDetails || {};
 
     if (!isMeter && !isAmr && !isCorrector) {
@@ -70,7 +54,6 @@ function AssetTypeSelectionPage() {
       return;
     }
 
-    saveToDatabase();
     goToNextStep();
   };
 
@@ -98,7 +81,7 @@ function AssetTypeSelectionPage() {
                 handleInputChange('isMeter', e);
               }}
             />
-            <View style={styles.spacer} />
+
             <SwitchWithTitle
               title={'AMR'}
               value={meterDetails?.isAmr}
@@ -106,7 +89,7 @@ function AssetTypeSelectionPage() {
                 handleInputChange('isAmr', e);
               }}
             />
-            <View style={styles.spacer} />
+
             <SwitchWithTitle
               title={'Corrector'}
               value={meterDetails?.isCorrector}
@@ -114,7 +97,6 @@ function AssetTypeSelectionPage() {
                 handleInputChange('isCorrector', e);
               }}
             />
-            <View style={styles.spacer} />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -128,10 +110,8 @@ const styles = StyleSheet.create({
   },
   body: {
     flex: 1,
-    marginHorizontal: width * 0.1,
-  },
-  spacer: {
-    height: unitH * 20,
+    gap: 20,
+    padding: 20,
   },
 });
 

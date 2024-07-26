@@ -1,46 +1,101 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import React, { useCallback, useState } from 'react';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import { SafeAreaView, StyleSheet, Alert, FlatList, Text } from 'react-native';
 // Components
 import Header from '../components/Header';
 import JobCard from '../components/JobCard';
 // Utils
-import LoadJob from '../utils/loadJob';
-import { useProgressNavigation } from '../context/ExampleFlowRouteProvider';
+import { useProgressNavigation } from '../context/ProgressiveFlowRouteProvider';
 import { useSQLiteContext } from 'expo-sqlite/next';
-import { AppContext } from '../context/AppContext';
+import { useFormStateContext } from '../context/AppContext';
 
-const JobsTable = ({ route }) => {
+const fieldsToParse = [
+  'siteDetails',
+  'siteQuestions',
+  'photos',
+  'streams',
+  'meterDetails',
+  'kioskDetails',
+  'ecvDetails',
+  'movDetails',
+  'regulatorDetails',
+  'standards',
+  'meterDetailsTwo',
+  'additionalMaterials',
+  'dataLoggerDetails',
+  'dataLoggerDetailsTwo',
+  'maintenanceDetails',
+  'correctorDetails',
+  'correctorDetailsTwo',
+  'chatterBoxDetails',
+];
+
+const safeParse = (jsonString, fallbackValue) => {
+  try {
+    return !!jsonString ? JSON.parse(jsonString) : fallbackValue;
+  } catch (error) {
+    console.error('Error parsing JSON string:', error, jsonString);
+    return fallbackValue;
+  }
+};
+
+const JobsTable = () => {
   const db = useSQLiteContext();
-  const appContext = useContext(AppContext);
-  const [jobs, setJobs] = useState([]);
   const navigation = useNavigation();
+  const { setState } = useFormStateContext();
   const { startFlow } = useProgressNavigation();
+  const route = useRoute();
 
-  useEffect(() => {
-    fetchData();
-  }, [route?.params]);
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [route?.params])
+  );
 
   const fetchData = async () => {
+    setLoading(true);
     try {
       const result = await db.getAllAsync(
         'SELECT * FROM jobs WHERE jobStatus = ?',
         ['In Progress']
       );
       setJobs(result);
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching jobs:', error);
+      setLoading(false);
     }
   };
 
   const handleRowClick = async (jobId) => {
     try {
-      const jobData = await LoadJob(db, appContext, jobId);
-      startFlow(jobData.jobType);
-      navigation.navigate('SiteDetailsPage', { jobData });
+      const jobData = jobs.find(({ id }) => id === jobId);
+      if (jobData) {
+        const parsedJobData = { ...jobData };
+
+        fieldsToParse.forEach((field) => {
+          parsedJobData[field] = safeParse(
+            jobData?.[field],
+            Array.isArray(parsedJobData?.[field]) ? [] : {}
+          );
+        });
+
+        setState((prevState) => ({
+          ...prevState,
+          ...parsedJobData,
+          jobID: jobId,
+        }));
+        startFlow(parsedJobData.jobType);
+      }
     } catch (error) {
       console.error('Error loading job:', error);
-      // Handle the error, e.g., show an error message
     }
   };
 
@@ -51,13 +106,11 @@ const JobsTable = ({ route }) => {
         text: 'Yes',
         onPress: async () => {
           try {
-            await db.transaction(async (tx) => {
-              await tx.executeSql('DELETE FROM Jobs WHERE id = ?', [jobId]);
-            });
+            await db.runAsync('DELETE FROM Jobs WHERE id = ?', [jobId]);
             console.log('Record deleted successfully');
             fetchData();
           } catch (error) {
-            console.error('Error deleting record', error);
+            console.error('Error deleting record:', error);
           }
         },
       },
@@ -78,6 +131,7 @@ const JobsTable = ({ route }) => {
         style={styles.listContainer}
         renderItem={({ item }) => (
           <JobCard
+            loading={loading}
             item={item}
             handleOnCardClick={handleRowClick}
             buttonConfig={[
@@ -94,6 +148,7 @@ const JobsTable = ({ route }) => {
         ListEmptyComponent={() => (
           <Text style={styles.noJobsText}>No jobs available</Text>
         )}
+        refreshing={loading}
       />
     </SafeAreaView>
   );

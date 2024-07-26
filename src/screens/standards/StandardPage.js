@@ -4,12 +4,11 @@ import {
   Modal,
   Button,
   StyleSheet,
-  Dimensions,
   ScrollView,
   SafeAreaView,
   KeyboardAvoidingView,
 } from 'react-native';
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import SignatureScreen from 'react-native-signature-canvas';
 
 import { isIos } from '../../utils/constant';
@@ -21,93 +20,57 @@ import OptionalButton from '../../components/OptionButton';
 import { TextInputWithTitle } from '../../components/TextInput';
 
 // Context
-import { AppContext } from '../../context/AppContext';
-import { useProgressNavigation } from '../../context/ExampleFlowRouteProvider';
+import { useFormStateContext } from '../../context/AppContext';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
 // Utils
 import EcomHelper from '../../utils/ecomHelper';
 import { PrimaryColors } from '../../theme/colors';
+import { validateStandardDetails } from './StandardPage.validator';
 
-const { width, height } = Dimensions.get('window');
 function StandardPage() {
-  const appContext = useContext(AppContext);
+  const signatureWidth = EcomHelper.getSignatureWidth();
+  const { state, setState } = useFormStateContext();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
-
-  const title = 'Standard Details';
-  const { standardDetails, meterDetails, jobID, setStandardDetails,jobType } =
-    appContext;
-
-  const riddorReportable =
-    standardDetails?.riddorReportable == null
-      ? meterDetails?.isStandard
-      : standardDetails?.riddorReportable;
+  const { standards, meterDetails, jobType } = state;
 
   const [isModal, setIsModal] = useState(false);
 
   const handleOK = (signature) => {
     const base64String = signature.replace('data:image/png;base64,', '');
-    setStandardDetails((curState) => ({
-      ...curState,
-      signature: base64String,
+    setState((prevState) => ({
+      ...prevState,
+      standards: {
+        ...prevState.standards,
+        signature: base64String,
+      },
     }));
     setIsModal(false);
   };
 
+  const handleInputChange = (name, value) => {
+    setState((prevState) => ({
+      ...prevState,
+      standards: {
+        ...prevState.standards,
+        [name]: value,
+      },
+    }));
+  };
+
   const nextPressed = async () => {
-    const meterDetailsUpdate = {
-      ...meterDetails,
-      isStandard: riddorReportable,
-    };
-    // console.log('Standard Details before JSON:', standards);
-    // console.log('Meter Details before JSON:', meterDetailsUpdate);
+    const { isValid, message } = validateStandardDetails(
+      standards,
+      meterDetails,
+      jobType
+    );
+
+    if (!isValid) {
+      EcomHelper.showInfoMessage(message);
+      return;
+    }
 
     try {
-      if (standardDetails?.conformStandard == null) {
-        EcomHelper.showInfoMessage(
-          'Please answer if the network service/ECV conform to standards'
-        );
-        return;
-      }
-
-      if (standardDetails?.pressure == null) {
-        EcomHelper.showInfoMessage('Please set inlet pressure');
-        return;
-      }
-
-      if (standardDetails?.signature == null) {
-        EcomHelper.showInfoMessage('Please enter signature');
-        return;
-      }
-      if (riddorReportable == null) {
-        EcomHelper.showInfoMessage('Please answer if RIDDOR reportable');
-        return;
-      }
-      if (meterDetails?.isMeter) {
-        if (jobType === 'Install' || jobType === 'Exchange') {
-          if (standardDetails?.testPassed == null) {
-            EcomHelper.showInfoMessage('Please answer if tightness test passed');
-            return;
-          }
-          if (standardDetails?.useOutlet == null) {
-            EcomHelper.showInfoMessage('Please answer if Outlet kit is used');
-            return;
-          }
-        }
-      }
-
-      await db.runAsync('UPDATE Jobs SET standards = ? WHERE id = ?', [
-        JSON.stringify(),
-        jobID,
-      ]);
-
-      appContext.setMeterDetails(meterDetailsUpdate);
-
-      await db.runAsync('UPDATE Jobs SET meterDetails = ? WHERE id = ?', [
-        JSON.stringify(meterDetailsUpdate),
-        jobID,
-      ]);
-
-      setStandardDetails(standardDetails);
       goToNextStep();
     } catch (error) {
       console.error('Error updating job details:', error);
@@ -127,7 +90,7 @@ function StandardPage() {
         hasLeftBtn={true}
         hasCenterText={true}
         hasRightBtn={true}
-        centerText={title}
+        centerText={'Standard Details'}
         leftBtnPressed={backPressed}
         rightBtnPressed={nextPressed}
       />
@@ -136,226 +99,105 @@ function StandardPage() {
         behavior={isIos ? 'padding' : null}
       >
         <ScrollView style={styles.scrollView}>
-          <View style={styles.spacer} />
           <View style={styles.body}>
-            <View style={styles.spacer} />
-            <Text>Does the network service /ECV conform to standards</Text>
-            <View style={styles.optionContainer}>
-              <OptionalButton
-                options={['Yes', 'No']}
-                actions={[
-                  () => {
-                    setStandardDetails((curState) => ({
-                      ...curState,
-                      conformStandard: true,
-                    }));
-                  },
-                  () => {
-                    setStandardDetails((curState) => ({
-                      ...curState,
-                      conformStandard: false,
-                    }));
-                  },
-                ]}
-                value={
-                  standardDetails?.conformStandard == null
-                    ? null
-                    : standardDetails?.conformStandard
-                    ? 'Yes'
-                    : 'No'
-                }
-              />
-            </View>
-            <View style={styles.spacer} />
-            <Text>RIDDOR reportable</Text>
-            <View style={styles.optionContainer}>
-              <OptionalButton
-                options={['Yes', 'No']}
-                actions={[
-                  () => {
-                    setStandardDetails((curState) => ({
-                      ...curState,
-                      riddorReportable: true,
-                    }));
-                  },
-                  () => {
-                    setStandardDetails((curState) => ({
-                      ...curState,
-                      riddorReportable: false,
-                    }));
-                  },
-                ]}
-                value={
-                  riddorReportable == null
-                    ? null
-                    : riddorReportable
-                    ? 'Yes'
-                    : 'No'
-                }
-              />
-            </View>
-            <View style={styles.spacer} />
-            <View style={styles.container}>
-            {jobType !=="Survey" && (
-              <>
-                  <View style={styles.spacer} />
-            <Text>Any Additional materials used</Text>
-            <View style={styles.optionContainer}>
-              <OptionalButton
-                options={['Yes', 'No']}
-                actions={[
-                  () => {
-                    setStandardDetails((curState) => ({
-                      ...curState,
-                      additionalMaterials: true,
-                    }));
-                  },
-                  () => {
-                    setStandardDetails((curState) => ({
-                      ...curState,
-                      additionalMaterials: false,
-                    }));
-                  },
-                ]}
-                value={
-                  standardDetails?.additionalMaterials == null
-                    ? null
-                    : standardDetails?.additionalMaterials
-                    ? 'Yes'
-                    : 'No'
-                }
-              />
-            </View>
-            <View style={styles.spacer} />
-            <Text>Any chatterBox installed</Text>
-            <View style={styles.optionContainer}>
-              <OptionalButton
-                options={['Yes', 'No']}
-                actions={[
-                  () => {
-                    setStandardDetails((curState) => ({
-                      ...curState,
-                      chatterbox: true,
-                    }));
-                  },
-                  () => {
-                    setStandardDetails((curState) => ({
-                      ...curState,
-                      chatterbox: false,
-                    }));
-                  },
-                ]}
-                value={
-                  standardDetails?.chatterbox == null
-                    ? null
-                    : standardDetails?.chatterbox
-                    ? 'Yes'
-                    : 'No'
-                }
-              />
-            </View>
-              
-              </>
-            )}
-            </View>
-            <View style={styles.spacer} />
-            <View style={styles.container}>
-              {meterDetails?.isMeter  && (jobType === 'Install' || jobType === 'Exchange') && (
-                <>
-                  <Text>Outlet kit been used</Text>
+            {[
+              {
+                key: 'conformStandard',
+                question: 'Does the network service /ECV conform to standards',
+                options: ['Yes', 'No'],
+              },
+              {
+                key: 'riddorReportable',
+                question: 'RIDDOR reportable',
+                options: ['Yes', 'No'],
+              },
+              ...(jobType !== 'Survey'
+                ? [
+                    {
+                      key: 'additionalMaterials',
+                      question: 'Any Additional materials used',
+                      options: ['Yes', 'No'],
+                    },
+                    {
+                      key: 'chatterbox',
+                      question: 'Any chatterBox installed',
+                      options: ['Yes', 'No'],
+                    },
+                  ]
+                : []),
+              ...(meterDetails?.isMeter &&
+              (jobType === 'Install' || jobType === 'Exchange')
+                ? [
+                    {
+                      key: 'useOutlet',
+                      question: 'Outlet kit been used',
+                      options: ['Yes', 'No'],
+                    },
+                    {
+                      key: 'testPassed',
+                      question: 'Tightness test passed',
+                      options: ['Yes', 'No'],
+                    },
+                  ]
+                : []),
+            ].map((item) => {
+              return (
+                <View
+                  style={{
+                    gap: 10,
+                  }}
+                  key={item?.key}
+                >
+                  <Text>{item?.question}</Text>
                   <View style={styles.optionContainer}>
                     <OptionalButton
-                      options={['Yes', 'No']}
+                      options={item?.options}
                       actions={[
-                        () =>
-                          setStandardDetails((curState) => ({
-                            ...curState,
-                            useOutlet: true,
-                          })),
-                        () =>
-                          setStandardDetails((curState) => ({
-                            ...curState,
-                            useOutlet: false,
-                          })),
+                        () => {
+                          handleInputChange(item?.key, true);
+                        },
+                        () => {
+                          handleInputChange(item?.key, false);
+                        },
                       ]}
                       value={
-                        standardDetails?.useOutlet == null
+                        standards?.[item?.key] === undefined
                           ? null
-                          : standardDetails?.useOutlet
-                          ? 'Yes'
-                          : 'No'
+                          : standards?.[item?.key]
+                          ? item?.options[0]
+                          : item?.options[1]
                       }
                     />
                   </View>
-              
-                  <View style={styles.spacer} />
-                  <Text>Tightness test passed</Text>
-                  <View style={styles.optionContainer}>
-                    <OptionalButton
-                      options={['Yes', 'No']}
-                      actions={[
-                        () =>
-                          setStandardDetails((curState) => ({
-                            ...curState,
-                            testPassed: true,
-                          })),
-                        () =>
-                          setStandardDetails((curState) => ({
-                            ...curState,
-                            testPassed: false,
-                          })),
-                      ]}
-                      value={
-                        standardDetails?.testPassed == null
-                          ? null
-                          : standardDetails?.testPassed
-                          ? 'Yes'
-                          : 'No'
-                      }
-                    />
-                  </View>
-                </>
-              )}
-            </View>
+                </View>
+              );
+            })}
 
-            <View style={styles.spacer} />
             <TextInputWithTitle
               title={'Inlet Pressure'}
-              width={'100%'}
-              value={standardDetails?.pressure}
+              value={standards?.pressure}
               onChange={(event) => {
                 // its sendign native event with numeric keyboard
-                setStandardDetails((curState) => ({
-                  ...curState,
-                  pressure: event.nativeEvent.text,
-                }));
+                handleInputChange('pressure', event.nativeEvent.text);
               }}
               keyboardType="numeric"
             />
 
-            <View style={styles.spacer} />
             <TextInputWithTitle
               title={'Notes'}
-              value={standardDetails?.conformText}
+              value={standards?.conformText}
               onChangeText={(text) => {
-                setStandardDetails((curState) => ({
-                  ...curState,
-                  conformText: text,
-                }));
+                handleInputChange('conformText', text);
               }}
-              style={{
-                ...styles.input,
-                width: '100%',
-                height: height * 0.2,
-              }}
+              style={{ height: 200 }}
               multiline={true}
             />
-            <View style={styles.spacer} />
+
             <Text>
               I confirm that all works have been carried out in accordance with
               current industry standards and health safety policies
             </Text>
-            <View style={styles.spacer} />
+
             <View>
               <Button
                 title={'Signature'}
@@ -363,50 +205,50 @@ function StandardPage() {
                   setIsModal(true);
                 }}
               />
-              <View style={styles.spacer} />
-              {standardDetails?.signature && (
+
+              {standards?.signature && (
                 <Image
                   source={{
-                    uri: `data:image/png;base64,${standardDetails?.signature}`,
+                    uri: `data:image/png;base64,${standards?.signature}`,
                   }}
                   style={styles.signImage}
                 />
               )}
             </View>
-
-            <Modal
-              animationType="slide"
-              transparent={true}
-              visible={isModal}
-              onRequestClose={() => {
-                setIsModal(!isModal);
-              }}
-            >
-              <View style={styles.modalOverlay}>
-                <View
-                  style={[
-                    styles.modalInnerContainer,
-                    { width: width * 0.8, height: height * 0.6 },
-                  ]}
-                >
-                  <Button
-                    title="Close"
-                    onPress={() => {
-                      setIsModal(false);
-                    }}
-                  />
-                  <SignatureScreen
-                    onOK={handleOK}
-                    webStyle={`.m-signature-pad { ... }`}
-                    backgroundColor={PrimaryColors.Sand}
-                    scrollable={true}
-                  />
-                </View>
-              </View>
-            </Modal>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isModal}
+        onRequestClose={() => {
+          setIsModal(!isModal);
+        }}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalInnerContainer}>
+            <SignatureScreen
+              onOK={handleOK}
+              webStyle={`
+                .m-signature-pad { box-shadow: none; border: none; width: ${signatureWidth}; height: 70%; } 
+                .m-signature-pad--body { border: none; }
+                .m-signature-pad--footer { margin: 0px; }
+                body, html { width: 100%; height: 100%;}
+              `}
+              backgroundColor={PrimaryColors.Sand}
+              style={styles.signatureCanvas}
+              webviewContainerStyle={styles.webviewContainer}
+            />
+            <Button
+              title="Close"
+              onPress={() => {
+                setIsModal(false);
+              }}
+            />
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -416,52 +258,47 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollView: {
-    flex: 1,
     paddingHorizontal: 16,
+  },
+  body: {
+    gap: 20,
   },
   modalOverlay: {
     flex: 1,
-    justifyContent: 'center', // Centers the modal content vertically
-    alignItems: 'center', // Centers the modal content horizontally
-    backgroundColor: 'rgba(0,0,0,0.5)', // Semi-transparent background
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modalInnerContainer: {
+    width: '90%',
+    height: '70%',
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 20,
-    alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
   },
-  signatureContainer: {
+  signatureCanvas: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+    backgroundColor: PrimaryColors.Sand,
+    borderRadius: 10,
   },
   signImage: {
-    width: width * 0.8,
-    height: height * 0.2,
+    width: '100%',
+    height: 300,
     alignSelf: 'center',
   },
-  inputContainer: {
-    marginBottom: 20,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 20,
-  },
-  optionContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: width * 0.4, // Adjusted for responsiveness
+  webviewContainer: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    backgroundColor: PrimaryColors.Sand,
+    borderRadius: 10,
   },
 });
-
 export default StandardPage;
