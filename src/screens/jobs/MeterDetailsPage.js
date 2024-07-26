@@ -1,4 +1,3 @@
-import { useSQLiteContext } from 'expo-sqlite/next';
 import { useRoute } from '@react-navigation/native';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -21,7 +20,6 @@ import TextInput, { TextInputWithTitle } from '../../components/TextInput';
 
 // Context and Utils
 import {
-  tableNames,
   PULSE_VALUE,
   NUMBER_OF_DIALS,
   METER_TYPE_CHOICES,
@@ -33,14 +31,15 @@ import {
 } from '../../utils/constant';
 import EcomHelper from '../../utils/ecomHelper';
 import { useFormStateContext } from '../../context/AppContext';
-import { makeFontSmallerAsTextGrows } from '../../utils/styles';
-import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 import { validateMeterDetails } from './MeterDetailsPage.validator';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
+
+// Constants
+import { meterDetailsOptions } from '../../../assets/json/meterDetails';
 
 function MeterDetailsPage() {
   const route = useRoute();
   const camera = useRef(null);
-  const db = useSQLiteContext();
   const { state, setState } = useFormStateContext();
   const { jobType, meterDetails } = state;
 
@@ -50,8 +49,6 @@ function MeterDetailsPage() {
   const { title } = route.params;
   const diaphragmMeterTypes = ['1', '2', '4'];
 
-  const [meterManufacturers, setMeterManufacturers] = useState([]);
-  const [meterModelCodes, setMeterModelCodes] = useState([]);
   const [isModal, setIsModal] = useState(false);
 
   useEffect(() => {
@@ -102,48 +99,6 @@ function MeterDetailsPage() {
     handleInputChange('manufacturer', null);
     handleInputChange('model', null);
     handleInputChange('pressureTier', null);
-    const meterType = item?.value;
-    const tableName = meterType && tableNames[meterType];
-    getMeterManufacturers({ tableName });
-  };
-
-  const getMeterModelCodes = async ({ manufacturer }) => {
-    const tableName = meterDetails?.meterType
-      ? tableNames[meterDetails.meterType.value]
-      : null;
-    if (tableName) {
-      try {
-        const query = `SELECT DISTINCT ModelCode FROM ${tableName} WHERE Manufacturer = ?`;
-        const params = [manufacturer?.value || ''];
-        const result = await db.getAllAsync(query, params);
-        const modelCodes = result.map((model) => ({
-          label: model.ModelCode,
-          value: model.ModelCode,
-        }))
-        .sort((a, b) => a.label.localeCompare(b.label));;
-        setMeterModelCodes(modelCodes);
-      } catch (err) {
-        console.error('SQL Error: ', err);
-      }
-    } else {
-      console.log('meterDetails.meterType is false, not fetching model codes');
-    }
-  };
-
-  const getMeterManufacturers = async ({ tableName }) => {
-    try {
-      const query = `SELECT DISTINCT Manufacturer FROM ${tableName}`;
-      const result = await db.getAllAsync(query);
-      const manufacturers = result.map((mf) => ({
-        label: mf.Manufacturer,
-        value: mf.Manufacturer,
-      }))
-      .sort((a, b) => a.label.localeCompare(b.label));
-      
-      setMeterManufacturers(manufacturers);
-    } catch (err) {
-      console.error('SQL Error: ', err);
-    }
   };
 
   const nextPressed = async () => {
@@ -236,11 +191,22 @@ function MeterDetailsPage() {
                 ) : (
                   <EcomDropDown
                     value={meterDetails.manufacturer}
-                    valueList={meterManufacturers}
+                    valueList={
+                      meterDetailsOptions?.[meterDetails.meterType?.label]
+                        ? meterDetailsOptions[meterDetails.meterType?.label]
+                            .map(({ Manufacturer }) => ({
+                              label: Manufacturer,
+                              value: Manufacturer,
+                            }))
+                            .filter(
+                              (v, i, a) =>
+                                a.findIndex((t) => t.label === v.label) === i
+                            )
+                        : []
+                    }
                     placeholder="Select a Manufacturer"
                     onChange={(item) => {
                       handleInputChange('manufacturer', item);
-                      getMeterModelCodes({ manufacturer: item });
                     }}
                   />
                 )}
@@ -276,7 +242,25 @@ function MeterDetailsPage() {
                 ) : (
                   <EcomDropDown
                     value={meterDetails.model}
-                    valueList={meterModelCodes}
+                    valueList={
+                      meterDetailsOptions?.[meterDetails.meterType?.label] &&
+                      meterDetails.manufacturer
+                        ? meterDetailsOptions[meterDetails.meterType?.label]
+                            .filter(
+                              ({ Manufacturer }) =>
+                                Manufacturer ===
+                                meterDetails.manufacturer?.value
+                            )
+                            .map(({ ModelCode }) => ({
+                              label: ModelCode,
+                              value: ModelCode,
+                            }))
+                            .filter(
+                              (v, i, a) =>
+                                a.findIndex((t) => t.label === v.label) === i
+                            )
+                        : []
+                    }
                     placeholder="Select Model Code"
                     onChange={(item) => handleInputChange('model', item)}
                   />
@@ -406,7 +390,6 @@ function MeterDetailsPage() {
                     }}
                     style={{
                       ...styles.input,
-                      
                     }}
                   />
                   <Button

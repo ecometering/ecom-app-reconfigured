@@ -77,12 +77,11 @@ export const validateSiteDetails = (siteDetails, jobType) => {
       validateEmail('email2', siteDetails.email2, 'Invalid email: email2'),
     () =>
       validateSelected(
-        'Site Contact',
-        siteDetails.siteContact,
+        'Contact confirm details',
+        siteDetails.confirmContact,
         'Please confirm contact details are correct'
       ),
     () =>
-      siteDetails.confirmWarrant &&
       validateBooleanField(
         'the warrant went ahead',
         siteDetails.confirmWarrant,

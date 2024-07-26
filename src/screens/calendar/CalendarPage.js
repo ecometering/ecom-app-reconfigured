@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import moment from 'moment';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Calendar, Agenda } from 'react-native-calendars';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -141,6 +141,7 @@ const handleEventSubmit = async (eventData) => {
   }
 };
 
+// TODO Redesign this component its causing infinite re-renders and memory leaks
 const CalendarComponent = () => {
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split('T')[0]
@@ -150,13 +151,16 @@ const CalendarComponent = () => {
   const [agendaItem, setAgendaItem] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
 
-  useEffect(() => {
-    const loadEvents = async () => {
-      const events = await fetchEvents();
-      setSchedules(events);
-    };
-    loadEvents();
-  }, []);
+  // // Warning - this function is recreated on every render cycle causing unnecessary re-renders
+  // // keep it in useCallback to memoize the function
+  // const loadEvents = useCallback(async () => {
+  //   const events = await fetchEvents();
+  //   setSchedules(events);
+  // }, []);
+
+  // useEffect(() => {
+  //   loadEvents();
+  // }, [loadEvents]);
 
   return (
     <SafeAreaView style={styles.body}>

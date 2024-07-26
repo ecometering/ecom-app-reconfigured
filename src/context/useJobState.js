@@ -1,6 +1,7 @@
 import moment from 'moment';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useSQLiteContext } from 'expo-sqlite/next';
+import debounce from 'lodash/debounce';
 
 import { fieldMapping, jsonFields } from './stateDatabaseMapping';
 
@@ -97,6 +98,7 @@ const useJobState = () => {
   const saveToDatabase = async (currentState) => {
     try {
       const { jobID } = currentState;
+      console.log({ jobID });
 
       const fields = Object.keys(fieldMapping).filter((key) => key !== 'jobID');
       const values = fields.map((field) => {
@@ -118,6 +120,7 @@ const useJobState = () => {
       });
 
       if (jobID) {
+        console.log('updating job');
         const updateFields = fields
           .map((field) => `${fieldMapping[field]} = ?`)
           .join(', ');
@@ -126,6 +129,7 @@ const useJobState = () => {
           jobID,
         ]);
       } else {
+        console.log('inserting job');
         const placeholders = fields.map(() => '?').join(', ');
         const result = await db.runAsync(
           `INSERT INTO Jobs (${fields
@@ -143,13 +147,20 @@ const useJobState = () => {
     }
   };
 
+  // Debounce the ensureFieldsExist and saveToDatabase functions
+  const debouncedEnsureFieldsAndSave = useRef(
+    debounce(async (currentState) => {
+      await ensureFieldsExist();
+      await saveToDatabase(currentState);
+    }, 500)
+  ).current;
+
   const setStateAndSave = (newState) => {
     setState((prevState) => {
       const updatedState =
         typeof newState === 'function' ? newState(prevState) : newState;
-      ensureFieldsExist().then(() => {
-        saveToDatabase(updatedState);
-      });
+      console.log('hello');
+      debouncedEnsureFieldsAndSave(updatedState);
       return updatedState;
     });
   };

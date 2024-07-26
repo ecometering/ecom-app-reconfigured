@@ -25,7 +25,7 @@ function JobTypeSection() {
       if (startDate) {
         setState((prevState) => ({
           ...prevState,
-          jobID: jobID || `JOB-${Date.now()}`,
+          jobID: jobID,
           jobType,
           startDate: new Date().toISOString(),
           jobStatus: 'In Progress',

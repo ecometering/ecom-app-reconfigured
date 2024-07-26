@@ -1,5 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import React, { useCallback, useState } from 'react';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import { SafeAreaView, StyleSheet, Alert, FlatList, Text } from 'react-native';
 // Components
 import Header from '../components/Header';
@@ -39,27 +43,31 @@ const safeParse = (jsonString, fallbackValue) => {
   }
 };
 
-const JobsTable = ({ route }) => {
+const JobsTable = () => {
   const db = useSQLiteContext();
   const navigation = useNavigation();
   const { setState } = useFormStateContext();
   const { startFlow } = useProgressNavigation();
+  const route = useRoute();
 
   const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchData();
-  }, [route?.params]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [route?.params])
+  );
 
   const fetchData = async () => {
+    setLoading(true);
     try {
-      const result = await db.getAllAsync(
-        'SELECT * FROM jobs WHERE jobStatus = ?',
-        ['In Progress']
-      );
+      const result = await db.getAllAsync('SELECT * FROM jobs');
       setJobs(result);
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching jobs:', error);
+      setLoading(false);
     }
   };
 
@@ -120,6 +128,7 @@ const JobsTable = ({ route }) => {
         style={styles.listContainer}
         renderItem={({ item }) => (
           <JobCard
+            loading={loading}
             item={item}
             handleOnCardClick={handleRowClick}
             buttonConfig={[
@@ -136,6 +145,7 @@ const JobsTable = ({ route }) => {
         ListEmptyComponent={() => (
           <Text style={styles.noJobsText}>No jobs available</Text>
         )}
+        refreshing={loading}
       />
     </SafeAreaView>
   );

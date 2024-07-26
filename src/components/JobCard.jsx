@@ -1,12 +1,13 @@
 import { Text, TouchableOpacity, View } from 'react-native';
 import JobStatusLabel from './JobStatusLabel';
 
-const JobCard = ({ item, handleOnCardClick, buttonConfig }) => {
+const JobCard = ({ loading, item, handleOnCardClick, buttonConfig }) => {
   const parsedSiteDetails = JSON.parse(item.siteDetails);
   return (
     <TouchableOpacity
       onPress={() => handleOnCardClick(item.id)}
-      style={styles.cardContainer}
+      style={{ ...styles.cardContainer, opacity: loading ? 0.5 : 1 }}
+      disabled={loading}
     >
       <View style={styles.cardHeader}>
         <Text style={styles.textBold}>

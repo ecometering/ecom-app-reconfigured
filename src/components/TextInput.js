@@ -27,23 +27,19 @@ const TextInput = (
   );
 };
 
-export const TextInputWithTitle = (
-  {
-    title,
-    placeholderTextColor,
-    style,
-    containerStyle,
-    onChangeText,
-    ...otherProps
-  },
-  ref
-) => {
+export const TextInputWithTitle = ({
+  title,
+  placeholderTextColor,
+  style,
+  containerStyle,
+  onChangeText,
+  ...otherProps
+}) => {
   return (
     <View style={[containerStyle]}>
       <Text style={{ fontSize: 10 }}>{title}</Text>
       <View style={{ height: 5 }} />
       <TextInput
-        ref={ref}
         placeholderTextColor={placeholderTextColor}
         onChangeText={onChangeText}
         style={{ width: '100%', borderRadius: 5, ...style }}

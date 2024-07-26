@@ -22,8 +22,8 @@ import { useFormStateContext } from '../../context/AppContext';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
 import EcomHelper from '../../utils/ecomHelper';
-import { validateSiteDetails } from './SiteDetailsPage.validator';
 import CustomCheckbox from '../../components/Checkbox';
+import { validateSiteDetails } from './SiteDetailsPage.validator';
 
 function SiteDetailsPage() {
   const navigation = useNavigation();
