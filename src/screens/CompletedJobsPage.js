@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import React, { useCallback, useState } from 'react';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { SafeAreaView, Text, StyleSheet, FlatList, Alert } from 'react-native';
 
 // Components
@@ -49,9 +49,11 @@ const CompletedJobsTable = () => {
 
   const [jobs, setJobs] = useState([]);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [])
+  );
 
   const fetchData = async () => {
     try {
