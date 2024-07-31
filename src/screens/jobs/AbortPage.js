@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import React , { useState, useEffect, createRef }from 'react';
 import { useRoute } from '@react-navigation/native';
+
 // Components
 import Text from '../../components/Text';
 import Header from '../../components/Header';
@@ -16,20 +17,21 @@ import ImagePickerButton from '../../components/ImagePickerButton';
 // Context
 import { useFormStateContext } from '../../context/AppContext';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
-
+import EcomDropDown from '../../components/DropDown';
+import { AbortReason } from '../../utils/constant';
 // Utils
 import { TextType } from '../../theme/typography';
 import EcomHelper from '../../utils/ecomHelper';
-import { validateRiddorReport } from './RiddorReportPage.validator';
+import { validateAbortPage } from './AbortPage.validator';
 
-export default function RiddorReportPage() {
+export default function AbortPage() {
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const { state, setState } = useFormStateContext();
   const route = useRoute();
-
-  const { standards, jobType, photos } = state;
+ const {  title,photoKey } = route.params;
+  const { siteQuestions, jobType, photos } = state;
   const existingPhoto = photos && photoKey ? photos[photoKey] : null;
-  const {  photoKey,title } = route.params;
+ 
   const [selectedImage, setSelectedImage] = useState(existingPhoto || {});
 
 
@@ -40,8 +42,8 @@ export default function RiddorReportPage() {
   const handleInputChange = (key, value) => {
     setState((prev) => ({
       ...prev,
-      standards: {
-        ...prev.standards,
+      siteQuestions: {
+        ...prev.siteQuestions,
         [key]: value,
       },
     }));
@@ -57,7 +59,8 @@ export default function RiddorReportPage() {
     }));
   };
   const nextPressed = async () => {
-    const { isValid, message } = validateRiddorReport(standards,selectedImage);
+    const { isValid, message } = validateAbortPage(siteQuestions,
+      selectedImage);
 
     if (!isValid) {
       EcomHelper.showInfoMessage(message);
@@ -74,7 +77,7 @@ export default function RiddorReportPage() {
           hasLeftBtn={true}
           hasCenterText={true}
           hasRightBtn={true}
-          centerText={"Riddor Report"}
+          centerText={"Job abort reason"}
           leftBtnPressed={backPressed}
           rightBtnPressed={nextPressed}
         />
@@ -82,26 +85,23 @@ export default function RiddorReportPage() {
           <View style={styles.formContainer}>
             <View style={styles.spacer} />
             
-            <Text>RIDDOR Reference</Text>
-            <TextInput
-              value={standards?.riddorRef}
-              onChangeText={(txt) => {
-                const NoSpacesAllowed = txt.toUpperCase();
-                const formattedText = NoSpacesAllowed.replace(
-                  /[^A-Z0-9]+/g,
-                  ''
-                ); 
-                handleInputChange('riddorRef', formattedText);
-              }}
-              style={styles.input}
-            />
+            <View style={styles.flex}>
+                <EcomDropDown
+                  value={siteQuestions.abortReason}
+                  valueList={AbortReason}
+                  placeholder={'Abort Reason'}
+                  onChange={(item) => {
+                    handleInputChange('abortReason', item);
+                  }}
+                />
+              </View>
   
             <View style={styles.spacer} />
             <Text>Notes</Text>
             <TextInput
-              value={standards?.notes}
+              value={siteQuestions?.abortNotes}
               onChangeText={(text) => {
-                handleInputChange('notes', text);
+                handleInputChange('abortNotes', text);
               }}
               style={{ ...styles.input, minHeight: 100 }}
               multiline={true}
@@ -116,7 +116,7 @@ export default function RiddorReportPage() {
             <View style={styles.imagePickerContainer}>
               <View style={styles.body}>
                 <Text type="caption" style={styles.text}>
-                  RIDDOR Issue
+                  Photo of reason
                 </Text>
                 <ImagePickerButton
                   onImageSelected={handlePhotoSelected}

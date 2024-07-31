@@ -1,0 +1,6902 @@
+[
+  {
+    "ModelCode": "BK G10",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G10",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0.1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G10",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G10",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G10",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G10",
+    "Manufacturer": "PC",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G10",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G100",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G100",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G100",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G100",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G16",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0.1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G16",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G16",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G16",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G16",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G16",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G25",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G25",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G25",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G25",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G25",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G25",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G40",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G40",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G40",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G40",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0.1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G40",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G40",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G4E",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G4E",
+    "Manufacturer": "EMI",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G4E",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G4ES",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G6",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "10",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G6",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "10",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G65",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G65",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G65",
+    "Manufacturer": "INS",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G65",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G65",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G65",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK G65",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G100E",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G100E",
+    "Manufacturer": "EMI",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G100E",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G100E",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G100EI7",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "8",
+    "PulseValue": "1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G100M",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G10E",
+    "Manufacturer": "CHE",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G10E",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G10E",
+    "Manufacturer": "EMI",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G10E",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G10E",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G10E",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0.1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G10E",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G10E",
+    "Manufacturer": "LG",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G10E",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G10EI7",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0.1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G10M",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G16E",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G16E",
+    "Manufacturer": "EMI",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G16E",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G16E",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G16E",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G16EI7",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0.1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G16M",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G25E",
+    "Manufacturer": "EDM",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G25E",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G25E",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G25E",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G25E",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G25EI7",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0.1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G25M",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G4",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G4",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G4",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G4",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0.1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G4",
+    "Manufacturer": "JR",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G4",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G4",
+    "Manufacturer": "LPG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G4",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G40E",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G40E",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G40E",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G40E",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G40E",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G40EI7",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0.1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G40M",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G4E",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G4E",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G4EI7",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "N/A",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BKG4M",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0.01",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G4M",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G65E",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G65E",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G65E",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G65E",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G65EI7",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0.1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "BK-G65M",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6",
+    "Manufacturer": "EUR",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6",
+    "Manufacturer": "GW",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6",
+    "Manufacturer": "LG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6",
+    "Manufacturer": "LPG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6",
+    "Manufacturer": "PC",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6",
+    "Manufacturer": "SCM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6",
+    "Manufacturer": "SEN",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6",
+    "Manufacturer": "SIE",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6V130",
+    "Manufacturer": "LPG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6V210",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6V210",
+    "Manufacturer": "LPG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6V210",
+    "Manufacturer": "SCM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6V310",
+    "Manufacturer": "LPG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6V310P",
+    "Manufacturer": "LPG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6VG130",
+    "Manufacturer": "LPG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6VG370",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6VG370",
+    "Manufacturer": "LG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6VG370",
+    "Manufacturer": "LPG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6VG370",
+    "Manufacturer": "SCM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6VG470",
+    "Manufacturer": "LG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6VG470",
+    "Manufacturer": "LPG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6VLG310",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6VLG310",
+    "Manufacturer": "EUR",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6VLG310",
+    "Manufacturer": "GW",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6VLG310",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6VLG310",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6VLG310",
+    "Manufacturer": "LG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6VLG310",
+    "Manufacturer": "LPG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6VLG310",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6VLG310",
+    "Manufacturer": "SIE",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6VLG310",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6VLG310P",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6VLG310P",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6VLG310P",
+    "Manufacturer": "LG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6VLG310P",
+    "Manufacturer": "LPG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6VLG310P",
+    "Manufacturer": "MET",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6VLG310P",
+    "Manufacturer": "SCM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6VLG310P",
+    "Manufacturer": "SIE",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6X",
+    "Manufacturer": "LG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "E6X",
+    "Manufacturer": "SIE",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ECM11000",
+    "Manufacturer": "LPG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "EG4V10",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "EG4V10",
+    "Manufacturer": "CMN",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "EG4V10",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "EG4V10",
+    "Manufacturer": "LPG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "EG4V10",
+    "Manufacturer": "PRI",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "EG4V10",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "EG4V10",
+    "Manufacturer": "SCM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "EG4V10",
+    "Manufacturer": "SEN",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "EG4V10",
+    "Manufacturer": "SM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "EG4V10",
+    "Manufacturer": "WLN",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETGW",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETGW",
+    "Manufacturer": "GW",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETGW",
+    "Manufacturer": "LG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETGW",
+    "Manufacturer": "LPG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETUG",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETUG",
+    "Manufacturer": "EMI",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETUG",
+    "Manufacturer": "GW",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETUG",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETUG",
+    "Manufacturer": "LG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETUG",
+    "Manufacturer": "LPG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "4",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETUG",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETUG",
+    "Manufacturer": "SGR",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETUG",
+    "Manufacturer": "SIE",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETX6",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETX6",
+    "Manufacturer": "AM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETX6",
+    "Manufacturer": "EUR",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETX6",
+    "Manufacturer": "GW",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETX6",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETX6",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETX6",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETX6",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETX6",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETX6",
+    "Manufacturer": "LG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETX6",
+    "Manufacturer": "LPG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETX6",
+    "Manufacturer": "MAG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETX6",
+    "Manufacturer": "MET",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETX6",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETX6",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETX6",
+    "Manufacturer": "SIE",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "ETX6",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "EU6VAMR",
+    "Manufacturer": "LG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "EU6VAMR",
+    "Manufacturer": "ONS",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "EU6VAMR",
+    "Manufacturer": "PRI",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "EU6VAMR",
+    "Manufacturer": "PRI",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "EU6VAMR",
+    "Manufacturer": "SCM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "EUG4V10",
+    "Manufacturer": "PRI",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G10",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G10",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G10",
+    "Manufacturer": "GW",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G10",
+    "Manufacturer": "INS",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G10",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G10",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0.1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G10",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G10/U16",
+    "Manufacturer": "MAG",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G100",
+    "Manufacturer": "INS",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G100",
+    "Manufacturer": "INS",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G100",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G100",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G100",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G16",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G16",
+    "Manufacturer": "INS",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G16",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G16",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G16",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G16",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G16",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G16",
+    "Manufacturer": "MAG",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "8",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G16",
+    "Manufacturer": "MET",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G16",
+    "Manufacturer": "MTK",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G16",
+    "Manufacturer": "NP",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G16",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G16/U25",
+    "Manufacturer": "NP",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G160",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G160",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G25",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G25",
+    "Manufacturer": "INS",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G25",
+    "Manufacturer": "INS",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G25",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G25",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G25",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G25",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G25",
+    "Manufacturer": "MAG",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G25",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G25",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G25",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G25/U40",
+    "Manufacturer": "NP",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "0.1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "AGS",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "AM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "AMC",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "COM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "EDM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "EUR",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "GG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "GL",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "GM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "GMC",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "GW",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "IGA",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "IGT",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "INS",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0.01",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "INV",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "JR",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "4",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "LG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "LPG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "MAG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "MET",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "MTL",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "MTX",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "NFC",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "NP",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "ONS",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "PC",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "PRI",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "ROM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "SCK",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "SCM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "SEN",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "SIE",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4/U6",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4/U6",
+    "Manufacturer": "GW",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4/U6",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4/U6",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4/U6",
+    "Manufacturer": "LG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4/U6",
+    "Manufacturer": "NP",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4/U6",
+    "Manufacturer": "ONS",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4/U6",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G40",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G40",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G40",
+    "Manufacturer": "GW",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G40",
+    "Manufacturer": "INS",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G40",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G40",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G40",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G40",
+    "Manufacturer": "ROM",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G40/U65",
+    "Manufacturer": "NP",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4SC",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4SC",
+    "Manufacturer": "EUR",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4SC",
+    "Manufacturer": "GW",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4SC",
+    "Manufacturer": "GW",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4SC",
+    "Manufacturer": "IGA",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4SC",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4SC",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4SC",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4SC",
+    "Manufacturer": "LPG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4SC",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4SC",
+    "Manufacturer": "SIE",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4SDZV-1",
+    "Manufacturer": "FLN",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4SDZV-2",
+    "Manufacturer": "FLN",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4SZV",
+    "Manufacturer": "FLA",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4SZV",
+    "Manufacturer": "FLN",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4SZV",
+    "Manufacturer": "GW",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G4SZV-2",
+    "Manufacturer": "FLN",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G6",
+    "Manufacturer": "GW",
+    "MeasuringCapacity": "10",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G6",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G6",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G6",
+    "Manufacturer": "MET",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G65",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G65",
+    "Manufacturer": "INS",
+    "MeasuringCapacity": "1",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G65",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G65",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0.1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G65",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G65",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G65",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "G65/U100",
+    "Manufacturer": "NP",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "Libra200",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "Libra200",
+    "Manufacturer": "LG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "Libra200",
+    "Manufacturer": "LPG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "Libra200",
+    "Manufacturer": "SIE",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "Libra200",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA100",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA100",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA100",
+    "Manufacturer": "GW",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA100",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA100",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA100",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA100",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA100",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA100",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA100",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA100W",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA100W",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA100W",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA16",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA16",
+    "Manufacturer": "BGL",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA16",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA16",
+    "Manufacturer": "EUR",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA16",
+    "Manufacturer": "GW",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA16",
+    "Manufacturer": "IGA",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA16",
+    "Manufacturer": "IGT",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA16",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA16",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0.1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA16",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA16",
+    "Manufacturer": "LPG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA16",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA16",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA160",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA160",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA160",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA160",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA160",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA160",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA160W",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA160W",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA160W",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA160W",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA16W",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA16W",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA16W",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA16W",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA16W",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA25",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0.01",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA25",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA25",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA25",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA25",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA25",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA25",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA25",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA25W",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA25W",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA25W",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA40",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA40",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0.1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA40",
+    "Manufacturer": "IGA",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA40",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0.1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA40",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA40",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA40",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA40",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA40W",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA40W",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA40W",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA65",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA65",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA65",
+    "Manufacturer": "INS",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA65",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA65",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA65",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA65",
+    "Manufacturer": "PC",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA65",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA65",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA65W",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA65W",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDA65W",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK100",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK100",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK100",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK100",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK100",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK100",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK100",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK16",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK16",
+    "Manufacturer": "CMN",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK16",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK16",
+    "Manufacturer": "EMI",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK16",
+    "Manufacturer": "EUR",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK16",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK16",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "8",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK16",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0.01",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK16",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK16",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK160",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK160",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK160",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK160",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK16E",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK25",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK25",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK25",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK25",
+    "Manufacturer": "EUR",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK25",
+    "Manufacturer": "GW",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK25",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK25",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK25",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK25",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "8",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK25",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "0.01",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK25",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK25",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "0",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK25",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK25",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK25",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK25",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK25",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0.01",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK25",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0.1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK25",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "0.01",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK25",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK25",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK25",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK25",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK25E",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK40",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK40",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK40",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "1",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK40",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK40",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK40",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK40",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK40",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "0.01",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK40",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK40",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK40",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK40",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK40",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK40",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0.1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK40",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "0.01",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK40",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0.01",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK40",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK40",
+    "Manufacturer": "PC",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK40",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK40",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK40E",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK65",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK65",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK65",
+    "Manufacturer": "EUR",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK65",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "0",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK65",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK65",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK65",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK65",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK65",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK65",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "0",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK65",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK65",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK65",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK65",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0.01",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK65",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0.1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK65",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK65",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK65",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "0.01",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK65",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK65",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK65",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDK65",
+    "Manufacturer": "SEN",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU100W",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "0",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU100W",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "4",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU100W",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU160W",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU160W",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU16W",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU16W",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU16W",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU16W",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "0",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU16W",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU16W",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0.1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU16W",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU25W",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU25W",
+    "Manufacturer": "GL",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU25W",
+    "Manufacturer": "GW",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU25W",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU25W",
+    "Manufacturer": "ROM",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU25W",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0.1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU25W",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU40W",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU40W",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU40W",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "0",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU40W",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU40W",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU65W",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MDU65W",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MRA100B",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MRA100B",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MRA100B",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MRA100PP",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MRA100PP",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MRA100PP",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MRA160C",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MRA160C",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MRA160C",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MRA160PQ",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MRA250C",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MRA250C",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "8",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MRA25A",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MRA25A",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MRA25A",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MRA25A",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MRA25A",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MRA300D",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "8",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MRA400D",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "8",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MRA40A",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MRA40A",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MRA450D",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MRA65B",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MRA65B",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "MUE6",
+    "Manufacturer": "EDM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "SC6",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "SC6",
+    "Manufacturer": "EMI",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "SC6",
+    "Manufacturer": "EUR",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "SC6",
+    "Manufacturer": "EUR",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "SC6",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "4",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "SC6",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "SC6",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "SC6",
+    "Manufacturer": "LPG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "SC6",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "SC6",
+    "Manufacturer": "SIE",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "SG4",
+    "Manufacturer": "ONS",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U100",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U100",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U100",
+    "Manufacturer": "INS",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U100",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0.1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U100",
+    "Manufacturer": "JR",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U100",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U100",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U100",
+    "Manufacturer": "SEN",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U100",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U100 R5",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "100",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U16",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U16",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U16",
+    "Manufacturer": "GW",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U16",
+    "Manufacturer": "INS",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U16",
+    "Manufacturer": "INV",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U16",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U16",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0.01",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U16",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U16",
+    "Manufacturer": "MAG",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U16",
+    "Manufacturer": "MET",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U16",
+    "Manufacturer": "PC",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U16",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U16",
+    "Manufacturer": "SIE",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U16",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U16 R5",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U16 R5",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U16 R5",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U16 R5",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U16 R5",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U16 R5",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "16",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U160",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U160",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U160",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U160",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U160",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U160",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "160",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U25",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U25",
+    "Manufacturer": "DEL",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U25",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U25",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U25",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "7",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U25",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U25",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U25",
+    "Manufacturer": "MTX",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U25",
+    "Manufacturer": "PC",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U25",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U25",
+    "Manufacturer": "SEN",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U25",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U25 R5",
+    "Manufacturer": "GW",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U25 R5",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U25 R5",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U25 R5",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U25 R5",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "25",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U40",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U40",
+    "Manufacturer": "EUR",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U40",
+    "Manufacturer": "GW",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U40",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U40",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U40",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U40",
+    "Manufacturer": "PC",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U40",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U40",
+    "Manufacturer": "SEN",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U40",
+    "Manufacturer": "SIE",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U40",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U40 R5",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U40 R5",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U40 R5",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "40",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "AGS",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "AM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "BGL",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "EMI",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "EUR",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "GG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "GL",
+    "MeasuringCapacity": "0",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "GMC",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "GW",
+    "MeasuringCapacity": "0",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "IGT",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "INS",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "INV",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "1",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0.01",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "0",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "LG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "LPG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "4",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "MAG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "MET",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "MTX",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "NP",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "ONS",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "PC",
+    "MeasuringCapacity": "0",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "ROM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "SCK",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "SCM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "SEN",
+    "MeasuringCapacity": "0",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "SGR",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "SIE",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "SM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "0",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6",
+    "Manufacturer": "WLN",
+    "MeasuringCapacity": "0",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6 R5",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6 R5",
+    "Manufacturer": "AM",
+    "MeasuringCapacity": "0",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6 R5",
+    "Manufacturer": "GW",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6 R5",
+    "Manufacturer": "INS",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6 R5",
+    "Manufacturer": "INV",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6 R5",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6 R5",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6 R5",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6 R5",
+    "Manufacturer": "LG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6 R5",
+    "Manufacturer": "LPG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6 R5",
+    "Manufacturer": "PC",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6 R5",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6 R5",
+    "Manufacturer": "SEN",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6 R5",
+    "Manufacturer": "SIE",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6 R5",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "4",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6/G4",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6/G4",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6/G4",
+    "Manufacturer": "GW",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6/G4",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "0",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6/G4",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6/G4",
+    "Manufacturer": "LPG",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6/G4",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U6/G4",
+    "Manufacturer": "SEN",
+    "MeasuringCapacity": "6",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U65",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U65",
+    "Manufacturer": "ELM",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U65",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U65",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U65",
+    "Manufacturer": "KRO",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U65",
+    "Manufacturer": "PC",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U65",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U65",
+    "Manufacturer": "SEN",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U65",
+    "Manufacturer": "SIE",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U65",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U65 R5",
+    "Manufacturer": "ACT",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U65 R5",
+    "Manufacturer": "ITR",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U65 R5",
+    "Manufacturer": "JEA",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "6",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U65 R5",
+    "Manufacturer": "SCH",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  },
+  {
+    "ModelCode": "U65 R5",
+    "Manufacturer": "UGI",
+    "MeasuringCapacity": "65",
+    "MultiplicationFactor": "1",
+    "NumberOfDials": "5",
+    "PulseValue": "0",
+    "UnitsOfMeasure": "SCMH"
+    
+  }
+]

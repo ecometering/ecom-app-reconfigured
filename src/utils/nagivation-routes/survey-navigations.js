@@ -24,7 +24,7 @@ export const SurveyNavigation = [
       if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
         return SurveyStandardPage;
       } else if (!siteQuestions?.isCarryOut) {
-        return RebookPage;
+        return AbortPage;
       } else {
         return SurveyQuestions;
       }
@@ -66,13 +66,7 @@ export const CompositeLabelPhoto = [
       photoKey: 'dsearLabel',
     },
   },
-  {
-    screen: 'SiteDrawingPhoto',
-    params: {
-      title: 'Site Survey Drawing ',
-      photoKey: 'siteDrawing',
-    },
-  },
+  
   ...ExtraPhotoPageRoute(),
   ...SubmitSuccessPage,
 ];
@@ -80,9 +74,13 @@ export const CompositeLabelPhoto = [
 export const RiddorReportPage = [
   {
     screen: 'RiddorReportPage',
+    params:{
+      title: 'Riddor Report',
+      photoKey:'RiddorReport'
+    },
     diversions: ({ state }) => {
-      const { standards } = state;
-      if (standards.conformStandard === false) {
+      const { standards,siteQuestions } = state;
+      if (!siteQuestions.isStandard) {
         return SnClientInfoPage;
       } else {
         return CompositeLabelPhoto;
@@ -92,11 +90,18 @@ export const RiddorReportPage = [
 ];
 
 export const SnClientInfoPage = [
+  // {
+  //   screen: 'SnClientInfoPage',
+  // },
+  // {
+  //   screen: 'GasSafeWarningPage',
+  // },
   {
     screen: 'SnClientInfoPage',
-  },
-  {
-    screen: 'GasSafeWarningPage',
+    params: {
+      title: 'Gas warning photo',
+      photoKey: 'gasWarning',
+    },
   },
   ...CompositeLabelPhoto,
 ];
@@ -106,12 +111,12 @@ export const SurveyStandardPage = [
   {
     screen: 'StandardPage',
     diversions: ({ state }) => {
-      const { standards } = state;
+      const { standards,siteQuestions } = state;
       const { riddorReportable, conformStandard } = standards;
       if (riddorReportable === true) {
         return RiddorReportPage;
       } else {
-        if (conformStandard === false) {
+        if (!siteQuestions.isStandard) {
           return SnClientInfoPage;
         } else {
           return CompositeLabelPhoto;
@@ -121,9 +126,13 @@ export const SurveyStandardPage = [
   },
 ];
 
-export const RebookPage = [
+export const AbortPage = [
   {
-    screen: 'RebookPage',
+    screen: 'AbortPage',
+    params: {
+      photoKey: 'AbortReason',
+      title:'Job abort reason'
+    },
   },
   ...SubmitSuccessPage,
 ];
@@ -163,7 +172,7 @@ export const SurveyExistingMeterDetails = [
 
       const Type = meterDetails?.meterType.value;
 
-      if (!['1', '2', '4'].includes(Type)) {
+      if (!['1', '2', '4','7'].includes(Type)) {
         return SurveyExistingMeterDataBadge;
       } else {
         return SurveyExistingMeterIndex;
@@ -230,9 +239,9 @@ export const SurveyExistingDataLoggerDetails = [
 export const InstancesForStreamFlow = ({ state }) => {
   // TODO: sort context switch
   // Redux might be a better option
-  const { streamNumber } = state || {};
+  const { streams } = state || {};
 
-  return Array.from({ length: streamNumber }, (_, index) => index + 1).reduce(
+  return Array.from({ length: streams.Number }, (_, index) => index + 1).reduce(
     (acc, stream) => {
       return [
         ...acc,
@@ -248,6 +257,7 @@ export const InstancesForStreamFlow = ({ state }) => {
           screen: 'StreamSlamshutPage',
           params: {
             title: `Slamshut Page ${stream}`,
+            stream: stream,
             photoKey: `SlamShut${stream}Photo`,
           },
         },
@@ -255,6 +265,7 @@ export const InstancesForStreamFlow = ({ state }) => {
           screen: 'StreamActiveRegulatorPage',
           params: {
             title: `Active Regulator Page ${stream}`,
+            stream: stream,
             photoKey: `ActiveRegulator${stream}Photo`,
           },
         },
@@ -262,6 +273,7 @@ export const InstancesForStreamFlow = ({ state }) => {
           screen: 'StreamReliefRegulatorPage',
           params: {
             title: `Relief Regulator Page ${stream}`,
+            stream: stream,
             photoKey: `ReliefRegulator${stream}Photo`,
           },
         },
@@ -269,6 +281,7 @@ export const InstancesForStreamFlow = ({ state }) => {
           screen: 'StreamWaferCheckPage',
           params: {
             title: `Wafer Check Page ${stream}`,
+            stream: stream,
             photoKey: `WaferCheck${stream}Photo`,
           },
         },

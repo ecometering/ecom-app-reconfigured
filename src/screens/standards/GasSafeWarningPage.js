@@ -98,7 +98,12 @@ function GasSafeWarningPage() {
               title={'Certificate Reference'}
               placeholder={''}
               onChangeText={(txt) => {
-                handleInputChange('certificateReference', txt);
+                const withSpacesAllowed = txt.toUpperCase();
+                      const formattedText = withSpacesAllowed.replace(
+                        /[^A-Z0-9]+/g,
+                        ''
+                      );
+                handleInputChange('certificateReference', formattedText);
               }}
               value={standards?.certificateReference}
             />
@@ -107,7 +112,12 @@ function GasSafeWarningPage() {
               title={'Details of gas EmergencyService Provider REF'}
               placeholder={''}
               onChangeText={(txt) => {
-                handleInputChange('emergencyService', txt);
+                const withSpacesAllowed = txt.toUpperCase();
+                      const formattedText = withSpacesAllowed.replace(
+                        /[^A-Z0-9]+/g,
+                        ''
+                      );
+                handleInputChange('emergencyService', formattedText);
               }}
               value={standards?.emergencyService}
             />

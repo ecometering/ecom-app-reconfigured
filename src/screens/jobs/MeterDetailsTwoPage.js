@@ -1,4 +1,3 @@
-import { useSQLiteContext } from 'expo-sqlite/next';
 import { useRoute } from '@react-navigation/native';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -21,7 +20,6 @@ import TextInput, { TextInputWithTitle } from '../../components/TextInput';
 
 // Context and Utils
 import {
-  tableNames,
   PULSE_VALUE,
   NUMBER_OF_DIALS,
   METER_TYPE_CHOICES,
@@ -33,14 +31,13 @@ import {
 } from '../../utils/constant';
 import EcomHelper from '../../utils/ecomHelper';
 import { useFormStateContext } from '../../context/AppContext';
-import { makeFontSmallerAsTextGrows } from '../../utils/styles';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 import { validateMeterDetails } from './MeterDetailsPage.validator';
+import { meterDetailsOptions } from '../../../assets/json/meterDetails';
 
 function MeterDetailsTwoPage() {
   const route = useRoute();
   const camera = useRef(null);
-  const db = useSQLiteContext();
   const { state, setState } = useFormStateContext();
   const { jobType, meterDetailsTwo } = state;
 
@@ -48,10 +45,8 @@ function MeterDetailsTwoPage() {
 
   const isIos = Platform.OS === 'ios';
   const { title } = route.params;
-  const diaphragmMeterTypes = ['1', '2', '4'];
+  const diaphragmMeterTypes = ['1', '2', '4','7'];
 
-  const [meterManufacturers, setMeterManufacturers] = useState([]);
-  const [meterModelCodes, setMeterModelCodes] = useState([]);
   const [isModal, setIsModal] = useState(false);
 
   useEffect(() => {
@@ -62,6 +57,9 @@ function MeterDetailsTwoPage() {
         value: 2,
       });
     }
+
+    handleInputChange('havePulseValue', false);
+
     if (!meterDetailsTwo.pulseValue) {
       handleInputChange('pulseValue', { _index: 0, label: '1', value: 1 });
     }
@@ -95,47 +93,6 @@ function MeterDetailsTwoPage() {
     handleInputChange('manufacturer', null);
     handleInputChange('model', null);
     handleInputChange('pressureTier', null);
-    const meterType = item?.value;
-    const tableName = meterType && tableNames[meterType];
-    getMeterManufacturers({ tableName });
-  };
-
-  const getMeterModelCodes = async ({ manufacturer }) => {
-    const tableName = meterDetailsTwo?.meterType
-      ? tableNames[meterDetailsTwo.meterType.value]
-      : null;
-    if (tableName) {
-      try {
-        const query = `SELECT DISTINCT ModelCode FROM ${tableName} WHERE Manufacturer = ?`;
-        const params = [manufacturer?.value || ''];
-        const result = await db.getAllAsync(query, params);
-        const modelCodes = result.map((model) => ({
-          label: model.ModelCode,
-          value: model.ModelCode,
-        }));
-        setMeterModelCodes(modelCodes);
-      } catch (err) {
-        console.error('SQL Error: ', err);
-      }
-    } else {
-      console.log(
-        'meterDetailsTwo.meterType is false, not fetching model codes'
-      );
-    }
-  };
-
-  const getMeterManufacturers = async ({ tableName }) => {
-    try {
-      const query = `SELECT DISTINCT Manufacturer FROM ${tableName}`;
-      const result = await db.getAllAsync(query);
-      const manufacturers = result.map((mf) => ({
-        label: mf.Manufacturer,
-        value: mf.Manufacturer,
-      }));
-      setMeterManufacturers(manufacturers);
-    } catch (err) {
-      console.error('SQL Error: ', err);
-    }
   };
 
   const nextPressed = async () => {
@@ -148,7 +105,7 @@ function MeterDetailsTwoPage() {
 
     let isDiaphragm =
       meterDetailsTwo.meterType &&
-      [1, 2, 4].includes(meterDetailsTwo.meterType.value);
+      [1, 2, 4, 7].includes(meterDetailsTwo.meterType.value);
     let isNotML =
       meterDetailsTwo.pressureTier &&
       [1, 4].includes(meterDetailsTwo.pressureTier.value);
@@ -228,11 +185,23 @@ function MeterDetailsTwoPage() {
                 ) : (
                   <EcomDropDown
                     value={meterDetailsTwo.manufacturer}
-                    valueList={meterManufacturers}
+                    valueList={
+                      meterDetailsOptions?.[meterDetailsTwo.meterType?.label]
+                        ? meterDetailsOptions[meterDetailsTwo.meterType?.label]
+                            .map(({ Manufacturer }) => ({
+                              label: Manufacturer,
+                              value: Manufacturer,
+                            }))
+                            .filter(
+                              (v, i, a) =>
+                                a.findIndex((t) => t.label === v.label) === i
+                            )
+                            .sort((a, b) => a.label.localeCompare(b.label))
+                        : []
+                    }
                     placeholder="Select a Manufacturer"
                     onChange={(item) => {
                       handleInputChange('manufacturer', item);
-                      getMeterModelCodes({ manufacturer: item });
                     }}
                   />
                 )}
@@ -268,7 +237,26 @@ function MeterDetailsTwoPage() {
                 ) : (
                   <EcomDropDown
                     value={meterDetailsTwo.model}
-                    valueList={meterModelCodes}
+                    valueList={
+                      meterDetailsOptions?.[meterDetailsTwo.meterType?.label] &&
+                      meterDetailsTwo.manufacturer
+                        ? meterDetailsOptions[meterDetailsTwo.meterType?.label]
+                            .filter(
+                              ({ Manufacturer }) =>
+                                Manufacturer ===
+                                meterDetailsTwo.manufacturer?.value
+                            )
+                            .map(({ ModelCode }) => ({
+                              label: ModelCode,
+                              value: ModelCode,
+                            }))
+                            .filter(
+                              (v, i, a) =>
+                                a.findIndex((t) => t.label === v.label) === i
+                            )
+                            .sort((a, b) => a.label.localeCompare(b.label))
+                        : []
+                    }
                     placeholder="Select Model Code"
                     onChange={(item) => handleInputChange('model', item)}
                   />

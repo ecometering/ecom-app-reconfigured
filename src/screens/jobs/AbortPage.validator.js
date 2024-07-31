@@ -1,6 +1,6 @@
 import { validateRequiredField } from '../../utils/validation/validators';
 
-export const validateRiddorReport = (standards,selectedImage) => {
+export const validateAbortPage = (siteQuestions,selectedImage) => {
   const validations = [
     () =>
       validateRequiredField(
@@ -10,15 +10,15 @@ export const validateRiddorReport = (standards,selectedImage) => {
       ),
     () =>
       validateRequiredField(
-        'Notes',
-        standards?.notes,
+        'abort Notes',
+        siteQuestions?.abortNotes,
         'Notes are compulsory!'
       ),
     () =>
       validateRequiredField(
-        'RIDDOR Reference',
-        standards?.riddorRef,
-        'RIDDOR reference is required!'
+        'Abort Reason',
+        siteQuestions?.abortReason,
+        'Abort Reason is required!'
       ),
   ];
 

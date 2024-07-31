@@ -134,6 +134,7 @@ const ExtraPhotoPage = () => {
             </View>
           ))}
           <Text style={styles.textLabel}>Any more extra photos?</Text>
+          <Text style={styles.textLabel}>(Add them below if none click next)</Text>
           <ImagePickerButton onImageSelected={handleImageSelected} />
         </View>
       </ScrollView>

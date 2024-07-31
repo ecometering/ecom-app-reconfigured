@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState,useEffect } from 'react';
 import { useRoute } from '@react-navigation/native';
 import {
   View,
@@ -23,7 +23,6 @@ import ImagePickerButton from '../../components/ImagePickerButton';
 import EcomHelper from '../../utils/ecomHelper';
 import { TextType } from '../../theme/typography';
 import { useFormStateContext } from '../../context/AppContext';
-import { makeFontSmallerAsTextGrows } from '../../utils/styles';
 import { validateDataLoggerDetails } from './DataLoggerDetailsPage.validator';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
@@ -34,7 +33,7 @@ export default function DataLoggerDetailsPage() {
   const { state, setState } = useFormStateContext();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
-  const { photos, dataLoggerDetails } = state;
+  const { photos, dataLoggerDetails,jobType } = state;
   const existingPhoto = photos && photoKey ? photos[photoKey] : null;
 
   const [isModal, setIsModal] = useState(false);
@@ -50,6 +49,11 @@ export default function DataLoggerDetailsPage() {
       },
     }));
   };
+  useEffect(() => {
+    if (!dataLoggerDetails.loggerOwner){
+      if (['Install', 'Maintenance'].includes(jobType)) {
+        handleInputChange('loggerOwner','Eco Metering Solutions')}}
+  })
 
   const handlePhotoSelected = (uri) => {
     setState((prevState) => ({
@@ -230,7 +234,9 @@ export default function DataLoggerDetailsPage() {
                 <View style={styles.row}>
                   <TextInput
                     onChangeText={(txt) => {
-                      handleInputChange('manufacturer', txt);
+                      const formattedText = txt.toUpperCase();
+                      const filteredText = formattedText.replace(/[^a-zA-Z ]/g, '');
+                      handleInputChange('manufacturer', filteredText);
                     }}
                     value={dataLoggerDetails.manufacturer}
                   />
@@ -244,7 +250,9 @@ export default function DataLoggerDetailsPage() {
                 <Text>Model</Text>
                 <TextInput
                   onChangeText={(txt) => {
-                    handleInputChange('model', txt);
+                    const formattedText = txt.toUpperCase();
+                    const filteredText = formattedText.replace(/[^a-zA-Z0-9\-\s]/g, '');
+                    handleInputChange('model', filteredText);
                   }}
                   value={dataLoggerDetails.model}
                 />

@@ -49,6 +49,15 @@ export const unitedFlowNavigators = [
     },
   },
   {
+    name: 'RemovedItemsphoto',
+    component: GenericPhotoPage,
+    initialParams: {
+      title: 'Removed Items photo',
+      photoKey: 'RemovedItems',
+    },
+  },
+ 
+  {
     name: 'ExistingEcvPhoto',
     component: GenericPhotoPage,
     initialParams: {
@@ -148,6 +157,7 @@ export const unitedFlowNavigators = [
     component: FilterPage,
     initialParams: { title: 'Filter' },
   },
+  
   {
     name: 'StreamSlamshutPage',
     component: SlamshutPage,

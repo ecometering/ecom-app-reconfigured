@@ -45,6 +45,11 @@ const ActiveRegulatorPage = () => {
       },
     }));
   };
+  React.useEffect(() => {
+    if (streams[`activeRegulator${stream}Exists`] === undefined) {
+      handleInputChange(`activeRegulator${stream}Exists`, false);
+    }
+  }, [stream, streams]);
 
   const handlePhotoSelected = (uri) => {
     setState((prevState) => ({

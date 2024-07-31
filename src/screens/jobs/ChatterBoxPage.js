@@ -130,7 +130,9 @@ export default function ChatterBoxDetailsPage() {
               <View>
                 <TextInput
                   onChangeText={(txt) => {
-                    handleInputChange('manufacturer', txt);
+                    const capitalise = txt.toUpperCase();
+                    const filteredText = capitalise.replace(/[^a-zA-Z ]/g, '');
+                    handleInputChange('manufacturer', filteredText);
                   }}
                   value={chatterBoxDetails.manufacturer}
                 />
@@ -142,7 +144,12 @@ export default function ChatterBoxDetailsPage() {
               <View>
                 <TextInput
                   onChangeText={(txt) => {
-                    handleInputChange('model', txt);
+                    const capitalise = txt.toUpperCase();
+                    const formattedText = capitalise.replace(
+                      /[^A-Z0-9]+/g,
+                      ''
+                    );
+                    handleInputChange('model', formattedText);
                   }}
                   value={chatterBoxDetails.model}
                 />

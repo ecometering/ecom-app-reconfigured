@@ -35,6 +35,11 @@ const FilterPage = () => {
 
   const { title, stream, photoKey } = route.params;
   const existingPhoto = photos && photoKey ? photos[photoKey] : null;
+  React.useEffect(() => {
+    if (streams[`filter${stream}Exists`] === undefined) {
+      handleInputChange(`filter${stream}Exists`, false);
+    }
+  }, [stream, streams]);
 
   const handleInputChange = (name, value) => {
     setState((prev) => ({

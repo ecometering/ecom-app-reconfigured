@@ -69,258 +69,286 @@ export default function KioskPage() {
       >
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
           <View style={styles.body}>
-            <TextInputWithTitle
-              title="Kiosk Type"
-              value={kioskDetails.type}
-              onChangeText={(txt) => {
-                const withSpecialChars = txt.toUpperCase();
-                const formattedText = withSpecialChars.replace(
-                  /[^A-Z0-9"/ ]+/g,
-                  ''
-                );
-                handleInputChange('type', formattedText);
-              }}
-              style={styles.input}
-            />
-
-            <TextInputWithTitle
-              title="Kiosk Condition"
-              value={kioskDetails.condition}
-              onChangeText={(txt) => {
-                const formattedText = txt.replace(/[^A-Za-z]+/g, '');
-                handleInputChange('condition', formattedText);
-              }}
-              style={styles.input}
-            />
-
-            <View style={styles.optionContainer}>
+            <View>
               <Text type={TextType.CAPTION_2} style={styles.questionText}>
-                {'Is kiosk weather resistant? *'}
+                {'Does the kiosk exist? *'}
               </Text>
               <OptionalButton
                 options={['Yes', 'No']}
                 actions={[
                   () => {
-                    handleInputChange('isWeatherResistant', true);
+                    handleInputChange('kioskExists', true);
                   },
                   () => {
-                    handleInputChange('isWeatherResistant', false);
+                    handleInputChange('kioskExists', false);
                   },
                 ]}
                 value={
-                  kioskDetails.isWeatherResistant === undefined
+                  kioskDetails.kioskExists === undefined
                     ? null
-                    : kioskDetails.isWeatherResistant
+                    : kioskDetails.kioskExists
                     ? 'Yes'
                     : 'No'
                 }
               />
             </View>
+            {kioskDetails.kioskExists && (
+              <>
+                <TextInputWithTitle
+                  title="Kiosk Type"
+                  value={kioskDetails.type}
+                  onChangeText={(txt) => {
+                    const withSpecialChars = txt.toUpperCase();
+                    const formattedText = withSpecialChars.replace(
+                      /[^A-Z0-9"/ ]+/g,
+                      ''
+                    );
+                    handleInputChange('type', formattedText);
+                  }}
+                  style={styles.input}
+                />
 
-            <View style={styles.optionContainer}>
-              <Text type={TextType.CAPTION_2} style={styles.questionText}>
-                {'Is kiosk lockable? *'}
-              </Text>
-              <OptionalButton
-                options={['Yes', 'No']}
-                actions={[
-                  () => {
-                    handleInputChange('isLockable', true);
-                  },
-                  () => {
-                    handleInputChange('isLockable', false);
-                  },
-                ]}
-                value={
-                  kioskDetails.isLockable === undefined
-                    ? null
-                    : kioskDetails.isLockable
-                    ? 'Yes'
-                    : 'No'
-                }
-              />
-            </View>
+                <TextInputWithTitle
+                  title="Kiosk Condition"
+                  value={kioskDetails.condition}
+                  onChangeText={(txt) => {
+                    const formattedText = txt.replace(/[^A-Za-z]+/g, '');
+                    handleInputChange('condition', formattedText);
+                  }}
+                  style={styles.input}
+                />
 
-            <View style={styles.optionContainer}>
-              <Text type={TextType.CAPTION_2} style={styles.questionText}>
-                {'Is kiosk free of vegetation, trees, etc.? *'}
-              </Text>
-              <OptionalButton
-                options={['Yes', 'No']}
-                actions={[
-                  () => {
-                    handleInputChange('isVegitationFree', true);
-                  },
-                  () => {
-                    handleInputChange('isVegitationFree', false);
-                  },
-                ]}
-                value={
-                  kioskDetails.isVegitationFree === undefined
-                    ? null
-                    : kioskDetails.isVegitationFree
-                    ? 'Yes'
-                    : 'No'
-                }
-              />
-            </View>
+                <View style={styles.optionContainer}>
+                  <Text type={TextType.CAPTION_2} style={styles.questionText}>
+                    {'Is kiosk weather resistant? *'}
+                  </Text>
+                  <OptionalButton
+                    options={['Yes', 'No']}
+                    actions={[
+                      () => {
+                        handleInputChange('isWeatherResistant', true);
+                      },
+                      () => {
+                        handleInputChange('isWeatherResistant', false);
+                      },
+                    ]}
+                    value={
+                      kioskDetails.isWeatherResistant === undefined
+                        ? null
+                        : kioskDetails.isWeatherResistant
+                        ? 'Yes'
+                        : 'No'
+                    }
+                  />
+                </View>
 
-            <View style={styles.optionContainer}>
-              <Text type={TextType.CAPTION_2} style={styles.questionText}>
-                {'Is kiosk/housing stable? *'}
-              </Text>
-              <OptionalButton
-                options={['Yes', 'No']}
-                actions={[
-                  () => {
-                    handleInputChange('isStable', true);
-                  },
-                  () => {
-                    handleInputChange('isStable', false);
-                  },
-                ]}
-                value={
-                  kioskDetails.isStable === undefined
-                    ? null
-                    : kioskDetails.isStable
-                    ? 'Yes'
-                    : 'No'
-                }
-              />
-            </View>
+                <View style={styles.optionContainer}>
+                  <Text type={TextType.CAPTION_2} style={styles.questionText}>
+                    {'Is kiosk lockable? *'}
+                  </Text>
+                  <OptionalButton
+                    options={['Yes', 'No']}
+                    actions={[
+                      () => {
+                        handleInputChange('isLockable', true);
+                      },
+                      () => {
+                        handleInputChange('isLockable', false);
+                      },
+                    ]}
+                    value={
+                      kioskDetails.isLockable === undefined
+                        ? null
+                        : kioskDetails.isLockable
+                        ? 'Yes'
+                        : 'No'
+                    }
+                  />
+                </View>
 
-            <View style={styles.optionContainer}>
-              <Text type={TextType.CAPTION_2} style={styles.questionText}>
-                {'Is Kiosk Free of Flooding? *'}
-              </Text>
-              <OptionalButton
-                options={['Yes', 'No']}
-                actions={[
-                  () => {
-                    handleInputChange('isFloodingFree', true);
-                  },
-                  () => {
-                    handleInputChange('isFloodingFree', false);
-                  },
-                ]}
-                value={
-                  kioskDetails.isFloodingFree === undefined
-                    ? null
-                    : kioskDetails.isFloodingFree
-                    ? 'Yes'
-                    : 'No'
-                }
-              />
-            </View>
+                <View style={styles.optionContainer}>
+                  <Text type={TextType.CAPTION_2} style={styles.questionText}>
+                    {'Is kiosk free of vegetation, trees, etc.? *'}
+                  </Text>
+                  <OptionalButton
+                    options={['Yes', 'No']}
+                    actions={[
+                      () => {
+                        handleInputChange('isVegitationFree', true);
+                      },
+                      () => {
+                        handleInputChange('isVegitationFree', false);
+                      },
+                    ]}
+                    value={
+                      kioskDetails.isVegitationFree === undefined
+                        ? null
+                        : kioskDetails.isVegitationFree
+                        ? 'Yes'
+                        : 'No'
+                    }
+                  />
+                </View>
 
-            <View style={styles.optionContainer}>
-              <Text type={TextType.CAPTION_2} style={styles.questionText}>
-                {'Is kiosk roof an explosion relief roof? *'}
-              </Text>
-              <OptionalButton
-                options={['Yes', 'No']}
-                actions={[
-                  () => {
-                    handleInputChange('isExplosionReliefRoof', true);
-                  },
-                  () => {
-                    handleInputChange('isExplosionReliefRoof', false);
-                  },
-                ]}
-                value={
-                  kioskDetails.isExplosionReliefRoof === undefined
-                    ? null
-                    : kioskDetails.isExplosionReliefRoof
-                    ? 'Yes'
-                    : 'No'
-                }
-              />
-            </View>
+                <View style={styles.optionContainer}>
+                  <Text type={TextType.CAPTION_2} style={styles.questionText}>
+                    {'Is kiosk/housing stable? *'}
+                  </Text>
+                  <OptionalButton
+                    options={['Yes', 'No']}
+                    actions={[
+                      () => {
+                        handleInputChange('isStable', true);
+                      },
+                      () => {
+                        handleInputChange('isStable', false);
+                      },
+                    ]}
+                    value={
+                      kioskDetails.isStable === undefined
+                        ? null
+                        : kioskDetails.isStable
+                        ? 'Yes'
+                        : 'No'
+                    }
+                  />
+                </View>
 
-            <View style={styles.optionContainer}>
-              <Text type={TextType.CAPTION_2} style={styles.questionText}>
-                {'Is kiosk easily accessible? *'}
-              </Text>
-              <OptionalButton
-                options={['Yes', 'No']}
-                actions={[
-                  () => {
-                    handleInputChange('isAccessible', true);
-                  },
-                  () => {
-                    handleInputChange('isAccessible', false);
-                  },
-                ]}
-                value={
-                  kioskDetails.isAccessible === undefined
-                    ? null
-                    : kioskDetails.isAccessible
-                    ? 'Yes'
-                    : 'No'
-                }
-              />
-            </View>
+                <View style={styles.optionContainer}>
+                  <Text type={TextType.CAPTION_2} style={styles.questionText}>
+                    {'Is Kiosk Free of Flooding? *'}
+                  </Text>
+                  <OptionalButton
+                    options={['Yes', 'No']}
+                    actions={[
+                      () => {
+                        handleInputChange('isFloodingFree', true);
+                      },
+                      () => {
+                        handleInputChange('isFloodingFree', false);
+                      },
+                    ]}
+                    value={
+                      kioskDetails.isFloodingFree === undefined
+                        ? null
+                        : kioskDetails.isFloodingFree
+                        ? 'Yes'
+                        : 'No'
+                    }
+                  />
+                </View>
 
-            <View style={styles.optionContainer}>
-              <Text type={TextType.CAPTION_2} style={styles.questionText}>
-                {'Are there steps leading up to the kiosk? *'}
-              </Text>
-              <OptionalButton
-                options={['Yes', 'No']}
-                actions={[
-                  () => {
-                    handleInputChange('isSteps', true);
-                  },
-                  () => {
-                    handleInputChange('isSteps', false);
-                  },
-                ]}
-                value={
-                  kioskDetails.isSteps === undefined
-                    ? null
-                    : kioskDetails.isSteps
-                    ? 'Yes'
-                    : 'No'
-                }
-              />
-            </View>
-          </View>
-          <Text type={TextType.CAPTION_2} style={styles.sectionTitle}>
-            Internal Kiosk Dimensions
-          </Text>
-          <View style={styles.row}>
-            <TextInputWithTitle
-              title="Height (mm)"
-              value={kioskDetails.height}
-              onChangeText={(txt) => {
-                const numericValue = txt.replace(/[^0-9.]/g, '');
-                handleInputChange('height', numericValue);
-              }}
-              keyboardType="numeric"
-              containerStyle={styles.input}
-            />
+                <View style={styles.optionContainer}>
+                  <Text type={TextType.CAPTION_2} style={styles.questionText}>
+                    {'Is kiosk roof an explosion relief roof? *'}
+                  </Text>
+                  <OptionalButton
+                    options={['Yes', 'No']}
+                    actions={[
+                      () => {
+                        handleInputChange('isExplosionReliefRoof', true);
+                      },
+                      () => {
+                        handleInputChange('isExplosionReliefRoof', false);
+                      },
+                    ]}
+                    value={
+                      kioskDetails.isExplosionReliefRoof === undefined
+                        ? null
+                        : kioskDetails.isExplosionReliefRoof
+                        ? 'Yes'
+                        : 'No'
+                    }
+                  />
+                </View>
 
-            <TextInputWithTitle
-              title="Width (mm)"
-              value={kioskDetails.width}
-              onChangeText={(txt) => {
-                const numericValue = txt.replace(/[^0-9.]/g, '');
-                handleInputChange('width', numericValue);
-              }}
-              keyboardType="numeric"
-              containerStyle={styles.input}
-            />
+                <View style={styles.optionContainer}>
+                  <Text type={TextType.CAPTION_2} style={styles.questionText}>
+                    {'Is kiosk easily accessible? *'}
+                  </Text>
+                  <OptionalButton
+                    options={['Yes', 'No']}
+                    actions={[
+                      () => {
+                        handleInputChange('isAccessible', true);
+                      },
+                      () => {
+                        handleInputChange('isAccessible', false);
+                      },
+                    ]}
+                    value={
+                      kioskDetails.isAccessible === undefined
+                        ? null
+                        : kioskDetails.isAccessible
+                        ? 'Yes'
+                        : 'No'
+                    }
+                  />
+                </View>
 
-            <TextInputWithTitle
-              title="Length (mm)"
-              value={kioskDetails.length}
-              onChangeText={(txt) => {
-                const numericValue = txt.replace(/[^0-9.]/g, '');
-                handleInputChange('length', numericValue);
-              }}
-              keyboardType="numeric"
-              containerStyle={styles.input}
-            />
+                <View style={styles.optionContainer}>
+                  <Text type={TextType.CAPTION_2} style={styles.questionText}>
+                    {'Are there steps leading up to the kiosk? *'}
+                  </Text>
+                  <OptionalButton
+                    options={['Yes', 'No']}
+                    actions={[
+                      () => {
+                        handleInputChange('isSteps', true);
+                      },
+                      () => {
+                        handleInputChange('isSteps', false);
+                      },
+                    ]}
+                    value={
+                      kioskDetails.isSteps === undefined
+                        ? null
+                        : kioskDetails.isSteps
+                        ? 'Yes'
+                        : 'No'
+                    }
+                  />
+                </View>
+
+                <Text type={TextType.CAPTION_2} style={styles.sectionTitle}>
+                  Internal Kiosk Dimensions
+                </Text>
+                <View style={styles.row}>
+                  <TextInputWithTitle
+                    title="Height (mm)"
+                    value={kioskDetails.height}
+                    onChangeText={(txt) => {
+                      const numericValue = txt.replace(/[^0-9.]/g, '');
+                      handleInputChange('height', numericValue);
+                    }}
+                    keyboardType="numeric"
+                    containerStyle={styles.input}
+                  />
+
+                  <TextInputWithTitle
+                    title="Width (mm)"
+                    value={kioskDetails.width}
+                    onChangeText={(txt) => {
+                      const numericValue = txt.replace(/[^0-9.]/g, '');
+                      handleInputChange('width', numericValue);
+                    }}
+                    keyboardType="numeric"
+                    containerStyle={styles.input}
+                  />
+
+                  <TextInputWithTitle
+                    title="Length (mm)"
+                    value={kioskDetails.length}
+                    onChangeText={(txt) => {
+                      const numericValue = txt.replace(/[^0-9.]/g, '');
+                      handleInputChange('length', numericValue);
+                    }}
+                    keyboardType="numeric"
+                    containerStyle={styles.input}
+                  />
+                </View>
+              </>
+            )}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

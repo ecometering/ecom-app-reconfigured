@@ -55,6 +55,11 @@ const SlamShutPage = () => {
       },
     }));
   };
+  React.useEffect(() => {
+    if (streams[`slamShut${stream}Exists`] === undefined) {
+      handleInputChange(`slamShut${stream}Exists`, false);
+    }
+  }, [stream, streams]);
 
   const backPressed = () => {
     goToPreviousStep();

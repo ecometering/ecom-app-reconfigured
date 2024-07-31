@@ -23,7 +23,6 @@ import ImagePickerButton from '../../components/ImagePickerButton';
 import EcomHelper from '../../utils/ecomHelper';
 import { TextType } from '../../theme/typography';
 import { useFormStateContext } from '../../context/AppContext';
-import { makeFontSmallerAsTextGrows } from '../../utils/styles';
 import { validateDataLoggerDetails } from './DataLoggerDetailsPage.validator';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
@@ -234,7 +233,9 @@ export default function DataLoggerDetailsTwoPage() {
                 <View style={styles.row}>
                   <TextInput
                     onChangeText={(txt) => {
-                      handleInputChange('manufacturer', txt);
+                      const formattedText = txt.toUpperCase();
+                      const filteredText = formattedText.replace(/[^a-zA-Z ]/g, '');
+                      handleInputChange('manufacturer', filteredText);
                     }}
                     value={dataLoggerDetailsTwo.manufacturer}
                   />
@@ -248,7 +249,9 @@ export default function DataLoggerDetailsTwoPage() {
                 <Text>Model</Text>
                 <TextInput
                   onChangeText={(txt) => {
-                    handleInputChange('model', txt);
+                    const formattedText = txt.toUpperCase();
+                    const filteredText = formattedText.replace(/[^a-zA-Z0-9\-\s]/g, '');
+                    handleInputChange('model', filteredText);
                   }}
                   value={dataLoggerDetailsTwo.model}
                 />

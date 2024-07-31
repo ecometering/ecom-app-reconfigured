@@ -23,16 +23,14 @@ import TextInput, { TextInputWithTitle } from '../../components/TextInput';
 
 // Context & Utils
 import EcomHelper from '../../utils/ecomHelper';
-import { tablename } from '../../utils/constant';
 import { PrimaryColors } from '../../theme/colors';
 import { useFormStateContext } from '../../context/AppContext';
-import { makeFontSmallerAsTextGrows } from '../../utils/styles';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 import { validateCorrectorDetails } from './CorrectorDetailsPage.validator';
+import correctors from '../../../assets/json/correctors.json';
 
 export default function CorrectorDetailsPage() {
   const route = useRoute();
-  const db = useSQLiteContext();
   const camera = createRef(null);
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const { state, setState } = useFormStateContext();
@@ -44,47 +42,9 @@ export default function CorrectorDetailsPage() {
 
   const [isModal, setIsModal] = useState(false);
 
-  const [correctorModelCodes, setCorrectorModelCodes] = useState([]);
-  const [correctorManufacturers, setCorrectorManufacturers] = useState([]);
   const [selectedImage, setSelectedImage] = useState(existingPhoto || {});
 
-  useEffect(() => {
-    getCorrectorManufacturers();
-  }, []);
 
-  async function getCorrectorManufacturers() {
-    try {
-      const query = `SELECT DISTINCT Manufacturer FROM ${tablename[9]}`;
-      const result = await db.getAllAsync(query);
-      setCorrectorManufacturers(
-        result
-          .map((manu) => ({
-            label: manu.Manufacturer,
-            value: manu.Manufacturer,
-          }))
-          .sort((a, b) => a.label.localeCompare(b.label))
-      );
-    } catch (err) {
-      console.error('SQL Error: ', err);
-    }
-  }
-
-  async function getCorrectorModelCodes(manufacturer) {
-    try {
-      const query = `SELECT DISTINCT "ModelCode" FROM ${tablename[9]} WHERE Manufacturer = '${manufacturer}'`;
-      const result = await db.getAllAsync(query);
-      setCorrectorModelCodes(
-        result
-          .map((model) => ({
-            label: model['ModelCode'],
-            value: model['ModelCode'],
-          }))
-          .sort((a, b) => a.label.localeCompare(b.label))
-      );
-    } catch (err) {
-      console.error('SQL Error: ', err);
-    }
-  }
 
   const handleInputChange = (name, value) => {
     setState((prevState) => ({
@@ -142,7 +102,7 @@ export default function CorrectorDetailsPage() {
         hasLeftBtn={true}
         hasCenterText={true}
         hasRightBtn={true}
-        centerText={'Corrector Details'}
+        centerText={title}
         leftBtnPressed={backPressed}
         rightBtnPressed={nextPressed}
       />
@@ -202,19 +162,48 @@ export default function CorrectorDetailsPage() {
               <View style={{ flex: 1 }}>
                 <EcomDropDown
                   value={correctorDetails.manufacturer}
-                  valueList={correctorManufacturers}
+                  valueList={
+                    correctors
+                      ? correctors
+                          .map(({ Manufacturer }) => ({
+                            label: Manufacturer,
+                            value: Manufacturer,
+                          }))
+                          .filter(
+                            (v, i, a) =>
+                              a.findIndex((t) => t.label === v.label) === i
+                          )
+                          .sort((a, b) => a.label.localeCompare(b.label))
+                      : []
+                  }
                   placeholder="Select a Manufacturer"
                   onChange={(item) => {
-                    handleInputChange('manufacturer', item.value);
-                    getCorrectorModelCodes(
-                      item.value === 'Select a Manufacturer' ? '' : item.value
-                    );
+                    handleInputChange('manufacturer', item);
                   }}
                 />
 
                 <EcomDropDown
                   value={correctorDetails.model}
-                  valueList={correctorModelCodes}
+                  valueList={
+                    
+                    correctorDetails.manufacturer
+                      ? correctors
+                          .filter(
+                            ({ Manufacturer }) =>
+                              Manufacturer ===
+                              correctorDetails.manufacturer?.value
+                          )
+                          .map(({ ModelDescription }) => ({
+                            label: ModelDescription,
+                            value: ModelDescription,
+                          }))
+                          .filter(
+                            (v, i, a) =>
+                              a.findIndex((t) => t.label === v.label) === i
+                          )
+                          .sort((a, b) => a.label.localeCompare(b.label))
+                      : []
+                  }
                   placeholder="Select Model Code"
                   onChange={(item) => handleInputChange('model', item.value)}
                 />

@@ -93,7 +93,7 @@ function SiteDetailsPage() {
               title={'Building name/ number *'}
               value={siteDetails.buildingName}
               onChangeText={(txt) => {
-                const filteredText = txt.replace(/[^a-zA-Z0-9\s\-\(\)]/g, '');
+                const filteredText = txt.replace(/[^a-zA-Z0-9\s\-\(\)']/g, '');
                 handleInputChange('buildingName', filteredText);
               }}
             />
@@ -129,7 +129,7 @@ function SiteDetailsPage() {
               title={'Town/city *'}
               value={siteDetails.town}
               onChangeText={(txt) => {
-                const filteredText = txt.replace(/[^a-zA-Z]/g, '');
+                const filteredText = txt.replace(/[^a-zA-Z\s\-]/g, '');
                 handleInputChange('town', filteredText);
               }}
             />
@@ -138,7 +138,7 @@ function SiteDetailsPage() {
               title={'County *'}
               value={siteDetails.county}
               onChangeText={(txt) => {
-                const filteredText = txt.replace(/[^a-zA-Z ]/g, '');
+                const filteredText = txt.replace(/[^a-zA-Z\s\-]/g, '');
                 handleInputChange('county', filteredText);
               }}
             />
@@ -260,15 +260,7 @@ function SiteDetailsPage() {
             />
 
             <View style={{ marginBottom: 30, gap: 20 }}>
-              <View style={{ gap: 20 }}>
-                <CustomCheckbox
-                  label="I confirm all contact details correct"
-                  checked={siteDetails.confirmContact || false}
-                  onChange={(newValue) =>
-                    handleInputChange('confirmContact', newValue)
-                  }
-                />
-              </View>
+             
               {jobType === 'Warrant' && (
                 <View style={{ gap: 10 }}>
                   <Text type={TextType.CAPTION_2}>

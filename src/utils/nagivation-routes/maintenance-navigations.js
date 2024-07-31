@@ -26,7 +26,7 @@ export const MaintenanceNavigation = [
       if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
         return MaintenanceStandardPage;
       } else if (!siteQuestions?.isCarryOut) {
-        return RebookPage;
+        return AbortPage;
       } else {
         return AssetTypeSelectionPage;
       }
@@ -77,7 +77,7 @@ export const AdditionalMaterialsPage = [
   {
     screen: 'AdditionalMaterials',
     diversions: ({ state }) => {
-      const { standards } = state;
+      const { standards,siteQuestions } = state;
       const { riddorReportable, conformStandard, chatterbox } = standards;
       if (chatterbox === true) {
         return chatterBoxPage;
@@ -85,7 +85,7 @@ export const AdditionalMaterialsPage = [
         if (riddorReportable === true) {
           return RiddorReportPage;
         } else {
-          if (conformStandard === false) {
+          if (!siteQuestions.isStandard) {
             return SnClientInfoPage;
           } else {
             return CompositeLabelPhoto;
@@ -147,29 +147,27 @@ export const MaintenanceStandardPage = [
   {
     screen: 'StandardPage',
     diversions: ({ state }) => {
-      const { standards } = state;
+      const { standards,siteQuestions } = state;
       const {
         riddorReportable,
         conformStandard,
         chatterbox,
         additionalMaterials,
       } = standards;
-      if (additionalMaterials === true) {
-        return AdditionalMaterialsPage;
-      } else {
+     
         if (chatterbox === true) {
           return chatterBoxPage;
         } else {
           if (riddorReportable === true) {
             return RiddorReportPage;
           } else {
-            if (conformStandard === false) {
+            if (!siteQuestions.isStandard) {
               return SnClientInfoPage;
             } else {
               return CompositeLabelPhoto;
             }
           }
-        }
+        
       }
     },
   },
@@ -178,9 +176,13 @@ export const MaintenanceStandardPage = [
 export const RiddorReportPage = [
   {
     screen: 'RiddorReportPage',
+    params:{
+      title: 'Riddor Report',
+      photoKey:'RiddorReport'
+    },
     diversions: ({ state }) => {
-      const { standards } = state;
-      if (standards.conformStandard === false) {
+      const { standards,siteQuestions } = state;
+      if (!siteQuestions.isStandard) {
         return SnClientInfoPage;
       } else {
         return CompositeLabelPhoto;
@@ -209,18 +211,29 @@ export const CompositeLabelPhoto = [
 ];
 
 export const SnClientInfoPage = [
+  // {
+  //   screen: 'SnClientInfoPage',
+  // },
+  // {
+  //   screen: 'GasSafeWarningPage',
+  // },
   {
     screen: 'SnClientInfoPage',
-  },
-  {
-    screen: 'GasSafeWarningPage',
+    params: {
+      title: 'Gas warning photo',
+      photoKey: 'gasWarning',
+    },
   },
   ...CompositeLabelPhoto,
 ];
 
-export const RebookPage = [
+export const AbortPage = [
   {
-    screen: 'RebookPage',
+    screen: 'AbortPage',
+    params: {
+      photoKey: 'AbortReason',
+      title:'Job abort reason'
+    },
   },
   ...SubmitSuccessPage,
 ];
@@ -261,7 +274,7 @@ export const MaintenanceExistingMeterDetails = [
 
       const Type = meterDetails?.meterType.value;
 
-      if (!['1', '2', '4'].includes(Type)) {
+      if (!['1', '2', '4','7'].includes(Type)) {
         return MaintenanceExistingMeterDataBadge;
       } else {
         return MaintenanceExistingMeterIndex;

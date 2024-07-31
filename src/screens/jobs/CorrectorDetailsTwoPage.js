@@ -29,6 +29,7 @@ import { useFormStateContext } from '../../context/AppContext';
 import { makeFontSmallerAsTextGrows } from '../../utils/styles';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 import { validateCorrectorDetails } from './CorrectorDetailsPage.validator';
+import correctors from '../../../assets/json/correctors.json';
 
 export default function CorrectorDetailsTwoPage() {
   const route = useRoute();
@@ -48,43 +49,6 @@ export default function CorrectorDetailsTwoPage() {
   const [correctorManufacturers, setCorrectorManufacturers] = useState([]);
   const [selectedImage, setSelectedImage] = useState(existingPhoto || {});
 
-  useEffect(() => {
-    getCorrectorManufacturers();
-  }, []);
-
-  async function getCorrectorManufacturers() {
-    try {
-      const query = `SELECT DISTINCT Manufacturer FROM ${tablename[9]}`;
-      const result = await db.getAllAsync(query);
-      setCorrectorManufacturers(
-        result
-          .map((manu) => ({
-            label: manu.Manufacturer,
-            value: manu.Manufacturer,
-          }))
-          .sort((a, b) => a.label.localeCompare(b.label))
-      );
-    } catch (err) {
-      console.error('SQL Error: ', err);
-    }
-  }
-
-  async function getCorrectorModelCodes(manufacturer) {
-    try {
-      const query = `SELECT DISTINCT "ModelCode" FROM ${tablename[9]} WHERE Manufacturer = '${manufacturer}'`;
-      const result = await db.getAllAsync(query);
-      setCorrectorModelCodes(
-        result
-          .map((model) => ({
-            label: model['ModelCode'],
-            value: model['ModelCode'],
-          }))
-          .sort((a, b) => a.label.localeCompare(b.label))
-      );
-    } catch (err) {
-      console.error('SQL Error: ', err);
-    }
-  }
 
   const handleInputChange = (name, value) => {
     setState((prevState) => ({
@@ -142,7 +106,7 @@ export default function CorrectorDetailsTwoPage() {
         hasLeftBtn={true}
         hasCenterText={true}
         hasRightBtn={true}
-        centerText={'Corrector Details'}
+        centerText={title}
         leftBtnPressed={backPressed}
         rightBtnPressed={nextPressed}
       />
@@ -198,29 +162,56 @@ export default function CorrectorDetailsTwoPage() {
                 </View>
               </View>
 
-              <View
-                style={{
-                  ...styles.row,
-                }}
-              >
+              <View style={styles.row}>
+              <View style={{ flex: 1 }}>
                 <EcomDropDown
                   value={correctorDetailsTwo.manufacturer}
-                  valueList={correctorManufacturers}
+                  valueList={
+                    correctors
+                      ? correctors
+                          .map(({ Manufacturer }) => ({
+                            label: Manufacturer,
+                            value: Manufacturer,
+                          }))
+                          .filter(
+                            (v, i, a) =>
+                              a.findIndex((t) => t.label === v.label) === i
+                          )
+                          .sort((a, b) => a.label.localeCompare(b.label))
+                      : []
+                  }
                   placeholder="Select a Manufacturer"
                   onChange={(item) => {
-                    handleInputChange('manufacturer', item.value);
-                    getCorrectorModelCodes(
-                      item.value === 'Select a Manufacturer' ? '' : item.value
-                    );
+                    handleInputChange('manufacturer', item);
                   }}
                 />
 
                 <EcomDropDown
                   value={correctorDetailsTwo.model}
-                  valueList={correctorModelCodes}
+                  valueList={
+                    
+                    correctorDetailsTwo.manufacturer
+                      ? correctors
+                          .filter(
+                            ({ Manufacturer }) =>
+                              Manufacturer ===
+                              correctorDetailsTwo.manufacturer?.value
+                          )
+                          .map(({ ModelDescription }) => ({
+                            label: ModelDescription,
+                            value: ModelDescription,
+                          }))
+                          .filter(
+                            (v, i, a) =>
+                              a.findIndex((t) => t.label === v.label) === i
+                          )
+                          .sort((a, b) => a.label.localeCompare(b.label))
+                      : []
+                  }
                   placeholder="Select Model Code"
                   onChange={(item) => handleInputChange('model', item.value)}
                 />
+              </View>
               </View>
 
               <View style={styles.row}>
