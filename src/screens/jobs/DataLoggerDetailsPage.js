@@ -124,11 +124,13 @@ export default function DataLoggerDetailsPage() {
                 <View style={styles.row}>
                   <TextInput
                     onChangeText={(txt) => {
-                      const alphanumericRegex = /^[a-z0-9]+$/i;
-                      const formattedText = txt.toUpperCase();
-                      if (alphanumericRegex.test(formattedText)) {
+                      const withSpacesAllowed = txt.toUpperCase();
+                      const formattedText = withSpacesAllowed.replace(
+                        /[^A-Z0-9]+/g,
+                        ''
+                      );
                         handleInputChange('serialNumber', formattedText);
-                      }
+                      
                     }}
                     style={{
                       ...styles.input,

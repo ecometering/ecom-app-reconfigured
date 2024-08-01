@@ -59,9 +59,8 @@ function MeterDetailsPage() {
         value: 2,
       });
     }
-    if (meterDetails.havePulseValue===undefined){
       handleInputChange('havePulseValue', false);
-    }
+    
     if (!meterDetails.pulseValue) {
       handleInputChange('pulseValue', { _index: 0, label: '1', value: 1 });
     }
@@ -115,7 +114,7 @@ function MeterDetailsPage() {
 
     let isDiaphragm =
       meterDetails.meterType &&
-      [1, 2, 4].includes(meterDetails.meterType.value);
+      [1, 2, 4,7].includes(meterDetails.meterType.value);
     let isNotML =
       meterDetails.pressureTier &&
       [1, 4].includes(meterDetails.pressureTier.value);
