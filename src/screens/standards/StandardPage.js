@@ -105,6 +105,27 @@ function StandardPage() {
                 key: 'conformStandard',
                 question: 'Does the network service /ECV conform to standards',
                 options: ['Yes', 'No'],
+                extra: () => {
+                  if (standards?.conformStandard === false) {
+                    return (
+                      <TextInputWithTitle
+                        title={
+                          'ECV Reference '
+                        }
+                        placeholder={''}
+                        value={standards?.ecvRef}
+                        onChangeText={(txt) => {
+                          const withSpacesAllowed = txt.toUpperCase();
+                        const formattedText = withSpacesAllowed.replace(
+                          /[^A-Z0-9]+/g,
+                          ''
+                        );
+                          handleInputChange('ecvRef', formattedText);
+                        }}
+                      />
+                    );
+                  }
+                },
               },
               {
                 key: 'riddorReportable',
@@ -118,11 +139,13 @@ function StandardPage() {
                       question: 'Any Additional materials used',
                       options: ['Yes', 'No'],
                     },
+                    ...(jobType === 'Install' || jobType === 'Exchange'? [
                     {
                       key: 'chatterbox',
                       question: 'Any chatterBox installed',
                       options: ['Yes', 'No'],
                     },
+                  ]:[])
                   ]
                 : []),
               ...(meterDetails?.isMeter &&
@@ -169,6 +192,7 @@ function StandardPage() {
                       }
                     />
                   </View>
+                  {item?.extra && item?.extra()}
                 </View>
               );
             })}

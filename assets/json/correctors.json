@@ -1377,101 +1377,101 @@
   {
     "ProductId": null,
     "ModelCode": "IMAEL1",
-    "ModelDescription": "UML_Maxi_Elcor",
+    "ModelDescription": "Maxi_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 12,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 8,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "IMAEL10",
-    "ModelDescription": "UML_Maxi_Elcor",
+    "ModelDescription": "Maxi_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 12,
     "UncorrectedMultiplicationFactor": 10.0,
     "UncorrectedNumberOfDials": 8,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "IMAEL100",
-    "ModelDescription": "UML_Maxi_Elcor",
+    "ModelDescription": "Maxi_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 12,
     "UncorrectedMultiplicationFactor": 100.0,
     "UncorrectedNumberOfDials": 8,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "IMIEL1",
-    "ModelDescription": "UML_Mini_Elcor",
+    "ModelDescription": "Mini_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 12,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 8,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "IMIEL10",
-    "ModelDescription": "UML_Mini_Elcor",
+    "ModelDescription": "Mini_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 12,
     "UncorrectedMultiplicationFactor": 10.0,
     "UncorrectedNumberOfDials": 8,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "IMIEL100",
-    "ModelDescription": "UML_Mini_Elcor",
+    "ModelDescription": "Mini_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 12,
     "UncorrectedMultiplicationFactor": 100.0,
     "UncorrectedNumberOfDials": 8,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "INAEL1",
-    "ModelDescription": "UML_Nano_Elcor",
+    "ModelDescription": "Nano_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 12,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 8,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "INAEL10",
-    "ModelDescription": "UML_Nano_Elcor",
+    "ModelDescription": "Nano_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 12,
     "UncorrectedMultiplicationFactor": 10.0,
     "UncorrectedNumberOfDials": 8,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "INAEL100",
-    "ModelDescription": "UML_Nano_Elcor",
+    "ModelDescription": "Nano_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 12,
     "UncorrectedMultiplicationFactor": 100.0,
     "UncorrectedNumberOfDials": 8,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
@@ -2708,233 +2708,233 @@
   {
     "ProductId": null,
     "ModelCode": "MMAEL1",
-    "ModelDescription": "UML_Maxi_Elcor",
+    "ModelDescription": "Maxi_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 12,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 8,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "MMAEL10",
-    "ModelDescription": "UML_Maxi_Elcor",
+    "ModelDescription": "Maxi_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 12,
     "UncorrectedMultiplicationFactor": 10.0,
     "UncorrectedNumberOfDials": 8,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "MMAEL100",
-    "ModelDescription": "UML_Maxi_Elcor",
+    "ModelDescription": "Maxi_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 12,
     "UncorrectedMultiplicationFactor": 100.0,
     "UncorrectedNumberOfDials": 8,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "MMAEL71",
-    "ModelDescription": "UML_Maxi_Elcor",
+    "ModelDescription": "Maxi_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 11,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 7,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "MMAEL81",
-    "ModelDescription": "UML_Maxi_Elcor",
+    "ModelDescription": "Maxi_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 11,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 8,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "MMAEL91",
-    "ModelDescription": "UML_Maxi_Elcor",
+    "ModelDescription": "Maxi_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 11,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "MMIEL1",
-    "ModelDescription": "UML_Mini_Elcor",
+    "ModelDescription": "Mini_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 12,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 8,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "MMIEL10",
-    "ModelDescription": "UML_Mini_Elcor",
+    "ModelDescription": "Mini_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 12,
     "UncorrectedMultiplicationFactor": 10.0,
     "UncorrectedNumberOfDials": 8,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "MMIEL100",
-    "ModelDescription": "UML_Mini_Elcor",
+    "ModelDescription": "Mini_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 12,
     "UncorrectedMultiplicationFactor": 100.0,
     "UncorrectedNumberOfDials": 8,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "MMIEL101N",
-    "ModelDescription": "UML_Mini_Elcor",
+    "ModelDescription": "Mini_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 10,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 10,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "MMIEL71",
-    "ModelDescription": "UML_Mini_Elcor",
+    "ModelDescription": "Mini_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 11,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 7,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "MMIEL81",
-    "ModelDescription": "UML_Mini_Elcor",
+    "ModelDescription": "Mini_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 11,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 8,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "MMIEL81N",
-    "ModelDescription": "UML_Mini_Elcor",
+    "ModelDescription": "Mini_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 8,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 8,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "MMIEL91",
-    "ModelDescription": "UML_Mini_Elcor",
+    "ModelDescription": "Mini_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 11,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "MMIEL91N",
-    "ModelDescription": "UML_Mini_Elcor",
+    "ModelDescription": "Mini_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "MNAEL1",
-    "ModelDescription": "UML_Nano_Elcor",
+    "ModelDescription": "Nano_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 12,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 8,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "MNAEL10",
-    "ModelDescription": "UML_Nano_Elcor",
+    "ModelDescription": "Nano_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 12,
     "UncorrectedMultiplicationFactor": 10.0,
     "UncorrectedNumberOfDials": 8,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "MNAEL100",
-    "ModelDescription": "UML_Nano_Elcor",
+    "ModelDescription": "Nano_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 12,
     "UncorrectedMultiplicationFactor": 100.0,
     "UncorrectedNumberOfDials": 8,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "MNAEL71",
-    "ModelDescription": "UML_Nano_Elcor",
+    "ModelDescription": "Nano_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 11,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 7,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "MNAEL81",
-    "ModelDescription": "UML_Nano_Elcor",
+    "ModelDescription": "Nano_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 11,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 8,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "MNAEL91",
-    "ModelDescription": "UML_Nano_Elcor",
+    "ModelDescription": "Nano_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 11,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
@@ -3148,46 +3148,46 @@
   {
     "ProductId": null,
     "ModelCode": "MMIEL910",
-    "ModelDescription": "UML_Mini_Elcor",
+    "ModelDescription": "Mini_Elcor",
     "CorrectedMultiplicationFactor": 10.0,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 10.0,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "MNAEL910N",
-    "ModelDescription": "UML_Nano_Elcor",
+    "ModelDescription": "Nano_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "MNAEL91N",
-    "ModelDescription": "UML_Nano_Elcor",
+    "ModelDescription": "Nano_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "MNAE801N",
-    "ModelDescription": "UML_Nano_Elcor",
+    "ModelDescription": "Nano_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 8,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 8,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": "-",
@@ -3720,112 +3720,112 @@
   {
     "ProductId": null,
     "ModelCode": "IMIEL90.01",
-    "ModelDescription": "UML_Mini_Elcor",
+    "ModelDescription": "Mini_Elcor",
     "CorrectedMultiplicationFactor": 0.01,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 0.01,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPTD",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "IMIEL90.1",
-    "ModelDescription": "UML_Mini_Elcor",
+    "ModelDescription": "Mini_Elcor",
     "CorrectedMultiplicationFactor": 0.1,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 0.1,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPTD",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "IMIEL91",
-    "ModelDescription": "UML_Mini_Elcor",
+    "ModelDescription": "Mini_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPTD",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "IMIEL910",
-    "ModelDescription": "UML_Mini_Elcor",
+    "ModelDescription": "Mini_Elcor",
     "CorrectedMultiplicationFactor": 10.0,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 10.0,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPTD",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "IMIEL9100",
-    "ModelDescription": "UML_Mini_Elcor",
+    "ModelDescription": "Mini_Elcor",
     "CorrectedMultiplicationFactor": 100.0,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 100.0,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPTD",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "IMIEL90.01",
-    "ModelDescription": "UML_Mini_Elcor",
+    "ModelDescription": "Mini_Elcor",
     "CorrectedMultiplicationFactor": 0.01,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 0.01,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPTD",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "IMIEL90.1",
-    "ModelDescription": "UML_Mini_Elcor",
+    "ModelDescription": "Mini_Elcor",
     "CorrectedMultiplicationFactor": 0.1,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 0.1,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPTD",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "IMIEL91",
-    "ModelDescription": "UML_Mini_Elcor",
+    "ModelDescription": "Mini_Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPTD",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "IMIEL910",
-    "ModelDescription": "UML_Mini_Elcor",
+    "ModelDescription": "Mini_Elcor",
     "CorrectedMultiplicationFactor": 10.0,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 10.0,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPTD",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "IMIEL9100",
-    "ModelDescription": "UML_Mini_Elcor",
+    "ModelDescription": "Mini_Elcor",
     "CorrectedMultiplicationFactor": 100.0,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 100.0,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPTD",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
@@ -3841,167 +3841,167 @@
   {
     "ProductId": null,
     "ModelCode": "EL90.01",
-    "ModelDescription": "UML - Elcor",
+    "ModelDescription": "Elcor",
     "CorrectedMultiplicationFactor": 0.01,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 0.01,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "EL90.1",
-    "ModelDescription": "UML - Elcor",
+    "ModelDescription": "Elcor",
     "CorrectedMultiplicationFactor": 0.1,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 0.1,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "EL91",
-    "ModelDescription": "UML - Elcor",
+    "ModelDescription": "Elcor",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "EL910",
-    "ModelDescription": "UML - Elcor",
+    "ModelDescription": "Elcor",
     "CorrectedMultiplicationFactor": 10.0,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 10.0,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "EL9100",
-    "ModelDescription": "UML - Elcor",
+    "ModelDescription": "Elcor",
     "CorrectedMultiplicationFactor": 100.0,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 100.0,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "El90.01C",
-    "ModelDescription": "UML - Elcor with Comms",
+    "ModelDescription": "Elcor with Comms",
     "CorrectedMultiplicationFactor": 0.01,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 0.01,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "El90.1C",
-    "ModelDescription": "UML - Elcor with Comms",
+    "ModelDescription": "Elcor with Comms",
     "CorrectedMultiplicationFactor": 0.1,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 0.1,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "El91C",
-    "ModelDescription": "UML - Elcor with Comms",
+    "ModelDescription": "Elcor with Comms",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "EL910C",
-    "ModelDescription": "UML - Elcor with Comms",
+    "ModelDescription": "Elcor with Comms",
     "CorrectedMultiplicationFactor": 10.0,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 10.0,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "EL9100C",
-    "ModelDescription": "UML - Elcor with Comms",
+    "ModelDescription": "Elcor with Comms",
     "CorrectedMultiplicationFactor": 100.0,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 100.0,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "ELP90.01",
-    "ModelDescription": "UML - ElcorPlus",
+    "ModelDescription": "ElcorPlus",
     "CorrectedMultiplicationFactor": 0.01,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 0.01,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "ELP90.1",
-    "ModelDescription": "UML - ElcorPlus",
+    "ModelDescription": "ElcorPlus",
     "CorrectedMultiplicationFactor": 0.1,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 0.1,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "ELP91",
-    "ModelDescription": "UML - ElcorPlus",
+    "ModelDescription": "ElcorPlus",
     "CorrectedMultiplicationFactor": 1.0,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 1.0,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "ELP910",
-    "ModelDescription": "UML - ElcorPlus",
+    "ModelDescription": "ElcorPlus",
     "CorrectedMultiplicationFactor": 10.0,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 10.0,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,
     "ModelCode": "ELP9100",
-    "ModelDescription": "UML - ElcorPlus",
+    "ModelDescription": "ElcorPlus",
     "CorrectedMultiplicationFactor": 100.0,
     "CorrectedNumberOfDials": 9,
     "UncorrectedMultiplicationFactor": 100.0,
     "UncorrectedNumberOfDials": 9,
     "ConversionBasisCode": "CPT",
-    "Manufacturer": "UTILITY METERS WAREHOUSE LIMITED"
+    "Manufacturer": "ELGAS"
   },
   {
     "ProductId": null,

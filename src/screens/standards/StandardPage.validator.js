@@ -33,6 +33,24 @@ export const validateStandardDetails = (
         standards?.riddorReportable,
         'Please answer if RIDDOR reportable'
       ),
+      ...(jobType !== 'Survey'?
+        [
+          () =>
+            validateBooleanField(
+              'additional Materials',
+              standards?.additionalMaterials,
+              'Please answer if any additional materials used'
+            ),
+          ...(jobType === 'Install' || jobType === 'Exchange'?[
+          () =>
+            validateBooleanField(
+              'Chatterbox installed',
+              standards?.chatterbox,
+              'Please answer if any chatterbox installed'
+            ),]:[])
+        ]:[
+        ]
+      ),
     ...(meterDetails?.isMeter &&
     (jobType === 'Install' || jobType === 'Exchange')
       ? [

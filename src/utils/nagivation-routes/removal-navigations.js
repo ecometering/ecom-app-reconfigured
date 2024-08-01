@@ -24,7 +24,7 @@ export const RemovalNavigation = [
       if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
         return RemovedStandardPage;
       } else if (!siteQuestions?.isCarryOut) {
-        return RebookPage;
+        return AbortPage;
       } else {
         return AssetTypeSelectionPage;
       }
@@ -65,17 +65,29 @@ export const CompositeLabelPhoto = [
       title: 'DSEAR label',
       photoKey: 'dsearLabel',
     },
+    screen:'RemovedItemsphoto',
+    params: {
+      title: 'Removed Items photo',
+      photoKey: 'RemovedItems',
+    },
   },
   ...ExtraPhotoPageRoute(),
   ...SubmitSuccessPage,
 ];
 
 export const SnClientInfoPage = [
+  // {
+  //   screen: 'SnClientInfoPage',
+  // },
+  // {
+  //   screen: 'GasSafeWarningPage',
+  // },
   {
     screen: 'SnClientInfoPage',
-  },
-  {
-    screen: 'GasSafeWarningPage',
+    params: {
+      title: 'Gas warning photo',
+      photoKey: 'gasWarning',
+    },
   },
   ...CompositeLabelPhoto,
 ];
@@ -84,9 +96,13 @@ export const SnClientInfoPage = [
 export const RiddorReportPage = [
   {
     screen: 'RiddorReportPage',
+    params:{
+      title: 'Riddor Report',
+      photoKey:'RiddorReport'
+    },
     diversions: ({ state }) => {
-      const { standards } = state;
-      if (standards.conformStandard === false) {
+      const { standards,siteQuestions } = state;
+      if (!siteQuestions.isStandard) {
         return SnClientInfoPage;
       } else {
         return CompositeLabelPhoto;
@@ -116,9 +132,13 @@ export const AssetTypeSelectionPage = [
   },
 ];
 
-export const RebookPage = [
+export const AbortPage = [
   {
-    screen: 'RebookPage',
+    screen: 'AbortPage',
+    params: {
+      photoKey: 'AbortReason',
+      title:'Job abort reason'
+    },
   },
   ...SubmitSuccessPage,
 ];
@@ -128,13 +148,13 @@ export const chatterBoxPage = [
   {
     screen: 'chatterBox',
     diversions: ({ state }) => {
-      const { standards } = state;
+      const { standards,siteQuestions } = state;
       const { riddorReportable, conformStandard } = standards;
 
       if (riddorReportable === true) {
         return RiddorReportPage;
       } else {
-        if (conformStandard === false) {
+        if (!siteQuestions.isStandard) {
           return SnClientInfoPage;
         } else {
           return CompositeLabelPhoto;
@@ -171,29 +191,27 @@ export const RemovedStandardPage = [
   {
     screen: 'StandardPage',
     diversions: ({ state }) => {
-      const { standards } = state;
+      const { standards,siteQuestions } = state;
       const {
         riddorReportable,
         conformStandard,
         chatterbox,
         additionalMaterials,
       } = standards;
-      if (additionalMaterials === true) {
-        return AdditionalMaterialsPage;
-      } else {
+      
         if (chatterbox === true) {
           return chatterBoxPage;
         } else {
           if (riddorReportable === true) {
             return RiddorReportPage;
           } else {
-            if (conformStandard === false) {
+            if (!siteQuestions.isStandard) {
               return SnClientInfoPage;
             } else {
               return CompositeLabelPhoto;
             }
           }
-        }
+        
       }
     },
   },
@@ -209,7 +227,7 @@ export const RemovedMeterDetails = [
       const { meterDetails } = state || {};
       const Type = meterDetails?.meterType.value;
 
-      if (!['1', '2', '4'].includes(Type)) {
+      if (!['1', '2', '4','7'].includes(Type)) {
         return RemovedMeterDataBadge;
       } else {
         return RemovedMeterIndex;
@@ -243,7 +261,7 @@ export const RemovedDataLoggerDetails = [
       title: 'Removed AMR',
       photoKey: 'RemovedAMR',
     },
-    ...RemovedStandardPage,
+    diversions: () => RemovedStandardPage,
   },
 ];
 

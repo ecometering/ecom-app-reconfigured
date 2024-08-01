@@ -140,7 +140,8 @@ function RegulatorPage() {
                 <TextInput
                   value={regulatorDetails.manufacturer}
                   onChangeText={(txt) => {
-                    const filteredText = txt.replace(/[^a-zA-Z ]/g, '');
+                    const capitalise = txt.toUpperCase();
+                    const filteredText = capitalise.replace(/[^a-zA-Z ]/g, '');
                     handleInputChange('manufacturer', filteredText);
                   }}
                 />
@@ -154,8 +155,12 @@ function RegulatorPage() {
                 <TextInput
                   value={regulatorDetails.model}
                   onChangeText={(txt) => {
-                    const filteredText = txt.replace(/[^a-zA-Z ]/g, '');
-                    handleInputChange('model', filteredText);
+                    const capitalise = txt.toUpperCase();
+                    const formattedText = capitalise.replace(
+                      /[^A-Z0-9]+/g,
+                      ''
+                    );
+                    handleInputChange('model', formattedText);
                   }}
                 />
               </View>

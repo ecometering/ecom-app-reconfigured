@@ -75,12 +75,7 @@ export const validateSiteDetails = (siteDetails, jobType) => {
     () =>
       siteDetails.email2 &&
       validateEmail('email2', siteDetails.email2, 'Invalid email: email2'),
-    () =>
-      validateSelected(
-        'Contact confirm details',
-        siteDetails.confirmContact,
-        'Please confirm contact details are correct'
-      ),
+   
     () =>
       validateBooleanField(
         'the warrant went ahead',

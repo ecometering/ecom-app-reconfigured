@@ -60,49 +60,41 @@ function SiteQuestionsPage() {
   };
 
   const nextPressed = async () => {
-    if (siteQuestions?.isSafe === null) {
-      EcomHelper.showInfoMessage(
-        'Please indicate if the meter location is safe.'
-      );
-      return;
+    const validationChecks = [
+      {
+        condition: siteQuestions?.isSafe !== true && siteQuestions?.isSafe !== false,
+        message: 'Please indicate if the meter location is safe.'
+      },
+      {
+        condition: siteQuestions?.isGeneric !== true && siteQuestions?.isGeneric !== false,
+        message: 'Please indicate if the job is covered by the generic risk assessment.'
+      },
+      {
+        condition: siteQuestions?.isCarryOut !== true && siteQuestions?.isCarryOut !== false,
+        message: 'Please indicate if the job can be carried out.'
+      },
+   
+      {
+        condition: siteQuestions?.isFitted !== true && siteQuestions?.isFitted !== false,
+        message: 'Please indicate if a bypass is fitted.'
+      },
+      {
+        condition: siteQuestions?.isFitted === true && !photos?.bypassPhoto,
+        message: 'Please provide a photo of the bypass.'
+      },
+      {
+        condition: siteQuestions?.isStandard !== true && siteQuestions?.isStandard !== false,
+        message: 'Please indicate if the customer installation conforms to current standards.'
+      }
+    ];
+  
+    for (const check of validationChecks) {
+      if (check.condition) {
+        EcomHelper.showInfoMessage(check.message);
+        return;
+      }
     }
-    if (siteQuestions?.isGeneric === null) {
-      EcomHelper.showInfoMessage(
-        'Please indicate if the job is covered by the generic risk assessment.'
-      );
-      return;
-    }
-    if (siteQuestions?.isCarryOut === null) {
-      EcomHelper.showInfoMessage(
-        'Please indicate if the job can be carried out.'
-      );
-      return;
-    }
-    if (
-      siteQuestions?.isCarryOut === false &&
-      (!siteQuestions?.carryOutReason ||
-        siteQuestions?.carryOutReason?.trim()?.length === 0)
-    ) {
-      EcomHelper.showInfoMessage(
-        "Please indicate why the job can't be carried out."
-      );
-      return;
-    }
-    if (siteQuestions?.isFitted === null) {
-      EcomHelper.showInfoMessage('Please indicate if a bypass is fitted.');
-      return;
-    }
-    if (siteQuestions?.isFitted && !photos?.bypassPhoto) {
-      EcomHelper.showInfoMessage('Please provide a photo of the bypass.');
-      return;
-    }
-    if (siteQuestions?.isStandard === null) {
-      EcomHelper.showInfoMessage(
-        'Please indicate if the customer installation conforms to current standards.'
-      );
-      return;
-    }
-
+  
     goToNextStep();
   };
 
@@ -130,7 +122,7 @@ function SiteQuestionsPage() {
               question: 'Is the job covered by the generic risk assessment',
               options: ['Yes', 'No'],
               extra: () => {
-                if (!siteQuestions?.isGeneric) {
+                if (siteQuestions?.isGeneric === false) {
                   return (
                     <TextInputWithTitle
                       title={
@@ -150,20 +142,7 @@ function SiteQuestionsPage() {
               key: 'isCarryOut',
               question: 'Can the Job be carried out',
               options: ['Yes', 'No'],
-              extra: () => {
-                if (!siteQuestions?.isCarryOut) {
-                  return (
-                    <TextInputWithTitle
-                      title={'Why it cant be carried out'}
-                      placeholder={''}
-                      value={siteQuestions?.carryOutReason}
-                      onChangeText={(txt) => {
-                        handleInputChange('carryOutReason', txt);
-                      }}
-                    />
-                  );
-                }
-              },
+              
             },
             {
               key: 'isFitted',

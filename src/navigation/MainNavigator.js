@@ -15,7 +15,7 @@ import InProgressJobsPage from '../screens/InProgressJobsPage';
 // import JobTypePage from '../screens/JobTypePage';
 import PlannedJobPage from '../screens/PlannedJobPage';
 import SubmitSuccessPage from '../screens/SubmitSuccessPage';
-import RebookPage from '../screens/jobs/RebookPage';
+import AbortPage from '../screens/jobs/AbortPage';
 
 // calendar imports
 import LoginPage from '../screens/LoginPage';
@@ -127,9 +127,13 @@ const MainNavigator = () => {
                 name="RiddorReportPage"
                 component={RiddorReportPage}
               />
-              <Stack.Screen
+              {/* <Stack.Screen
                 name="SnClientInfoPage"
                 component={SnClientInfoPage}
+              /> */}
+              <Stack.Screen
+                name="SnClientInfoPage"
+                component={GenericPhotoPage}
               />
               <Stack.Screen
                 name="GasSafeWarningPage"
@@ -180,7 +184,7 @@ const MainNavigator = () => {
                   title: 'Extra Photos ',
                 }}
               />
-              <Stack.Screen name="RebookPage" component={RebookPage} />
+              <Stack.Screen name="AbortPage" component={AbortPage} />
               <Stack.Screen
                 name="SubmitSuccessPage"
                 component={SubmitSuccessPage}

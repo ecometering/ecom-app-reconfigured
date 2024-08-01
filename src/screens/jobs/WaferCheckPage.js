@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   View,
   Image,
@@ -7,7 +8,6 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
 } from 'react-native';
-import React from 'react';
 import { useRoute } from '@react-navigation/native';
 
 // Components
@@ -23,11 +23,11 @@ import EcomHelper from '../../utils/ecomHelper';
 import { SIZE_LIST } from '../../utils/constant';
 import { TextType } from '../../theme/typography';
 import { useFormStateContext } from '../../context/AppContext';
-import { validateWaferCheck } from './WaferCheckPage.validator';
 import withUniqueKey from '../../utils/renderNavigationWithUniqueKey';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
+import { validateWaferCheck } from './WaferCheckPage.validator';
 
-const WaferCheckPage = () => {
+const waferCheckPage = () => {
   const route = useRoute();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
   const { state, setState } = useFormStateContext();
@@ -35,22 +35,27 @@ const WaferCheckPage = () => {
 
   const { title, stream, photoKey } = route.params;
   const existingPhoto = photos && photoKey ? photos[photoKey] : null;
+  React.useEffect(() => {
+    if (streams[`waferCheck${stream}Exists`] === undefined) {
+      handleInputChange(`waferCheck${stream}Exists`, false);
+    }
+  }, [stream, streams]);
 
   const handleInputChange = (name, value) => {
-    setState((prevDetails) => ({
-      ...prevDetails,
+    setState((prevState) => ({
+      ...prevState,
       streams: {
-        ...prevDetails.streams,
+        ...prevState.streams,
         [name]: value,
       },
     }));
   };
 
   const handlePhotoSelected = (uri) => {
-    setState((prevDetails) => ({
-      ...prevDetails,
+    setState((prevState) => ({
+      ...prevState,
       photos: {
-        ...prevDetails.photos,
+        ...prevState.photos,
         [photoKey]: { title, photoKey, uri },
       },
     }));
@@ -74,6 +79,7 @@ const WaferCheckPage = () => {
 
     goToNextStep();
   };
+
   return (
     <SafeAreaView style={styles.content}>
       <Header
@@ -91,7 +97,7 @@ const WaferCheckPage = () => {
         <ScrollView style={styles.content}>
           <View style={styles.body}>
             <Text type={TextType.HEADER_1} style={{ alignSelf: 'center' }}>
-              Wafer Check Details
+              Relief Regulator Details
             </Text>
             <View>
               <Text style={styles.text}>Does the waferCheck exist?</Text>
@@ -117,7 +123,7 @@ const WaferCheckPage = () => {
             {streams[`waferCheck${stream}Exists`] && (
               <>
                 <View>
-                  <Text>Wafer Check Serial Number</Text>
+                  <Text>Relief Regulator Serial Number</Text>
                   <TextInput
                     onChangeText={(txt) => {
                       const withSpacesAllowed = txt.toUpperCase();
@@ -138,14 +144,20 @@ const WaferCheckPage = () => {
                   valueList={SIZE_LIST}
                   placeholder="Select size"
                   onChange={(item) =>
-                    handleInputChange(`waferCheckSize${stream}`, item.value)
+                    handleInputChange(
+                      `waferCheckSize${stream}`,
+                      item.value
+                    )
                   }
                 />
                 <TextInputWithTitle
                   title={'Manufacturer'}
                   value={streams[`waferCheckManufacturer${stream}`]}
                   onChangeText={(txt) => {
-                    handleInputChange(`waferCheckManufacturer${stream}`, txt);
+                    handleInputChange(
+                      `waferCheckManufacturer${stream}`,
+                      txt
+                    );
                   }}
                 />
                 <TextInputWithTitle
@@ -156,7 +168,7 @@ const WaferCheckPage = () => {
                   }}
                 />
                 <Text type="caption" style={styles.text}>
-                  Wafer Check photo
+                  Relief Regulator photo
                 </Text>
                 <ImagePickerButton
                   onImageSelected={handlePhotoSelected}
@@ -191,4 +203,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withUniqueKey(WaferCheckPage);
+export default withUniqueKey(waferCheckPage);

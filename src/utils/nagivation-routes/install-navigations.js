@@ -1,3 +1,4 @@
+
 export const InstallNavigation = [
   {
     screen: 'SiteDetailsPage',
@@ -24,7 +25,7 @@ export const InstallNavigation = [
       if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
         return StandardPage;
       } else if (!siteQuestions?.isCarryOut) {
-        return RebookPage;
+        return AbortPage;
       } else {
         return AssetTypeSelectionPage;
       }
@@ -58,14 +59,16 @@ export const chatterBoxPage = [
       photoKey: 'InstalledChatterBox',
     },
     diversions: ({ state }) => {
-      const { standards } = state;
+      const { standards,siteQuestions } = state;
       const { riddorReportable, conformStandard } = standards;
       if (riddorReportable) {
         return RiddorReportPage;
-      } else {
-        if (!conformStandard) {
+      } 
+      else {
+        if (!siteQuestions.isStandard) {
           return SnClientInfoPage;
-        } else {
+        } 
+        else {
           return CompositeLabelPhoto;
         }
       }
@@ -77,17 +80,19 @@ export const AdditionalMaterialsPage = [
   {
     screen: 'AdditionalMaterial',
     diversions: ({ state }) => {
-      const { standards } = state;
+      const { standards,siteQuestions } = state;
       const { riddorReportable, conformStandard, chatterbox } = standards;
       if (chatterbox === true) {
         return chatterBoxPage;
       } else {
         if (riddorReportable === true) {
           return RiddorReportPage;
-        } else {
-          if (conformStandard === false) {
+        } 
+        else {
+          if (!siteQuestions.isStandard) {
             return SnClientInfoPage;
-          } else {
+          } 
+          else {
             return CompositeLabelPhoto;
           }
         }
@@ -100,37 +105,41 @@ export const StandardPage = [
   {
     screen: 'StandardPage',
     diversions: ({ state }) => {
-      const { standards } = state;
+      const { standards,siteQuestions } = state;
       const {
         riddorReportable,
         conformStandard,
         chatterbox,
         additionalMaterials,
       } = standards;
-      if (additionalMaterials === true) {
-        return AdditionalMaterialsPage;
-      } else {
+     
         if (chatterbox === true) {
           return chatterBoxPage;
         } else {
           if (riddorReportable === true) {
             return RiddorReportPage;
-          } else {
-            if (conformStandard === false) {
+          }
+           else {
+            if (!siteQuestions.isStandard) {
               return SnClientInfoPage;
-            } else {
+            } 
+            else {
               return CompositeLabelPhoto;
             }
           }
-        }
+        
       }
     },
   },
 ];
 
-export const RebookPage = [
+export const AbortPage = [
   {
-    screen: 'RebookPage',
+    screen: 'AbortPage',
+    params: {
+      photoKey: 'AbortReason',
+      title:'Job abort reason'
+    },
   },
   ...SubmitSuccessPage,
 ];
@@ -141,9 +150,13 @@ export const RebookPage = [
 export const RiddorReportPage = [
   {
     screen: 'RiddorReportPage',
+    params:{
+      title: 'Riddor Report',
+      photoKey:'RiddorReport'
+    },
     diversions: ({ state }) => {
-      const { standards } = state;
-      if (standards.conformStandard === false) {
+      const { standards,siteQuestions } = state;
+      if (!siteQuestions.isStandard) {
         return SnClientInfoPage;
       } else {
         return CompositeLabelPhoto;
@@ -178,13 +191,21 @@ export const CompositeLabelPhoto = [
 export const SnClientInfoPage = [
   {
     screen: 'SnClientInfoPage',
+    params: {
+      title: 'Gas warning photo',
+      photoKey: 'gasWarning',
+    },
   },
-  {
-    screen: 'GasSafeWarningPage',
-  },
+  
   ...CompositeLabelPhoto,
+ 
 ];
-
+ // {
+  //   screen: 'SnClientInfoPage',
+  // },
+  // {
+  //   screen: 'GasSafeWarningPage',
+  // },
 // AssetTypeSelectionPage
 export const AssetTypeSelectionPage = [
   {
@@ -220,7 +241,7 @@ export const MeterDetailsPage = [
       const { meterDetails } = state || {};
       const Type = meterDetails?.meterType.value;
 
-      if (!['1', '2', '4'].includes(Type)) {
+      if (!['1', '2', '4','7'].includes(Type)) {
         return MeterDataBadgePage;
       } else {
         return MeterIndexPage;
@@ -241,16 +262,25 @@ export const CorrectorDetailsPage = [
       const { pressureTier } = meterDetails || {};
       const isAmr = meterDetails?.isAmr;
       const isMeter = meterDetails?.isMeter;
-
+      console.log(meterDetails)
       if (isAmr) {
+        console.log('Diverting to DataLoggerDetailsPage');
         return DataLoggerDetailsPage;
       }
+
       if (isMeter) {
         if (pressureTier === 'LP' || pressureTier?.label === 'LP') {
+          console.log('Diverting to RegulatorPage');
           return RegulatorPage;
+        } else {
+          console.log('Diverting to StreamsSetSealDetailsPage');
+          return StreamsSetSealDetailsPage;
         }
-      } else {
-        return StreamsSetSealDetailsPage;
+      }
+
+      if (!isMeter && !isAmr) {
+        console.log('Diverting to StandardsPage');
+        return StandardPage;
       }
     },
   },

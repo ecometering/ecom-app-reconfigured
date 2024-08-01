@@ -19,6 +19,24 @@ export const validateRegulator = (regulatorDetails) => {
         regulatorDetails.serialNumber,
         'Please enter or scan regulator Serial number'
       ),
+      () =>
+      validateRequiredField(
+        'Manufacturer',
+        regulatorDetails.manufacturer,
+        'Please enter manufacturer'
+      ),
+      () =>
+      validateRequiredField(
+        'Model',
+        regulatorDetails.model,
+        'Please enter model'
+      ),
+      () =>
+      validateRequiredField(
+        'size',
+        regulatorDetails.size,
+        'Please Select size'
+      ),
     () =>
       validateBooleanField(
         'Regulator Sealed',

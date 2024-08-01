@@ -47,7 +47,7 @@ function MeterDetailsPage() {
 
   const isIos = Platform.OS === 'ios';
   const { title } = route.params;
-  const diaphragmMeterTypes = ['1', '2', '4'];
+  const diaphragmMeterTypes = ['1', '2', '4','7'];
 
   const [isModal, setIsModal] = useState(false);
 
@@ -58,6 +58,9 @@ function MeterDetailsPage() {
         label: 'Standard Cubic Meters per hour',
         value: 2,
       });
+    }
+    if (meterDetails.havePulseValue===undefined){
+      handleInputChange('havePulseValue', false);
     }
     if (!meterDetails.pulseValue) {
       handleInputChange('pulseValue', { _index: 0, label: '1', value: 1 });
@@ -82,6 +85,7 @@ function MeterDetailsPage() {
     if (!meterDetails.mechanism) {
       handleInputChange('mechanism', { _index: 0, label: 'Credit', value: 1 });
     }
+    console.log(meterDetails)
   }, []);
 
   const handleInputChange = (name, value) => {
@@ -91,7 +95,7 @@ function MeterDetailsPage() {
         ...prevState.meterDetails,
         [name]: value,
       },
-    }));
+    }));console.log(meterDetails)
   };
 
   const handleMeterTypeChange = (item) => {
@@ -177,7 +181,7 @@ function MeterDetailsPage() {
 
               <View style={styles.flex}>
                 {meterDetails.meterType &&
-                meterDetails.meterType.value === '7' ? (
+                meterDetails.meterType.value === '8' ? (
                   <View style={styles.flex}>
                     <TextInput
                       value={meterDetails.manufacturer}
@@ -202,6 +206,7 @@ function MeterDetailsPage() {
                               (v, i, a) =>
                                 a.findIndex((t) => t.label === v.label) === i
                             )
+                            .sort((a, b) => a.label.localeCompare(b.label))
                         : []
                     }
                     placeholder="Select a Manufacturer"
@@ -232,7 +237,7 @@ function MeterDetailsPage() {
               </View>
               <View style={styles.flex}>
                 {meterDetails.meterType &&
-                meterDetails.meterType.value === '7' ? (
+                meterDetails.meterType.value === '8' ? (
                   <TextInput
                     value={meterDetails.model}
                     onChangeText={(txt) => handleInputChange('model', txt)}
@@ -259,6 +264,7 @@ function MeterDetailsPage() {
                               (v, i, a) =>
                                 a.findIndex((t) => t.label === v.label) === i
                             )
+                            .sort((a, b) => a.label.localeCompare(b.label))
                         : []
                     }
                     placeholder="Select Model Code"
