@@ -32,6 +32,7 @@ const fieldsToParse = [
   'correctorDetails',
   'correctorDetailsTwo',
   'chatterBoxDetails',
+  'navigation',
 ];
 
 const safeParse = (jsonString, fallbackValue) => {
@@ -92,7 +93,7 @@ const JobsTable = () => {
           ...parsedJobData,
           jobID: jobId,
         }));
-        startFlow(parsedJobData.jobType);
+        startFlow({ newFlowType: parsedJobData.jobType });
       }
     } catch (error) {
       console.error('Error loading job:', error);

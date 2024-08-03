@@ -19,18 +19,21 @@ export const ExchangeNavigation = [
       title: 'Site Questions',
       photoKey: 'bypassPhoto',
     },
-    diversions: ({ state }) => {
-      const { siteQuestions } = state;
-      if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
-        return ExchangeStandardPage;
-      } else if (!siteQuestions?.isCarryOut) {
-        return AbortPage;
-      } else {
-        return AssetTypeSelectionPage;
-      }
-    },
+    diversionsKey: 'siteQuestionsDiversion', // Updated
   },
 ];
+
+// Define siteQuestionsDiversion function here
+const siteQuestionsDiversion = (state) => {
+  const { siteQuestions } = state;
+  if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
+    return ExchangeStandardPage;
+  } else if (!siteQuestions?.isCarryOut) {
+    return AbortPage;
+  } else {
+    return AssetTypeSelectionPage;
+  }
+};
 
 export const SubmitSuccessPage = [
   {
@@ -54,89 +57,87 @@ export const ExtraPhotoPageRoute = (
 // Site Questions Alternative Flows
 export const chatterBoxPage = [
   {
-    screen: 'ChatterBox',
-    diversions: ({ state }) => {
-      const { standards } = state;
-      const { riddorReportable, conformStandard } = standards;
-
-      if (riddorReportable === true) {
-        return RiddorReportPage;
-      } 
-      else {
-        if (conformStandard === false) {
-          return SnClientInfoPage;
-        } 
-        else {
-          return CompositeLabelPhoto;
-        }
-      }
-    },
+    screen: 'chatterBox',
+    diversionsKey: 'chatterBoxDiversion', // Updated
   },
 ];
+
+// Define chatterBoxDiversion function here
+const chatterBoxDiversion = (state) => {
+  const { standards } = state;
+  const { riddorReportable, conformStandard } = standards;
+
+  if (riddorReportable === true) {
+    return RiddorReportPage;
+  } else {
+    if (conformStandard === false) {
+      return SnClientInfoPage;
+    } else {
+      return CompositeLabelPhoto;
+    }
+  }
+};
 
 export const AdditionalMaterialsPage = [
   {
     screen: 'AdditionalMaterials',
-    diversions: ({ state }) => {
-      const { standards,siteQuestions } = state;
-      const { riddorReportable, conformStandard, chatterbox } = standards;
-      if (chatterbox === true) {
-        return chatterBoxPage;
-      } else {
-        if (riddorReportable === true) {
-          return RiddorReportPage;
-        } 
-        else {
-          if (!siteQuestions.isStandard) {
-            return SnClientInfoPage;
-          } 
-          else {
-            return CompositeLabelPhoto;
-          }
-        }
-      }
-    },
+    diversionsKey: 'additionalMaterialsDiversion', // Updated
   },
 ];
+
+// Define additionalMaterialsDiversion function here
+const additionalMaterialsDiversion = (state) => {
+  const { standards, siteQuestions } = state;
+  const { riddorReportable, conformStandard, chatterbox } = standards;
+  if (chatterbox === true) {
+    return chatterBoxPage;
+  } else {
+    if (riddorReportable === true) {
+      return RiddorReportPage;
+    } else {
+      if (!siteQuestions.isStandard) {
+        return SnClientInfoPage;
+      } else {
+        return CompositeLabelPhoto;
+      }
+    }
+  }
+};
+
 // Site Questions Alternative Flows
 export const ExchangeStandardPage = [
   {
     screen: 'StandardPage',
-    diversions: ({ state }) => {
-      const { standards,siteQuestions } = state;
-      const {
-        riddorReportable,
-        conformStandard,
-        chatterbox,
-        additionalMaterials,
-      } = standards;
-      
-        if (chatterbox === true) {
-          return chatterBoxPage;
-        } else {
-          if (riddorReportable === true) {
-            return RiddorReportPage;
-          }
-           else {
-            if (!siteQuestions.isStandard) {
-              return SnClientInfoPage;
-            }
-             else {
-              return CompositeLabelPhoto;
-            }
-          }
-        }
-      }
-    },
-  
+    diversionsKey: 'exchangeStandardDiversion', // Updated
+  },
 ];
+
+// Define exchangeStandardDiversion function here
+const exchangeStandardDiversion = (state) => {
+  const { standards, siteQuestions } = state;
+  const { riddorReportable, conformStandard, chatterbox } = standards;
+
+  if (chatterbox === true) {
+    return chatterBoxPage;
+  } else {
+    if (riddorReportable === true) {
+      return RiddorReportPage;
+    } else {
+      if (!siteQuestions.isStandard) {
+        return SnClientInfoPage;
+      } else {
+        return CompositeLabelPhoto;
+      }
+    }
+  }
+};
 
 export const AbortPage = [
   {
     screen: 'AbortPage',
     params: {
       photoKey: 'AbortReason',
-      title:'Job abort reason'
+      title: 'Job abort reason',
     },
   },
   ...SubmitSuccessPage,
@@ -146,16 +147,19 @@ export const AbortPage = [
 export const RiddorReportPage = [
   {
     screen: 'RiddorReportPage',
-    diversions: ({ state }) => {
-      const { standards,siteQuestions } = state;
-      if (!siteQuestions.isStandard) {
-        return SnClientInfoPage;
-      } else {
-        return CompositeLabelPhoto;
-      }
-    },
+    diversionsKey: 'riddorReportDiversion', // Updated
   },
 ];
+
+// Define riddorReportDiversion function here
+const riddorReportDiversion = (state) => {
+  const { siteQuestions } = state;
+  if (siteQuestions.isStandard === false) {
+    return SnClientInfoPage;
+  } else {
+    return CompositeLabelPhoto;
+  }
+};
 
 export const CompositeLabelPhoto = [
   {
@@ -171,7 +175,9 @@ export const CompositeLabelPhoto = [
       title: 'DSEAR label',
       photoKey: 'dsearLabel',
     },
-    screen:'RemovedItemsphoto',
+  },
+  {
+    screen: 'RemovedItemsphoto',
     params: {
       title: 'Removed Items photo',
       photoKey: 'RemovedItems',
@@ -201,19 +207,22 @@ export const AssetTypeSelectionPage = [
     screen: 'AssetTypeSelectionPage',
     params: {
       title: 'Assets being Exchanged',
-        },
-    diversions: ({ state }) => {
-      const { meterDetails } = state || {};
-      if (meterDetails?.isMeter) {
-        return ExistingMeterDetails;
-      } else if (meterDetails?.isCorrector) {
-        return ExistingCorrectorDetails;
-      } else if (meterDetails?.isAmr) {
-        return ExistingDataLoggerDetails;
-      }
     },
+    diversionsKey: 'assetTypeSelectionDiversion', // Updated
   },
 ];
+
+// Define assetTypeSelectionDiversion function here
+const assetTypeSelectionDiversion = (state) => {
+  const { meterDetails } = state || {};
+  if (meterDetails?.isMeter) {
+    return ExistingMeterDetails;
+  } else if (meterDetails?.isCorrector) {
+    return ExistingCorrectorDetails;
+  } else if (meterDetails?.isAmr) {
+    return ExistingDataLoggerDetails;
+  }
+};
 
 export const ExistingMeterDetails = [
   {
@@ -221,18 +230,21 @@ export const ExistingMeterDetails = [
     params: {
       title: 'Existing Meter Details',
     },
-    diversions: ({ state }) => {
-      const { meterDetails } = state || {};
-      const Type = meterDetails?.meterType.value;
-
-      if (!['1', '2', '4','7'].includes(Type)) {
-        return ExistingMeterDataBadge;
-      } else {
-        return ExistingMeterIndex;
-      }
-    },
+    diversionsKey: 'existingMeterDetailsDiversion', // Updated
   },
 ];
+
+// Define existingMeterDetailsDiversion function here
+const existingMeterDetailsDiversion = (state) => {
+  const { meterDetails } = state || {};
+  const Type = meterDetails?.meterType.value;
+
+  if (!['1', '2', '4', '7'].includes(Type)) {
+    return ExistingMeterDataBadge;
+  } else {
+    return ExistingMeterIndex;
+  }
+};
 
 export const InstalledMeterDetails = [
   {
@@ -247,18 +259,21 @@ export const InstalledMeterDetails = [
       title: 'ECV to MOV photo',
       photoKey: 'ecvToMovPhoto',
     },
-    diversions: ({ state }) => {
-      const { meterDetails } = state || {};
-      const Type = meterDetails?.meterType.value;
-
-      if (!['1', '2', '4','7'].includes(Type)) {
-        return InstalledMeterDataBadge;
-      } else {
-        return InstalledMeterIndex;
-      }
-    },
+    diversionsKey: 'installedMeterDetailsDiversion', // Updated
   },
 ];
+
+// Define installedMeterDetailsDiversion function here
+const installedMeterDetailsDiversion = (state) => {
+  const { meterDetails } = state || {};
+  const Type = meterDetails?.meterType.value;
+
+  if (!['1', '2', '4', '7'].includes(Type)) {
+    return InstalledMeterDataBadge;
+  } else {
+    return InstalledMeterIndex;
+  }
+};
 
 export const InstalledCorrectorDetails = [
   {
@@ -267,35 +282,37 @@ export const InstalledCorrectorDetails = [
       title: 'Installed Corrector Details',
       photoKey: 'InstalledCorrector',
     },
-    diversions: ({ state }) => {
-      const { meterDetails } = state || {};
-      const { pressureTier,isAmr,isMeter } = meterDetails || {};
-
-
-      console.log('Meter Details:', meterDetails);
-
-      if (isAmr) {
-        console.log('Diverting to InstalledDataLoggerDetails');
-        return InstalledDataLoggerDetails;
-      }
-
-      if (isMeter) {
-        if (pressureTier === 'LP' || pressureTier?.label === 'LP') {
-          console.log('Diverting to RegulatorPage');
-          return RegulatorPage;
-        } else {
-          console.log('Diverting to ExchangeStreamsSetSealDetailsPage');
-          return ExchangeStreamsSetSealDetailsPage;
-        }
-      }
-
-      if (!isMeter && !isAmr) {
-        console.log('Diverting to StandardsPage');
-        return ExchangeStandardPage;
-      }
-    } 
+    diversionsKey: 'installedCorrectorDetailsDiversion', // Updated
   },
 ];
+
+// Define installedCorrectorDetailsDiversion function here
+const installedCorrectorDetailsDiversion = (state) => {
+  const { meterDetails } = state || {};
+  const { pressureTier, isAmr, isMeter } = meterDetails || {};
+
+  console.log('Meter Details:', meterDetails);
+
+  if (isAmr) {
+    console.log('Diverting to InstalledDataLoggerDetails');
+    return InstalledDataLoggerDetails;
+  }
+
+  if (isMeter) {
+    if (pressureTier === 'LP' || pressureTier?.label === 'LP') {
+      console.log('Diverting to RegulatorPage');
+      return RegulatorPage;
+    } else {
+      console.log('Diverting to ExchangeStreamsSetSealDetailsPage');
+      return ExchangeStreamsSetSealDetailsPage;
+    }
+  }
+
+  if (!isMeter && !isAmr) {
+    console.log('Diverting to StandardsPage');
+    return ExchangeStandardPage;
+  }
+};
 
 export const InstalledDataLoggerDetails = [
   {
@@ -304,24 +321,27 @@ export const InstalledDataLoggerDetails = [
       title: 'Installed AMR',
       photoKey: 'InstalledAMR',
     },
-    diversions: ({ state }) => {
-      const { meterDetails } = state || {};
-
-      const pressureTier = meterDetails?.pressureTier?.label;
-
-      const isMeter = meterDetails?.isMeter;
-
-      if (isMeter) {
-        if (pressureTier === 'LP') {
-          return RegulatorPage;
-        } else {
-          return ExchangeStreamsSetSealDetailsPage;
-        }
-      }
-      return ExchangeStandardPage;
-    },
+    diversionsKey: 'installedDataLoggerDetailsDiversion', // Updated
   },
 ];
+
+// Define installedDataLoggerDetailsDiversion function here
+const installedDataLoggerDetailsDiversion = (state) => {
+  const { meterDetails } = state || {};
+
+  const pressureTier = meterDetails?.pressureTier?.label;
+
+  const isMeter = meterDetails?.isMeter;
+
+  if (isMeter) {
+    if (pressureTier === 'LP') {
+      return RegulatorPage;
+    } else {
+      return ExchangeStreamsSetSealDetailsPage;
+    }
+  }
+  return ExchangeStandardPage;
+};
 
 export const InstalledMeterIndex = [
   {
@@ -337,48 +357,46 @@ export const InstalledMeterIndex = [
       title: 'Installed Meter Photo',
       photoKey: 'InstalledMeterPhoto',
     },
-    diversions: ({ state }) => {
-      console.log("Entering diversions function");
-      console.log("Full state:", state);
-
-      const { meterDetails, meterDetailsTwo } = state || {};
-      console.log("meterDetails:", meterDetails);
-      console.log("meterDetailsTwo:", meterDetailsTwo);
-
-      const isMeter = meterDetails?.isMeter;
-      const isAmr = meterDetails?.isAmr;
-      const isCorrector = meterDetails?.isCorrector;
-      const pressureTier = meterDetailsTwo?.pressureTier?.label;
-
-      console.log("isMeter:", isMeter);
-      console.log("isAmr:", isAmr);
-      console.log("isCorrector:", isCorrector);
-      console.log("pressureTier:", pressureTier);
-
-      if (isCorrector) {
-        console.log("Diverting to InstalledCorrectorDetails");
-        return InstalledCorrectorDetails;
-      }
-
-      if (isAmr) {
-        console.log("Diverting to InstalledDataLoggerDetails");
-        return InstalledDataLoggerDetails;
-      }
-
-      if (isMeter) {
-        console.log("isMeter is true");
-        if (pressureTier === 'LP') {
-          console.log("Diverting to RegulatorPage");
-          return RegulatorPage;
-        }
-        console.log("pressureTier is not 'LP', continuing...");
-      }
-
-      console.log("Diverting to ExchangeStreamsSetSealDetailsPage");
-      return ExchangeStreamsSetSealDetailsPage;
-    },
+    diversionsKey: 'installedMeterIndexDiversion', // Updated
   },
 ];
+
+// Define installedMeterIndexDiversion function here
+const installedMeterIndexDiversion = (state) => {
+  const { meterDetails } = state || {};
+  const isMeter = meterDetails?.isMeter;
+  const isAmr = meterDetails?.isAmr;
+  const isCorrector = meterDetails?.isCorrector;
+  const pressureTier = meterDetails?.pressureTier?.label;
+
+  console.log('isMeter:', isMeter);
+  console.log('isAmr:', isAmr);
+  console.log('isCorrector:', isCorrector);
+  console.log('pressureTier:', pressureTier);
+
+  if (isCorrector) {
+    console.log('Diverting to InstalledCorrectorDetails');
+    return InstalledCorrectorDetails;
+  }
+
+  if (isAmr) {
+    console.log('Diverting to InstalledDataLoggerDetails');
+    return InstalledDataLoggerDetails;
+  }
+
+  if (isMeter) {
+    console.log('isMeter is true');
+    if (pressureTier === 'LP') {
+      console.log('Diverting to RegulatorPage');
+      return RegulatorPage;
+    }
+    console.log("pressureTier is not 'LP', continuing...");
+  }
+
+  console.log('Diverting to ExchangeStreamsSetSealDetailsPage');
+  return ExchangeStreamsSetSealDetailsPage;
+};
+
 export const InstalledMeterDataBadge = [
   {
     screen: 'ExistingMeterDataBadge',
@@ -411,22 +429,25 @@ export const ExistingMeterIndex = [
       title: 'Ecv Photo',
       photoKey: 'EcvPhoto',
     },
-    diversions: ({ state }) => {
-      const { meterDetails } = state || {};
-
-      const isAmr = meterDetails?.isAmr;
-      const isCorrector = meterDetails?.isCorrector;
-
-      if (isCorrector) {
-        return ExistingCorrectorDetails;
-      }
-      if (isAmr) {
-        return ExistingDataLoggerDetails;
-      }
-      return InstalledMeterDetails;
-    },
+    diversionsKey: 'existingMeterIndexDiversion', // Updated
   },
 ];
+
+// Define existingMeterIndexDiversion function here
+const existingMeterIndexDiversion = (state) => {
+  const { meterDetails } = state || {};
+
+  const isAmr = meterDetails?.isAmr;
+  const isCorrector = meterDetails?.isCorrector;
+
+  if (isCorrector) {
+    return ExistingCorrectorDetails;
+  }
+  if (isAmr) {
+    return ExistingDataLoggerDetails;
+  }
+  return InstalledMeterDetails;
+};
 
 export const ExistingMeterDataBadge = [
   {
@@ -445,18 +466,21 @@ export const ExistingDataLoggerDetails = [
     params: {
       title: 'Existing DataLogger Details',
     },
-    diversions: ({ state }) => {
-      const { meterDetails } = state || {};
-      if (meterDetails?.isMeter) {
-        return InstalledMeterDetails;
-      }
-      if (meterDetails?.isCorrector) {
-        return InstalledCorrectorDetails;
-      }
-      return InstalledDataLoggerDetails;
-    },
+    diversionsKey: 'existingDataLoggerDetailsDiversion', // Updated
   },
 ];
+
+// Define existingDataLoggerDetailsDiversion function here
+const existingDataLoggerDetailsDiversion = (state) => {
+  const { meterDetails } = state || {};
+  if (meterDetails?.isMeter) {
+    return InstalledMeterDetails;
+  }
+  if (meterDetails?.isCorrector) {
+    return InstalledCorrectorDetails;
+  }
+  return InstalledDataLoggerDetails;
+};
 
 export const ExistingCorrectorDetails = [
   {
@@ -464,22 +488,25 @@ export const ExistingCorrectorDetails = [
     params: {
       title: 'Existing Corrector Details',
     },
-    diversions: ({ state }) => {
-      const { meterDetails } = state;
-
-      if (meterDetails?.isAmr) {
-        return ExistingDataLoggerDetails;
-      }
-      if (meterDetails.isMeter) {
-        return InstalledMeterDetails;
-      }
-
-      return InstalledCorrectorDetails;
-    },
+    diversionsKey: 'existingCorrectorDetailsDiversion', // Updated
   },
 ];
 
-export const InstancesForStreamFlow = ({ state }) => {
+// Define existingCorrectorDetailsDiversion function here
+const existingCorrectorDetailsDiversion = (state) => {
+  const { meterDetails } = state;
+
+  if (meterDetails?.isAmr) {
+    return ExistingDataLoggerDetails;
+  }
+  if (meterDetails.isMeter) {
+    return InstalledMeterDetails;
+  }
+
+  return InstalledCorrectorDetails;
+};
+
+export const InstancesForStreamFlow = (state) => {
   // TODO: sort context switch
   // Redux might be a better option
   const { streams } = state || {};
@@ -540,12 +567,15 @@ export const ExchangeStreamsSetSealDetailsPage = [
     params: {
       title: 'Streams Set Seal Details',
     },
-    diversions: ({ state }) => {
-      const streamFlows = InstancesForStreamFlow({ state });
-      return [...streamFlows, ...RegulatorPage];
-    },
+    diversionsKey: 'exchangeStreamsSetSealDetailsDiversion', // Updated
   },
 ];
+
+// Define exchangeStreamsSetSealDetailsDiversion function here
+const exchangeStreamsSetSealDetailsDiversion = (state) => {
+  const streamFlows = InstancesForStreamFlow(state);
+  return [...streamFlows, ...RegulatorPage];
+};
 
 export const RegulatorPage = [
   {
@@ -561,3 +591,22 @@ export const RegulatorPage = [
 
   ...ExchangeStandardPage,
 ];
+
+// Export all diversion functions in an object
+export const exchangeDiversions = {
+  siteQuestionsDiversion,
+  chatterBoxDiversion,
+  additionalMaterialsDiversion,
+  exchangeStandardDiversion,
+  riddorReportDiversion,
+  assetTypeSelectionDiversion,
+  existingMeterDetailsDiversion,
+  installedMeterDetailsDiversion,
+  installedCorrectorDetailsDiversion,
+  installedDataLoggerDetailsDiversion,
+  installedMeterIndexDiversion,
+  existingMeterIndexDiversion,
+  existingDataLoggerDetailsDiversion,
+  existingCorrectorDetailsDiversion,
+  exchangeStreamsSetSealDetailsDiversion,
+};

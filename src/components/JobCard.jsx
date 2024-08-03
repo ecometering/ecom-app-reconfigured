@@ -3,6 +3,7 @@ import JobStatusLabel from './JobStatusLabel';
 
 const JobCard = ({ loading, item, handleOnCardClick, buttonConfig }) => {
   const parsedSiteDetails = JSON.parse(item.siteDetails);
+  const parsedNavigation = JSON.parse(item.navigation);
   return (
     <TouchableOpacity
       onPress={() => handleOnCardClick(item.id)}
@@ -19,6 +20,10 @@ const JobCard = ({ loading, item, handleOnCardClick, buttonConfig }) => {
       <Text style={styles.mrpnText}>
         <Text style={styles.textBold}>MPRN:</Text>
         {item.MPRN ?? parsedSiteDetails.mprn}
+      </Text>
+      <Text style={styles.lastScreen}>
+        <Text style={styles.textBold}>Last Screen: </Text>
+        {parsedNavigation?.[item?.lastNavigationIndex]?.screen}
       </Text>
 
       <View style={styles.dateContainer}>
