@@ -32,7 +32,7 @@ function JobTypeSection() {
           progress: 0,
         }));
       }
-      startFlow(jobType);
+      startFlow({ newFlowType: jobType });
     } catch (error) {
       console.error('Error starting new job:', error);
     }
@@ -47,7 +47,8 @@ function JobTypeSection() {
           </Text>
           <View style={styles.jobInProgressInfo}>
             <Text>
-              Last Screen: {state?.lastScreen || 'This is just a placeholder'}
+              Last Screen:{' '}
+              {state?.navigation?.[state?.lastNavigationIndex]?.screen}
             </Text>
             <View style={styles.progressBarBackground}>
               <View style={styles.progressBarForeground} />
@@ -59,7 +60,13 @@ function JobTypeSection() {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.continueButton}
-              onPress={() => startFlow(state?.jobType)}
+              onPress={() =>
+                startFlow({
+                  newFlowType: state?.jobType,
+                  lastNavigationIndex: state?.lastNavigationIndex,
+                  stateNavigation: state?.navigation,
+                })
+              }
             >
               <Text>Continue</Text>
             </TouchableOpacity>

@@ -66,6 +66,8 @@ function HomePage() {
     }, [])
   );
 
+  console.log('HomePage');
+
   const fetchData = async () => {
     setLoading(true);
     try {

@@ -1,5 +1,5 @@
 import rotary from './rotary.json';
-import tinDiaphgram from './tinDiaphrgam.json';
+import tinDiaphgram from './Tindiaphrgam.json';
 import ultraSonic from './ultrasonic.json';
 import turbine from './turbine.json';
 import diaphgram from './diaphgram.json';

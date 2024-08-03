@@ -19,18 +19,21 @@ export const RemovalNavigation = [
       title: 'Site Questions',
       photoKey: 'bypassPhoto',
     },
-    diversions: ({ state }) => {
-      const { siteQuestions } = state;
-      if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
-        return RemovedStandardPage;
-      } else if (!siteQuestions?.isCarryOut) {
-        return AbortPage;
-      } else {
-        return AssetTypeSelectionPage;
-      }
-    },
+    diversionsKey: 'siteQuestionsDiversion', // Updated
   },
 ];
+
+// Define siteQuestionsDiversion function here
+const siteQuestionsDiversion = (state) => {
+  const { siteQuestions } = state;
+  if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
+    return RemovedStandardPage;
+  } else if (!siteQuestions?.isCarryOut) {
+    return AbortPage;
+  } else {
+    return AssetTypeSelectionPage;
+  }
+};
 
 export const SubmitSuccessPage = [
   {
@@ -65,7 +68,9 @@ export const CompositeLabelPhoto = [
       title: 'DSEAR label',
       photoKey: 'dsearLabel',
     },
-    screen:'RemovedItemsphoto',
+  },
+  {
+    screen: 'RemovedItemsphoto',
     params: {
       title: 'Removed Items photo',
       photoKey: 'RemovedItems',
@@ -76,12 +81,6 @@ export const CompositeLabelPhoto = [
 ];
 
 export const SnClientInfoPage = [
-  // {
-  //   screen: 'SnClientInfoPage',
-  // },
-  // {
-  //   screen: 'GasSafeWarningPage',
-  // },
   {
     screen: 'SnClientInfoPage',
     params: {
@@ -96,48 +95,53 @@ export const SnClientInfoPage = [
 export const RiddorReportPage = [
   {
     screen: 'RiddorReportPage',
-    params:{
+    params: {
       title: 'Riddor Report',
-      photoKey:'RiddorReport'
+      photoKey: 'RiddorReport',
     },
-    diversions: ({ state }) => {
-      const { standards,siteQuestions } = state;
-      if (!siteQuestions.isStandard) {
-        return SnClientInfoPage;
-      } else {
-        return CompositeLabelPhoto;
-      }
-    },
+    diversionsKey: 'riddorReportDiversion', // Updated
   },
 ];
+
+// Define riddorReportDiversion function here
+const riddorReportDiversion = (state) => {
+  const { standards, siteQuestions } = state;
+  if (!siteQuestions.isStandard) {
+    return SnClientInfoPage;
+  } else {
+    return CompositeLabelPhoto;
+  }
+};
 
 // AssetTypeSelectionPage
 export const AssetTypeSelectionPage = [
   {
     screen: 'AssetTypeSelectionPage',
-
     params: {
       title: 'Assets being removed',
     },
-    diversions: ({ state }) => {
-      const { meterDetails } = state || {};
-      if (meterDetails?.isMeter) {
-        return RemovedMeterDetails;
-      } else if (meterDetails?.isCorrector) {
-        return RemovedCorrectorDetails;
-      } else if (meterDetails?.isAmr) {
-        return RemovedDataLoggerDetails;
-      }
-    },
+    diversionsKey: 'assetTypeSelectionDiversion', // Updated
   },
 ];
+
+// Define assetTypeSelectionDiversion function here
+const assetTypeSelectionDiversion = (state) => {
+  const { meterDetails } = state || {};
+  if (meterDetails?.isMeter) {
+    return RemovedMeterDetails;
+  } else if (meterDetails?.isCorrector) {
+    return RemovedCorrectorDetails;
+  } else if (meterDetails?.isAmr) {
+    return RemovedDataLoggerDetails;
+  }
+};
 
 export const AbortPage = [
   {
     screen: 'AbortPage',
     params: {
       photoKey: 'AbortReason',
-      title:'Job abort reason'
+      title: 'Job abort reason',
     },
   },
   ...SubmitSuccessPage,
@@ -147,75 +151,79 @@ export const AbortPage = [
 export const chatterBoxPage = [
   {
     screen: 'chatterBox',
-    diversions: ({ state }) => {
-      const { standards,siteQuestions } = state;
-      const { riddorReportable, conformStandard } = standards;
-
-      if (riddorReportable === true) {
-        return RiddorReportPage;
-      } else {
-        if (!siteQuestions.isStandard) {
-          return SnClientInfoPage;
-        } else {
-          return CompositeLabelPhoto;
-        }
-      }
-    },
+    diversionsKey: 'chatterBoxDiversion', // Updated
   },
 ];
+
+// Define chatterBoxDiversion function here
+const chatterBoxDiversion = (state) => {
+  const { standards, siteQuestions } = state;
+  const { riddorReportable, conformStandard } = standards;
+
+  if (riddorReportable === true) {
+    return RiddorReportPage;
+  } else {
+    if (!siteQuestions.isStandard) {
+      return SnClientInfoPage;
+    } else {
+      return CompositeLabelPhoto;
+    }
+  }
+};
 
 export const AdditionalMaterialsPage = [
   {
     screen: 'AdditionalMaterials',
-    diversions: ({ state }) => {
-      const { standards } = state;
-      const { riddorReportable, conformStandard, chatterbox } = standards;
-      if (chatterbox === true) {
-        return chatterBoxPage;
-      } else {
-        if (riddorReportable === true) {
-          return RiddorReportPage;
-        } else {
-          if (conformStandard === false) {
-            return SnClientInfoPage;
-          } else {
-            return CompositeLabelPhoto;
-          }
-        }
-      }
-    },
+    diversionsKey: 'additionalMaterialsDiversion', // Updated
   },
 ];
+
+// Define additionalMaterialsDiversion function here
+const additionalMaterialsDiversion = (state) => {
+  const { standards } = state;
+  const { riddorReportable, conformStandard, chatterbox } = standards;
+  if (chatterbox === true) {
+    return chatterBoxPage;
+  } else {
+    if (riddorReportable === true) {
+      return RiddorReportPage;
+    } else {
+      if (conformStandard === false) {
+        return SnClientInfoPage;
+      } else {
+        return CompositeLabelPhoto;
+      }
+    }
+  }
+};
+
 // Site Questions Alternative Flows
 export const RemovedStandardPage = [
   {
     screen: 'StandardPage',
-    diversions: ({ state }) => {
-      const { standards,siteQuestions } = state;
-      const {
-        riddorReportable,
-        conformStandard,
-        chatterbox,
-        additionalMaterials,
-      } = standards;
-      
-        if (chatterbox === true) {
-          return chatterBoxPage;
-        } else {
-          if (riddorReportable === true) {
-            return RiddorReportPage;
-          } else {
-            if (!siteQuestions.isStandard) {
-              return SnClientInfoPage;
-            } else {
-              return CompositeLabelPhoto;
-            }
-          }
-        
-      }
-    },
+    diversionsKey: 'removedStandardPageDiversion', // Updated
   },
 ];
+
+// Define removedStandardPageDiversion function here
+const removedStandardPageDiversion = (state) => {
+  const { standards, siteQuestions } = state;
+  const { riddorReportable, conformStandard, chatterbox } = standards;
+
+  if (chatterbox === true) {
+    return chatterBoxPage;
+  } else {
+    if (riddorReportable === true) {
+      return RiddorReportPage;
+    } else {
+      if (!siteQuestions.isStandard) {
+        return SnClientInfoPage;
+      } else {
+        return CompositeLabelPhoto;
+      }
+    }
+  }
+};
 
 export const RemovedMeterDetails = [
   {
@@ -223,18 +231,21 @@ export const RemovedMeterDetails = [
     params: {
       title: 'Removed Meter Details',
     },
-    diversions: ({ state }) => {
-      const { meterDetails } = state || {};
-      const Type = meterDetails?.meterType.value;
-
-      if (!['1', '2', '4','7'].includes(Type)) {
-        return RemovedMeterDataBadge;
-      } else {
-        return RemovedMeterIndex;
-      }
-    },
+    diversionsKey: 'removedMeterDetailsDiversion', // Updated
   },
 ];
+
+// Define removedMeterDetailsDiversion function here
+const removedMeterDetailsDiversion = (state) => {
+  const { meterDetails } = state || {};
+  const Type = meterDetails?.meterType.value;
+
+  if (!['1', '2', '4', '7'].includes(Type)) {
+    return RemovedMeterDataBadge;
+  } else {
+    return RemovedMeterIndex;
+  }
+};
 
 export const RemovedCorrectorDetails = [
   {
@@ -243,16 +254,19 @@ export const RemovedCorrectorDetails = [
       title: 'Removed Corrector Details',
       photoKey: 'removedCorrector',
     },
-    diversions: ({ state }) => {
-      const { meterDetails } = state;
-
-      if (meterDetails?.isAmr) {
-        return RemovedDataLoggerDetails;
-      }
-      return RemovedStandardPage;
-    },
+    diversionsKey: 'removedCorrectorDetailsDiversion', // Updated
   },
 ];
+
+// Define removedCorrectorDetailsDiversion function here
+const removedCorrectorDetailsDiversion = (state) => {
+  const { meterDetails } = state;
+
+  if (meterDetails?.isAmr) {
+    return RemovedDataLoggerDetails;
+  }
+  return RemovedStandardPage;
+};
 
 export const RemovedDataLoggerDetails = [
   {
@@ -261,9 +275,12 @@ export const RemovedDataLoggerDetails = [
       title: 'Removed AMR',
       photoKey: 'RemovedAMR',
     },
-    diversions: () => RemovedStandardPage,
+    diversionsKey: 'removedDataLoggerDetailsDiversion', // Updated
   },
 ];
+
+// Define removedDataLoggerDetailsDiversion function here
+const removedDataLoggerDetailsDiversion = () => RemovedStandardPage;
 
 export const RemovedMeterIndex = [
   {
@@ -286,22 +303,25 @@ export const RemovedMeterIndex = [
       title: 'Ecv Photo',
       photoKey: 'EcvPhoto',
     },
-    diversions: ({ state }) => {
-      const { meterDetails } = state || {};
-
-      const isAmr = meterDetails?.isAmr;
-      const isCorrector = meterDetails?.isCorrector;
-
-      if (isCorrector) {
-        return RemovedCorrectorDetails;
-      }
-      if (isAmr) {
-        return RemovedDataLoggerDetails;
-      }
-      return RemovedStandardPage;
-    },
+    diversionsKey: 'removedMeterIndexDiversion', // Updated
   },
 ];
+
+// Define removedMeterIndexDiversion function here
+const removedMeterIndexDiversion = (state) => {
+  const { meterDetails } = state || {};
+
+  const isAmr = meterDetails?.isAmr;
+  const isCorrector = meterDetails?.isCorrector;
+
+  if (isCorrector) {
+    return RemovedCorrectorDetails;
+  }
+  if (isAmr) {
+    return RemovedDataLoggerDetails;
+  }
+  return RemovedStandardPage;
+};
 
 export const RemovedMeterDataBadge = [
   {
@@ -313,3 +333,17 @@ export const RemovedMeterDataBadge = [
   },
   ...RemovedMeterIndex,
 ];
+
+// Export all diversion functions in an object
+export const removalDiversions = {
+  siteQuestionsDiversion,
+  riddorReportDiversion,
+  assetTypeSelectionDiversion,
+  chatterBoxDiversion,
+  additionalMaterialsDiversion,
+  removedStandardPageDiversion,
+  removedMeterDetailsDiversion,
+  removedCorrectorDetailsDiversion,
+  removedDataLoggerDetailsDiversion,
+  removedMeterIndexDiversion,
+};

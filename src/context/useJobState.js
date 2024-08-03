@@ -70,6 +70,8 @@ const getInitialJobState = (jobType) => ({
     corrected: '',
   },
   chatterBoxDetails: {},
+  navigation: [],
+  lastNavigationIndex: 0,
 });
 
 const useJobState = () => {

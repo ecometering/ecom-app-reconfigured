@@ -2,6 +2,7 @@ import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import JobCard from '../JobCard';
 import { useFormStateContext } from '../../context/AppContext';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
+import { omit } from 'lodash';
 
 const fieldsToParse = [
   'siteDetails',
@@ -22,6 +23,7 @@ const fieldsToParse = [
   'correctorDetails',
   'correctorDetailsTwo',
   'chatterBoxDetails',
+  'navigation',
 ];
 
 const safeParse = (jsonString, fallbackValue) => {
@@ -58,10 +60,14 @@ export default function HomeJobsListing({
 
         setState((prevState) => ({
           ...prevState,
-          ...parsedJobData,
+          ...omit(parsedJobData, ['navigation', 'lastNavigationIndex']),
           jobID: jobId,
         }));
-        startFlow(parsedJobData.jobType);
+        startFlow({
+          newFlowType: parsedJobData.jobType,
+          lastNavigationIndex: parsedJobData?.lastNavigationIndex,
+          stateNavigation: parsedJobData?.navigation,
+        });
       }
     } catch (error) {
       console.error('Error loading job:', error);

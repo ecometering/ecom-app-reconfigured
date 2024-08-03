@@ -17,6 +17,7 @@ export const jsonFields = [
   'correctorDetails',
   'correctorDetailsTwo',
   'chatterBoxDetails',
+  'navigation',
 ];
 
 // keeping the mapping for backward compatibility with the old records
@@ -44,5 +45,7 @@ export const fieldMapping = {
   maintenanceQuestions: 'maintenanceQuestions',
   correctorDetails: 'correctorDetails',
   correctorDetailsTwo: 'correctorDetailsTwo',
-  chatterBoxDetails: 'chatterBoxDetails',
+  chatterBoxDetails: 'chatterboxDetails',
+  navigation: 'navigation',
+  lastNavigationIndex: 'lastNavigationIndex',
 };
