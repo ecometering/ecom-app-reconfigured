@@ -171,7 +171,7 @@ function MeterDetailsTwoPage() {
 
               <View style={styles.flex}>
                 {meterDetailsTwo.meterType &&
-                meterDetailsTwo.meterType.value === '7' ? (
+                meterDetailsTwo.meterType.value === '8' ? (
                   <View style={styles.flex}>
                     <TextInput
                       value={meterDetailsTwo.manufacturer}
@@ -227,7 +227,7 @@ function MeterDetailsTwoPage() {
               </View>
               <View style={styles.flex}>
                 {meterDetailsTwo.meterType &&
-                meterDetailsTwo.meterType.value === '7' ? (
+                meterDetailsTwo.meterType.value === '8' ? (
                   <TextInput
                     value={meterDetailsTwo.model}
                     onChangeText={(txt) => handleInputChange('model', txt)}

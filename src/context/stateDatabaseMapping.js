@@ -39,10 +39,10 @@ export const fieldMapping = {
   standards: 'standards',
   meterDetailsTwo: 'meterDetailsTwo',
   additionalMaterials: 'additionalMaterials',
-  dataLoggerDetails: 'dataloggerDetails',
+  dataLoggerDetails: 'dataLoggerDetails',
   dataLoggerDetailsTwo: 'dataLoggerDetailsTwo',
   maintenanceQuestions: 'maintenanceQuestions',
   correctorDetails: 'correctorDetails',
   correctorDetailsTwo: 'correctorDetailsTwo',
-  chatterBoxDetails: 'chatterboxDetails',
+  chatterBoxDetails: 'chatterBoxDetails',
 };
