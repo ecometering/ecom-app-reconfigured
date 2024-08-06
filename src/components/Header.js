@@ -95,33 +95,34 @@ export const Header = ({
           }}
         >
           <ScrollView>
-            {state?.navigation?.map((nav, index) => {
-              return (
-                <Pressable
-                  key={`nav-${index}-${nav.screen}`}
-                  onPress={() => {
-                    setMenuVisible(false);
-                    jumpToStep(index);
-                  }}
-                  style={{
-                    borderBottomWidth: 1,
-                    borderBottomColor: 'black',
-                    backgroundColor:
-                      state?.lastNavigationIndex === index
-                        ? 'green'
-                        : '#f4f4f4',
-                  }}
-                >
-                  <Text
+            {state?.navigation &&
+              state?.navigation?.map((nav, index) => {
+                return (
+                  <Pressable
+                    key={`nav-${index}-${nav.screen}`}
+                    onPress={() => {
+                      setMenuVisible(false);
+                      jumpToStep(index);
+                    }}
                     style={{
-                      padding: 10,
+                      borderBottomWidth: 1,
+                      borderBottomColor: 'black',
+                      backgroundColor:
+                        state?.lastNavigationIndex === index
+                          ? 'green'
+                          : '#f4f4f4',
                     }}
                   >
-                    {nav.screen}
-                  </Text>
-                </Pressable>
-              );
-            })}
+                    <Text
+                      style={{
+                        padding: 10,
+                      }}
+                    >
+                      {nav.screen}
+                    </Text>
+                  </Pressable>
+                );
+              })}
           </ScrollView>
         </SafeAreaView>
       </Modal>
