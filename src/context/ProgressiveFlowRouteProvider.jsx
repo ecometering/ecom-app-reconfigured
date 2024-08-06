@@ -70,7 +70,7 @@ export function NavigationProvider({ children }) {
   }, [flowType]);
 
   const goToNextStep = () => {
-    if (flow[lastNavigationIndex].diversionsKey) {
+    if (flow[lastNavigationIndex]?.diversionsKey) {
       const divKey = flow[lastNavigationIndex].diversionsKey;
       const diversionFunc = diversions[flowType][divKey](state);
       pushNavigation(diversionFunc);
@@ -106,7 +106,7 @@ export function NavigationProvider({ children }) {
   const startFlow = ({ newFlowType, lastNavigationIndex, stateNavigation }) => {
     const parsedLastNavigationIndex = Number(lastNavigationIndex) || 0;
     setFlowType(newFlowType);
-    if (stateNavigation) {
+    if (stateNavigation && Object.keys(stateNavigation).length > 0) {
       setState((prevState) => {
         return {
           ...prevState,
