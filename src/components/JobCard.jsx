@@ -2,8 +2,29 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import JobStatusLabel from './JobStatusLabel';
 
 const JobCard = ({ loading, item, handleOnCardClick, buttonConfig }) => {
-  const parsedSiteDetails = JSON.parse(item.siteDetails);
-  const parsedNavigation = JSON.parse(item.navigation);
+  if (!item) {
+    console.error('Item is undefined in JobCard');
+    return null;
+  }
+
+  const parseSafely = (jsonString, fallback = {}) => {
+    if (!jsonString) return fallback;
+    try {
+      return typeof jsonString === 'string' ? JSON.parse(jsonString) : jsonString;
+    } catch (error) {
+      console.error('Error parsing JSON:', error);
+      return fallback;
+    }
+  };
+
+  const parsedSiteDetails = parseSafely(item.siteDetails);
+  const parsedNavigation = parseSafely(item.navigation, []);
+
+  const mprn = item.MPRN ?? parsedSiteDetails.mprn ?? 'N/A';
+  const lastScreen = parsedNavigation[item?.lastNavigationIndex]?.screen ?? 'N/A';
+  const startDate = item.startDate ? new Date(item.startDate).toDateString() : 'N/A';
+  const endDate = item.endDate ? new Date(item.endDate).toDateString() : '-';
+
   return (
     <TouchableOpacity
       onPress={() => handleOnCardClick(item.id)}
@@ -12,42 +33,38 @@ const JobCard = ({ loading, item, handleOnCardClick, buttonConfig }) => {
     >
       <View style={styles.cardHeader}>
         <Text style={styles.textBold}>
-          {item.jobType} Job ({item.id})
+          {item.jobType || 'Unknown'} Job ({item.id || 'No ID'})
         </Text>
         <JobStatusLabel status={item.jobStatus} />
       </View>
 
       <Text style={styles.mrpnText}>
-        <Text style={styles.textBold}>MPRN:</Text>
-        {item.MPRN ?? parsedSiteDetails.mprn}
+        <Text style={styles.textBold}>MPRN:</Text> {mprn}
       </Text>
       <Text style={styles.lastScreen}>
-        <Text style={styles.textBold}>Last Screen: </Text>
-        {parsedNavigation?.[item?.lastNavigationIndex]?.screen}
+        <Text style={styles.textBold}>Last Screen: </Text> {lastScreen}
       </Text>
 
       <View style={styles.dateContainer}>
         <Text>
-          <Text style={styles.textBold}>Start:</Text>
-          {new Date(item.startDate).toDateString('en-GB')}
+          <Text style={styles.textBold}>Start:</Text> {startDate}
         </Text>
         <Text>
-          <Text style={styles.textBold}>End:</Text>
-          {item.endDate ? new Date(item.startDate).toDateString('en-GB') : '-'}
+          <Text style={styles.textBold}>End:</Text> {endDate}
         </Text>
       </View>
       {buttonConfig && (
         <View style={styles.buttonsContainer}>
-          {buttonConfig.map((button) => (
+          {buttonConfig.map((button, index) => (
             <TouchableOpacity
-              key={button.text}
+              key={button.text || index}
               style={{
                 ...styles.button,
-                backgroundColor: button.backgroundColor,
+                backgroundColor: button.backgroundColor || 'gray',
               }}
               onPress={button.onPress}
             >
-              <Text style={{ color: button.textColor }}>{button.text}</Text>
+              <Text style={{ color: button.textColor || 'white' }}>{button.text || 'Button'}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -55,7 +72,6 @@ const JobCard = ({ loading, item, handleOnCardClick, buttonConfig }) => {
     </TouchableOpacity>
   );
 };
-
 const styles = {
   cardContainer: {
     padding: 10,

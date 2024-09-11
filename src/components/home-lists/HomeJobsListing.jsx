@@ -1,3 +1,4 @@
+import React from 'react';
 import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import JobCard from '../JobCard';
 import { useFormStateContext } from '../../context/AppContext';
@@ -68,11 +69,18 @@ export default function HomeJobsListing({
           lastNavigationIndex: parsedJobData?.lastNavigationIndex,
           stateNavigation: parsedJobData?.navigation,
         });
+      } else {
+        console.error('Job not found:', jobId);
       }
     } catch (error) {
       console.error('Error loading job:', error);
     }
   };
+
+  if (!data) {
+    console.error('Data is undefined in HomeJobsListing');
+    return null;
+  }
 
   return (
     <View style={loading ? { opacity: 0.5 } : {}}>
@@ -82,14 +90,20 @@ export default function HomeJobsListing({
         </Text>
       </TouchableOpacity>
       <View style={styles.jobList}>
-        {data?.map((item) => (
-          <JobCard
-            key={item.id}
-            loading={loading}
-            item={item}
-            handleOnCardClick={handleRowClick}
-          />
-        ))}
+        {data.map((item) => {
+          if (!item) {
+            console.error('Item is undefined in data array');
+            return null;
+          }
+          return (
+            <JobCard
+              key={item.id}
+              loading={loading}
+              item={item} 
+              handleOnCardClick={handleRowClick}
+            />
+          );
+        })}
       </View>
     </View>
   );

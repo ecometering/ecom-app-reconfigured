@@ -208,20 +208,32 @@ export const AssetTypeSelectionPage = [
     params: {
       title: 'Assets being Exchanged',
     },
-    diversionsKey: 'assetTypeSelectionDiversion', // Updated
+    diversionsKey: 'assetTypeSelectionDiversion',
   },
 ];
 
+console.log('AssetTypeSelectionPage configuration:', AssetTypeSelectionPage);
+
 // Define assetTypeSelectionDiversion function here
 const assetTypeSelectionDiversion = (state) => {
-  const { meterDetails } = state || {};
-  if (meterDetails?.isMeter) {
+  console.log('assetTypeSelectionDiversion called with state:', state);
+
+  const { siteQuestions } = state || {};
+  console.log('siteQuestions:', siteQuestions);
+
+  if (siteQuestions?.assetsRemoved.isMeter) {
+    console.log('Diverting to ExistingMeterDetails');
     return ExistingMeterDetails;
-  } else if (meterDetails?.isCorrector) {
+  } else if (siteQuestions?.assetsRemoved.isCorrector) {
+    console.log('Diverting to ExistingCorrectorDetails');
     return ExistingCorrectorDetails;
-  } else if (meterDetails?.isAmr) {
+  } else if (siteQuestions?.assetsRemoved.isAmr) {
+    console.log('Diverting to ExistingDataLoggerDetails');
     return ExistingDataLoggerDetails;
   }
+
+  console.log('No diversion applied, returning undefined');
+  return undefined;
 };
 
 export const ExistingMeterDetails = [
@@ -288,10 +300,13 @@ export const InstalledCorrectorDetails = [
 
 // Define installedCorrectorDetailsDiversion function here
 const installedCorrectorDetailsDiversion = (state) => {
-  const { meterDetails } = state || {};
-  const { pressureTier, isAmr, isMeter } = meterDetails || {};
+  const { meterDetails, siteQuestions } = state || {};
+  
+  const pressureTier = meterDetails?.pressureTier?.label;
+  const isMeter = siteQuestions?.isMeter;
 
   console.log('Meter Details:', meterDetails);
+  console.log('Site Questions:', siteQuestions);
 
   if (isAmr) {
     console.log('Diverting to InstalledDataLoggerDetails');
@@ -327,11 +342,11 @@ export const InstalledDataLoggerDetails = [
 
 // Define installedDataLoggerDetailsDiversion function here
 const installedDataLoggerDetailsDiversion = (state) => {
-  const { meterDetails } = state || {};
+  const { meterDetails,siteQuestions } = state || {};
 
   const pressureTier = meterDetails?.pressureTier?.label;
 
-  const isMeter = meterDetails?.isMeter;
+  const isMeter = siteQuestions?.isMeter;
 
   if (isMeter) {
     if (pressureTier === 'LP') {
@@ -435,10 +450,10 @@ export const ExistingMeterIndex = [
 
 // Define existingMeterIndexDiversion function here
 const existingMeterIndexDiversion = (state) => {
-  const { meterDetails } = state || {};
+  const { siteQuestions } = state || {};
 
-  const isAmr = meterDetails?.isAmr;
-  const isCorrector = meterDetails?.isCorrector;
+  const isAmr = siteQuestions?.assetsRemoved.isAmr;
+  const isCorrector = siteQuestions?.assetsRemoved.isCorrector;
 
   if (isCorrector) {
     return ExistingCorrectorDetails;
@@ -472,11 +487,11 @@ export const ExistingDataLoggerDetails = [
 
 // Define existingDataLoggerDetailsDiversion function here
 const existingDataLoggerDetailsDiversion = (state) => {
-  const { meterDetails } = state || {};
-  if (meterDetails?.isMeter) {
+  const { siteQuestions } = state || {};
+  if (siteQuestions?.assetsInstalled.isMeter) {
     return InstalledMeterDetails;
   }
-  if (meterDetails?.isCorrector) {
+  if (siteQuestions?.assetsInstalled.isCorrector) {
     return InstalledCorrectorDetails;
   }
   return InstalledDataLoggerDetails;
@@ -494,13 +509,13 @@ export const ExistingCorrectorDetails = [
 
 // Define existingCorrectorDetailsDiversion function here
 const existingCorrectorDetailsDiversion = (state) => {
-  const { meterDetails } = state;
+  const { siteQuestions } = state;
 
-  if (meterDetails?.isAmr) {
+  if (siteQuestions?.assetsRemoved.isAmr) {
     return ExistingDataLoggerDetails;
   }
-  if (meterDetails.isMeter) {
-    return InstalledMeterDetails;
+  if (siteQuestions.assetsInstalled.isMeter) {
+    return InstalledsiteQuestions;
   }
 
   return InstalledCorrectorDetails;

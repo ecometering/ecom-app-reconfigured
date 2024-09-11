@@ -210,18 +210,21 @@ export const SnClientInfoPage = [
 export const AssetTypeSelectionPage = [
   {
     screen: 'AssetTypeSelectionPage',
+    params: {
+      title: 'Assets being Installed',
+    },
     diversionsKey: 'assetTypeSelectionDiversion', // Updated
   },
 ];
 
 // Define assetTypeSelectionDiversion function here
 const assetTypeSelectionDiversion = (state) => {
-  const { meterDetails } = state || {};
-  if (meterDetails?.isMeter) {
+  const { siteQuestions } = state || {};
+  if (siteQuestions?.isMeter) {
     return MeterDetailsPage;
-  } else if (meterDetails?.isCorrector) {
+  } else if (siteQuestions?.isCorrector) {
     return CorrectorDetailsPage;
-  } else if (meterDetails?.isAmr) {
+  } else if (siteQuestions?.isAmr) {
     return DataLoggerDetailsPage;
   }
 };
@@ -269,10 +272,10 @@ export const CorrectorDetailsPage = [
 
 // Define correctorDetailsDiversion function here
 const correctorDetailsDiversion = (state) => {
-  const { meterDetails } = state || {};
+  const { meterDetails,siteQuestions } = state || {};
   const { pressureTier } = meterDetails || {};
-  const isAmr = meterDetails?.isAmr;
-  const isMeter = meterDetails?.isMeter;
+  const isAmr = siteQuestions?.isAmr;
+  const isMeter = siteQuestions?.isMeter;
   console.log(meterDetails);
   if (isAmr) {
     console.log('Diverting to DataLoggerDetailsPage');
@@ -308,10 +311,10 @@ export const DataLoggerDetailsPage = [
 
 // Define dataLoggerDiversion function here
 const dataLoggerDiversion = (state) => {
-  const { meterDetails } = state || {};
+  const { meterDetails,siteQuestions } = state || {};
 
   const pressureTier = meterDetails?.pressureTier?.label;
-  const isMeter = meterDetails?.isMeter;
+  const isMeter = siteQuestions?.isMeter;
 
   if (isMeter) {
     if (pressureTier === 'LP') {
@@ -323,7 +326,7 @@ const dataLoggerDiversion = (state) => {
   return StandardPage;
 };
 
-// MeterDetails Alternative Flows
+// siteQuestions Alternative Flows
 export const MeterIndexPage = [
   {
     screen: 'MeterIndex',
@@ -344,10 +347,10 @@ export const MeterIndexPage = [
 
 // Define meterPhotoDiversion function here
 const meterPhotoDiversion = (state) => {
-  const { meterDetails } = state || {};
-  const isMeter = meterDetails?.isMeter;
-  const isAmr = meterDetails?.isAmr;
-  const isCorrector = meterDetails?.isCorrector;
+  const { meterDetails,siteQuestions } = state || {};
+  const isMeter = siteQuestions?.isMeter;
+  const isAmr = siteQuestions?.isAmr;
+  const isCorrector = siteQuestions?.isCorrector;
   const pressureTier = meterDetails?.pressureTier?.label;
 
   if (isCorrector) {

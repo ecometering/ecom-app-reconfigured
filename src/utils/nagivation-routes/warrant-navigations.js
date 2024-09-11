@@ -139,12 +139,12 @@ export const AssetTypeSelectionPage = [
 
 // Define assetTypeSelectionPageDiversion function here
 const assetTypeSelectionPageDiversion = (state) => {
-  const { meterDetails } = state || {};
-  if (meterDetails?.isMeter) {
+  const { siteQuestions } = state || {};
+  if (siteQuestions?.isMeter) {
     return RemovedMeterDetails;
-  } else if (meterDetails?.isCorrector) {
+  } else if (siteQuestions?.isCorrector) {
     return RemovedCorrectorDetails;
-  } else if (meterDetails?.isAmr) {
+  } else if (siteQuestions?.isAmr) {
     return RemovedDataLoggerDetails;
   }
 };
@@ -273,9 +273,9 @@ export const RemovedCorrectorDetails = [
 
 // Define removedCorrectorDetailsDiversion function here
 const removedCorrectorDetailsDiversion = (state) => {
-  const { meterDetails } = state;
+  const { siteQuestions } = state;
 
-  if (meterDetails?.isAmr) {
+  if (siteQuestions?.isAmr) {
     return RemovedDataLoggerDetails;
   }
   return RemovedStandardPage;
@@ -322,10 +322,10 @@ export const RemovedMeterIndex = [
 
 // Define removedMeterIndexDiversion function here
 const removedMeterIndexDiversion = (state) => {
-  const { meterDetails } = state || {};
+  const { siteQuestions } = state || {};
 
-  const isAmr = meterDetails?.isAmr;
-  const isCorrector = meterDetails?.isCorrector;
+  const isAmr = siteQuestions?.isAmr;
+  const isCorrector = siteQuestions?.isCorrector;
 
   if (isCorrector) {
     return RemovedCorrectorDetails;

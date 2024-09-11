@@ -152,11 +152,11 @@ export const MaintenanceExistingMeterIndex = [
 
 // Define maintenanceExistingMeterIndexDiversion function here
 const maintenanceExistingMeterIndexDiversion = (state) => {
-  const { meterDetails } = state || {};
+  const { meterDetails,siteQuestions } = state || {};
   const { pressureTier } = meterDetails || {};
-  const isCorrector = meterDetails?.isCorrector;
-  const isAmr = meterDetails?.isAmr;
-  const isMeter = meterDetails?.isMeter;
+  const isCorrector = siteQuestions?.isCorrector;
+  const isAmr = siteQuestions?.isAmr;
+  const isMeter = siteQuestions?.isMeter;
   if (isCorrector) {
     return MaintenanceExistingCorrectorDetails;
   }
@@ -277,19 +277,22 @@ export const AbortPage = [
 export const AssetTypeSelectionPage = [
   {
     screen: 'AssetTypeSelectionPage',
+    params: {
+      title: 'Assets maintenance required',
+    },
     diversionsKey: 'assetTypeSelectionDiversion', // Updated
   },
 ];
 
 // Define assetTypeSelectionDiversion function here
 const assetTypeSelectionDiversion = (state) => {
-  const { meterDetails } = state || {};
+  const { siteQuestions } = state || {};
 
-  if (meterDetails?.isMeter) {
+  if (siteQuestions?.isMeter) {
     return MaintenanceExistingMeterDetails;
-  } else if (meterDetails?.isCorrector) {
+  } else if (siteQuestions?.isCorrector) {
     return MaintenanceExistingCorrectorDetails;
-  } else if (meterDetails?.isAmr) {
+  } else if (siteQuestions?.isAmr) {
     return MaintenanceExistingDataLoggerDetails;
   }
 };
@@ -336,11 +339,11 @@ export const MaintenanceExistingCorrectorDetails = [
 
 // Define maintenanceExistingCorrectorDetailsDiversion function here
 const maintenanceExistingCorrectorDetailsDiversion = (state) => {
-  const { meterDetails } = state || {};
+  const { meterDetails,siteQuestions } = state || {};
   const { pressureTier } = meterDetails || {};
 
-  const isAmr = meterDetails?.isAmr;
-  const isMeter = meterDetails?.isMeter;
+  const isAmr = siteQuestions?.isAmr;
+  const isMeter = siteQuestions?.isMeter;
 
   if (isAmr) {
     return MaintenanceExistingDataLoggerDetails;
@@ -367,9 +370,9 @@ export const MaintenanceExistingDataLoggerDetails = [
 
 // Define maintenanceExistingDataLoggerDetailsDiversion function here
 const maintenanceExistingDataLoggerDetailsDiversion = (state) => {
-  const { meterDetails } = state || {};
+  const { meterDetails,siteQuestions } = state || {};
   const pressureTier = meterDetails?.pressureTier?.label;
-  const isMeter = meterDetails?.isMeter;
+  const isMeter = siteQuestions?.isMeter;
 
   if (isMeter) {
     if (pressureTier === 'LP') {

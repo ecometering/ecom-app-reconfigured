@@ -143,18 +143,22 @@ export const AbortPage = [
 export const AssetTypeSelectionPage = [
   {
     screen: 'AssetTypeSelectionPage',
-    diversionsKey: 'assetTypeSelectionDiversion', // Updated
+    diversionsKey: 'assetTypeSelectionDiversion',
+    params:{
+      title: 'Existing assets',
+    },
+     
   },
 ];
 
 // Define assetTypeSelectionDiversion function here
 const assetTypeSelectionDiversion = (state) => {
-  const { meterDetails } = state || {};
-  if (meterDetails?.isMeter) {
+  const { siteQuestions } = state || {};
+  if (siteQuestions?.isMeter) {
     return SurveyExistingMeterDetails;
-  } else if (meterDetails?.isCorrector) {
+  } else if (siteQuestions?.isCorrector) {
     return SurveyExistingCorrectorDetails;
-  } else if (meterDetails?.isAmr) {
+  } else if (siteQuestions?.isAmr) {
     return SurveyExistingDataLoggerDetails;
   }
 };
@@ -200,11 +204,11 @@ export const SurveyExistingCorrectorDetails = [
 
 // Define surveyExistingCorrectorDetailsDiversion function here
 const surveyExistingCorrectorDetailsDiversion = (state) => {
-  const { meterDetails } = state || {};
+  const { meterDetails,siteQuestions } = state || {};
   const { pressureTier } = meterDetails || {};
 
-  const isAmr = meterDetails?.isAmr;
-  const isMeter = meterDetails?.isMeter;
+  const isAmr = siteQuestions?.isAmr;
+  const isMeter = siteQuestions?.isMeter;
 
   if (isAmr) {
     return SurveyExistingDataLoggerDetails;
@@ -233,9 +237,9 @@ export const SurveyExistingDataLoggerDetails = [
 
 // Define surveyExistingDataLoggerDetailsDiversion function here
 const surveyExistingDataLoggerDetailsDiversion = (state) => {
-  const { meterDetails } = state || {};
+  const { meterDetails,siteQuestions } = state || {};
   const pressureTier = meterDetails?.pressureTier?.label;
-  const isMeter = meterDetails?.isMeter;
+  const isMeter = siteQuestions?.isMeter;
 
   if (isMeter) {
     if (pressureTier === 'LP') {
@@ -339,11 +343,11 @@ export const SurveyExistingMeterIndex = [
 
 // Define surveyExistingMeterIndexDiversion function here
 const surveyExistingMeterIndexDiversion = (state) => {
-  const { meterDetails } = state || {};
+  const { meterDetails,siteQuestions } = state || {};
   const { pressureTier } = meterDetails || {};
-  const isCorrector = meterDetails?.isCorrector;
-  const isAmr = meterDetails?.isAmr;
-  const isMeter = meterDetails?.isMeter;
+  const isCorrector = siteQuestions?.isCorrector;
+  const isAmr = siteQuestions?.isAmr;
+  const isMeter = siteQuestions?.isMeter;
 
   if (isCorrector) {
     return SurveyExistingCorrectorDetails;

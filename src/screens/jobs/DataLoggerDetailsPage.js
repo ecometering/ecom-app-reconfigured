@@ -14,7 +14,7 @@ import {
 // Components
 import Text from '../../components/Text';
 import Header from '../../components/Header';
-import TextInput from '../../components/TextInput';
+import TextInput, { TextInputWithTitle } from '../../components/TextInput';
 import OptionalButton from '../../components/OptionButton';
 import BarcodeScanner from '../../components/BarcodeScanner';
 import ImagePickerButton from '../../components/ImagePickerButton';
@@ -273,6 +273,15 @@ export default function DataLoggerDetailsPage() {
                 value={dataLoggerDetails.loggerOwner}
               />
             </View>
+            <TextInputWithTitle
+          title={'Notes'}
+          value={dataLoggerDetails?.notes}
+          onChangeText={(text) => {
+            handleInputChange('notes', text);
+          }}
+          style={{ height: 100 }}
+          multiline={true}
+        />
             <View style={styles.imagePickerContainer}>
               <View>
                 <Text type="caption" style={styles.text}>

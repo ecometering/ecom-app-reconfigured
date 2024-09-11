@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   View,
   Platform,
@@ -6,11 +7,14 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
 } from 'react-native';
+import Text from '../../components/Text'; // Assuming you have a Text component
+import { TextType } from '../../theme/typography';
 
 // Components
 import Header from '../../components/Header';
 import EcomDropDown from '../../components/DropDown';
 import { TextInputWithTitle } from '../../components/TextInput';
+import OptionalButton from '../../components/OptionButton';
 
 // Utils & Context
 import EcomHelper from '../../utils/ecomHelper';
@@ -52,12 +56,12 @@ export default function MovPage() {
   };
 
   return (
-    <SafeAreaView style={styles.content}>
+    <SafeAreaView style={styles.container}>
       <Header
         hasLeftBtn={true}
         hasCenterText={true}
         hasRightBtn={true}
-        centerText={'MOV details'}
+        centerText={'MOV Details'}
         leftBtnPressed={backPressed}
         rightBtnPressed={nextPressed}
       />
@@ -66,67 +70,90 @@ export default function MovPage() {
         behavior={isIos ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
-        <ScrollView style={styles.content}>
-          <View style={styles.spacer} />
+        <ScrollView style={styles.scrollView}>
           <View style={styles.body}>
-            <TextInputWithTitle
-              title="Mov Type"
-              value={movDetails?.type}
-              onChangeText={(txt) => {
-                const withSpecialChars = txt.toUpperCase();
-                const formattedText = withSpecialChars.replace(
-                  /[^A-Z0-9"/ ]+/g,
-                  ''
-                );
-                handleInputChange('type', formattedText);
-              }}
-            />
+            <View style={styles.questionContainer}>
+              <Text type={TextType.CAPTION_2} style={styles.questionText}>
+                {'Does the MOV exist? *'}
+              </Text>
+              <OptionalButton
+                options={['Yes', 'No']}
+                actions={[
+                  () => handleInputChange('movExists', true),
+                  () => handleInputChange('movExists', false),
+                ]}
+                value={
+                  movDetails.movExists === undefined
+                    ? null
+                    : movDetails.movExists
+                    ? 'Yes'
+                    : 'No'
+                }
+              />
+            </View>
 
-            <View style={styles.row}>
-              <View style={{ flex: 1 }}>
+            {movDetails.movExists && (
+              <>
                 <TextInputWithTitle
-                  title="Mov height (mm)"
-                  value={movDetails?.height}
+                  title="MOV Type"
+                  value={movDetails?.type}
                   onChangeText={(txt) => {
-                    const numericValue = txt.replace(/[^0-9.]/g, '');
-                    handleInputChange('height', numericValue);
+                    const withSpecialChars = txt.toUpperCase();
+                    const formattedText = withSpecialChars.replace(
+                      /[^A-Z0-9"/ ]+/g,
+                      ''
+                    );
+                    handleInputChange('type', formattedText);
                   }}
-                  keyboardType="numeric"
                 />
-              </View>
-              <View style={{ flex: 1 }}>
-                <EcomDropDown
-                  value={movDetails?.size}
-                  valueList={SIZE_LIST}
-                  placeholder="Select size"
-                  onChange={(item) => handleInputChange('size', item.value)}
-                />
-              </View>
-            </View>
-            <View style={styles.row}>
-              <View style={{ flex: 1 }}>
-                <TextInputWithTitle
-                  title="Distance from Kiosk wall (mm)"
-                  value={movDetails?.dfkw}
-                  onChangeText={(txt) => {
-                    const numericValue = txt.replace(/[^0-9.]/g, '');
-                    handleInputChange('dfkw', numericValue);
-                  }}
-                  keyboardType="numeric"
-                />
-              </View>
-              <View style={{ flex: 1 }}>
-                <TextInputWithTitle
-                  title="Distance from  Rear Kiosk wall (mm)"
-                  value={movDetails?.dfrkw}
-                  onChangeText={(txt) => {
-                    const numericValue = txt.replace(/[^0-9.]/g, '');
-                    handleInputChange('dfrkw', numericValue);
-                  }}
-                  keyboardType="numeric"
-                />
-              </View>
-            </View>
+
+                <View style={styles.row}>
+                  <View style={{ flex: 1 }}>
+                    <TextInputWithTitle
+                      title="MOV height (mm)"
+                      value={movDetails?.height}
+                      onChangeText={(txt) => {
+                        const numericValue = txt.replace(/[^0-9.]/g, '');
+                        handleInputChange('height', numericValue);
+                      }}
+                      keyboardType="numeric"
+                    />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <EcomDropDown
+                      value={movDetails?.size}
+                      valueList={SIZE_LIST}
+                      placeholder="Select size"
+                      onChange={(item) => handleInputChange('size', item.value)}
+                    />
+                  </View>
+                </View>
+                <View style={styles.row}>
+                  <View style={{ flex: 1 }}>
+                    <TextInputWithTitle
+                      title="Distance from Kiosk wall (mm)"
+                      value={movDetails?.dfkw}
+                      onChangeText={(txt) => {
+                        const numericValue = txt.replace(/[^0-9.]/g, '');
+                        handleInputChange('dfkw', numericValue);
+                      }}
+                      keyboardType="numeric"
+                    />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <TextInputWithTitle
+                      title="Distance from Rear Kiosk wall (mm)"
+                      value={movDetails?.dfrkw}
+                      onChangeText={(txt) => {
+                        const numericValue = txt.replace(/[^0-9.]/g, '');
+                        handleInputChange('dfrkw', numericValue);
+                      }}
+                      keyboardType="numeric"
+                    />
+                  </View>
+                </View>
+              </>
+            )}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -136,6 +163,9 @@ export default function MovPage() {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  content: {
     flex: 1,
   },
   scrollView: {
@@ -148,7 +178,12 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    flex: 1,
     gap: 10,
+  },
+  questionContainer: {
+    marginBottom: 20,
+  },
+  questionText: {
+    marginBottom: 10,
   },
 });
