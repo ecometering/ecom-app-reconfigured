@@ -26,7 +26,7 @@ const fieldsToParse = [
   'standards',
   'meterDetailsTwo',
   'additionalMaterials',
-  'dataLoggerDetails',
+  'dataloggerDetails',
   'dataLoggerDetailsTwo',
   'maintenanceDetails',
   'correctorDetails',

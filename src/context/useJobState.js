@@ -46,7 +46,7 @@ const getInitialJobState = (jobType) => ({
   standards: {},
   meterDetailsTwo: {},
   additionalMaterials: {},
-  dataLoggerDetails: {},
+  dataloggerDetails: {},
   dataLoggerDetailsTwo: {
     loggerOwner: ['Install', 'Maintenance'].includes(jobType)
       ? 'Eco Metering Solutions'
@@ -85,11 +85,14 @@ const useJobState = () => {
       const tableInfo = await db.getAllAsync('PRAGMA table_info(Jobs);');
       const existingFields = tableInfo.map((info) => info.name);
 
+      console.log('Existing fields:', existingFields);
+
       const missingFields = Object.values(fieldMapping).filter(
         (field) => !existingFields.includes(field)
       );
 
       for (const field of missingFields) {
+        console.log('Adding field:', field);
         await db.runAsync(`ALTER TABLE Jobs ADD COLUMN ${field} TEXT;`);
       }
     } catch (error) {

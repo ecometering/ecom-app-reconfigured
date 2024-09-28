@@ -33,24 +33,24 @@ export default function DataLoggerDetailsPage() {
   const { state, setState } = useFormStateContext();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
-  const { photos, dataLoggerDetails,jobType } = state;
+  const { photos, dataloggerDetails,jobType } = state;
   const existingPhoto = photos && photoKey ? photos[photoKey] : null;
 
   const [isModal, setIsModal] = useState(false);
 
-  console.log({ dataLoggerDetails });
+  console.log({ dataloggerDetails });
 
   const handleInputChange = (name, value) => {
     setState((prevState) => ({
       ...prevState,
-      dataLoggerDetails: {
-        ...prevState.dataLoggerDetails,
+      dataloggerDetails: {
+        ...prevState.dataloggerDetails,
         [name]: value,
       },
     }));
   };
   useEffect(() => {
-    if (!dataLoggerDetails.loggerOwner){
+    if (!dataloggerDetails.loggerOwner){
       if (['Install', 'Maintenance'].includes(jobType)) {
         handleInputChange('loggerOwner','Eco Metering Solutions')}}
   })
@@ -71,7 +71,7 @@ export default function DataLoggerDetailsPage() {
 
   const nextPressed = async () => {
     const { isValid, message } = validateDataLoggerDetails(
-      dataLoggerDetails,
+      dataloggerDetails,
       existingPhoto
     );
 
@@ -137,7 +137,7 @@ export default function DataLoggerDetailsPage() {
                       alignSelf: 'flex-end',
                       
                     }}
-                    value={dataLoggerDetails.serialNumber}
+                    value={dataloggerDetails.serialNumber}
                   />
                   <Button title="📷" onPress={scanBarcode} />
                 </View>
@@ -160,9 +160,9 @@ export default function DataLoggerDetailsPage() {
                       },
                     ]}
                     value={
-                      dataLoggerDetails.isMountingBracket == null
+                      dataloggerDetails.isMountingBracket == null
                         ? null
-                        : dataLoggerDetails.isMountingBracket
+                        : dataloggerDetails.isMountingBracket
                         ? 'Yes'
                         : 'No'
                     }
@@ -189,9 +189,9 @@ export default function DataLoggerDetailsPage() {
                       },
                     ]}
                     value={
-                      dataLoggerDetails.isAdapter == null
+                      dataloggerDetails.isAdapter == null
                         ? null
-                        : dataLoggerDetails.isAdapter
+                        : dataloggerDetails.isAdapter
                         ? 'Yes'
                         : 'No'
                     }
@@ -216,9 +216,9 @@ export default function DataLoggerDetailsPage() {
                       },
                     ]}
                     value={
-                      dataLoggerDetails.isPulseSplitter == null
+                      dataloggerDetails.isPulseSplitter == null
                         ? null
-                        : dataLoggerDetails.isPulseSplitter
+                        : dataloggerDetails.isPulseSplitter
                         ? 'Yes'
                         : 'No'
                     }
@@ -240,7 +240,7 @@ export default function DataLoggerDetailsPage() {
                       const filteredText = formattedText.replace(/[^a-zA-Z ]/g, '');
                       handleInputChange('manufacturer', filteredText);
                     }}
-                    value={dataLoggerDetails.manufacturer}
+                    value={dataloggerDetails.manufacturer}
                   />
                 </View>
               </View>
@@ -256,7 +256,7 @@ export default function DataLoggerDetailsPage() {
                     const filteredText = formattedText.replace(/[^a-zA-Z0-9\-\s]/g, '');
                     handleInputChange('model', filteredText);
                   }}
-                  value={dataLoggerDetails.model}
+                  value={dataloggerDetails.model}
                 />
               </View>
             </View>
@@ -270,12 +270,12 @@ export default function DataLoggerDetailsPage() {
                 onChangeText={(txt) => {
                   handleInputChange('loggerOwner', txt);
                 }}
-                value={dataLoggerDetails.loggerOwner}
+                value={dataloggerDetails.loggerOwner}
               />
             </View>
             <TextInputWithTitle
           title={'Notes'}
-          value={dataLoggerDetails?.notes}
+          value={dataloggerDetails?.notes}
           onChangeText={(text) => {
             handleInputChange('notes', text);
           }}
