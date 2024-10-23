@@ -46,6 +46,8 @@ export const Header = ({
     }
   }, []);
 
+  const isNavigationArray = Array.isArray(state?.navigation);
+
   return (
     <>
       <View style={[styles.headerSpacerMobile, { height: statusBarHeight }]} />
@@ -99,24 +101,27 @@ export const Header = ({
       >
         <SafeAreaView style={styles.modalContainer}>
           <ScrollView>
-            {state?.navigation?.map((nav, index) => (
-              <Pressable
-                key={`nav-${index}-${nav.screen}`}
-                onPress={() => {
-                  setMenuVisible(false);
-                  jumpToStep(index);
-                }}
-                style={[
-                  styles.navItem,
-                  {
-                    backgroundColor:
-                      state?.lastNavigationIndex === index ? 'green' : '#f4f4f4',
-                  },
-                ]}
-              >
-                <Text style={styles.navItemText}>{nav.screen}</Text>
-              </Pressable>
-            ))}
+            {isNavigationArray &&
+              state?.navigation?.map((nav, index) => (
+                <Pressable
+                  key={`nav-${index}-${nav?.screen}`}
+                  onPress={() => {
+                    setMenuVisible(false);
+                    jumpToStep(index);
+                  }}
+                  style={[
+                    styles.navItem,
+                    {
+                      backgroundColor:
+                        state?.lastNavigationIndex === index
+                          ? 'green'
+                          : '#f4f4f4',
+                    },
+                  ]}
+                >
+                  <Text style={styles.navItemText}>{nav?.screen}</Text>
+                </Pressable>
+              ))}
           </ScrollView>
         </SafeAreaView>
       </Modal>

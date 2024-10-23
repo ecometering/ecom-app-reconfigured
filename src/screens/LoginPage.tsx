@@ -27,7 +27,6 @@ function LoginPage() {
   };
 
   const handleLoginPress = () => {
-    console.log('Login button pressed');
     login();
   };
 

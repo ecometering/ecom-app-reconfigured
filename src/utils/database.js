@@ -26,7 +26,6 @@ const createJobsTable = async (db) => {
         photos TEXT
       );
     `);
-    console.log('Jobs table created or already exists.');
   } catch (error) {
     console.error('Error creating Jobs table:', error);
     throw error;
@@ -43,7 +42,6 @@ const getDatabaseTables = async (db) => {
       acc[table.name] = [];
       return acc;
     }, {});
-    console.log('Fetched table names:', tableNames);
     return tableNames;
   } catch (error) {
     console.error('Error fetching table names:', error);

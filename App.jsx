@@ -8,22 +8,22 @@ import MainNavigator from './src/navigation/MainNavigator';
 import { AppContextProvider } from './src/context/AppContext';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { createJobsTable, getDatabaseTables } from './src/utils/database';
+import ImageQueueContext, {
+  ImageQueueProvider,
+} from './src/context/image-queue/ImageQueueContext';
 
 const checkFirstLaunch = async (db) => {
   try {
     const hasLaunched = await AsyncStorage.getItem('hasLaunched');
-    console.log('hasLaunched:', hasLaunched);
+
     if (hasLaunched === null) {
-      console.log('First Launch');
       await createJobsTable(db);
-      console.log('Jobs table created');
+
       await AsyncStorage.setItem('hasLaunched', 'true');
     } else {
-      console.log('App has been launched before.');
       const check = await getDatabaseTables(db);
       if (!check.Jobs) {
         await createJobsTable(db);
-        console.log('Jobs table created as it was missing');
       }
     }
   } catch (error) {
@@ -67,9 +67,11 @@ const MainApp = () => {
 export const Layout = () => {
   return (
     <AppContextProvider>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <MainNavigator />
-      </GestureHandlerRootView>
+      <ImageQueueProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <MainNavigator />
+        </GestureHandlerRootView>
+      </ImageQueueProvider>
     </AppContextProvider>
   );
 };

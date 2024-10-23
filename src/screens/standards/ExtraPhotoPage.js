@@ -31,8 +31,6 @@ const ExtraPhotoPage = () => {
   const [photos, setPhotos] = useState(existingPhotos || []);
   const [activeSections, setActiveSections] = useState([]);
 
-  console.log({ photos });
-
   const handleImageSelected = (newPhoto) => {
     const updatedPhotos = [...photos, { uri: newPhoto }];
     setPhotos(updatedPhotos);
@@ -134,7 +132,9 @@ const ExtraPhotoPage = () => {
             </View>
           ))}
           <Text style={styles.textLabel}>Any more extra photos?</Text>
-          <Text style={styles.textLabel}>(Add them below if none click next)</Text>
+          <Text style={styles.textLabel}>
+            (Add them below if none click next)
+          </Text>
           <ImagePickerButton onImageSelected={handleImageSelected} />
         </View>
       </ScrollView>

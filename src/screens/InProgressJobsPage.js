@@ -78,14 +78,18 @@ const JobsTable = () => {
   const handleRowClick = async (jobId) => {
     try {
       const jobData = jobs.find(({ id }) => id === jobId);
+
       if (jobData) {
         const parsedJobData = { ...jobData };
 
         fieldsToParse.forEach((field) => {
-          parsedJobData[field] = safeParse(
-            jobData?.[field],
-            Array.isArray(parsedJobData?.[field]) ? [] : {}
-          );
+          // Add checks to ensure that jobData[field] is defined before parsing
+          if (jobData.hasOwnProperty(field) && jobData[field] !== undefined) {
+            parsedJobData[field] = safeParse(
+              jobData[field],
+              Array.isArray(parsedJobData[field]) ? [] : {}
+            );
+          }
         });
 
         setState((prevState) => ({
@@ -93,7 +97,10 @@ const JobsTable = () => {
           ...parsedJobData,
           jobID: jobId,
         }));
-        startFlow({ newFlowType: parsedJobData.jobType });
+
+        if (parsedJobData.jobType) {
+          startFlow({ newFlowType: parsedJobData.jobType });
+        }
       }
     } catch (error) {
       console.error('Error loading job:', error);
@@ -108,7 +115,6 @@ const JobsTable = () => {
         onPress: async () => {
           try {
             await db.runAsync('DELETE FROM Jobs WHERE id = ?', [jobId]);
-            console.log('Record deleted successfully');
             fetchData();
           } catch (error) {
             console.error('Error deleting record:', error);

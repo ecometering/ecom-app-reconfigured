@@ -1,4 +1,4 @@
-import React, { useRef, useState,useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useRoute } from '@react-navigation/native';
 import {
   View,
@@ -33,12 +33,10 @@ export default function DataLoggerDetailsPage() {
   const { state, setState } = useFormStateContext();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
-  const { photos, dataloggerDetails,jobType } = state;
+  const { photos, dataloggerDetails, jobType } = state;
   const existingPhoto = photos && photoKey ? photos[photoKey] : null;
 
   const [isModal, setIsModal] = useState(false);
-
-  console.log({ dataloggerDetails });
 
   const handleInputChange = (name, value) => {
     setState((prevState) => ({
@@ -50,10 +48,12 @@ export default function DataLoggerDetailsPage() {
     }));
   };
   useEffect(() => {
-    if (!dataloggerDetails.loggerOwner){
+    if (!dataloggerDetails.loggerOwner) {
       if (['Install', 'Maintenance'].includes(jobType)) {
-        handleInputChange('loggerOwner','Eco Metering Solutions')}}
-  })
+        handleInputChange('loggerOwner', 'Eco Metering Solutions');
+      }
+    }
+  });
 
   const handlePhotoSelected = (uri) => {
     setState((prevState) => ({
@@ -129,13 +129,11 @@ export default function DataLoggerDetailsPage() {
                         /[^A-Z0-9]+/g,
                         ''
                       );
-                        handleInputChange('serialNumber', formattedText);
-                      
+                      handleInputChange('serialNumber', formattedText);
                     }}
                     style={{
                       ...styles.input,
                       alignSelf: 'flex-end',
-                      
                     }}
                     value={dataloggerDetails.serialNumber}
                   />
@@ -237,7 +235,10 @@ export default function DataLoggerDetailsPage() {
                   <TextInput
                     onChangeText={(txt) => {
                       const formattedText = txt.toUpperCase();
-                      const filteredText = formattedText.replace(/[^a-zA-Z ]/g, '');
+                      const filteredText = formattedText.replace(
+                        /[^a-zA-Z ]/g,
+                        ''
+                      );
                       handleInputChange('manufacturer', filteredText);
                     }}
                     value={dataloggerDetails.manufacturer}
@@ -253,7 +254,10 @@ export default function DataLoggerDetailsPage() {
                 <TextInput
                   onChangeText={(txt) => {
                     const formattedText = txt.toUpperCase();
-                    const filteredText = formattedText.replace(/[^a-zA-Z0-9\-\s]/g, '');
+                    const filteredText = formattedText.replace(
+                      /[^a-zA-Z0-9\-\s]/g,
+                      ''
+                    );
                     handleInputChange('model', filteredText);
                   }}
                   value={dataloggerDetails.model}
@@ -274,14 +278,14 @@ export default function DataLoggerDetailsPage() {
               />
             </View>
             <TextInputWithTitle
-          title={'Notes'}
-          value={dataloggerDetails?.notes}
-          onChangeText={(text) => {
-            handleInputChange('notes', text);
-          }}
-          style={{ height: 100 }}
-          multiline={true}
-        />
+              title={'Notes'}
+              value={dataloggerDetails?.notes}
+              onChangeText={(text) => {
+                handleInputChange('notes', text);
+              }}
+              style={{ height: 100 }}
+              multiline={true}
+            />
             <View style={styles.imagePickerContainer}>
               <View>
                 <Text type="caption" style={styles.text}>

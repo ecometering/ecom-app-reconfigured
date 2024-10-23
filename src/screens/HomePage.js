@@ -1,23 +1,26 @@
+import axios from 'axios';
 import React, { useCallback, useState } from 'react';
 import {
   View,
+  Image,
   ScrollView,
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
 } from 'react-native';
+import { useSQLiteContext } from 'expo-sqlite/next';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 // Components
 import Text from '../components/Text';
+import JobTypeSection from '../components/JobTypeSection';
+import ImageQueueInfo from '../components/image-queue/ImageQueueInfo';
+import HomeJobsListing from '../components/home-lists/HomeJobsListing';
+import CalendarComponent from '../components/calendar/CalendarSection';
 
 // Context
 import { PrimaryColors } from '../theme/colors';
 import { useAuth } from '../context/AuthContext';
-import CalendarComponent from '../components/calendar/CalendarSection';
-import JobTypeSection from '../components/JobTypeSection';
-import HomeJobsListing from '../components/home-lists/HomeJobsListing';
-import { useSQLiteContext } from 'expo-sqlite/next';
 
 const buttons = [
   {
@@ -26,12 +29,12 @@ const buttons = [
     state: 'inProgressJobs',
   },
   {
-    title: 'Completed Job',
+    title: 'Completed Jobs',
     navigationName: 'CompletedJobsPage',
     state: 'completedJobs',
   },
   {
-    title: 'Planned Job',
+    title: 'Planned Jobs',
     navigationName: 'PlannedJobPage',
     state: 'plannedJobs',
   },
@@ -66,8 +69,6 @@ function HomePage() {
     }, [])
   );
 
-  console.log('HomePage');
-
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -80,14 +81,16 @@ function HomePage() {
         'SELECT * FROM jobs WHERE jobStatus = ? ORDER BY endDate DESC LIMIT 3',
         ['Completed']
       );
-      const plannedJobs = await db.getAllAsync(
-        'SELECT * FROM jobs WHERE jobStatus = ? LIMIT 3',
-        ['Planned']
+      const plannedJobsData = await axios.get(
+        'https://test.ecomdata.co.uk/api/jobs/'
       );
+
       setJobsListing({
         inProgressJobs,
         completedJobs,
-        plannedJobs,
+        plannedJobs: plannedJobsData.data
+          ? plannedJobsData.data.slice(0, 3)
+          : [],
       });
 
       // Fetch job count for each job status
@@ -99,10 +102,6 @@ function HomePage() {
         'SELECT COUNT(*) FROM jobs WHERE jobStatus = ?',
         ['Completed']
       );
-      const plannedJobsLength = await db.getAllAsync(
-        'SELECT COUNT(*) FROM jobs WHERE jobStatus = ?',
-        ['Planned']
-      );
 
       setJobListLength({
         inProgressJobs: inProgressJobsLength.find((item) => item['COUNT(*)'])?.[
@@ -111,9 +110,7 @@ function HomePage() {
         completedJobs: completedJobsLength.find((item) => item['COUNT(*)'])?.[
           'COUNT(*)'
         ],
-        plannedJobs: plannedJobsLength.find((item) => item['COUNT(*)'])?.[
-          'COUNT(*)'
-        ],
+        plannedJobs: 0,
       });
 
       setLoading(false);
@@ -127,6 +124,7 @@ function HomePage() {
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <ScrollView style={{ flex: 1 }}>
         <View style={styles.body}>
+          <ImageQueueInfo />
           <CalendarComponent />
           <JobTypeSection />
           {buttons.map((button) => (
@@ -137,6 +135,7 @@ function HomePage() {
                 navigationToPage({ navigationName: button.navigationName });
               }}
               data={jobsListing[button.state]}
+              stateType={button.state}
               length={jobListLength[button.state]}
               loading={loading}
             />
@@ -180,6 +179,18 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 20,
     fontWeight: '500',
+  },
+  iconButton: {
+    width: 34,
+    height: 34,
+    borderRadius: 25,
+    backgroundColor: PrimaryColors.Blue,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  icon: {
+    height: 21,
+    width: 21,
   },
 });
 

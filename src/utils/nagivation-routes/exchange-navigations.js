@@ -212,27 +212,18 @@ export const AssetTypeSelectionPage = [
   },
 ];
 
-console.log('AssetTypeSelectionPage configuration:', AssetTypeSelectionPage);
-
 // Define assetTypeSelectionDiversion function here
 const assetTypeSelectionDiversion = (state) => {
-  console.log('assetTypeSelectionDiversion called with state:', state);
-
   const { siteQuestions } = state || {};
-  console.log('siteQuestions:', siteQuestions);
 
   if (siteQuestions?.assetsRemoved.isMeter) {
-    console.log('Diverting to ExistingMeterDetails');
     return ExistingMeterDetails;
   } else if (siteQuestions?.assetsRemoved.isCorrector) {
-    console.log('Diverting to ExistingCorrectorDetails');
     return ExistingCorrectorDetails;
   } else if (siteQuestions?.assetsRemoved.isAmr) {
-    console.log('Diverting to ExistingDataLoggerDetails');
     return ExistingDataLoggerDetails;
   }
 
-  console.log('No diversion applied, returning undefined');
   return undefined;
 };
 
@@ -301,30 +292,23 @@ export const InstalledCorrectorDetails = [
 // Define installedCorrectorDetailsDiversion function here
 const installedCorrectorDetailsDiversion = (state) => {
   const { meterDetails, siteQuestions } = state || {};
-  
+
   const pressureTier = meterDetails?.pressureTier?.label;
   const isMeter = siteQuestions?.isMeter;
 
-  console.log('Meter Details:', meterDetails);
-  console.log('Site Questions:', siteQuestions);
-
   if (isAmr) {
-    console.log('Diverting to InstalledDataLoggerDetails');
     return InstalledDataLoggerDetails;
   }
 
   if (isMeter) {
     if (pressureTier === 'LP' || pressureTier?.label === 'LP') {
-      console.log('Diverting to RegulatorPage');
       return RegulatorPage;
     } else {
-      console.log('Diverting to ExchangeStreamsSetSealDetailsPage');
       return ExchangeStreamsSetSealDetailsPage;
     }
   }
 
   if (!isMeter && !isAmr) {
-    console.log('Diverting to StandardsPage');
     return ExchangeStandardPage;
   }
 };
@@ -342,7 +326,7 @@ export const InstalledDataLoggerDetails = [
 
 // Define installedDataLoggerDetailsDiversion function here
 const installedDataLoggerDetailsDiversion = (state) => {
-  const { meterDetails,siteQuestions } = state || {};
+  const { meterDetails, siteQuestions } = state || {};
 
   const pressureTier = meterDetails?.pressureTier?.label;
 
@@ -384,31 +368,20 @@ const installedMeterIndexDiversion = (state) => {
   const isCorrector = meterDetails?.isCorrector;
   const pressureTier = meterDetails?.pressureTier?.label;
 
-  console.log('isMeter:', isMeter);
-  console.log('isAmr:', isAmr);
-  console.log('isCorrector:', isCorrector);
-  console.log('pressureTier:', pressureTier);
-
   if (isCorrector) {
-    console.log('Diverting to InstalledCorrectorDetails');
     return InstalledCorrectorDetails;
   }
 
   if (isAmr) {
-    console.log('Diverting to InstalledDataLoggerDetails');
     return InstalledDataLoggerDetails;
   }
 
   if (isMeter) {
-    console.log('isMeter is true');
     if (pressureTier === 'LP') {
-      console.log('Diverting to RegulatorPage');
       return RegulatorPage;
     }
-    console.log("pressureTier is not 'LP', continuing...");
   }
 
-  console.log('Diverting to ExchangeStreamsSetSealDetailsPage');
   return ExchangeStreamsSetSealDetailsPage;
 };
 
