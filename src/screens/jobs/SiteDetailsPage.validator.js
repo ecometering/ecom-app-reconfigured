@@ -75,15 +75,16 @@ export const validateSiteDetails = (siteDetails, jobType) => {
     () =>
       siteDetails.email2 &&
       validateEmail('email2', siteDetails.email2, 'Invalid email: email2'),
-   
-    () =>
+
+    () => {
       validateBooleanField(
         'the warrant went ahead',
-        siteDetails.confirmWarrant,
+        siteDetails?.confirmWarrant,
         jobType === 'Warrant'
           ? 'Please confirm if the warrant went ahead'
           : null
-      ),
+      );
+    },
   ];
 
   for (const validate of validations) {

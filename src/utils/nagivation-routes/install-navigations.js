@@ -272,28 +272,23 @@ export const CorrectorDetailsPage = [
 
 // Define correctorDetailsDiversion function here
 const correctorDetailsDiversion = (state) => {
-  const { meterDetails,siteQuestions } = state || {};
+  const { meterDetails, siteQuestions } = state || {};
   const { pressureTier } = meterDetails || {};
   const isAmr = siteQuestions?.isAmr;
   const isMeter = siteQuestions?.isMeter;
-  console.log(meterDetails);
   if (isAmr) {
-    console.log('Diverting to DataLoggerDetailsPage');
     return DataLoggerDetailsPage;
   }
 
   if (isMeter) {
     if (pressureTier === 'LP' || pressureTier?.label === 'LP') {
-      console.log('Diverting to RegulatorPage');
       return RegulatorPage;
     } else {
-      console.log('Diverting to StreamsSetSealDetailsPage');
       return StreamsSetSealDetailsPage;
     }
   }
 
   if (!isMeter && !isAmr) {
-    console.log('Diverting to StandardsPage');
     return StandardPage;
   }
 };
@@ -311,7 +306,7 @@ export const DataLoggerDetailsPage = [
 
 // Define dataLoggerDiversion function here
 const dataLoggerDiversion = (state) => {
-  const { meterDetails,siteQuestions } = state || {};
+  const { meterDetails, siteQuestions } = state || {};
 
   const pressureTier = meterDetails?.pressureTier?.label;
   const isMeter = siteQuestions?.isMeter;
@@ -347,7 +342,7 @@ export const MeterIndexPage = [
 
 // Define meterPhotoDiversion function here
 const meterPhotoDiversion = (state) => {
-  const { meterDetails,siteQuestions } = state || {};
+  const { meterDetails, siteQuestions } = state || {};
   const isMeter = siteQuestions?.isMeter;
   const isAmr = siteQuestions?.isAmr;
   const isCorrector = siteQuestions?.isCorrector;

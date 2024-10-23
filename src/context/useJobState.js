@@ -85,14 +85,11 @@ const useJobState = () => {
       const tableInfo = await db.getAllAsync('PRAGMA table_info(Jobs);');
       const existingFields = tableInfo.map((info) => info.name);
 
-      console.log('Existing fields:', existingFields);
-
       const missingFields = Object.values(fieldMapping).filter(
         (field) => !existingFields.includes(field)
       );
 
       for (const field of missingFields) {
-        console.log('Adding field:', field);
         await db.runAsync(`ALTER TABLE Jobs ADD COLUMN ${field} TEXT;`);
       }
     } catch (error) {
@@ -124,7 +121,6 @@ const useJobState = () => {
       });
 
       if (jobID) {
-        console.log('updating job');
         const updateFields = fields
           .map((field) => `${fieldMapping[field]} = ?`)
           .join(', ');
@@ -133,7 +129,6 @@ const useJobState = () => {
           jobID,
         ]);
       } else {
-        console.log('inserting job');
         const placeholders = fields.map(() => '?').join(', ');
         const result = await db.runAsync(
           `INSERT INTO Jobs (${fields

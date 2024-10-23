@@ -25,19 +25,11 @@ import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvide
 function AssetTypeSelectionPage() {
   const { goToPreviousStep, goToNextStep } = useProgressNavigation();
   const route = useRoute();
-  console.log("route info: ", route);
   const title = route.params?.title;
   const { state, setState } = useFormStateContext();
   const { jobType, siteQuestions, jobID } = state;
 
-  useEffect(() => {
-    console.log("Updated siteQuestions:", siteQuestions);
-  }, [siteQuestions]);
-
-  
-  
   const handleInputChange = (section, name, value) => {
-    console.log(`Changing ${section}.${name} to ${value}`);
     setState((prevState) => {
       let newState;
       if (jobType === 'Exchange') {
@@ -60,36 +52,38 @@ function AssetTypeSelectionPage() {
           },
         };
       }
-      console.log("New state after change:", newState);
       return newState;
     });
   };
 
   const backPressed = async () => {
-    console.log("Back button pressed");
     goToPreviousStep();
   };
 
   const nextPressed = async () => {
-    console.log("Next button pressed");
     if (jobType === 'Exchange') {
       const { assetsRemoved, assetsInstalled } = siteQuestions || {};
-      const hasRemovedAsset = assetsRemoved?.isMeter || assetsRemoved?.isAmr || assetsRemoved?.isCorrector;
-      const hasInstalledAsset = assetsInstalled?.isMeter || assetsInstalled?.isAmr || assetsInstalled?.isCorrector;
-
-      console.log("Exchange job - Assets being removed:", hasRemovedAsset);
-      console.log("Exchange job - Assets being installed:", hasInstalledAsset);
+      const hasRemovedAsset =
+        assetsRemoved?.isMeter ||
+        assetsRemoved?.isAmr ||
+        assetsRemoved?.isCorrector;
+      const hasInstalledAsset =
+        assetsInstalled?.isMeter ||
+        assetsInstalled?.isAmr ||
+        assetsInstalled?.isCorrector;
 
       if (!hasRemovedAsset || !hasInstalledAsset) {
-        console.log("Validation failed: Not enough assets selected for Exchange");
         EcomHelper.showInfoMessage(
           'For an exchange, you must select at least one asset type to remove and one to install.'
         );
         return;
       }
     } else {
-      if (!siteQuestions?.isMeter && !siteQuestions?.isAmr && !siteQuestions?.isCorrector) {
-        console.log("Validation failed: No assets selected");
+      if (
+        !siteQuestions?.isMeter &&
+        !siteQuestions?.isAmr &&
+        !siteQuestions?.isCorrector
+      ) {
         EcomHelper.showInfoMessage(
           'You must select at least one asset type to proceed.'
         );
@@ -97,36 +91,42 @@ function AssetTypeSelectionPage() {
       }
     }
 
-    console.log("Validation passed, proceeding to next step");
     goToNextStep();
   };
 
   const renderAssetSwitches = (section = '') => {
-    console.log(`Rendering asset switches for section: ${section}`);
     return (
       <>
         <SwitchWithTitle
           title={'Meter'}
-          value={jobType === 'Exchange' ? siteQuestions?.[section]?.isMeter ?? false : siteQuestions?.isMeter ?? false}
+          value={
+            jobType === 'Exchange'
+              ? siteQuestions?.[section]?.isMeter ?? false
+              : siteQuestions?.isMeter ?? false
+          }
           onValueChange={(e) => handleInputChange(section, 'isMeter', e)}
         />
         <SwitchWithTitle
           title={'AMR'}
-          value={jobType === 'Exchange' ? siteQuestions?.[section]?.isAmr ?? false : siteQuestions?.isAmr ?? false}
+          value={
+            jobType === 'Exchange'
+              ? siteQuestions?.[section]?.isAmr ?? false
+              : siteQuestions?.isAmr ?? false
+          }
           onValueChange={(e) => handleInputChange(section, 'isAmr', e)}
         />
         <SwitchWithTitle
           title={'Corrector'}
-          value={jobType === 'Exchange' ? siteQuestions?.[section]?.isCorrector ?? false : siteQuestions?.isCorrector ?? false}
+          value={
+            jobType === 'Exchange'
+              ? siteQuestions?.[section]?.isCorrector ?? false
+              : siteQuestions?.isCorrector ?? false
+          }
           onValueChange={(e) => handleInputChange(section, 'isCorrector', e)}
         />
       </>
     );
   };
-
-  console.log("Rendering AssetTypeSelectionPage");
-  console.log("Current jobType:", jobType);
-  console.log("Current siteQuestions:", siteQuestions);
 
   return (
     <SafeAreaView style={styles.content}>

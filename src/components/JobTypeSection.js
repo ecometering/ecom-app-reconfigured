@@ -1,5 +1,5 @@
 import { View, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 // Utils and Constants
 import { PrimaryColors } from '../theme/colors';
@@ -10,11 +10,84 @@ import Text from './Text';
 // Context
 import { useFormStateContext } from '../context/AppContext';
 import { useProgressNavigation } from '../context/ProgressiveFlowRouteProvider';
+import { useSQLiteContext } from 'expo-sqlite/next';
+
+const safeParse = (jsonString, fallbackValue) => {
+  try {
+    return !!jsonString ? JSON.parse(jsonString) : fallbackValue;
+  } catch (error) {
+    console.error('Error parsing JSON string:', error, jsonString);
+    return fallbackValue;
+  }
+};
+
+const fieldsToParse = [
+  'siteDetails',
+  'siteQuestions',
+  'photos',
+  'streams',
+  'meterDetails',
+  'kioskDetails',
+  'ecvDetails',
+  'movDetails',
+  'regulatorDetails',
+  'standards',
+  'meterDetailsTwo',
+  'additionalMaterials',
+  'dataloggerDetails',
+  'dataLoggerDetailsTwo',
+  'maintenanceDetails',
+  'correctorDetails',
+  'correctorDetailsTwo',
+  'chatterBoxDetails',
+  'navigation',
+];
 
 function JobTypeSection() {
   const { startFlow } = useProgressNavigation();
   const { state, setState, resetState } = useFormStateContext();
   const { startDate, jobID } = state;
+  const db = useSQLiteContext();
+  const [isThereInProgressJob, setIsThereInProgressJob] = useState(false);
+
+  const getInProgressJobs = async () => {
+    try {
+      const jobs = await db.getAllAsync(
+        'SELECT * FROM jobs WHERE jobStatus = ?',
+        ['In Progress']
+      );
+      if (jobs[0]) {
+        const parsedJobData = { ...jobs[0] };
+
+        fieldsToParse.forEach((field) => {
+          // Add checks to ensure that jobs[0][field] is defined before parsing
+          if (jobs[0].hasOwnProperty(field) && jobs[0][field] !== undefined) {
+            parsedJobData[field] = safeParse(
+              jobs[0][field],
+              Array.isArray(parsedJobData[field]) ? [] : {}
+            );
+          }
+        });
+
+        setState((prevState) => ({
+          ...prevState,
+          ...parsedJobData,
+          jobID: jobs[0].id,
+        }));
+      }
+      if (jobs.length > 0) {
+        setIsThereInProgressJob(jobs[0]);
+      } else {
+        setIsThereInProgressJob(false);
+      }
+    } catch (error) {
+      console.error('Error getting in progress jobs:', error);
+    }
+  };
+
+  useEffect(() => {
+    getInProgressJobs();
+  }, []);
 
   const handleJobTypeSelection = (jobType) => {
     startNewJob(jobType);
@@ -40,7 +113,7 @@ function JobTypeSection() {
 
   return (
     <SafeAreaView style={styles.flex}>
-      {state?.jobStatus === 'In Progress' ? (
+      {state?.jobStatus === 'In Progress' || isThereInProgressJob ? (
         <View style={styles.jobInProgressContainer}>
           <Text style={styles.jobInProgressTitle}>
             A {state?.jobType} job is in progress
@@ -55,9 +128,9 @@ function JobTypeSection() {
             </View>
           </View>
           <View style={styles.jobInProgressActions}>
-            <TouchableOpacity style={styles.cancelButton} onPress={resetState}>
+            {/* <TouchableOpacity style={styles.cancelButton} onPress={resetState}>
               <Text>Cancel</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <TouchableOpacity
               style={styles.continueButton}
               onPress={() =>

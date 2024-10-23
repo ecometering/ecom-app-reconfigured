@@ -101,7 +101,6 @@ const CompletedJobsTable = () => {
         onPress: async () => {
           try {
             await db.runAsync('DELETE FROM Jobs WHERE id = ?', [jobId]);
-            console.log('Record deleted successfully');
             fetchData();
           } catch (error) {
             console.error('Error deleting record:', error);

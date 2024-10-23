@@ -19,6 +19,7 @@ import Header from '../components/Header';
 import { useFormStateContext } from '../context/AppContext';
 import { useSQLiteContext } from 'expo-sqlite/next';
 import { useProgressNavigation } from '../context/ProgressiveFlowRouteProvider';
+import useImageQueue from '../context/image-queue/useImageQueue';
 
 const getCurrentDateTime = () => moment().format('YYYY-MM-DD HH:mm');
 
@@ -51,6 +52,7 @@ const handleUploadError = (error) => {
 const SubmitSuccessPage = () => {
   const { state, resetState } = useFormStateContext();
   const { jobStatus, jobID, photos, standards } = state;
+  const { addToQueue } = useImageQueue();
 
   const navigation = useNavigation();
   const { goToPreviousStep } = useProgressNavigation();
@@ -95,7 +97,6 @@ const SubmitSuccessPage = () => {
         'https://test.ecomdata.co.uk/api/incoming-jobs/',
         body
       );
-      console.log('Job data uploaded:', response.data);
       await uploadPhotos(response.data.job_id);
       updateJobStatus();
     } catch (error) {
@@ -109,7 +110,6 @@ const SubmitSuccessPage = () => {
   };
 
   const uploadPhotos = async (job_id) => {
-    console.log('Uploading photos...');
     const photosToUpload = (photos && Object.values(photos)) || [];
     const extraPhotos =
       standards?.extras
@@ -122,37 +122,16 @@ const SubmitSuccessPage = () => {
 
     const allPhotos = [...photosToUpload, ...extraPhotos];
 
-    await Promise.all(allPhotos.map((photo) => uploadResource(photo, job_id)));
-  };
-
-  const uploadResource = async (photo, job_id) => {
-    if (!photo.uri) {
-      console.error('Photo URI is empty', { photo });
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('photo_type', photo.photoKey);
-    formData.append('job_id', job_id);
-    formData.append('description', photo.description);
-    formData.append('photo', {
-      uri: photo.uri.replace('file://', ''),
-      type: 'image/jpeg',
-      name: `${photo.photoKey}.jpg`,
-    });
-
-    try {
-      const response = await axios.post(
-        'https://test.ecomdata.co.uk/api/upload-photos/',
-        formData,
-        {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        }
-      );
-      console.log('Upload successful:', response.data);
-    } catch (error) {
-      handleUploadError(error);
-    }
+    await Promise.all(
+      allPhotos.map((photo) =>
+        addToQueue({
+          uri: photo.uri,
+          photoKey: photo.photoKey,
+          recordId: job_id,
+          description: photo.description,
+        })
+      )
+    );
   };
 
   const updateJobStatus = async () => {

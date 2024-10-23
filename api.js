@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Image, ScrollView, Alert } from 'react-native';
+import {
+  Text,
+  TextInput,
+  Button,
+  StyleSheet,
+  Image,
+  ScrollView,
+  Alert,
+} from 'react-native';
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
 
-const API_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzEzMjk1NjI0LCJpYXQiOjE3MTMyOTIwMjQsImp0aSI6ImQzZDcyZjA0NzZhODRkYjk5OThmMjQ3MDNmMGM5Yzg2IiwidXNlcl9pZCI6MX0.qaukdmAvtNwjy9DTu1epVxEJylU6QmnRoBLzgcBP_1c';
 const API_ENDPOINT = 'https://test.ecomdata.co.uk/api/upload-photos/';
 
 const App = () => {
@@ -26,9 +33,9 @@ const App = () => {
   };
 
   const handleSubmit = async () => {
-    if(!photo){
-      Alert.alert("NO PHOTOT")
-      return
+    if (!photo) {
+      Alert.alert('NO PHOTOT');
+      return;
     }
     const formData = new FormData();
     formData.append('photo_type', photoType);
@@ -37,22 +44,17 @@ const App = () => {
     formData.append('photo', {
       uri: photo,
       type: 'image/jpeg', // or the correct type based on your photo URI
-      name: 'photo.jpg'
+      name: 'photo.jpg',
     });
 
-
-    console.log('====================================');
-    console.log(photo);
-    console.log('====================================');
     try {
       const response = await axios.post(API_ENDPOINT, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           // 'Authorization': `Bearer ${API_TOKEN}`
-        }
+        },
       });
       Alert.alert('Success', 'Photo uploaded successfully!');
-      console.log('Success:', response.data);
     } catch (error) {
       Alert.alert('Error', `Failed to upload photo. ${error}`);
       console.error('Error uploading image:', error);
@@ -60,9 +62,9 @@ const App = () => {
   };
 
   const handleSubmit_ = async () => {
-    if(!photo){
-      Alert.alert("NO PHOTOT")
-      return
+    if (!photo) {
+      Alert.alert('NO PHOTOT');
+      return;
     }
     const formData = new FormData();
     formData.append('photo_type', photoType);
@@ -72,34 +74,34 @@ const App = () => {
     formData.append('photo', {
       uri: photo,
       type: 'image/jpeg', // or the correct type based on your photo URI
-      name: 'photo.png'
+      name: 'photo.png',
     });
-  
-    console.log('==================photo==================');
-    console.log(photo);
-    console.log('===================photo=================');
-  
+
     try {
       const response = await fetch(API_ENDPOINT, {
         method: 'POST',
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-        body: formData
+        body: formData,
       });
-  
+
       const responseData = await response.json();
-  
+
       if (response.ok) {
         Alert.alert('Success', 'Photo uploaded successfully!');
-        console.log('Success:', responseData);
       } else {
-        Alert.alert('Error', `Failed to upload photo. ${responseData.message || 'Unknown error'}`);
+        Alert.alert(
+          'Error',
+          `Failed to upload photo. ${responseData.message || 'Unknown error'}`
+        );
         console.error('Error uploading image:', responseData);
       }
-  
     } catch (error) {
-      Alert.alert('Error', `Failed to upload photo. ${error.message || 'Unknown error'}`);
+      Alert.alert(
+        'Error',
+        `Failed to upload photo. ${error.message || 'Unknown error'}`
+      );
       console.error('Error uploading image:', error);
     }
   };
@@ -127,7 +129,9 @@ const App = () => {
         multiline
       />
       <Button title="Pick an image from camera roll" onPress={pickImage} />
-      {photo && <Image source={{ uri: photo }} style={{ width: 200, height: 200 }} />}
+      {photo && (
+        <Image source={{ uri: photo }} style={{ width: 200, height: 200 }} />
+      )}
       <Button title="Upload Photo" onPress={handleSubmit} />
     </ScrollView>
   );
@@ -136,18 +140,18 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   label: {
     fontSize: 16,
-    marginVertical: 8
+    marginVertical: 8,
   },
   input: {
     width: '100%',
     borderWidth: 1,
     padding: 10,
-    marginBottom: 10
-  }
+    marginBottom: 10,
+  },
 });
 
 export default App;
