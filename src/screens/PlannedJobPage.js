@@ -107,8 +107,6 @@ function PlannedJobPage() {
       jobId,
     ]);
 
-    console.log({ jobExists });
-
     if (jobExists.length > 0) {
       setTakeOverId(null);
       setOpenTakenWarningModal(true);
@@ -192,9 +190,27 @@ function PlannedJobPage() {
       jobID: jobId,
     }));
 
+    await updateJobStatus(jobId);
+
     if (parsedJobData.jobType) {
       startFlow({ newFlowType: parsedJobData.jobType });
     }
+  };
+
+  const updateJobStatus = async (jobId) => {
+    await axios
+      .patch('https://test.ecomdata.co.uk/job-update/update_job/', {
+        job_id: jobId,
+      })
+      .then((response) => {
+        setPlannedJobs((prevJobs) =>
+          prevJobs.filter((job) => job.id !== jobId)
+        );
+        console.log('Job status updated', response);
+      })
+      .catch((error) => {
+        console.error('Error updating job status:', error);
+      });
   };
 
   const insertShapedDataIntoJobsTable = async (shapedData) => {

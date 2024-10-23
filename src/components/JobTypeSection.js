@@ -128,9 +128,9 @@ function JobTypeSection() {
             </View>
           </View>
           <View style={styles.jobInProgressActions}>
-            <TouchableOpacity style={styles.cancelButton} onPress={resetState}>
+            {/* <TouchableOpacity style={styles.cancelButton} onPress={resetState}>
               <Text>Cancel</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <TouchableOpacity
               style={styles.continueButton}
               onPress={() =>
