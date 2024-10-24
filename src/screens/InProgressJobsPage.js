@@ -12,37 +12,8 @@ import JobCard from '../components/JobCard';
 import { useProgressNavigation } from '../context/ProgressiveFlowRouteProvider';
 import { useSQLiteContext } from 'expo-sqlite/next';
 import { useFormStateContext } from '../context/AppContext';
-
-const fieldsToParse = [
-  'siteDetails',
-  'siteQuestions',
-  'photos',
-  'streams',
-  'meterDetails',
-  'kioskDetails',
-  'ecvDetails',
-  'movDetails',
-  'regulatorDetails',
-  'standards',
-  'meterDetailsTwo',
-  'additionalMaterials',
-  'dataloggerDetails',
-  'dataLoggerDetailsTwo',
-  'maintenanceDetails',
-  'correctorDetails',
-  'correctorDetailsTwo',
-  'chatterBoxDetails',
-  'navigation',
-];
-
-const safeParse = (jsonString, fallbackValue) => {
-  try {
-    return !!jsonString ? JSON.parse(jsonString) : fallbackValue;
-  } catch (error) {
-    console.error('Error parsing JSON string:', error, jsonString);
-    return fallbackValue;
-  }
-};
+import { fieldsToParse } from '../utils/constant';
+import { safeParse } from '../utils/nagivation-routes/helpers';
 
 const JobsTable = () => {
   const db = useSQLiteContext();

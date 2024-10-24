@@ -22,6 +22,8 @@ const JobCard = ({ loading, item, handleOnCardClick, buttonConfig }) => {
   const parsedSiteDetails = parseSafely(item?.siteDetails || item);
   const parsedNavigation = parseSafely(item?.navigation, []);
 
+  console.log({ item });
+
   const mprn = item?.MPRN ?? parsedSiteDetails.mprn ?? 'N/A';
   const lastScreen = parsedNavigation[item?.lastNavigationIndex]?.screen;
   const startDate = item?.startDate && new Date(item?.startDate).toDateString();
@@ -62,9 +64,18 @@ const JobCard = ({ loading, item, handleOnCardClick, buttonConfig }) => {
             <Text style={styles.textBold}>End:</Text> {endDate}
           </Text>
         )}
-        {item?.planned_date && (
+        {item?.job_details?.date_carried_out && (
           <Text>
-            <Text style={styles.textBold}>Planned:</Text> {item?.planned_date}
+            <Text style={styles.textBold}>Planned:</Text>
+            {new Date(item?.job_details?.date_carried_out).toDateString()}
+          </Text>
+        )}
+      </View>
+      <View>
+        {item?.mprn?.postcode && (
+          <Text>
+            <Text style={styles.textBold}>Postcode:</Text>{' '}
+            {item?.mprn?.postcode}
           </Text>
         )}
       </View>
@@ -136,3 +147,81 @@ const styles = {
 };
 
 export default JobCard;
+
+const hede = {
+  item: {
+    assigned_ami: null,
+    assigned_engineer: 1,
+    assigned_surveyor: null,
+    id: 258,
+    job_details: {
+      AMRDetails: null,
+      CorrectorDetails: null,
+      MeterDetails: [Object],
+      additionalMaterials: null,
+      chatterboxDetails: null,
+      created_at: '2024-09-05T23:23:48.541515+01:00',
+      created_by: 33,
+      date_carried_out: '2024-09-05T23:23:48.538375+01:00',
+      ecvDetails: [Object],
+      engineer: 33,
+      id: 294,
+      job_id: 87,
+      job_notes_old: '',
+      job_status: 'Complete',
+      job_type: 'Survey',
+      kioskDetails: [Object],
+      last_updated: '2024-09-05T23:23:48.541503+01:00',
+      maintenanceQuestions: null,
+      market_sector: '',
+      movDetails: [Object],
+      mprn: '1127502705',
+      notes_old: '',
+      planned_date: null,
+      reason_code: '',
+      rebook: null,
+      regulatorDetails: null,
+      siteQuestions: [Object],
+      standards: [Object],
+      streams: null,
+      trans_ref: null,
+      transaction_status: '',
+    },
+    job_type: 'MEX & AMR',
+    meter_size: 'ROTARY',
+    mprn: {
+      access_codes: '',
+      address_1: 'Charles Bowman Industrial Estate',
+      address_2: '',
+      address_3: '',
+      building: 'Strathmore House',
+      county: 'Angus',
+      created_at: '2024-08-16T08:31:23.464513+01:00',
+      email: '',
+      email_2: '',
+      first_name: 'Gary',
+      gas_supplier: 40,
+      gas_supplier_ref: 810,
+      grid_reference: null,
+      last_updated: '2024-09-05T23:23:48.488746+01:00',
+      micro_business: 'Yes',
+      mprn: '1127502705',
+      notes_old: '',
+      postcode: 'DD4 9UB',
+      pressure: 'LP',
+      site_name: 'Start Group',
+      supplier_ref: 'CG1846672',
+      surname: '',
+      telephone: '07860715310',
+      telephone_2: '',
+      three_words: null,
+      title: 'Mr',
+      town: 'Dundee',
+    },
+    other_job: 294,
+    pressure_tier: 'LP',
+    status: 'surveyed',
+    survey: 294,
+    survey_required: false,
+  },
+};

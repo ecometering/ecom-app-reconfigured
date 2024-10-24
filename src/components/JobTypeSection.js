@@ -11,37 +11,9 @@ import Text from './Text';
 import { useFormStateContext } from '../context/AppContext';
 import { useProgressNavigation } from '../context/ProgressiveFlowRouteProvider';
 import { useSQLiteContext } from 'expo-sqlite/next';
+import { fieldsToParse } from '../utils/constant';
+import { safeParse } from '../utils/nagivation-routes/helpers';
 
-const safeParse = (jsonString, fallbackValue) => {
-  try {
-    return !!jsonString ? JSON.parse(jsonString) : fallbackValue;
-  } catch (error) {
-    console.error('Error parsing JSON string:', error, jsonString);
-    return fallbackValue;
-  }
-};
-
-const fieldsToParse = [
-  'siteDetails',
-  'siteQuestions',
-  'photos',
-  'streams',
-  'meterDetails',
-  'kioskDetails',
-  'ecvDetails',
-  'movDetails',
-  'regulatorDetails',
-  'standards',
-  'meterDetailsTwo',
-  'additionalMaterials',
-  'dataloggerDetails',
-  'dataLoggerDetailsTwo',
-  'maintenanceDetails',
-  'correctorDetails',
-  'correctorDetailsTwo',
-  'chatterBoxDetails',
-  'navigation',
-];
 
 function JobTypeSection() {
   const { startFlow } = useProgressNavigation();
