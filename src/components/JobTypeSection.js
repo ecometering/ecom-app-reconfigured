@@ -1,5 +1,7 @@
 import { View, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
-import React, { useEffect, useState } from 'react';
+
+import React, { useCallback, useState } from 'react';
+
 
 // Utils and Constants
 import { PrimaryColors } from '../theme/colors';
@@ -12,36 +14,10 @@ import { useFormStateContext } from '../context/AppContext';
 import { useProgressNavigation } from '../context/ProgressiveFlowRouteProvider';
 import { useSQLiteContext } from 'expo-sqlite/next';
 
-const safeParse = (jsonString, fallbackValue) => {
-  try {
-    return !!jsonString ? JSON.parse(jsonString) : fallbackValue;
-  } catch (error) {
-    console.error('Error parsing JSON string:', error, jsonString);
-    return fallbackValue;
-  }
-};
+import { fieldsToParse } from '../utils/constant';
+import { safeParse } from '../utils/nagivation-routes/helpers';
+import { useFocusEffect } from '@react-navigation/native';
 
-const fieldsToParse = [
-  'siteDetails',
-  'siteQuestions',
-  'photos',
-  'streams',
-  'meterDetails',
-  'kioskDetails',
-  'ecvDetails',
-  'movDetails',
-  'regulatorDetails',
-  'standards',
-  'meterDetailsTwo',
-  'additionalMaterials',
-  'dataloggerDetails',
-  'dataLoggerDetailsTwo',
-  'maintenanceDetails',
-  'correctorDetails',
-  'correctorDetailsTwo',
-  'chatterBoxDetails',
-  'navigation',
-];
 
 function JobTypeSection() {
   const { startFlow } = useProgressNavigation();
@@ -75,6 +51,7 @@ function JobTypeSection() {
           jobID: jobs[0].id,
         }));
       }
+
       if (jobs.length > 0) {
         setIsThereInProgressJob(jobs[0]);
       } else {
@@ -85,9 +62,13 @@ function JobTypeSection() {
     }
   };
 
-  useEffect(() => {
-    getInProgressJobs();
-  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      getInProgressJobs();
+    }, [])
+  );
+
 
   const handleJobTypeSelection = (jobType) => {
     startNewJob(jobType);

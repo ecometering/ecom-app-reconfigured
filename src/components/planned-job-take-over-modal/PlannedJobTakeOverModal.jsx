@@ -1,112 +1,29 @@
-import axios from 'axios';
+import { useState } from 'react';
 import {
   View,
-
   Modal,
-
-
-  FlatList,
-  StyleSheet,
-  SafeAreaView,
   Text as RNText,
   TouchableOpacity,
+  StyleSheet,
 } from 'react-native';
-import React, { useState, useEffect } from 'react';
-import { useNavigation } from '@react-navigation/native';
-
-import Header from '../components/Header';
-import JobCard from '../components/JobCard';
-import { PrimaryColors } from '../theme/colors';
-import { useAuth } from '../context/AuthContext';
-import { useFormStateContext } from '../context/AppContext';
-import { useProgressNavigation } from '../context/ProgressiveFlowRouteProvider';
 import { useSQLiteContext } from 'expo-sqlite/next';
+import { useFormStateContext } from '../../context/AppContext';
+import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
+import { fieldsToParse } from '../../utils/constant';
+import { safeParse } from '../../utils/nagivation-routes/helpers';
+import { PrimaryColors } from '../../theme/colors';
 
-const fieldsToParse = [
-  'siteDetails',
-  'siteQuestions',
-  'photos',
-  'streams',
-  'meterDetails',
-  'kioskDetails',
-  'ecvDetails',
-  'movDetails',
-  'regulatorDetails',
-  'standards',
-  'meterDetailsTwo',
-  'additionalMaterials',
-  'dataloggerDetails',
-  'dataLoggerDetailsTwo',
-  'maintenanceDetails',
-  'correctorDetails',
-  'correctorDetailsTwo',
-  'chatterBoxDetails',
-  'navigation',
-];
-
-const safeParse = (jsonString, fallbackValue) => {
-  try {
-    return !!jsonString ? JSON.parse(jsonString) : fallbackValue;
-  } catch (error) {
-    console.error('Error parsing JSON string:', error, jsonString);
-    return fallbackValue;
-  }
-};
-
-import PlannedJobTakeOverModal from '../components/planned-job-take-over-modal/PlannedJobTakeOverModal';
-
-function PlannedJobPage() {
+const PlannedJobTakeOverModal = ({
+  plannedJobs,
+  setPlannedJobs,
+  takeOverId,
+  setTakeOverId,
+}) => {
   const db = useSQLiteContext();
-  const navigation = useNavigation();
-  const { authState } = useAuth();
-  const [plannedJobs, setPlannedJobs] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
   const { setState } = useFormStateContext();
   const { startFlow } = useProgressNavigation();
 
-  const [takeOverId, setTakeOverId] = useState(null);
   const [openTakenWarningModal, setOpenTakenWarningModal] = useState(false);
-
-  const [takeOverId, setTakeOverId] = useState(null);
-
-  useEffect(() => {
-    const fetchPlannedJobs = async () => {
-      setIsLoading(true);
-      setError(null);
-
-      if (!authState.token) {
-        setError('Authentication token is not available.');
-        setIsLoading(false);
-        return;
-      }
-
-      axios
-        .get('https://test.ecomdata.co.uk/api/jobs/')
-        .then((response) => {
-          const { data } = response;
-          console.log({ data: data[0].mprn });
-          if (data && data.length > 0) {
-            setPlannedJobs(data);
-          } else {
-            setError('No planned jobs found');
-          }
-        })
-        .catch((error) => {
-          setError(
-            `Error loading data: ${
-              error.response ? error.response.data : error.message
-            }`
-          );
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    };
-
-    fetchPlannedJobs();
-  }, [authState.token]);
-
 
   const handleJobTakeOver = async (jobId) => {
     const job = plannedJobs.find((job) => job.id === jobId);
@@ -214,7 +131,6 @@ function PlannedJobPage() {
         setPlannedJobs((prevJobs) =>
           prevJobs.filter((job) => job.id !== jobId)
         );
-        console.log('Job status updated', response);
       })
       .catch((error) => {
         console.error('Error updating job status:', error);
@@ -223,8 +139,8 @@ function PlannedJobPage() {
 
   const insertShapedDataIntoJobsTable = async (shapedData) => {
     const column_data = await db.getAllAsync(`
-      PRAGMA table_info(Jobs);
-    `);
+          PRAGMA table_info(Jobs);
+        `);
     const columns = column_data.map((col) => col.name).join(', ');
     const placeholders = column_data.map(() => '?').join(', ');
     const values = column_data.map((col) => shapedData[col.name] || null);
@@ -233,72 +149,8 @@ function PlannedJobPage() {
     setTakeOverId(null);
   };
 
-
-  const renderEmptyComponent = () => {
-    if (isLoading) {
-      return (
-        <View style={styles.center}>
-          <RNText>Loading...</RNText>
-        </View>
-      );
-    }
-    if (error) {
-      return (
-        <View style={styles.center}>
-          <RNText>{error}</RNText>
-        </View>
-      );
-    }
-    return (
-      <View style={styles.center}>
-        <RNText>No planned jobs</RNText>
-      </View>
-    );
-  };
-
   return (
-    <SafeAreaView style={styles.body}>
-      <Header
-        hasMenuButton={false}
-        hasLeftBtn={true}
-        hasCenterText={true}
-        hasRightBtn={false}
-        centerText={'Planned Jobs'}
-        leftBtnPressed={() => navigation.goBack()}
-      />
-      <FlatList
-        data={plannedJobs}
-        renderItem={({ item, index }) => {
-          return (
-            <JobCard
-              item={item}
-              index={index}
-              handleOnCardClick={() => setTakeOverId(item.id)}
-              buttonConfig={[
-                {
-                  text: 'Take over the job',
-                  backgroundColor: PrimaryColors.Blue,
-                  textColor: PrimaryColors.White,
-                  onPress: () => setTakeOverId(item.id),
-                },
-              ]}
-            />
-          );
-        }}
-        keyExtractor={(item) => item.id.toString()}
-        ListEmptyComponent={renderEmptyComponent}
-        style={{
-          padding: 10,
-          gap: 10,
-        }}
-
-      />
-      <PlannedJobTakeOverModal
-        takeOverId={takeOverId}
-        setTakeOverId={setTakeOverId}
-        plannedJobs={plannedJobs}
-        setPlannedJobs={setPlannedJobs}
-
+    <View>
       <Modal visible={!!takeOverId} transparent={true}>
         <View style={styles.center}>
           <View
@@ -410,9 +262,9 @@ function PlannedJobPage() {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   body: {
@@ -433,4 +285,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PlannedJobPage;
+export default PlannedJobTakeOverModal;

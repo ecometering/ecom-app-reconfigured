@@ -1,41 +1,28 @@
+
 import React, { useState } from 'react';
 import { Text, TouchableOpacity, View, StyleSheet, Modal } from 'react-native';
+
+import { omit } from 'lodash';
+
+
+
+// Components
+
 import JobCard from '../JobCard';
+import PlannedJobTakeOverModal from '../planned-job-take-over-modal/PlannedJobTakeOverModal';
+
+// Context
 import { useFormStateContext } from '../../context/AppContext';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 import { omit } from 'lodash';
 import { useSQLiteContext } from 'expo-sqlite/next';
 
-const fieldsToParse = [
-  'siteDetails',
-  'siteQuestions',
-  'photos',
-  'streams',
-  'meterDetails',
-  'kioskDetails',
-  'ecvDetails',
-  'movDetails',
-  'regulatorDetails',
-  'standards',
-  'meterDetailsTwo',
-  'additionalMaterials',
-  'dataloggerDetails',
-  'dataLoggerDetailsTwo',
-  'maintenanceDetails',
-  'correctorDetails',
-  'correctorDetailsTwo',
-  'chatterBoxDetails',
-  'navigation',
-];
 
-const safeParse = (jsonString, fallbackValue) => {
-  try {
-    return !!jsonString ? JSON.parse(jsonString) : fallbackValue;
-  } catch (error) {
-    console.error('Error parsing JSON string:', error, jsonString);
-    return fallbackValue;
-  }
-};
+
+// Utils
+import { fieldsToParse } from '../../utils/constant';
+import { safeParse } from '../../utils/nagivation-routes/helpers';
+
 
 export default function HomeJobsListing({
   title,
@@ -49,7 +36,10 @@ export default function HomeJobsListing({
   const { setState } = useFormStateContext();
   const { startFlow } = useProgressNavigation();
   const [takeOverId, setTakeOverId] = useState(null);
+
   const [openTakenWarningModal, setOpenTakenWarningModal] = useState(false);
+
+
 
   const handleRowClick = async (jobId) => {
     try {
@@ -84,6 +74,7 @@ export default function HomeJobsListing({
       console.error('Error loading job:', error);
     }
   };
+
 
   const handleJobTakeOver = async (jobId) => {
     try {
@@ -199,6 +190,7 @@ export default function HomeJobsListing({
     }
   };
 
+
   if (!data) {
     console.error('Data is undefined in HomeJobsListing');
     return null;
@@ -233,6 +225,7 @@ export default function HomeJobsListing({
           );
         })}
       </View>
+
       <Modal visible={!!takeOverId} transparent={true}>
         <View style={styles.center}>
           <View style={styles.modalContent}>
@@ -269,6 +262,14 @@ export default function HomeJobsListing({
           </View>
         </View>
       </Modal>
+
+      <PlannedJobTakeOverModal
+        plannedJobs={data}
+        setPlannedJobs={() => {}}
+        takeOverId={takeOverId}
+        setTakeOverId={setTakeOverId}
+      />
+
     </View>
   );
 }

@@ -13,41 +13,14 @@ import { useProgressNavigation } from '../context/ProgressiveFlowRouteProvider';
 import { useSQLiteContext } from 'expo-sqlite/next';
 import { useFormStateContext } from '../context/AppContext';
 
-const fieldsToParse = [
-  'siteDetails',
-  'siteQuestions',
-  'photos',
-  'streams',
-  'meterDetails',
-  'kioskDetails',
-  'ecvDetails',
-  'movDetails',
-  'regulatorDetails',
-  'standards',
-  'meterDetailsTwo',
-  'additionalMaterials',
-  'dataloggerDetails',
-  'dataLoggerDetailsTwo',
-  'maintenanceDetails',
-  'correctorDetails',
-  'correctorDetailsTwo',
-  'chatterBoxDetails',
-  'navigation',
-];
+import { fieldsToParse } from '../utils/constant';
+import { safeParse } from '../utils/nagivation-routes/helpers';
 
-const safeParse = (jsonString, fallbackValue) => {
-  try {
-    return !!jsonString ? JSON.parse(jsonString) : fallbackValue;
-  } catch (error) {
-    console.error('Error parsing JSON string:', error, jsonString);
-    return fallbackValue;
-  }
-};
 
 const JobsTable = () => {
   const db = useSQLiteContext();
   const navigation = useNavigation();
-  const { setState } = useFormStateContext();
+  const { setState, resetState } = useFormStateContext();
   const { startFlow } = useProgressNavigation();
   const route = useRoute();
 
@@ -67,6 +40,9 @@ const JobsTable = () => {
         'SELECT * FROM jobs WHERE jobStatus = ?',
         ['In Progress']
       );
+      if (result.length <= 0) {
+        resetState();
+      }
       setJobs(result);
       setLoading(false);
     } catch (error) {

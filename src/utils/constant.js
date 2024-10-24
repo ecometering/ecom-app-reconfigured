@@ -139,19 +139,19 @@ export const ReasonCode = [
   { label: 'Emergency', value: 3 },
   { label: 'New Connection', value: 4 },
 ];
-export const AbortReason =[
-  { "label": "Animal prevents access", "value": "APATS" },
-  { "label": "Refused Access", "value": "CRATS" },
-  { "label": "Job already done", "value": "JFTBD" },
-  { "label": "Meter tamper", "value": "MTFOS" },
-  { "label": "No Access", "value": "NOACC" },
-  { "label": "Other equipment required", "value": "OAEMR" },
-  { "label": "Obstructed Access", "value": "OBSAC" },
-  { "label": "Other reason", "value": "OTHER" },
-  { "label": "Property Unoccupied", "value": "PUNOC" },
-  { "label": "Unsafe access / safety grounds", "value": "UADOR" },
-  { "label": "Unable to turn Emergency Valve", "value": "UTTEV" }
-]
+export const AbortReason = [
+  { label: 'Animal prevents access', value: 'APATS' },
+  { label: 'Refused Access', value: 'CRATS' },
+  { label: 'Job already done', value: 'JFTBD' },
+  { label: 'Meter tamper', value: 'MTFOS' },
+  { label: 'No Access', value: 'NOACC' },
+  { label: 'Other equipment required', value: 'OAEMR' },
+  { label: 'Obstructed Access', value: 'OBSAC' },
+  { label: 'Other reason', value: 'OTHER' },
+  { label: 'Property Unoccupied', value: 'PUNOC' },
+  { label: 'Unsafe access / safety grounds', value: 'UADOR' },
+  { label: 'Unable to turn Emergency Valve', value: 'UTTEV' },
+];
 export const MPRN_STATUS = [
   { label: 'Agent aborts', value: 1 },
   { label: 'Completed', value: 2 },
@@ -178,7 +178,7 @@ export const METER_TYPE_CHOICES = [
   { value: '4', label: 'T-TIN CASE DIAPHRAGM' },
   { value: '5', label: 'U-ULTRASONIC' },
   { value: '6', label: 'T-TURBINE' },
-  {value:'7',label:'S-SYNTHETIC'},
+  { value: '7', label: 'S-SYNTHETIC' },
   { value: '8', label: 'Unknown' },
 ];
 
@@ -203,6 +203,31 @@ export const unitH = 1;
  * IsAndroid
  */
 export const isIos = Platform.OS === 'ios';
+
+/**
+ * DB to state mapping
+ */
+export const fieldsToParse = [
+  'siteDetails',
+  'siteQuestions',
+  'photos',
+  'streams',
+  'meterDetails',
+  'kioskDetails',
+  'ecvDetails',
+  'movDetails',
+  'regulatorDetails',
+  'standards',
+  'meterDetailsTwo',
+  'additionalMaterials',
+  'dataloggerDetails',
+  'dataLoggerDetailsTwo',
+  'maintenanceDetails',
+  'correctorDetails',
+  'correctorDetailsTwo',
+  'chatterBoxDetails',
+  'navigation',
+];
 
 /**
  * Default Settings
