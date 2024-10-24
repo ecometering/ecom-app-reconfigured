@@ -131,7 +131,6 @@ const PlannedJobTakeOverModal = ({
         setPlannedJobs((prevJobs) =>
           prevJobs.filter((job) => job.id !== jobId)
         );
-        console.log('Job status updated', response);
       })
       .catch((error) => {
         console.error('Error updating job status:', error);

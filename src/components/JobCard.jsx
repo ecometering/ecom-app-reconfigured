@@ -22,8 +22,6 @@ const JobCard = ({ loading, item, handleOnCardClick, buttonConfig }) => {
   const parsedSiteDetails = parseSafely(item?.siteDetails || item);
   const parsedNavigation = parseSafely(item?.navigation, []);
 
-  console.log({ item });
-
   const mprn = item?.MPRN ?? parsedSiteDetails.mprn ?? 'N/A';
   const lastScreen = parsedNavigation[item?.lastNavigationIndex]?.screen;
   const startDate = item?.startDate && new Date(item?.startDate).toDateString();

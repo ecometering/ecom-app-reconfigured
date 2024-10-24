@@ -18,7 +18,7 @@ import { safeParse } from '../utils/nagivation-routes/helpers';
 const JobsTable = () => {
   const db = useSQLiteContext();
   const navigation = useNavigation();
-  const { setState } = useFormStateContext();
+  const { setState, resetState } = useFormStateContext();
   const { startFlow } = useProgressNavigation();
   const route = useRoute();
 
@@ -38,6 +38,9 @@ const JobsTable = () => {
         'SELECT * FROM jobs WHERE jobStatus = ?',
         ['In Progress']
       );
+      if (result.length <= 0) {
+        resetState();
+      }
       setJobs(result);
       setLoading(false);
     } catch (error) {

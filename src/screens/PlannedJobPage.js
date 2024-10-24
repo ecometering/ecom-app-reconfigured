@@ -40,7 +40,6 @@ function PlannedJobPage() {
         .get('https://test.ecomdata.co.uk/api/jobs/')
         .then((response) => {
           const { data } = response;
-          console.log({ data: data[0].mprn });
           if (data && data.length > 0) {
             setPlannedJobs(data);
           } else {
