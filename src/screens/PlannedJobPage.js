@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
-  FlatList,
-  SafeAreaView,
-  StyleSheet,
   View,
+  FlatList,
+  StyleSheet,
+  SafeAreaView,
   Text as RNText,
 } from 'react-native';
-import { PrimaryColors, Transparents } from '../theme/colors';
-import { EcomPressable as Button } from '../components/ImageButton';
-import Header from '../components/Header';
+import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import axios from 'axios';
+
+import Header from '../components/Header';
+import JobCard from '../components/JobCard';
+import { PrimaryColors } from '../theme/colors';
 import { useAuth } from '../context/AuthContext';
+
+import PlannedJobTakeOverModal from '../components/planned-job-take-over-modal/PlannedJobTakeOverModal';
 
 function PlannedJobPage() {
   const navigation = useNavigation();
@@ -20,12 +23,12 @@ function PlannedJobPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const [takeOverId, setTakeOverId] = useState(null);
+
   useEffect(() => {
     const fetchPlannedJobs = async () => {
       setIsLoading(true);
       setError(null);
-
-      console.log('Using token for API request:', authState.token); // Debug: Check what token is being used
 
       if (!authState.token) {
         setError('Authentication token is not available.');
@@ -36,7 +39,6 @@ function PlannedJobPage() {
       axios
         .get('https://test.ecomdata.co.uk/api/jobs/')
         .then((response) => {
-          console.log({ response });
           const { data } = response;
           if (data && data.length > 0) {
             setPlannedJobs(data);
@@ -45,11 +47,6 @@ function PlannedJobPage() {
           }
         })
         .catch((error) => {
-          console.log({ error });
-          console.log(
-            'Error fetching jobs:',
-            error.response ? error.response.data : error.message
-          );
           setError(
             `Error loading data: ${
               error.response ? error.response.data : error.message
@@ -63,22 +60,6 @@ function PlannedJobPage() {
 
     fetchPlannedJobs();
   }, [authState.token]);
-
-  const renderItem = ({ item, index }) => {
-    const handleItemClick = () => {
-      navigation.navigate('SiteDetailsPage', { jobType: item.JobType });
-    };
-    const rowColor =
-      index % 2 === 0 ? Transparents.SandColor2 : Transparents.Clear;
-
-    return (
-      <Button key={item.id.toString()} onPress={handleItemClick}>
-        <View style={{ ...styles.row, backgroundColor: rowColor }}>
-          {/* Job Item Render Logic */}
-        </View>
-      </Button>
-    );
-  };
 
   const renderEmptyComponent = () => {
     if (isLoading) {
@@ -114,11 +95,35 @@ function PlannedJobPage() {
       />
       <FlatList
         data={plannedJobs}
-        renderItem={renderItem}
+        renderItem={({ item, index }) => {
+          return (
+            <JobCard
+              item={item}
+              index={index}
+              handleOnCardClick={() => setTakeOverId(item.id)}
+              buttonConfig={[
+                {
+                  text: 'Take over the job',
+                  backgroundColor: PrimaryColors.Blue,
+                  textColor: PrimaryColors.White,
+                  onPress: () => setTakeOverId(item.id),
+                },
+              ]}
+            />
+          );
+        }}
         keyExtractor={(item) => item.id.toString()}
         ListEmptyComponent={renderEmptyComponent}
-        ListHeaderComponent={<View style={styles.spacer} />}
-        ListFooterComponent={<View style={styles.spacer} />}
+        style={{
+          padding: 10,
+          gap: 10,
+        }}
+      />
+      <PlannedJobTakeOverModal
+        takeOverId={takeOverId}
+        setTakeOverId={setTakeOverId}
+        plannedJobs={plannedJobs}
+        setPlannedJobs={setPlannedJobs}
       />
     </SafeAreaView>
   );
@@ -127,12 +132,11 @@ function PlannedJobPage() {
 const styles = StyleSheet.create({
   body: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: 20,
   },
   row: {
     flexDirection: 'row',
+    padding: 20,
   },
   center: {
     flex: 1,

@@ -1,46 +1,97 @@
-import { ActivityIndicator, View } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
+import { ActivityIndicator, Image, View } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 
-// Context
+// Contexts
 import { AppContext } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
 import { NavigationProvider } from '../context/ProgressiveFlowRouteProvider';
 
-// import screens from "..screens"
-import CompletedJobsPage from '../screens/CompletedJobsPage';
+// Import screens
 import HomePage from '../screens/HomePage';
+import HelpGuidesPage from '../screens/HelpGuidesPage';
+import LoginPage from '../screens/LoginPage';
+import CompletedJobsPage from '../screens/CompletedJobsPage';
 import InProgressJobsPage from '../screens/InProgressJobsPage';
-// import JobTypePage from '../screens/JobTypePage';
 import PlannedJobPage from '../screens/PlannedJobPage';
 import SubmitSuccessPage from '../screens/SubmitSuccessPage';
 import AbortPage from '../screens/jobs/AbortPage';
-
-// calendar imports
-import LoginPage from '../screens/LoginPage';
-
-//import standards inport from ../screens/standards
-import ExtraPhotoPage from '../screens/standards/ExtraPhotoPage';
-import GasSafeWarningPage from '../screens/standards/GasSafeWarningPage';
-import RiddorReportPage from '../screens/standards/RiddorReportPage';
-import SnClientInfoPage from '../screens/standards/SnClientInfoPage';
-import StandardPage from '../screens/standards/StandardPage';
 import MeterDetailsPage from '../screens/jobs/MeterDetailsPage';
-
-//  jobs pages imports
 import SiteDetailsPage from '../screens/jobs/SiteDetailsPage';
 import SiteQuestionsPage from '../screens/jobs/SiteQuestionsPage';
-
-// generic photo page
 import GenericPhotoPage from '../screens/jobs/GenericPhotoPage';
-
-// navigation stacks
+import StandardPage from '../screens/standards/StandardPage';
+import RiddorReportPage from '../screens/standards/RiddorReportPage';
+import SnClientInfoPage from '../screens/standards/SnClientInfoPage';
+import GasSafeWarningPage from '../screens/standards/GasSafeWarningPage';
+import ExtraPhotoPage from '../screens/standards/ExtraPhotoPage';
 import CorrectorDetailsPage from '../screens/jobs/CorrectorDetailsPage';
+import PdfViewerPage from '../screens/PdfViewerPage';
 import { unitedFlowNavigators } from './flowNavigatorsUnited';
 
-const Stack = createStackNavigator();
+// Assets
+import fileIcon from '../../assets/images/folder.png';
+import homeIcon from '../../assets/images/home.png';
 
+// Navigation stacks
+const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
+
+// Bottom Tab Navigator with Home and Help Guides
+const BottomTabNavigator = () => {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused }) => {
+          let iconSource;
+
+          if (route.name === 'Home') {
+            iconSource = homeIcon;
+          } else if (route.name === 'Help Guides') {
+            iconSource = fileIcon;
+          }
+
+          // Return the icon component
+          return (
+            <Image
+              source={iconSource}
+              style={{
+                width: 24,
+                height: 24,
+                tintColor: focused ? '#007AFF' : '#8e8e8f',
+              }}
+              resizeMode="contain"
+            />
+          );
+        },
+        tabBarActiveTintColor: '#007AFF',
+        tabBarInactiveTintColor: '#8e8e8f',
+        tabBarShowLabel: false, // Disable labels globally
+      })}
+    >
+      <Tab.Screen
+        options={{
+          tabBarLabel: () => null, // Hide the label for Home
+          headerShown: false, // Hide the header title for Home
+        }}
+        name="Home"
+        component={HomePage}
+      />
+      <Tab.Screen
+        options={{
+          tabBarLabel: () => null, // Hide the label for Home
+          headerShown: false, // Hide the header title for Home
+        }}
+        name="Help Guides"
+        component={HelpGuidesPage}
+      />
+    </Tab.Navigator>
+  );
+};
+
+// Main Navigator Component
 const MainNavigator = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { siteDetails, jobType } = useContext(AppContext);
@@ -49,6 +100,7 @@ const MainNavigator = () => {
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
+        // Your login check logic here (e.g., check for token)
       } catch (err) {
         console.log('Error checking token: ', err);
       } finally {
@@ -59,7 +111,7 @@ const MainNavigator = () => {
     checkLoginStatus();
   }, []);
 
-  if (isLoading === null) {
+  if (isLoading) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator size="large" />
@@ -72,30 +124,30 @@ const MainNavigator = () => {
       <NavigationProvider>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {authState?.authenticated ? (
-            <Stack.Group>
-              <Stack.Screen name="Home" component={HomePage} />
-              <Stack.Screen
-                name="Corrector Details"
-                component={CorrectorDetailsPage}
-              />
-              <Stack.Screen name="PlannedJobPage" component={PlannedJobPage} />
-              <Stack.Screen
-                name="InProgressJobsPage"
-                component={InProgressJobsPage}
-              />
+            <>
+              <Stack.Screen name="Main" component={BottomTabNavigator} />
               <Stack.Screen
                 name="CompletedJobsPage"
                 component={CompletedJobsPage}
               />
               <Stack.Screen
-                name="test"
+                name="InProgressJobsPage"
+                component={InProgressJobsPage}
+              />
+              <Stack.Screen name="PlannedJobPage" component={PlannedJobPage} />
+              <Stack.Screen
+                name="SubmitSuccessPage"
+                component={SubmitSuccessPage}
+              />
+              <Stack.Screen name="AbortPage" component={AbortPage} />
+              <Stack.Screen
+                name="MeterDetailsPage"
                 component={MeterDetailsPage}
                 initialParams={{
                   title: 'DataLoggerDetailsPage',
                   nextScreen: 'EcvPage',
                 }}
               />
-
               <Stack.Screen
                 name="SiteDetailsPage"
                 component={SiteDetailsPage}
@@ -127,53 +179,13 @@ const MainNavigator = () => {
                 name="RiddorReportPage"
                 component={RiddorReportPage}
               />
-              {/* <Stack.Screen
-                name="SnClientInfoPage"
-                component={SnClientInfoPage}
-              /> */}
               <Stack.Screen
                 name="SnClientInfoPage"
-                component={GenericPhotoPage}
+                component={SnClientInfoPage}
               />
               <Stack.Screen
                 name="GasSafeWarningPage"
                 component={GasSafeWarningPage}
-              />
-              <Stack.Screen
-                name="SiteSurveyDrawing"
-                component={GenericPhotoPage}
-                initialParams={{
-                  title: 'Site Survey Drawing',
-                  photoKey: 'siteSurveyDrawing',
-                  nextScreen:
-                    jobType === 'Survey'
-                      ? 'ExtraPhotoPage'
-                      : 'SiteQuestionsPage',
-                  progress: 2,
-                }}
-              />
-              <Stack.Screen
-                key="CompositeLabelPhoto"
-                name="CompositeLabelPhoto"
-                component={GenericPhotoPage}
-                initialParams={{
-                  title: 'Composite label',
-                  photoKey: 'compositeLabel',
-                  nextScreen: 'DSEARLabelPhoto',
-                }}
-              />
-              <Stack.Screen
-                key="DSEARLabelPhoto"
-                name="DSEARLabelPhoto"
-                component={GenericPhotoPage}
-                initialParams={{
-                  title: 'DSEAR label',
-                  photoKey: 'dsearLabel',
-                  nextScreen:
-                    jobType === 'Survey'
-                      ? 'SiteSurveyDrawing'
-                      : 'ExtraPhotoPage',
-                }}
               />
               <Stack.Screen
                 name="ExtraPhotoPage"
@@ -184,11 +196,11 @@ const MainNavigator = () => {
                   title: 'Extra Photos ',
                 }}
               />
-              <Stack.Screen name="AbortPage" component={AbortPage} />
               <Stack.Screen
-                name="SubmitSuccessPage"
-                component={SubmitSuccessPage}
+                name="CorrectorDetailsPage"
+                component={CorrectorDetailsPage}
               />
+              <Stack.Screen name="PdfViewerPage" component={PdfViewerPage} />
               {unitedFlowNavigators.map((screen) => (
                 <Stack.Screen
                   key={screen.name}
@@ -197,11 +209,9 @@ const MainNavigator = () => {
                   initialParams={screen.initialParams}
                 />
               ))}
-            </Stack.Group>
+            </>
           ) : (
-            <Stack.Group>
-              <Stack.Screen name="LogIn" component={LoginPage} />
-            </Stack.Group>
+            <Stack.Screen name="LogIn" component={LoginPage} />
           )}
         </Stack.Navigator>
       </NavigationProvider>

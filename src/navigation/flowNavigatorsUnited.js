@@ -26,9 +26,7 @@ export const unitedFlowNavigators = [
   {
     name: 'AssetTypeSelectionPage',
     component: AssetTypeSelectionPage,
-    initialParams: {
-      title: 'Assets being installed',
-    },
+    
   },
   {
     name: 'MeterDetails',

@@ -12,41 +12,13 @@ import JobCard from '../components/JobCard';
 import { useProgressNavigation } from '../context/ProgressiveFlowRouteProvider';
 import { useSQLiteContext } from 'expo-sqlite/next';
 import { useFormStateContext } from '../context/AppContext';
-
-const fieldsToParse = [
-  'siteDetails',
-  'siteQuestions',
-  'photos',
-  'streams',
-  'meterDetails',
-  'kioskDetails',
-  'ecvDetails',
-  'movDetails',
-  'regulatorDetails',
-  'standards',
-  'meterDetailsTwo',
-  'additionalMaterials',
-  'dataLoggerDetails',
-  'dataLoggerDetailsTwo',
-  'maintenanceDetails',
-  'correctorDetails',
-  'correctorDetailsTwo',
-  'chatterBoxDetails',
-];
-
-const safeParse = (jsonString, fallbackValue) => {
-  try {
-    return !!jsonString ? JSON.parse(jsonString) : fallbackValue;
-  } catch (error) {
-    console.error('Error parsing JSON string:', error, jsonString);
-    return fallbackValue;
-  }
-};
+import { fieldsToParse } from '../utils/constant';
+import { safeParse } from '../utils/nagivation-routes/helpers';
 
 const JobsTable = () => {
   const db = useSQLiteContext();
   const navigation = useNavigation();
-  const { setState } = useFormStateContext();
+  const { setState, resetState } = useFormStateContext();
   const { startFlow } = useProgressNavigation();
   const route = useRoute();
 
@@ -66,6 +38,9 @@ const JobsTable = () => {
         'SELECT * FROM jobs WHERE jobStatus = ?',
         ['In Progress']
       );
+      if (result.length <= 0) {
+        resetState();
+      }
       setJobs(result);
       setLoading(false);
     } catch (error) {
@@ -77,14 +52,18 @@ const JobsTable = () => {
   const handleRowClick = async (jobId) => {
     try {
       const jobData = jobs.find(({ id }) => id === jobId);
+
       if (jobData) {
         const parsedJobData = { ...jobData };
 
         fieldsToParse.forEach((field) => {
-          parsedJobData[field] = safeParse(
-            jobData?.[field],
-            Array.isArray(parsedJobData?.[field]) ? [] : {}
-          );
+          // Add checks to ensure that jobData[field] is defined before parsing
+          if (jobData.hasOwnProperty(field) && jobData[field] !== undefined) {
+            parsedJobData[field] = safeParse(
+              jobData[field],
+              Array.isArray(parsedJobData[field]) ? [] : {}
+            );
+          }
         });
 
         setState((prevState) => ({
@@ -92,7 +71,10 @@ const JobsTable = () => {
           ...parsedJobData,
           jobID: jobId,
         }));
-        startFlow(parsedJobData.jobType);
+
+        if (parsedJobData.jobType) {
+          startFlow({ newFlowType: parsedJobData.jobType });
+        }
       }
     } catch (error) {
       console.error('Error loading job:', error);
@@ -107,7 +89,6 @@ const JobsTable = () => {
         onPress: async () => {
           try {
             await db.runAsync('DELETE FROM Jobs WHERE id = ?', [jobId]);
-            console.log('Record deleted successfully');
             fetchData();
           } catch (error) {
             console.error('Error deleting record:', error);

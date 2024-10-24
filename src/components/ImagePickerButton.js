@@ -15,7 +15,6 @@ const ImagePickerButton = ({ onImageSelected }) => {
         ? permanentUri
         : `file://${permanentUri}`;
 
-      console.log('File copied to:', accessibleUri);
       return accessibleUri;
     } catch (error) {
       console.error('Error copying file:', error);
@@ -61,16 +60,14 @@ const ImagePickerButton = ({ onImageSelected }) => {
         });
 
         if (!result.canceled && result.assets && result.assets.length > 0) {
-          console.log('Photo taken, attempting to save to gallery...');
           const asset = await MediaLibrary.createAssetAsync(
             result.assets[0].uri
           );
-          console.log('Photo saved to gallery:', asset.uri);
 
           const permURI = await copyFileToPermanentStorage(
             result.assets[0].uri
           );
-          console.log('Photo saved to permanent storage:', permURI);
+
           onImageSelected(permURI);
         }
       }
@@ -89,11 +86,10 @@ const ImagePickerButton = ({ onImageSelected }) => {
         });
 
         if (!result.canceled && result.assets && result.assets.length > 0) {
-          console.log('Image selected from gallery:', result.assets[0].uri);
           const permURI = await copyFileToPermanentStorage(
             result.assets[0].uri
           );
-          console.log('Image saved to permanent storage:', permURI);
+
           onImageSelected(permURI);
         }
       }

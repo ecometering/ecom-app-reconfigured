@@ -47,7 +47,7 @@ function MeterDetailsPage() {
 
   const isIos = Platform.OS === 'ios';
   const { title } = route.params;
-  const diaphragmMeterTypes = ['1', '2', '4','7'];
+  const diaphragmMeterTypes = ['1', '2', '4', '7'];
 
   const [isModal, setIsModal] = useState(false);
 
@@ -59,8 +59,8 @@ function MeterDetailsPage() {
         value: 2,
       });
     }
-      handleInputChange('havePulseValue', false);
-    
+    handleInputChange('havePulseValue', false);
+
     if (!meterDetails.pulseValue) {
       handleInputChange('pulseValue', { _index: 0, label: '1', value: 1 });
     }
@@ -84,7 +84,6 @@ function MeterDetailsPage() {
     if (!meterDetails.mechanism) {
       handleInputChange('mechanism', { _index: 0, label: 'Credit', value: 1 });
     }
-    console.log(meterDetails)
   }, []);
 
   const handleInputChange = (name, value) => {
@@ -94,7 +93,7 @@ function MeterDetailsPage() {
         ...prevState.meterDetails,
         [name]: value,
       },
-    }));console.log(meterDetails)
+    }));
   };
 
   const handleMeterTypeChange = (item) => {
@@ -114,7 +113,7 @@ function MeterDetailsPage() {
 
     let isDiaphragm =
       meterDetails.meterType &&
-      [1, 2, 4,7].includes(meterDetails.meterType.value);
+      [1, 2, 4, 7].includes(meterDetails.meterType.value);
     let isNotML =
       meterDetails.pressureTier &&
       [1, 4].includes(meterDetails.pressureTier.value);
@@ -452,37 +451,77 @@ function MeterDetailsPage() {
               </View>
             </View>
 
-            <View style={styles.row}>
-              <View style={styles.flex}>
-                <Text>Meter Outlet Working Pressure</Text>
-                <View style={{ height: 5 }} />
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}
-                >
-                  <TextInput
-                    value={meterDetails.pressure}
-                    onChangeText={(txt) => {
-                      if (txt.length > 5) {
-                        EcomHelper.showInfoMessage(
-                          'Max length should be less than 5'
-                        );
-                        return;
-                      }
-                      const numericValue = txt.replace(/[^0-9]/g, '');
-                      handleInputChange('pressure', numericValue);
-                    }}
-                    keyboardType="numeric"
-                    style={{
-                      ...styles.input,
-                      alignSelf: 'center',
-                      marginRight: 8,
-                    }}
-                  />
-                  <Text> mbar</Text>
+            <View>
+              <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+                <View style={{ width: '38%', marginRight: 10 }}>
+                  <Text style={{ marginBottom: 5 }}>
+                    Meter Outlet{'\n'}Working Pressure
+                  </Text>
+                  <View style={{ position: 'relative' }}>
+                    <TextInput
+                      value={meterDetails.pressure}
+                      onChangeText={(txt) => {
+                        if (txt.length > 5) {
+                          EcomHelper.showInfoMessage(
+                            'Max length should be less than 5'
+                          );
+                          return;
+                        }
+                        const numericValue = txt.replace(/[^0-9]/g, '');
+                        handleInputChange('pressure', numericValue);
+                      }}
+                      keyboardType="numeric"
+                      style={{
+                        borderWidth: 1,
+                        borderColor: 'gray',
+                        padding: 8,
+                        paddingRight: 50,
+                        width: '100%',
+                      }}
+                    />
+                    <Text
+                      style={{
+                        position: 'absolute',
+                        right: 10,
+                        top: '50%',
+                        transform: [{ translateY: -8 }],
+                      }}
+                    >
+                      mbar
+                    </Text>
+                  </View>
                 </View>
+
+                <View style={{ width: '61%' }}>
+                  <Text style={{ marginBottom: 5 }}>Collar Status</Text>
+                  <OptionalButton
+                    options={['Broken', 'Fixed', 'Removed']}
+                    actions={[
+                      () => handleInputChange('collarStatus', 'Broken'),
+                      () => handleInputChange('collarStatus', 'Fixed'),
+                      () => handleInputChange('collarStatus', 'Removed'),
+                    ]}
+                    value={meterDetails.collarStatus}
+                    containerStyle={{
+                      flexDirection: 'row',
+                      flexWrap: 'nowrap',
+                    }}
+                    buttonStyle={{ flex: 1, paddingHorizontal: 5 }}
+                    textStyle={{ fontSize: 12 }}
+                  />
+                </View>
+              </View>
+
+              <View style={{ marginTop: 20 }}>
+                <TextInputWithTitle
+                  title={'Notes'}
+                  value={meterDetails?.notes}
+                  onChangeText={(text) => {
+                    handleInputChange('notes', text);
+                  }}
+                  style={{ height: 100 }}
+                  multiline={true}
+                />
               </View>
             </View>
           </View>

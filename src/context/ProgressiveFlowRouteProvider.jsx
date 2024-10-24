@@ -1,74 +1,163 @@
 import { useFormStateContext } from './AppContext';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, StackActions } from '@react-navigation/native';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Flow types
-import { InstallNavigation } from '../utils/nagivation-routes/install-navigations';
-import { RemovalNavigation } from '../utils/nagivation-routes/removal-navigations';
-import { ExchangeNavigation } from '../utils/nagivation-routes/exchange-navigations';
-import { SurveyNavigation } from '../utils/nagivation-routes/survey-navigations';
-import { WarrantNavigation } from '../utils/nagivation-routes/warrant-navigations';
-import { MaintenanceNavigation } from '../utils/nagivation-routes/maintenance-navigations';
+import {
+  InstallNavigation,
+  installDiversions,
+} from '../utils/nagivation-routes/install-navigations';
+import {
+  RemovalNavigation,
+  removalDiversions,
+} from '../utils/nagivation-routes/removal-navigations';
+import {
+  ExchangeNavigation,
+  exchangeDiversions,
+} from '../utils/nagivation-routes/exchange-navigations';
+import {
+  SurveyNavigation,
+  surveyDiversions,
+} from '../utils/nagivation-routes/survey-navigations';
+import {
+  WarrantNavigation,
+  warrantDiversions,
+} from '../utils/nagivation-routes/warrant-navigations';
+import {
+  MaintenanceNavigation,
+  maintenanceDiversions,
+} from '../utils/nagivation-routes/maintenance-navigations';
 
 export const ProgressiveNavigationContext = createContext();
 
 const config = {
+  Survey: SurveyNavigation,
   Install: InstallNavigation,
   Removal: RemovalNavigation,
-  Exchange: ExchangeNavigation,
-  Survey: SurveyNavigation,
   Warrant: WarrantNavigation,
+  Exchange: ExchangeNavigation,
   Maintenance: MaintenanceNavigation,
 };
 
+const diversions = {
+  Survey: surveyDiversions,
+  Install: installDiversions,
+  Removal: removalDiversions,
+  Warrant: warrantDiversions,
+  Exchange: exchangeDiversions,
+  Maintenance: maintenanceDiversions,
+};
+
 export function NavigationProvider({ children }) {
-  const state = useFormStateContext();
+  const { state, setState } = useFormStateContext();
+
+  const flow = state?.navigation || [];
+  const lastNavigationIndex = state?.lastNavigationIndex || 0;
   const navigation = useNavigation();
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+
   const [flowType, setFlowType] = useState(); // Default flow type
-  const [flow, setFlow] = useState([]);
 
   useEffect(() => {
-    if (flowType) {
-      setFlow(config[flowType]);
-      setCurrentStepIndex(0);
+    if (flowType && flow?.length === 0) {
+      setState((prevState) => {
+        return {
+          ...prevState,
+          navigation: config[flowType],
+          lastNavigationIndex: 0,
+        };
+      });
     }
   }, [flowType]);
 
   const goToNextStep = () => {
-    if (flow[currentStepIndex].diversions) {
-      pushNavigation(flow[currentStepIndex].diversions(state));
+    if (flow[lastNavigationIndex]?.diversionsKey) {
+      const divKey = flow[lastNavigationIndex].diversionsKey;
+      const diversionFunc = diversions[flowType][divKey](state);
+      pushNavigation(diversionFunc);
     } else {
-      const nextIndex = currentStepIndex + 1;
+      const nextIndex = lastNavigationIndex + 1;
       if (nextIndex < flow.length) {
-        setCurrentStepIndex(nextIndex);
+        setState((prevState) => {
+          return {
+            ...prevState,
+            lastNavigationIndex: nextIndex,
+            navigation: flow,
+          };
+        });
         navigation.navigate(flow[nextIndex].screen, flow[nextIndex].params);
       }
     }
   };
 
   const goToPreviousStep = () => {
-    const prevIndex = currentStepIndex - 1;
+    const prevIndex = lastNavigationIndex - 1;
     if (prevIndex >= 0) {
-      setCurrentStepIndex(prevIndex);
+      setState((prevState) => {
+        return {
+          ...prevState,
+          lastNavigationIndex: prevIndex,
+          navigation: flow,
+        };
+      });
       navigation.navigate(flow[prevIndex].screen, flow[prevIndex].params);
     }
   };
 
-  const startFlow = (newFlowType) => {
+  const startFlow = ({ newFlowType, lastNavigationIndex, stateNavigation }) => {
+    const parsedLastNavigationIndex = Number(lastNavigationIndex) || 0;
     setFlowType(newFlowType);
-    setCurrentStepIndex(0);
-    return navigation.navigate(config[newFlowType][0].screen);
+    if (stateNavigation && Object.keys(stateNavigation).length > 0) {
+      setState((prevState) => {
+        return {
+          ...prevState,
+          lastNavigationIndex: parsedLastNavigationIndex,
+          navigation: stateNavigation,
+        };
+      });
+      stateNavigation.forEach((screen) => {
+        navigation.dispatch(
+          StackActions.push(screen.screen, screen.params || {})
+        );
+      });
+      return navigation.navigate(
+        stateNavigation[parsedLastNavigationIndex].screen
+      );
+    } else {
+      return navigation.navigate(config[newFlowType][0].screen);
+    }
+  };
+
+  const jumpToStep = (index) => {
+    if (index >= 0 && index < flow.length) {
+      setState((prevState) => {
+        return {
+          ...prevState,
+          lastNavigationIndex: index,
+        };
+      });
+
+      navigation.dispatch(StackActions.pop(flow.length));
+      const screens = flow.slice(0, index + 1);
+      screens.forEach((screen) => {
+        navigation.dispatch(
+          StackActions.push(screen.screen, screen.params || {})
+        );
+      });
+      navigation.navigate(flow[index].screen, flow[index].params);
+    }
   };
 
   const pushNavigation = (flowUpdate) => {
-    const nextIndex = currentStepIndex + 1;
-    setFlow((prevFlow) => {
-      const newFlow = [...prevFlow];
-      newFlow.splice(nextIndex, 0, ...flowUpdate); // Insert the new flow updates at the next index
-      return newFlow;
+    const nextIndex = lastNavigationIndex + 1;
+    const newFlow = [...flow];
+    newFlow.splice(nextIndex, 0, ...flowUpdate); // Insert the new flow updates at the next index
+    setState((prevState) => {
+      return {
+        ...prevState,
+        navigation: newFlow,
+        lastNavigationIndex: nextIndex,
+      };
     });
-    setCurrentStepIndex(nextIndex);
     navigation.navigate(flowUpdate[0].screen, flowUpdate[0].params);
   };
 
@@ -77,12 +166,13 @@ export function NavigationProvider({ children }) {
       value={{
         flow,
         startFlow,
+        jumpToStep,
         setFlowType,
         goToNextStep,
         goToPreviousStep,
         pushNavigation,
-        currentStep: currentStepIndex,
-        totalSteps: flow.length,
+        currentStep: lastNavigationIndex,
+        totalSteps: flow?.length || 0,
       }}
     >
       {children}

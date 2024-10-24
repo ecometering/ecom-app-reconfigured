@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import {
   View,
   Platform,
@@ -6,7 +7,6 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
 } from 'react-native';
-import React from 'react';
 import { useRoute } from '@react-navigation/native';
 
 // Components
@@ -25,18 +25,34 @@ import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvide
 function AssetTypeSelectionPage() {
   const { goToPreviousStep, goToNextStep } = useProgressNavigation();
   const route = useRoute();
-  const { title } = route.params;
-
+  const title = route.params?.title;
   const { state, setState } = useFormStateContext();
-  const { jobType, meterDetails, jobID } = state;
+  const { jobType, siteQuestions, jobID } = state;
 
-  const handleInputChange = (name, value) => {
-    setState({
-      ...state,
-      meterDetails: {
-        ...meterDetails,
-        [name]: value,
-      },
+  const handleInputChange = (section, name, value) => {
+    setState((prevState) => {
+      let newState;
+      if (jobType === 'Exchange') {
+        newState = {
+          ...prevState,
+          siteQuestions: {
+            ...prevState.siteQuestions,
+            [section]: {
+              ...prevState.siteQuestions[section],
+              [name]: value,
+            },
+          },
+        };
+      } else {
+        newState = {
+          ...prevState,
+          siteQuestions: {
+            ...prevState.siteQuestions,
+            [name]: value,
+          },
+        };
+      }
+      return newState;
     });
   };
 
@@ -45,16 +61,71 @@ function AssetTypeSelectionPage() {
   };
 
   const nextPressed = async () => {
-    const { isMeter, isAmr, isCorrector } = meterDetails || {};
+    if (jobType === 'Exchange') {
+      const { assetsRemoved, assetsInstalled } = siteQuestions || {};
+      const hasRemovedAsset =
+        assetsRemoved?.isMeter ||
+        assetsRemoved?.isAmr ||
+        assetsRemoved?.isCorrector;
+      const hasInstalledAsset =
+        assetsInstalled?.isMeter ||
+        assetsInstalled?.isAmr ||
+        assetsInstalled?.isCorrector;
 
-    if (!isMeter && !isAmr && !isCorrector) {
-      EcomHelper.showInfoMessage(
-        'You must select at least one asset type to proceed.'
-      );
-      return;
+      if (!hasRemovedAsset || !hasInstalledAsset) {
+        EcomHelper.showInfoMessage(
+          'For an exchange, you must select at least one asset type to remove and one to install.'
+        );
+        return;
+      }
+    } else {
+      if (
+        !siteQuestions?.isMeter &&
+        !siteQuestions?.isAmr &&
+        !siteQuestions?.isCorrector
+      ) {
+        EcomHelper.showInfoMessage(
+          'You must select at least one asset type to proceed.'
+        );
+        return;
+      }
     }
 
     goToNextStep();
+  };
+
+  const renderAssetSwitches = (section = '') => {
+    return (
+      <>
+        <SwitchWithTitle
+          title={'Meter'}
+          value={
+            jobType === 'Exchange'
+              ? siteQuestions?.[section]?.isMeter ?? false
+              : siteQuestions?.isMeter ?? false
+          }
+          onValueChange={(e) => handleInputChange(section, 'isMeter', e)}
+        />
+        <SwitchWithTitle
+          title={'AMR'}
+          value={
+            jobType === 'Exchange'
+              ? siteQuestions?.[section]?.isAmr ?? false
+              : siteQuestions?.isAmr ?? false
+          }
+          onValueChange={(e) => handleInputChange(section, 'isAmr', e)}
+        />
+        <SwitchWithTitle
+          title={'Corrector'}
+          value={
+            jobType === 'Exchange'
+              ? siteQuestions?.[section]?.isCorrector ?? false
+              : siteQuestions?.isCorrector ?? false
+          }
+          onValueChange={(e) => handleInputChange(section, 'isCorrector', e)}
+        />
+      </>
+    );
   };
 
   return (
@@ -74,29 +145,20 @@ function AssetTypeSelectionPage() {
         <ScrollView style={styles.content}>
           <View style={styles.body}>
             <Text type={TextType.CAPTION_3}>{jobType}</Text>
-            <SwitchWithTitle
-              title={'Meter'}
-              value={meterDetails?.isMeter}
-              onValueChange={(e) => {
-                handleInputChange('isMeter', e);
-              }}
-            />
-
-            <SwitchWithTitle
-              title={'AMR'}
-              value={meterDetails?.isAmr}
-              onValueChange={(e) => {
-                handleInputChange('isAmr', e);
-              }}
-            />
-
-            <SwitchWithTitle
-              title={'Corrector'}
-              value={meterDetails?.isCorrector}
-              onValueChange={(e) => {
-                handleInputChange('isCorrector', e);
-              }}
-            />
+            {jobType === 'Exchange' ? (
+              <>
+                <View style={styles.section}>
+                  <Text type={TextType.CAPTION_1}>Assets Being Removed</Text>
+                  {renderAssetSwitches('assetsRemoved')}
+                </View>
+                <View style={styles.section}>
+                  <Text type={TextType.CAPTION_1}>Assets Being Installed</Text>
+                  {renderAssetSwitches('assetsInstalled')}
+                </View>
+              </>
+            ) : (
+              renderAssetSwitches()
+            )}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -112,6 +174,10 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 20,
     padding: 20,
+  },
+  section: {
+    marginTop: 20,
+    gap: 10,
   },
 });
 

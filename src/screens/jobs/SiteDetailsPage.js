@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import {
   View,
@@ -22,14 +22,15 @@ import { useFormStateContext } from '../../context/AppContext';
 import { useProgressNavigation } from '../../context/ProgressiveFlowRouteProvider';
 
 import EcomHelper from '../../utils/ecomHelper';
-import CustomCheckbox from '../../components/Checkbox';
 import { validateSiteDetails } from './SiteDetailsPage.validator';
+import SiteDetailsReadOnly from './SiteDetailsReadOnly';
 
 function SiteDetailsPage() {
   const navigation = useNavigation();
 
   const { goToNextStep } = useProgressNavigation();
   const { state, setState } = useFormStateContext();
+  const [isDetailCorrect, setIsDetailCorrect] = useState(true);
   const { jobType, siteDetails } = state;
 
   const handleInputChange = (name, value) => {
@@ -53,6 +54,12 @@ function SiteDetailsPage() {
     goToNextStep();
   };
 
+  useState(() => {
+    if (!siteDetails.mprn) {
+      setIsDetailCorrect(false);
+    }
+  }, []);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Header
@@ -68,222 +75,234 @@ function SiteDetailsPage() {
         behavior={Platform.OS === 'ios' ? 'padding' : null}
       >
         <ScrollView style={{ flex: 1, padding: 10 }}>
-          <View style={{ gap: 20 }}>
-            <TextInputWithTitle
-              title={'MPRN *'}
-              value={siteDetails.mprn}
-              onChangeText={(txt) => {
-                const filteredText = txt.replace(/[^0-9]/g, '');
-                const limitedText = filteredText.slice(0, 15);
-                handleInputChange('mprn', limitedText);
-              }}
-              keyboardType="numeric"
-            />
-
-            <TextInputWithTitle
-              title={'Company name'}
-              value={siteDetails.companyName}
-              onChangeText={(txt) => {
-                const filteredText = txt.replace(/[^a-zA-Z0-9\s\-()&_'/]/g, '');
-                handleInputChange('companyName', filteredText);
-              }}
-            />
-
-            <TextInputWithTitle
-              title={'Building name/ number *'}
-              value={siteDetails.buildingName}
-              onChangeText={(txt) => {
-                const filteredText = txt.replace(/[^a-zA-Z0-9\s\-\(\)']/g, '');
-                handleInputChange('buildingName', filteredText);
-              }}
-            />
-
-            <TextInputWithTitle
-              title={'Address 1 *'}
-              value={siteDetails.address1}
-              onChangeText={(txt) => {
-                const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, '');
-                handleInputChange('address1', filteredText);
-              }}
-            />
-
-            <TextInputWithTitle
-              title={'Address 2'}
-              value={siteDetails.address2}
-              onChangeText={(txt) => {
-                const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, '');
-                handleInputChange('address2', filteredText);
-              }}
-            />
-
-            <TextInputWithTitle
-              title={'Address 3'}
-              value={siteDetails.address3}
-              onChangeText={(txt) => {
-                const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, '');
-                handleInputChange('address3', filteredText);
-              }}
-            />
-
-            <TextInputWithTitle
-              title={'Town/city *'}
-              value={siteDetails.town}
-              onChangeText={(txt) => {
-                const filteredText = txt.replace(/[^a-zA-Z\s\-]/g, '');
-                handleInputChange('town', filteredText);
-              }}
-            />
-
-            <TextInputWithTitle
-              title={'County *'}
-              value={siteDetails.county}
-              onChangeText={(txt) => {
-                const filteredText = txt.replace(/[^a-zA-Z\s\-]/g, '');
-                handleInputChange('county', filteredText);
-              }}
-            />
-
-            <TextInputWithTitle
-              title={'Post Code *'}
-              value={siteDetails.postCode}
-              onChangeText={(txt) => {
-                if (txt.length <= 9) {
-                  const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, '');
-                  handleInputChange('postCode', filteredText.toUpperCase());
-                }
-              }}
-            />
-
-            <View
-              style={{
-                flexDirection: 'row',
-                gap: 5,
-                justifyContent: 'space-between',
-              }}
-            >
-              <View style={{ flex: 1 }}>
-                <EcomDropDown
-                  value={siteDetails.title}
-                  valueList={[
-                    { _index: 1, label: 'Mr', value: 'Mr' },
-                    { _index: 2, label: 'Mrs', value: 'Mrs' },
-                    { _index: 3, label: 'Miss', value: 'Miss' },
-                    { _index: 4, label: 'Dr', value: 'Dr' },
-                  ]}
-                  placeholder={' Title'}
-                  onChange={(e) => {
-                    handleInputChange('title', e);
-                  }}
-                />
-              </View>
-
-              <View style={{ flex: 1 }}>
-                <TextInputWithTitle
-                  title={'Site Contact'}
-                  value={siteDetails.contact}
-                  onChangeText={(txt) => {
-                    const filteredText = txt.replace(/[^a-zA-Z ]/g, '');
-                    handleInputChange('contact', filteredText);
-                  }}
-                />
-              </View>
-            </View>
-
+          <SiteDetailsReadOnly
+            siteDetails={siteDetails}
+            visible={isDetailCorrect}
+            onChangeVisibility={setIsDetailCorrect}
+          />
+          {!isDetailCorrect && (
             <View style={{ gap: 20 }}>
-              <Text type={TextType.CAPTION_2}>{'Contact Numbers'}</Text>
+              <TextInputWithTitle
+                title={'MPRN *'}
+                value={siteDetails.mprn}
+                onChangeText={(txt) => {
+                  const filteredText = txt.replace(/[^0-9]/g, '');
+                  const limitedText = filteredText.slice(0, 15);
+                  handleInputChange('mprn', limitedText);
+                }}
+                keyboardType="numeric"
+              />
+
+              <TextInputWithTitle
+                title={'Company name'}
+                value={siteDetails.companyName}
+                onChangeText={(txt) => {
+                  const filteredText = txt.replace(
+                    /[^a-zA-Z0-9\s\-()&_'/]/g,
+                    ''
+                  );
+                  handleInputChange('companyName', filteredText);
+                }}
+              />
+
+              <TextInputWithTitle
+                title={'Building name/ number *'}
+                value={siteDetails.buildingName}
+                onChangeText={(txt) => {
+                  const filteredText = txt.replace(
+                    /[^a-zA-Z0-9\s\-\(\)']/g,
+                    ''
+                  );
+                  handleInputChange('buildingName', filteredText);
+                }}
+              />
+
+              <TextInputWithTitle
+                title={'Address 1 *'}
+                value={siteDetails.address1}
+                onChangeText={(txt) => {
+                  const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, '');
+                  handleInputChange('address1', filteredText);
+                }}
+              />
+
+              <TextInputWithTitle
+                title={'Address 2'}
+                value={siteDetails.address2}
+                onChangeText={(txt) => {
+                  const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, '');
+                  handleInputChange('address2', filteredText);
+                }}
+              />
+
+              <TextInputWithTitle
+                title={'Address 3'}
+                value={siteDetails.address3}
+                onChangeText={(txt) => {
+                  const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, '');
+                  handleInputChange('address3', filteredText);
+                }}
+              />
+
+              <TextInputWithTitle
+                title={'Town/city *'}
+                value={siteDetails.town}
+                onChangeText={(txt) => {
+                  const filteredText = txt.replace(/[^a-zA-Z\s\-]/g, '');
+                  handleInputChange('town', filteredText);
+                }}
+              />
+
+              <TextInputWithTitle
+                title={'County *'}
+                value={siteDetails.county}
+                onChangeText={(txt) => {
+                  const filteredText = txt.replace(/[^a-zA-Z\s\-]/g, '');
+                  handleInputChange('county', filteredText);
+                }}
+              />
+
+              <TextInputWithTitle
+                title={'Post Code *'}
+                value={siteDetails.postCode}
+                onChangeText={(txt) => {
+                  if (txt.length <= 9) {
+                    const filteredText = txt.replace(/[^a-zA-Z0-9\s]/g, '');
+                    handleInputChange('postCode', filteredText.toUpperCase());
+                  }
+                }}
+              />
+
               <View
                 style={{
                   flexDirection: 'row',
                   gap: 5,
+                  justifyContent: 'space-between',
                 }}
               >
-                <View style={{ flex: 0.5 }}>
-                  <TextInputWithTitle
-                    title={'Phone Number 1'}
-                    value={siteDetails.number1}
-                    keyboardType="numeric" // Set keyboardType to numeric
-                    onChangeText={(txt) => {
-                      const filteredText = txt.replace(/[^0-9]/g, ''); // Allow only numbers
-                      handleInputChange('number1', filteredText);
-                    }}
-                  />
-                </View>
-                <View style={{ flex: 0.5 }}>
-                  <TextInputWithTitle
-                    title={'Phone Number 2'}
-                    value={siteDetails.number2}
-                    keyboardType="numeric" // Set keyboardType to numeric
-                    onChangeText={(txt) => {
-                      const filteredText = txt.replace(/[^0-9]/g, ''); // Allow only numbers
-                      handleInputChange('number2', filteredText);
-                    }}
-                  />
-                </View>
-              </View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  gap: 5,
-                }}
-              >
-                <View style={{ flex: 0.5 }}>
-                  <TextInputWithTitle
-                    title={'Email Number 1'}
-                    value={siteDetails.email1}
-                    autoCapitalize="none"
-                    onChangeText={(txt) => {
-                      handleInputChange('email1', txt.toLowerCase());
-                    }}
-                  />
-                </View>
-                <View style={{ flex: 0.5 }}>
-                  <TextInputWithTitle
-                    title={'Email Number 2'}
-                    autoCapitalize="none"
-                    value={siteDetails.email2}
-                    onChangeText={(txt) => {
-                      handleInputChange('email2', txt.toLowerCase());
-                    }}
-                  />
-                </View>
-              </View>
-            </View>
-
-            <View style={{ marginHorizontal: '5%' }} />
-            <TextInputWithTitle
-              title={'Contact Instructions'}
-              value={siteDetails.instructions}
-              onChangeText={(txt) => {
-                const filteredText = txt.replace(/[^a-zA-Z0-9\s@.]/g, '');
-                handleInputChange('instructions', filteredText);
-              }}
-            />
-
-            <View style={{ marginBottom: 30, gap: 20 }}>
-             
-              {jobType === 'Warrant' && (
-                <View style={{ gap: 10 }}>
-                  <Text type={TextType.CAPTION_2}>
-                    {'Did the warrant go ahead? *'}
-                  </Text>
-                  <OptionalButton
-                    options={['Yes', 'No']}
-                    actions={[
-                      () => handleInputChange('confirmWarrant', true),
-                      () => handleInputChange('confirmWarrant', false),
+                <View style={{ flex: 1 }}>
+                  <EcomDropDown
+                    value={siteDetails.title}
+                    valueList={[
+                      { _index: 1, label: 'Mr', value: 'Mr' },
+                      { _index: 2, label: 'Mrs', value: 'Mrs' },
+                      { _index: 3, label: 'Miss', value: 'Miss' },
+                      { _index: 4, label: 'Dr', value: 'Dr' },
                     ]}
-                    value={
-                      siteDetails.confirmWarrant === undefined
-                        ? null
-                        : siteDetails.confirmWarrant
-                        ? 'Yes'
-                        : 'No'
-                    }
+                    placeholder={' Title'}
+                    onChange={(e) => {
+                      handleInputChange('title', e);
+                    }}
                   />
                 </View>
-              )}
+
+                <View style={{ flex: 1 }}>
+                  <TextInputWithTitle
+                    title={'Site Contact'}
+                    value={siteDetails.contact}
+                    onChangeText={(txt) => {
+                      const filteredText = txt.replace(/[^a-zA-Z ]/g, '');
+                      handleInputChange('contact', filteredText);
+                    }}
+                  />
+                </View>
+              </View>
+
+              <View style={{ gap: 20 }}>
+                <Text type={TextType.CAPTION_2}>{'Contact Numbers'}</Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    gap: 5,
+                  }}
+                >
+                  <View style={{ flex: 0.5 }}>
+                    <TextInputWithTitle
+                      title={'Phone Number 1'}
+                      value={siteDetails.number1}
+                      keyboardType="numeric" // Set keyboardType to numeric
+                      onChangeText={(txt) => {
+                        const filteredText = txt.replace(/[^0-9]/g, ''); // Allow only numbers
+                        handleInputChange('number1', filteredText);
+                      }}
+                    />
+                  </View>
+                  <View style={{ flex: 0.5 }}>
+                    <TextInputWithTitle
+                      title={'Phone Number 2'}
+                      value={siteDetails.number2}
+                      keyboardType="numeric" // Set keyboardType to numeric
+                      onChangeText={(txt) => {
+                        const filteredText = txt.replace(/[^0-9]/g, ''); // Allow only numbers
+                        handleInputChange('number2', filteredText);
+                      }}
+                    />
+                  </View>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    gap: 5,
+                  }}
+                >
+                  <View style={{ flex: 0.5 }}>
+                    <TextInputWithTitle
+                      title={'Email Number 1'}
+                      value={siteDetails.email1}
+                      autoCapitalize="none"
+                      onChangeText={(txt) => {
+                        handleInputChange('email1', txt.toLowerCase());
+                      }}
+                    />
+                  </View>
+                  <View style={{ flex: 0.5 }}>
+                    <TextInputWithTitle
+                      title={'Email Number 2'}
+                      autoCapitalize="none"
+                      value={siteDetails.email2}
+                      onChangeText={(txt) => {
+                        handleInputChange('email2', txt.toLowerCase());
+                      }}
+                    />
+                  </View>
+                </View>
+              </View>
+
+              <View style={{ marginHorizontal: '5%' }} />
+              <TextInputWithTitle
+                title={'Contact Instructions'}
+                value={siteDetails.instructions}
+                onChangeText={(txt) => {
+                  const filteredText = txt.replace(/[^a-zA-Z0-9\s@.]/g, '');
+                  handleInputChange('instructions', filteredText);
+                }}
+              />
+
+              <View style={{ marginBottom: 30, gap: 20 }}>
+                {jobType === 'Warrant' && (
+                  <View style={{ gap: 10 }}>
+                    <Text type={TextType.CAPTION_2}>
+                      {'Did the warrant go ahead? *'}
+                    </Text>
+                    <OptionalButton
+                      options={['Yes', 'No']}
+                      actions={[
+                        () => handleInputChange('confirmWarrant', true),
+                        () => handleInputChange('confirmWarrant', false),
+                      ]}
+                      value={
+                        siteDetails.confirmWarrant === undefined
+                          ? null
+                          : siteDetails.confirmWarrant
+                          ? 'Yes'
+                          : 'No'
+                      }
+                    />
+                  </View>
+                )}
+              </View>
             </View>
-          </View>
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

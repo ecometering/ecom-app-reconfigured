@@ -5,7 +5,6 @@ import {
 } from '../../utils/validation/validators';
 
 export const validateMeterDetails = (meterDetails) => {
-  console.log('meterDetails', meterDetails);
   const validations = [
     () =>
       validateRequiredField(

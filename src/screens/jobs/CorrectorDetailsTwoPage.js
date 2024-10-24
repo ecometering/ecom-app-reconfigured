@@ -238,6 +238,15 @@ export default function CorrectorDetailsTwoPage() {
                   />
                 </View>
               </View>
+              <TextInputWithTitle
+          title={'Notes'}
+          value={correctorDetailsTwo?.notes}
+          onChangeText={(text) => {
+            handleInputChange('notes', text);
+          }}
+          style={{ height: 100 }}
+          multiline={true}
+        />
             </View>
 
             <View style={styles.imagePickerContainer}>

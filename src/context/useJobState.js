@@ -46,7 +46,7 @@ const getInitialJobState = (jobType) => ({
   standards: {},
   meterDetailsTwo: {},
   additionalMaterials: {},
-  dataLoggerDetails: {},
+  dataloggerDetails: {},
   dataLoggerDetailsTwo: {
     loggerOwner: ['Install', 'Maintenance'].includes(jobType)
       ? 'Eco Metering Solutions'
@@ -70,6 +70,8 @@ const getInitialJobState = (jobType) => ({
     corrected: '',
   },
   chatterBoxDetails: {},
+  navigation: [],
+  lastNavigationIndex: 0,
 });
 
 const useJobState = () => {
@@ -119,7 +121,6 @@ const useJobState = () => {
       });
 
       if (jobID) {
-        console.log('updating job');
         const updateFields = fields
           .map((field) => `${fieldMapping[field]} = ?`)
           .join(', ');
@@ -128,7 +129,6 @@ const useJobState = () => {
           jobID,
         ]);
       } else {
-        console.log('inserting job');
         const placeholders = fields.map(() => '?').join(', ');
         const result = await db.runAsync(
           `INSERT INTO Jobs (${fields

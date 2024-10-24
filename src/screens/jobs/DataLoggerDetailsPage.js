@@ -1,4 +1,4 @@
-import React, { useRef, useState,useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useRoute } from '@react-navigation/native';
 import {
   View,
@@ -14,7 +14,7 @@ import {
 // Components
 import Text from '../../components/Text';
 import Header from '../../components/Header';
-import TextInput from '../../components/TextInput';
+import TextInput, { TextInputWithTitle } from '../../components/TextInput';
 import OptionalButton from '../../components/OptionButton';
 import BarcodeScanner from '../../components/BarcodeScanner';
 import ImagePickerButton from '../../components/ImagePickerButton';
@@ -33,27 +33,27 @@ export default function DataLoggerDetailsPage() {
   const { state, setState } = useFormStateContext();
   const { goToNextStep, goToPreviousStep } = useProgressNavigation();
 
-  const { photos, dataLoggerDetails,jobType } = state;
+  const { photos, dataloggerDetails, jobType } = state;
   const existingPhoto = photos && photoKey ? photos[photoKey] : null;
 
   const [isModal, setIsModal] = useState(false);
 
-  console.log({ dataLoggerDetails });
-
   const handleInputChange = (name, value) => {
     setState((prevState) => ({
       ...prevState,
-      dataLoggerDetails: {
-        ...prevState.dataLoggerDetails,
+      dataloggerDetails: {
+        ...prevState.dataloggerDetails,
         [name]: value,
       },
     }));
   };
   useEffect(() => {
-    if (!dataLoggerDetails.loggerOwner){
+    if (!dataloggerDetails.loggerOwner) {
       if (['Install', 'Maintenance'].includes(jobType)) {
-        handleInputChange('loggerOwner','Eco Metering Solutions')}}
-  })
+        handleInputChange('loggerOwner', 'Eco Metering Solutions');
+      }
+    }
+  });
 
   const handlePhotoSelected = (uri) => {
     setState((prevState) => ({
@@ -71,7 +71,7 @@ export default function DataLoggerDetailsPage() {
 
   const nextPressed = async () => {
     const { isValid, message } = validateDataLoggerDetails(
-      dataLoggerDetails,
+      dataloggerDetails,
       existingPhoto
     );
 
@@ -129,15 +129,13 @@ export default function DataLoggerDetailsPage() {
                         /[^A-Z0-9]+/g,
                         ''
                       );
-                        handleInputChange('serialNumber', formattedText);
-                      
+                      handleInputChange('serialNumber', formattedText);
                     }}
                     style={{
                       ...styles.input,
                       alignSelf: 'flex-end',
-                      
                     }}
-                    value={dataLoggerDetails.serialNumber}
+                    value={dataloggerDetails.serialNumber}
                   />
                   <Button title="📷" onPress={scanBarcode} />
                 </View>
@@ -160,9 +158,9 @@ export default function DataLoggerDetailsPage() {
                       },
                     ]}
                     value={
-                      dataLoggerDetails.isMountingBracket == null
+                      dataloggerDetails.isMountingBracket == null
                         ? null
-                        : dataLoggerDetails.isMountingBracket
+                        : dataloggerDetails.isMountingBracket
                         ? 'Yes'
                         : 'No'
                     }
@@ -189,9 +187,9 @@ export default function DataLoggerDetailsPage() {
                       },
                     ]}
                     value={
-                      dataLoggerDetails.isAdapter == null
+                      dataloggerDetails.isAdapter == null
                         ? null
-                        : dataLoggerDetails.isAdapter
+                        : dataloggerDetails.isAdapter
                         ? 'Yes'
                         : 'No'
                     }
@@ -216,9 +214,9 @@ export default function DataLoggerDetailsPage() {
                       },
                     ]}
                     value={
-                      dataLoggerDetails.isPulseSplitter == null
+                      dataloggerDetails.isPulseSplitter == null
                         ? null
-                        : dataLoggerDetails.isPulseSplitter
+                        : dataloggerDetails.isPulseSplitter
                         ? 'Yes'
                         : 'No'
                     }
@@ -237,10 +235,13 @@ export default function DataLoggerDetailsPage() {
                   <TextInput
                     onChangeText={(txt) => {
                       const formattedText = txt.toUpperCase();
-                      const filteredText = formattedText.replace(/[^a-zA-Z ]/g, '');
+                      const filteredText = formattedText.replace(
+                        /[^a-zA-Z ]/g,
+                        ''
+                      );
                       handleInputChange('manufacturer', filteredText);
                     }}
-                    value={dataLoggerDetails.manufacturer}
+                    value={dataloggerDetails.manufacturer}
                   />
                 </View>
               </View>
@@ -253,10 +254,13 @@ export default function DataLoggerDetailsPage() {
                 <TextInput
                   onChangeText={(txt) => {
                     const formattedText = txt.toUpperCase();
-                    const filteredText = formattedText.replace(/[^a-zA-Z0-9\-\s]/g, '');
+                    const filteredText = formattedText.replace(
+                      /[^a-zA-Z0-9\-\s]/g,
+                      ''
+                    );
                     handleInputChange('model', filteredText);
                   }}
-                  value={dataLoggerDetails.model}
+                  value={dataloggerDetails.model}
                 />
               </View>
             </View>
@@ -270,9 +274,18 @@ export default function DataLoggerDetailsPage() {
                 onChangeText={(txt) => {
                   handleInputChange('loggerOwner', txt);
                 }}
-                value={dataLoggerDetails.loggerOwner}
+                value={dataloggerDetails.loggerOwner}
               />
             </View>
+            <TextInputWithTitle
+              title={'Notes'}
+              value={dataloggerDetails?.notes}
+              onChangeText={(text) => {
+                handleInputChange('notes', text);
+              }}
+              style={{ height: 100 }}
+              multiline={true}
+            />
             <View style={styles.imagePickerContainer}>
               <View>
                 <Text type="caption" style={styles.text}>

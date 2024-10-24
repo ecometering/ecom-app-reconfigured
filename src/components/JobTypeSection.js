@@ -1,5 +1,5 @@
 import { View, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 
 // Utils and Constants
 import { PrimaryColors } from '../theme/colors';
@@ -10,11 +10,59 @@ import Text from './Text';
 // Context
 import { useFormStateContext } from '../context/AppContext';
 import { useProgressNavigation } from '../context/ProgressiveFlowRouteProvider';
+import { useSQLiteContext } from 'expo-sqlite/next';
+import { fieldsToParse } from '../utils/constant';
+import { safeParse } from '../utils/nagivation-routes/helpers';
+import { useFocusEffect } from '@react-navigation/native';
 
 function JobTypeSection() {
   const { startFlow } = useProgressNavigation();
   const { state, setState, resetState } = useFormStateContext();
   const { startDate, jobID } = state;
+  const db = useSQLiteContext();
+  const [isThereInProgressJob, setIsThereInProgressJob] = useState(false);
+
+  const getInProgressJobs = async () => {
+    try {
+      const jobs = await db.getAllAsync(
+        'SELECT * FROM jobs WHERE jobStatus = ?',
+        ['In Progress']
+      );
+      if (jobs[0]) {
+        const parsedJobData = { ...jobs[0] };
+
+        fieldsToParse.forEach((field) => {
+          // Add checks to ensure that jobs[0][field] is defined before parsing
+          if (jobs[0].hasOwnProperty(field) && jobs[0][field] !== undefined) {
+            parsedJobData[field] = safeParse(
+              jobs[0][field],
+              Array.isArray(parsedJobData[field]) ? [] : {}
+            );
+          }
+        });
+
+        setState((prevState) => ({
+          ...prevState,
+          ...parsedJobData,
+          jobID: jobs[0].id,
+        }));
+      }
+
+      if (jobs.length > 0) {
+        setIsThereInProgressJob(jobs[0]);
+      } else {
+        setIsThereInProgressJob(false);
+      }
+    } catch (error) {
+      console.error('Error getting in progress jobs:', error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      getInProgressJobs();
+    }, [])
+  );
 
   const handleJobTypeSelection = (jobType) => {
     startNewJob(jobType);
@@ -32,7 +80,7 @@ function JobTypeSection() {
           progress: 0,
         }));
       }
-      startFlow(jobType);
+      startFlow({ newFlowType: jobType });
     } catch (error) {
       console.error('Error starting new job:', error);
     }
@@ -40,26 +88,33 @@ function JobTypeSection() {
 
   return (
     <SafeAreaView style={styles.flex}>
-      {state?.jobStatus === 'In Progress' ? (
+      {state?.jobStatus === 'In Progress' || isThereInProgressJob ? (
         <View style={styles.jobInProgressContainer}>
           <Text style={styles.jobInProgressTitle}>
             A {state?.jobType} job is in progress
           </Text>
           <View style={styles.jobInProgressInfo}>
             <Text>
-              Last Screen: {state?.lastScreen || 'This is just a placeholder'}
+              Last Screen:{' '}
+              {state?.navigation?.[state?.lastNavigationIndex]?.screen}
             </Text>
             <View style={styles.progressBarBackground}>
               <View style={styles.progressBarForeground} />
             </View>
           </View>
           <View style={styles.jobInProgressActions}>
-            <TouchableOpacity style={styles.cancelButton} onPress={resetState}>
+            {/* <TouchableOpacity style={styles.cancelButton} onPress={resetState}>
               <Text>Cancel</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <TouchableOpacity
               style={styles.continueButton}
-              onPress={() => startFlow(state?.jobType)}
+              onPress={() =>
+                startFlow({
+                  newFlowType: state?.jobType,
+                  lastNavigationIndex: state?.lastNavigationIndex,
+                  stateNavigation: state?.navigation,
+                })
+              }
             >
               <Text>Continue</Text>
             </TouchableOpacity>

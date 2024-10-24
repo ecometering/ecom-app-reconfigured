@@ -10,36 +10,9 @@ import JobCard from '../components/JobCard';
 import { useProgressNavigation } from '../context/ProgressiveFlowRouteProvider';
 import { useSQLiteContext } from 'expo-sqlite/next';
 import { useFormStateContext } from '../context/AppContext';
+import { fieldsToParse } from '../utils/constant';
+import { safeParse } from '../utils/nagivation-routes/helpers';
 
-const fieldsToParse = [
-  'siteDetails',
-  'siteQuestions',
-  'photos',
-  'streams',
-  'meterDetails',
-  'kioskDetails',
-  'ecvDetails',
-  'movDetails',
-  'regulatorDetails',
-  'standards',
-  'meterDetailsTwo',
-  'additionalMaterials',
-  'dataLoggerDetails',
-  'dataLoggerDetailsTwo',
-  'maintenanceDetails',
-  'correctorDetails',
-  'correctorDetailsTwo',
-  'chatterBoxDetails',
-];
-
-const safeParse = (jsonString, fallbackValue) => {
-  try {
-    return !!jsonString ? JSON.parse(jsonString) : fallbackValue;
-  } catch (error) {
-    console.error('Error parsing JSON string:', error, jsonString);
-    return fallbackValue;
-  }
-};
 
 const CompletedJobsTable = () => {
   const db = useSQLiteContext();
@@ -85,7 +58,7 @@ const CompletedJobsTable = () => {
           ...parsedJobData,
           jobID: jobId,
         }));
-        startFlow(parsedJobData.jobType);
+        startFlow({ newFlowType: parsedJobData.jobType });
       }
     } catch (error) {
       console.error('Error loading job:', error);
@@ -100,7 +73,6 @@ const CompletedJobsTable = () => {
         onPress: async () => {
           try {
             await db.runAsync('DELETE FROM Jobs WHERE id = ?', [jobId]);
-            console.log('Record deleted successfully');
             fetchData();
           } catch (error) {
             console.error('Error deleting record:', error);

@@ -11,12 +11,13 @@ export const jsonFields = [
   'standards',
   'meterDetailsTwo',
   'additionalMaterials',
-  'dataLoggerDetails',
+  'dataloggerDetails',
   'dataLoggerDetailsTwo',
   'maintenanceQuestions',
   'correctorDetails',
   'correctorDetailsTwo',
   'chatterBoxDetails',
+  'navigation',
 ];
 
 // keeping the mapping for backward compatibility with the old records
@@ -39,10 +40,12 @@ export const fieldMapping = {
   standards: 'standards',
   meterDetailsTwo: 'meterDetailsTwo',
   additionalMaterials: 'additionalMaterials',
-  dataLoggerDetails: 'dataLoggerDetails',
+  dataloggerDetails: 'dataloggerDetails',
   dataLoggerDetailsTwo: 'dataLoggerDetailsTwo',
   maintenanceQuestions: 'maintenanceQuestions',
   correctorDetails: 'correctorDetails',
   correctorDetailsTwo: 'correctorDetailsTwo',
-  chatterBoxDetails: 'chatterBoxDetails',
+  chatterBoxDetails: 'chatterboxDetails',
+  navigation: 'navigation',
+  lastNavigationIndex: 'lastNavigationIndex',
 };

@@ -234,6 +234,17 @@ export default function CorrectorDetailsPage() {
                   />
                 </View>
               </View>
+              <View>
+        <TextInputWithTitle
+          title={'Notes'}
+          value={correctorDetails?.notes}
+          onChangeText={(text) => {
+            handleInputChange('notes', text);
+          }}
+          style={{ height: 100 }}
+          multiline={true}
+        />
+      </View>
             </View>
 
             <View style={styles.imagePickerContainer}>

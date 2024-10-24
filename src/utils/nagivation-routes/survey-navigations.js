@@ -19,18 +19,21 @@ export const SurveyNavigation = [
       title: 'Site Questions',
       photoKey: 'bypassPhoto',
     },
-    diversions: ({ state }) => {
-      const { siteQuestions } = state;
-      if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
-        return SurveyStandardPage;
-      } else if (!siteQuestions?.isCarryOut) {
-        return AbortPage;
-      } else {
-        return SurveyQuestions;
-      }
-    },
+    diversionsKey: 'siteQuestionsDiversion', // Updated
   },
 ];
+
+// Define siteQuestionsDiversion function here
+const siteQuestionsDiversion = (state) => {
+  const { siteQuestions } = state;
+  if (!siteQuestions?.isSafe || !siteQuestions?.isStandard) {
+    return SurveyStandardPage;
+  } else if (!siteQuestions?.isCarryOut) {
+    return AbortPage;
+  } else {
+    return SurveyQuestions;
+  }
+};
 
 export const SubmitSuccessPage = [
   {
@@ -66,7 +69,6 @@ export const CompositeLabelPhoto = [
       photoKey: 'dsearLabel',
     },
   },
-  
   ...ExtraPhotoPageRoute(),
   ...SubmitSuccessPage,
 ];
@@ -74,28 +76,25 @@ export const CompositeLabelPhoto = [
 export const RiddorReportPage = [
   {
     screen: 'RiddorReportPage',
-    params:{
+    params: {
       title: 'Riddor Report',
-      photoKey:'RiddorReport'
+      photoKey: 'RiddorReport',
     },
-    diversions: ({ state }) => {
-      const { standards,siteQuestions } = state;
-      if (!siteQuestions.isStandard) {
-        return SnClientInfoPage;
-      } else {
-        return CompositeLabelPhoto;
-      }
-    },
+    diversionsKey: 'riddorReportDiversion', // Updated
   },
 ];
 
+// Define riddorReportDiversion function here
+const riddorReportDiversion = (state) => {
+  const { siteQuestions } = state;
+  if (!siteQuestions.isStandard) {
+    return SnClientInfoPage;
+  } else {
+    return CompositeLabelPhoto;
+  }
+};
+
 export const SnClientInfoPage = [
-  // {
-  //   screen: 'SnClientInfoPage',
-  // },
-  // {
-  //   screen: 'GasSafeWarningPage',
-  // },
   {
     screen: 'SnClientInfoPage',
     params: {
@@ -110,28 +109,31 @@ export const SnClientInfoPage = [
 export const SurveyStandardPage = [
   {
     screen: 'StandardPage',
-    diversions: ({ state }) => {
-      const { standards,siteQuestions } = state;
-      const { riddorReportable, conformStandard } = standards;
-      if (riddorReportable === true) {
-        return RiddorReportPage;
-      } else {
-        if (!siteQuestions.isStandard) {
-          return SnClientInfoPage;
-        } else {
-          return CompositeLabelPhoto;
-        }
-      }
-    },
+    diversionsKey: 'surveyStandardPageDiversion', // Updated
   },
 ];
+
+// Define surveyStandardPageDiversion function here
+const surveyStandardPageDiversion = (state) => {
+  const { standards, siteQuestions } = state;
+  const { riddorReportable, conformStandard } = standards;
+  if (riddorReportable === true) {
+    return RiddorReportPage;
+  } else {
+    if (!siteQuestions.isStandard) {
+      return SnClientInfoPage;
+    } else {
+      return CompositeLabelPhoto;
+    }
+  }
+};
 
 export const AbortPage = [
   {
     screen: 'AbortPage',
     params: {
       photoKey: 'AbortReason',
-      title:'Job abort reason'
+      title: 'Job abort reason',
     },
   },
   ...SubmitSuccessPage,
@@ -141,18 +143,25 @@ export const AbortPage = [
 export const AssetTypeSelectionPage = [
   {
     screen: 'AssetTypeSelectionPage',
-    diversions: ({ state }) => {
-      const { meterDetails } = state || {};
-      if (meterDetails?.isMeter) {
-        return SurveyExistingMeterDetails;
-      } else if (meterDetails?.isCorrector) {
-        return SurveyExistingCorrectorDetails;
-      } else if (meterDetails?.isAmr) {
-        return SurveyExistingDataLoggerDetails;
-      }
+    diversionsKey: 'assetTypeSelectionDiversion',
+    params:{
+      title: 'Existing assets',
     },
+     
   },
 ];
+
+// Define assetTypeSelectionDiversion function here
+const assetTypeSelectionDiversion = (state) => {
+  const { siteQuestions } = state || {};
+  if (siteQuestions?.isMeter) {
+    return SurveyExistingMeterDetails;
+  } else if (siteQuestions?.isCorrector) {
+    return SurveyExistingCorrectorDetails;
+  } else if (siteQuestions?.isAmr) {
+    return SurveyExistingDataLoggerDetails;
+  }
+};
 
 export const SurveyExistingMeterDetails = [
   {
@@ -167,19 +176,21 @@ export const SurveyExistingMeterDetails = [
       title: 'Existing ECV to MOV',
       photoKey: 'ExistingEcvToMov',
     },
-    diversions: ({ state }) => {
-      const { meterDetails } = state || {};
-
-      const Type = meterDetails?.meterType.value;
-
-      if (!['1', '2', '4','7'].includes(Type)) {
-        return SurveyExistingMeterDataBadge;
-      } else {
-        return SurveyExistingMeterIndex;
-      }
-    },
+    diversionsKey: 'surveyExistingMeterDetailsDiversion', // Updated
   },
 ];
+
+// Define surveyExistingMeterDetailsDiversion function here
+const surveyExistingMeterDetailsDiversion = (state) => {
+  const { meterDetails } = state || {};
+  const Type = meterDetails?.meterType.value;
+
+  if (!['1', '2', '4', '7'].includes(Type)) {
+    return SurveyExistingMeterDataBadge;
+  } else {
+    return SurveyExistingMeterIndex;
+  }
+};
 
 export const SurveyExistingCorrectorDetails = [
   {
@@ -187,29 +198,32 @@ export const SurveyExistingCorrectorDetails = [
     params: {
       title: 'Existing Corrector installed',
     },
-    diversions: ({ state }) => {
-      const { meterDetails } = state || {};
-      const { pressureTier } = meterDetails || {};
-
-      const isAmr = meterDetails?.isAmr;
-      const isMeter = meterDetails?.isMeter;
-
-      if (isAmr) {
-        return SurveyExistingDataLoggerDetails;
-      }
-
-      if (isMeter) {
-        if (pressureTier === 'LP' || pressureTier?.label === 'LP') {
-          return SurveyStandardPage;
-        } else {
-          return SurveyStreamsSetSealDetailsPage;
-        }
-      }
-
-      return SurveyStandardPage;
-    },
+    diversionsKey: 'surveyExistingCorrectorDetailsDiversion', // Updated
   },
 ];
+
+// Define surveyExistingCorrectorDetailsDiversion function here
+const surveyExistingCorrectorDetailsDiversion = (state) => {
+  const { meterDetails,siteQuestions } = state || {};
+  const { pressureTier } = meterDetails || {};
+
+  const isAmr = siteQuestions?.isAmr;
+  const isMeter = siteQuestions?.isMeter;
+
+  if (isAmr) {
+    return SurveyExistingDataLoggerDetails;
+  }
+
+  if (isMeter) {
+    if (pressureTier === 'LP' || pressureTier?.label === 'LP') {
+      return SurveyStandardPage;
+    } else {
+      return SurveyStreamsSetSealDetailsPage;
+    }
+  }
+
+  return SurveyStandardPage;
+};
 
 export const SurveyExistingDataLoggerDetails = [
   {
@@ -217,26 +231,28 @@ export const SurveyExistingDataLoggerDetails = [
     params: {
       title: 'Existing AMR installed',
     },
-    diversions: ({ state }) => {
-      const { meterDetails } = state || {};
-
-      const pressureTier = meterDetails?.pressureTier?.label;
-      const isMeter = meterDetails?.isMeter;
-
-      if (isMeter) {
-        if (pressureTier === 'LP') {
-          return SurveyStandardPage;
-        } else {
-          return SurveyStreamsSetSealDetailsPage;
-        }
-      }
-
-      return SurveyStandardPage;
-    },
+    diversionsKey: 'surveyExistingDataLoggerDetailsDiversion', // Updated
   },
 ];
 
-export const InstancesForStreamFlow = ({ state }) => {
+// Define surveyExistingDataLoggerDetailsDiversion function here
+const surveyExistingDataLoggerDetailsDiversion = (state) => {
+  const { meterDetails,siteQuestions } = state || {};
+  const pressureTier = meterDetails?.pressureTier?.label;
+  const isMeter = siteQuestions?.isMeter;
+
+  if (isMeter) {
+    if (pressureTier === 'LP') {
+      return SurveyStandardPage;
+    } else {
+      return SurveyStreamsSetSealDetailsPage;
+    }
+  }
+
+  return SurveyStandardPage;
+};
+
+export const InstancesForStreamFlow = (state) => {
   // TODO: sort context switch
   // Redux might be a better option
   const { streams } = state || {};
@@ -297,12 +313,15 @@ export const SurveyStreamsSetSealDetailsPage = [
     params: {
       title: 'Streams Set Seal Details',
     },
-    diversions: ({ state }) => {
-      const streamFlows = InstancesForStreamFlow({ state });
-      return [...streamFlows, ...SurveyStandardPage];
-    },
+    diversionsKey: 'surveyStreamsSetSealDetailsPageDiversion', // Updated
   },
 ];
+
+// Define surveyStreamsSetSealDetailsPageDiversion function here
+const surveyStreamsSetSealDetailsPageDiversion = (state) => {
+  const streamFlows = InstancesForStreamFlow(state);
+  return [...streamFlows, ...SurveyStandardPage];
+};
 
 export const SurveyExistingMeterIndex = [
   {
@@ -318,32 +337,34 @@ export const SurveyExistingMeterIndex = [
       title: 'Existing Meter Photo',
       photoKey: 'ExistingMeterPhoto',
     },
-
-    diversions: ({ state }) => {
-      const { meterDetails } = state || {};
-      const { pressureTier } = meterDetails || {};
-      const isCorrector = meterDetails?.isCorrector;
-      const isAmr = meterDetails?.isAmr;
-      const isMeter = meterDetails?.isMeter;
-
-      if (isCorrector) {
-        return SurveyExistingCorrectorDetails;
-      }
-
-      if (isAmr) {
-        return SurveyExistingDataLoggerDetails;
-      }
-
-      if (isMeter) {
-        if (pressureTier === 'LP' || pressureTier?.label === 'LP') {
-          return SurveyStandardPage;
-        }
-      }
-
-      return SurveyStreamsSetSealDetailsPage;
-    },
+    diversionsKey: 'surveyExistingMeterIndexDiversion', // Updated
   },
 ];
+
+// Define surveyExistingMeterIndexDiversion function here
+const surveyExistingMeterIndexDiversion = (state) => {
+  const { meterDetails,siteQuestions } = state || {};
+  const { pressureTier } = meterDetails || {};
+  const isCorrector = siteQuestions?.isCorrector;
+  const isAmr = siteQuestions?.isAmr;
+  const isMeter = siteQuestions?.isMeter;
+
+  if (isCorrector) {
+    return SurveyExistingCorrectorDetails;
+  }
+
+  if (isAmr) {
+    return SurveyExistingDataLoggerDetails;
+  }
+
+  if (isMeter) {
+    if (pressureTier === 'LP' || pressureTier?.label === 'LP') {
+      return SurveyStandardPage;
+    }
+  }
+
+  return SurveyStreamsSetSealDetailsPage;
+};
 
 export const SurveyExistingMeterDataBadge = [
   {
@@ -355,6 +376,7 @@ export const SurveyExistingMeterDataBadge = [
   },
   ...SurveyExistingMeterIndex,
 ];
+
 export const SurveyQuestions = [
   {
     screen: 'KioskPage',
@@ -382,3 +404,16 @@ export const SurveyQuestions = [
   // },
   ...AssetTypeSelectionPage,
 ];
+
+// Export all diversion functions in an object
+export const surveyDiversions = {
+  siteQuestionsDiversion,
+  riddorReportDiversion,
+  surveyStandardPageDiversion,
+  assetTypeSelectionDiversion,
+  surveyExistingMeterDetailsDiversion,
+  surveyExistingCorrectorDetailsDiversion,
+  surveyExistingDataLoggerDetailsDiversion,
+  surveyStreamsSetSealDetailsPageDiversion,
+  surveyExistingMeterIndexDiversion,
+};

@@ -52,8 +52,6 @@ function SiteQuestionsPage() {
         [photoKey]: { title, photoKey, uri },
       },
     }));
-    console.log('Photo saved:', { title, photoKey, uri });
-    console.log('photos:', photos);
   };
   const backPressed = async () => {
     goToPreviousStep();
@@ -62,39 +60,49 @@ function SiteQuestionsPage() {
   const nextPressed = async () => {
     const validationChecks = [
       {
-        condition: siteQuestions?.isSafe !== true && siteQuestions?.isSafe !== false,
-        message: 'Please indicate if the meter location is safe.'
+        condition:
+          siteQuestions?.isSafe !== true && siteQuestions?.isSafe !== false,
+        message: 'Please indicate if the meter location is safe.',
       },
       {
-        condition: siteQuestions?.isGeneric !== true && siteQuestions?.isGeneric !== false,
-        message: 'Please indicate if the job is covered by the generic risk assessment.'
+        condition:
+          siteQuestions?.isGeneric !== true &&
+          siteQuestions?.isGeneric !== false,
+        message:
+          'Please indicate if the job is covered by the generic risk assessment.',
       },
       {
-        condition: siteQuestions?.isCarryOut !== true && siteQuestions?.isCarryOut !== false,
-        message: 'Please indicate if the job can be carried out.'
+        condition:
+          siteQuestions?.isCarryOut !== true &&
+          siteQuestions?.isCarryOut !== false,
+        message: 'Please indicate if the job can be carried out.',
       },
-   
+
       {
-        condition: siteQuestions?.isFitted !== true && siteQuestions?.isFitted !== false,
-        message: 'Please indicate if a bypass is fitted.'
+        condition:
+          siteQuestions?.isFitted !== true && siteQuestions?.isFitted !== false,
+        message: 'Please indicate if a bypass is fitted.',
       },
       {
         condition: siteQuestions?.isFitted === true && !photos?.bypassPhoto,
-        message: 'Please provide a photo of the bypass.'
+        message: 'Please provide a photo of the bypass.',
       },
       {
-        condition: siteQuestions?.isStandard !== true && siteQuestions?.isStandard !== false,
-        message: 'Please indicate if the customer installation conforms to current standards.'
-      }
+        condition:
+          siteQuestions?.isStandard !== true &&
+          siteQuestions?.isStandard !== false,
+        message:
+          'Please indicate if the customer installation conforms to current standards.',
+      },
     ];
-  
+
     for (const check of validationChecks) {
       if (check.condition) {
         EcomHelper.showInfoMessage(check.message);
         return;
       }
     }
-  
+
     goToNextStep();
   };
 
@@ -142,7 +150,6 @@ function SiteQuestionsPage() {
               key: 'isCarryOut',
               question: 'Can the Job be carried out',
               options: ['Yes', 'No'],
-              
             },
             {
               key: 'isFitted',

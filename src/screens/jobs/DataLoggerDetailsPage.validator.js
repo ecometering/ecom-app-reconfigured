@@ -3,7 +3,7 @@ import {
   validateBooleanField,
 } from '../../utils/validation/validators';
 
-export const validateDataLoggerDetails = (dataLoggerDetails, existingPhoto) => {
+export const validateDataLoggerDetails = (dataloggerDetails, existingPhoto) => {
   const validations = [
     () =>
       validateRequiredField(
@@ -14,43 +14,43 @@ export const validateDataLoggerDetails = (dataLoggerDetails, existingPhoto) => {
     () =>
       validateRequiredField(
         'Serial Number',
-        dataLoggerDetails.serialNumber,
+        dataloggerDetails.serialNumber,
         'Please enter serial number'
       ),
     () =>
       validateBooleanField(
         'Mounting Bracket Used',
-        dataLoggerDetails.isMountingBracket,
+        dataloggerDetails.isMountingBracket,
         'Please answer if mounting bracket was used'
       ),
     () =>
       validateBooleanField(
         'Adapter Used',
-        dataLoggerDetails.isAdapter,
+        dataloggerDetails.isAdapter,
         'Please answer if adapter was used'
       ),
     () =>
       validateBooleanField(
         'Pulse Splitter Used',
-        dataLoggerDetails.isPulseSplitter,
+        dataloggerDetails.isPulseSplitter,
         'Please answer if pulse splitter was used'
       ),
     () =>
       validateRequiredField(
         'Manufacturer',
-        dataLoggerDetails.manufacturer,
+        dataloggerDetails.manufacturer,
         'Please choose manufacturer'
       ),
     () =>
       validateRequiredField(
         'Model',
-        dataLoggerDetails.model,
+        dataloggerDetails.model,
         'Please choose model'
       ),
     () =>
       validateRequiredField(
         'Logger Owner',
-        dataLoggerDetails.loggerOwner,
+        dataloggerDetails.loggerOwner,
         'Please choose Logger owner'
       ),
   ];
