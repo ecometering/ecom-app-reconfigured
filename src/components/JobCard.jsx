@@ -62,6 +62,8 @@ const JobCard = ({ loading, item, handleOnCardClick, buttonConfig }) => {
             <Text style={styles.textBold}>End:</Text> {endDate}
           </Text>
         )}
+
+
         {item?.job_details?.date_carried_out && (
           <Text>
             <Text style={styles.textBold}>Planned:</Text>
@@ -74,6 +76,7 @@ const JobCard = ({ loading, item, handleOnCardClick, buttonConfig }) => {
           <Text>
             <Text style={styles.textBold}>Postcode:</Text>{' '}
             {item?.mprn?.postcode}
+
           </Text>
         )}
       </View>

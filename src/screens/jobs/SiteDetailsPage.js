@@ -54,6 +54,8 @@ function SiteDetailsPage() {
     goToNextStep();
   };
 
+
+
   useState(() => {
     if (!siteDetails.mprn) {
       setIsDetailCorrect(false);

@@ -12,8 +12,10 @@ import JobCard from '../components/JobCard';
 import { useProgressNavigation } from '../context/ProgressiveFlowRouteProvider';
 import { useSQLiteContext } from 'expo-sqlite/next';
 import { useFormStateContext } from '../context/AppContext';
+
 import { fieldsToParse } from '../utils/constant';
 import { safeParse } from '../utils/nagivation-routes/helpers';
+
 
 const JobsTable = () => {
   const db = useSQLiteContext();

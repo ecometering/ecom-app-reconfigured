@@ -1,5 +1,7 @@
 import { View, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+
 import React, { useCallback, useState } from 'react';
+
 
 // Utils and Constants
 import { PrimaryColors } from '../theme/colors';
@@ -11,9 +13,11 @@ import Text from './Text';
 import { useFormStateContext } from '../context/AppContext';
 import { useProgressNavigation } from '../context/ProgressiveFlowRouteProvider';
 import { useSQLiteContext } from 'expo-sqlite/next';
+
 import { fieldsToParse } from '../utils/constant';
 import { safeParse } from '../utils/nagivation-routes/helpers';
 import { useFocusEffect } from '@react-navigation/native';
+
 
 function JobTypeSection() {
   const { startFlow } = useProgressNavigation();
@@ -58,11 +62,13 @@ function JobTypeSection() {
     }
   };
 
+
   useFocusEffect(
     useCallback(() => {
       getInProgressJobs();
     }, [])
   );
+
 
   const handleJobTypeSelection = (jobType) => {
     startNewJob(jobType);

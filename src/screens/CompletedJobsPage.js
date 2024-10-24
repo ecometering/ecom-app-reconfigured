@@ -14,6 +14,7 @@ import { fieldsToParse } from '../utils/constant';
 import { safeParse } from '../utils/nagivation-routes/helpers';
 
 
+
 const CompletedJobsTable = () => {
   const db = useSQLiteContext();
   const navigation = useNavigation();
