@@ -106,6 +106,7 @@ const JobsTable = () => {
         hasRightBtn={false}
         centerText={'Jobs in progress'}
         leftBtnPressed={() => navigation.goBack()}
+        hasMenu={false}
       />
       <FlatList
         data={jobs}

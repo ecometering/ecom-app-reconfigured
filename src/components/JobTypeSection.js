@@ -1,4 +1,10 @@
-import { View, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import React, { useCallback, useState } from 'react';
 
 // Utils and Constants
@@ -15,7 +21,7 @@ import { fieldsToParse } from '../utils/constant';
 import { safeParse } from '../utils/nagivation-routes/helpers';
 import { useFocusEffect } from '@react-navigation/native';
 
-function JobTypeSection() {
+function JobTypeSection({ uiRefresh, setUiRefresh }) {
   const { startFlow } = useProgressNavigation();
   const { state, setState, resetState } = useFormStateContext();
   const { startDate, jobID } = state;
@@ -58,10 +64,33 @@ function JobTypeSection() {
     }
   };
 
+  const deleteCurrentJobAndResetState = async () => {
+    Alert.alert('Are you sure you want to cancel the current job?', '', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'OK',
+        onPress: async () => {
+          try {
+            await db.runAsync('DELETE FROM jobs WHERE jobStatus = ?', [
+              'In Progress',
+            ]);
+            resetState();
+            setUiRefresh(!uiRefresh);
+          } catch (error) {
+            console.error('Error deleting current job:', error);
+          }
+        },
+      },
+    ]);
+  };
+
   useFocusEffect(
     useCallback(() => {
       getInProgressJobs();
-    }, [])
+    }, [uiRefresh])
   );
 
   const handleJobTypeSelection = (jobType) => {
@@ -103,9 +132,12 @@ function JobTypeSection() {
             </View>
           </View>
           <View style={styles.jobInProgressActions}>
-            {/* <TouchableOpacity style={styles.cancelButton} onPress={resetState}>
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={deleteCurrentJobAndResetState}
+            >
               <Text>Cancel</Text>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
             <TouchableOpacity
               style={styles.continueButton}
               onPress={() =>

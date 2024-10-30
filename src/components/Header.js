@@ -1,20 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Pressable,
-  StyleSheet,
+  Modal,
   View,
   Platform,
+  Pressable,
   StatusBar,
-  Modal,
+  ScrollView,
+  StyleSheet,
   SafeAreaView,
-  Dimensions,
+  TouchableOpacity,
 } from 'react-native';
+
+// Components
 import Text from './Text';
-import { TextType } from '../theme/typography';
 import { CustomNavigationBar } from './navbar';
+
+// Theme
+import { TextType } from '../theme/typography';
+import { PrimaryColors } from '../theme/colors';
+
+// Context
 import { useFormStateContext } from '../context/AppContext';
 import { useProgressNavigation } from '../context/ProgressiveFlowRouteProvider';
-import { ScrollView } from 'react-native-gesture-handler';
 
 const HEADER_HEIGHT = 60;
 
@@ -32,6 +39,7 @@ export const Header = ({
   totalPages,
   currentPage,
   onPageChange,
+  hasMenu = true,
 }) => {
   const [isNavBarVisible, setNavBarVisible] = useState(false);
   const [isMenuVisible, setMenuVisible] = useState(false);
@@ -70,7 +78,7 @@ export const Header = ({
           )}
           {hasCenterText && (
             <Pressable
-              onPress={() => setMenuVisible(!isMenuVisible)}
+              onPress={() => hasMenu && setMenuVisible(!isMenuVisible)}
               style={styles.centerBtn}
             >
               <Text type={TextType.HEADER_1} style={styles.centerText}>
@@ -100,6 +108,11 @@ export const Header = ({
         onRequestClose={() => setMenuVisible(false)}
       >
         <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.navigationHeader}>
+            <TouchableOpacity onPress={() => setMenuVisible(false)}>
+              <Text style={styles.navigationCloseButton}>Close</Text>
+            </TouchableOpacity>
+          </View>
           <ScrollView>
             {isNavigationArray &&
               state?.navigation?.map((nav, index) => (
@@ -114,7 +127,7 @@ export const Header = ({
                     {
                       backgroundColor:
                         state?.lastNavigationIndex === index
-                          ? 'green'
+                          ? PrimaryColors.Green
                           : '#f4f4f4',
                     },
                   ]}
@@ -147,6 +160,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
+  },
+  navigationHeader: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    padding: 10,
+  },
+  navigationCloseButton: {
+    color: 'blue',
+    textDecorationLine: 'underline',
   },
   centerText: {
     textAlign: 'center',
