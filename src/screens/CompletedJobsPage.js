@@ -13,7 +13,6 @@ import { useFormStateContext } from '../context/AppContext';
 import { fieldsToParse } from '../utils/constant';
 import { safeParse } from '../utils/nagivation-routes/helpers';
 
-
 const CompletedJobsTable = () => {
   const db = useSQLiteContext();
   const navigation = useNavigation();
@@ -90,6 +89,7 @@ const CompletedJobsTable = () => {
         hasRightBtn={false}
         centerText={'Completed Jobs'}
         leftBtnPressed={() => navigation.goBack()}
+        hasMenu={false}
       />
       <FlatList
         style={styles.listContainer}

@@ -43,6 +43,7 @@ const buttons = [
 function HomePage() {
   const navigation = useNavigation();
   const db = useSQLiteContext();
+  const [uiRefresh, setUiRefresh] = useState(false);
 
   const { OnLogout } = useAuth();
 
@@ -66,7 +67,7 @@ function HomePage() {
   useFocusEffect(
     useCallback(() => {
       fetchData();
-    }, [])
+    }, [uiRefresh])
   );
 
   const fetchData = async () => {
@@ -126,7 +127,7 @@ function HomePage() {
         <View style={styles.body}>
           <ImageQueueInfo />
           <CalendarComponent />
-          <JobTypeSection />
+          <JobTypeSection uiRefresh={uiRefresh} setUiRefresh={setUiRefresh} />
           {buttons.map((button) => (
             <HomeJobsListing
               key={button.title}

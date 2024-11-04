@@ -91,6 +91,7 @@ function PlannedJobPage() {
         hasCenterText={true}
         hasRightBtn={false}
         centerText={'Planned Jobs'}
+        hasMenu={false}
         leftBtnPressed={() => navigation.goBack()}
       />
       <FlatList

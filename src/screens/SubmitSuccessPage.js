@@ -168,6 +168,7 @@ const SubmitSuccessPage = () => {
         leftBtnPressed={goToPreviousStep}
         hasCenterText={true}
         centerText="Submit Job"
+        hasMenu={false}
       />
       <View style={styles.content}>
         <Text>Submit the job</Text>
